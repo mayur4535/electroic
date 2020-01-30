@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<meta charset="UTF-8">
+<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
+<title>CodePen - Computer Science - Logic Gate Calculator</title>
+<style>
+
+
+
+#borderimg { 
+  border: 10px solid transparent;
+  padding: 10px;
+  width: 100%;
+  hight: 100%;
+  border-image-source: url();  
+  border-image-slice: 30;
+}
+
+body {
+  display: row;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+body {
+    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
+}
+
+body { 
+  background: #4CAF50 ; 
+}
+      /* Center page */
+.container {
+	width: 50%;
+	margin: 50px; 
+}
+
+/* Tables */
+
+table, td { 
+	padding: 6px;
+	border: 1px solid black;
+}
+
+
+
+/* Result */ 
+
+#result {
+        color: black;
+	font-size: 100px;
+        padding: 50px ;
+    background: white ;
+    border:2px solid #aaa;
+    border-radius:4px;
+    margin:8px 0;
+    outline:none;
+    box-sizing:border-box;
+    transition:.3s;
+}
+input[id=input-a]{
+    font-size: 70px;
+    padding: 50px ;
+    border:2px solid #aaa;
+    border-radius:4px;
+    margin:8px 0;
+    outline:none;
+    box-sizing:border-box;
+    transition:.3s;
+  }
+  
+  input[id=input-a]:focus{
+    border-color:dodgerBlue;
+    box-shadow:0 0 8px 0 dodgerBlue;
+  }
+input[id=input-b]{
+    font-size: 70px;
+    padding: 50px ;
+    border:2px solid #aaa;
+    border-radius:4px;
+    margin:8px 0;
+    outline:none;
+    box-sizing:border-box;
+    transition:.3s;
+  }
+  
+  input[id=input-b]:focus{
+    border-color:dodgerBlue;
+    box-shadow:0 0 8px 0 dodgerBlue;
+  }
+input[id=enter-inputs]{
+  background-color: #167A04 ;
+  border: 1;
+  color: white;
+  padding: 80px 300px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 70px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+    </style>
+<script>
+  window.console = window.console || function(t) {};
+</script>
+<script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+
+</script>
+</head>
+<body translate="no">
+<div class='container'>
+
+<div id='step1'>
+
+<button name="select-not" onclick='step2("not");'style="height:100px; width:1000px; font-size:70px;">NOT</button><h1></h1>
+<button name="select-and" onclick='step2("and");'style="height:100px; width:1000px; font-size:70px;">AND</button><h1></h1>
+<button name="select-or" onclick='step2("or");'style="height:100px; width:1000px; font-size:70px;">OR</button><h1></h1>
+<button name="select-xor" onclick='step2("xor");'style="height:100px; width:1000px; font-size:70px;">XOR</button><h1></h1>
+<button name="select-nand" onclick='step2("nand");'style="height:100px; width:1000px; font-size:70px;">NAND</button><h1></h1>
+<button name="select-nor" onclick='step2("nor");'style="height:100px; width:1000px; font-size:70px;">NOR</button><h1></h1>
+</div>
+<div id='step2'>
+<h2>inputs</h2>
+<input type="text" id='input-a' placeholder="Input A...">
+<input type="text" id='input-b' placeholder="Input B...">
+<button name="enter-inputs" onclick='step3();'style="height:150px; background:green; color:white; width:200px; font-size:70px;">Enter </button>
+
+</div>
+<div id='step3'>
+<h2>Result</h2>
+<p id='result'></p>
+<body>
+</div>
+</div>
+<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
+<script id="rendered-js">
+      var gateType;
+
+// Step 1
+document.addEventListener("DOMContentLoaded", function (event) {
+  // Hide stuff
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step3').style.display = 'none';
+});
+
+
+
+// Step 2
+function step2(type) {
+  // Hide stuff
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+  document.getElementById('step3').style.display = 'none';
+  // Globalise gate type so we can use it later
+  gateType = type;
+  // Only one input needed for NOT gate
+  if (gateType == 'not') {
+    document.getElementById('input-b').style.display = 'none';
+  }
+}
+
+// Step 3
+function step3() {
+  // Hide stuff
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step3').style.display = 'block';
+  // Get values from input text boxes
+  var a = document.getElementById('input-a').value;
+  var b = document.getElementById('input-b').value;
+  // Only get value from second box if its not a NOT gate
+  if (gateType == 'not') {
+    b = false;
+  }
+  // Display result
+  document.getElementById('result').innerHTML = calculateResult(a, b);
+}
+
+
+// Calculate result
+function calculateResult(a, b) {
+  var result;
+  if ((a == 0 || a == 1) && (b == 0 || b == 1)) {
+    switch (gateType) {
+      case 'not':
+        if (a == 0) {
+          result = 1;
+        } else {
+          result = 0;
+        }
+        break;
+      case 'and':
+        result = a * b;
+        break;
+      case 'or':
+        if (a == 1 && b == 1) {
+          result = 1;
+        } else {
+          result = a + b;
+        }
+        break;
+      case 'xor':
+        if (a == 1 && b == 1) {
+          result = 0;
+        } else {
+          result = a + b;
+        }
+        break;
+      case 'nand':
+        if (a == 1 && b == 1) {
+          result = 0;
+        } else {
+          result = 1;
+        }
+        break;
+      case 'nor':
+        if (a == 0 && b == 0) {
+          result = 1;
+        } else {
+          result = 0;
+        }
+        break;
+      default:
+        result = 'Error';
+        break;}
+
+  } else {
+    result = 'Error';
+  }
+  return result;
+}
+      //# sourceURL=pen.js
+    </script>
+<script src="https://static.codepen.io/assets/editor/live/css_reload-5619dc0905a68b2e6298901de54f73cefe4e079f65a75406858d92924b4938bf.js"></script>
+</body>
+</html>
