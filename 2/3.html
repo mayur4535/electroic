@@ -1,0 +1,424 @@
+<link rel="stylesheet" href="http://www.daycounter.com/DaycounterStyle.css"/>
+<style>
+}
+body {
+    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
+}
+input[type=checkbox]{
+    width: 200px; 
+    height: 200px; 
+   
+  }
+
+body { 
+  background: #4CAF50 ; 
+}
+body {
+    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
+}
+</style>
+<script type="text/javascript">// <![CDATA[
+function ShowBiasType() {
+	var type= Number(document.getElementById('BiasType').value);
+	switch(type) {
+		case 1:
+			document.getElementById('a1').style.display= "";
+			document.getElementById('b1').style.display= "";
+			document.getElementById('c1').style.display= "none";
+			document.getElementById('d1').style.display= "none";
+			document.getElementById('i1').style.display= "none";
+			document.getElementById('i2').style.display= "";
+			document.getElementById('RB').value= 1;
+			document.getElementById('R1').value= 0;
+			document.getElementById('R2').value= 0;
+		break;		
+		case 2:
+			document.getElementById('a1').style.display= "none";
+			document.getElementById('b1').style.display= "none";
+			document.getElementById('c1').style.display= "";
+			document.getElementById('d1').style.display= "";
+			document.getElementById('i1').style.display= "";
+			document.getElementById('i2').style.display= "none";
+			document.getElementById('RB').value= 0;
+			document.getElementById('R1').value= 10;
+			document.getElementById('R2').value= 2;
+		break;
+	}
+}
+
+
+function Compute(form) {
+	with(Math) {
+		var KILO= 1000;
+		var MEGA= KILO*KILO;
+		var PICO= 1/(MEGA*MEGA);
+		var RB= Number(form.RB.value)*KILO;
+		var RC= Number(form.RC.value)*KILO;
+		var RE1= Number(form.RE1.value)*KILO;
+		var RE2= Number(form.RE2.value)*KILO;		
+		var R1= Number(form.R1.value)*KILO;
+		var R2= Number(form.R2.value)*KILO;
+		var Beta= Number(form.Beta.value);
+		var Vbe= Number(form.Vbe.value);
+		var VP= Number(form.VP.value);
+		var Vin= Number(form.Vin.value);
+		var Ft= Number(form.Ft.value)*MEGA;
+		var Cbe= Number(form.Cbe.value)*PICO;				
+		var Ccb= Number(form.Ccb.value)*PICO;		
+		var Rs= Number(form.Rs.value);		
+		var RL= Number(form.RL.value);			
+		
+		var Precision= 5;
+		var Rin;
+		var RE= RE1+RE2;
+	
+		if(R1) {
+				RB= R1*R2/(R1+R2);
+				Vin= VP*R2/(R1+R2);
+		}	
+		
+		Rout=  RL*RC/(RL+RC);
+		
+		
+
+		Ib= (Vin-Vbe)/(RB+Beta*RE);
+		Ic= Beta*Ib;
+		Ve= Ic*RE;
+		Vb= Ve+Vbe;
+		Vc= VP - Ic*RC;
+		
+		if(Vc<Ve) {
+			form.Saturated.checked= true;
+			form.CutOff.checked= false;
+			// in saturation, VC=VE and we have a voltage divider
+			Ve= VP*RE/(RE+RC);
+			Vc= Ve;
+			Vb= Ve+Vbe;
+			Ic= VP/(RE+RC);
+		} else if(Vin<Vb) {
+			form.CutOff.checked= true;
+			form.Saturated.checked= false;
+			Vc= VP;
+			Ve= 0;
+			Vb= Vbe;
+			Ic= 0;
+			Ib= 0;
+			
+		}else {
+			form.Saturated.checked= false;
+			form.CutOff.checked= false;
+		}
+		
+		gm= Ic/.025;
+		rpi= Beta/gm;
+		
+		Rin= RB*Rs/(RB+Rs);
+				
+		if( Ccb && Ft) { 		// we can find Cbe from Ft an Ccb
+			Cbe= gm/(Ft*2*PI)-Ccb;
+		}
+		
+		Cmce= Ccb*(1+gm*Rout);
+		BWce= 1/((Cbe+Cmce)*Rin)/(2*PI);
+		
+
+
+		var Rcc= 1/( 1/Rs + 1/((1+gm*RE)*rpi) );
+		var BWcc= 1/((Ccb+ Cbe/(1+gm*RE))*Rcc)/(2*PI);
+		
+		
+	
+		var Rincc= 1/( 1/((Beta+1)*((RE2*RL)/(RE2+RL))) + 1/RB);
+		
+		var Ree= rpi+(Beta+1)*RE2;
+		var Rince= RB*Ree/(RB+Ree);
+
+		
+		if(RE2) {
+			Ace= Rout/RE2;
+		} else {
+			Ace= gm*Rout;
+		}
+		
+		Acc= Rincc/(Rincc+Rs);
+		
+		
+		Rincc= Rincc/KILO; 	//convert to Kohms
+		
+		Ib*= KILO; // convert to mA
+		Ic*= KILO;
+
+		Cmce= Cmce/PICO;
+		Cbe= Cbe/PICO;
+		BWce= BWce/MEGA;
+		BWcc= BWcc/MEGA
+		
+		Rref= (rpi+ Rin)/(Beta+1);
+		
+		Rocc=  RE2*Rref/(RE2+Rref);
+		
+		var Roce= RC; 
+
+		form.Rincc.value= Rincc.toPrecision(Precision);	
+		form.Rince.value= Rince.toPrecision(Precision);			
+		form.Ace.value= Ace.toPrecision(Precision);		
+		form.Acc.value= Acc.toPrecision(Precision);				
+		form.Cmce.value= Cmce.toPrecision(Precision);
+		form.Cbe.value= Cbe.toPrecision(Precision);
+		form.BWce.value= BWce.toPrecision(Precision);
+		form.BWcc.value= BWcc.toPrecision(Precision);		
+		form.rpi.value= rpi.toPrecision(Precision);
+		form.gm.value= gm.toPrecision(Precision);
+		form.Ib.value= Ib.toPrecision(Precision);
+		form.Ic.value= Ic.toPrecision(Precision);
+		form.Ve.value= Ve.toPrecision(Precision);
+		form.Vb.value= Vb.toPrecision(Precision);
+		form.Vc.value= Vc.toPrecision(Precision);
+		form.Rocc.value= Rocc.toPrecision(Precision);		
+		form.Roce.value= Roce.toPrecision(Precision);		
+		
+		
+	}
+}
+
+function PageLoad() {
+	ShowBiasType();
+}
+// ]]></script>
+
+
+<table style=height="573" width="100%"" border="0">
+<tbody>
+<tr>
+<td align="left" valign="top" width="5" height="540">&nbsp;</td>
+<td align="left" valign="top" width="600" height="540">
+
+<form action="" method="POST" name="ParamForm">
+<table style= "font-family= 'Aclonica';" "color:#404040;" text-shadow: 0 0 30px white; font-size: 70px; "background-color: #4CAF50 ;" border="1">
+<tbody>
+<tr>
+
+<tr>
+
+<td><font size="70"  face="Arial"><strong>Base Bias<p> Type</font></td>
+<td><span style="color: #030303;"><select id="BiasType" name="BiasType" size="1" onchange="ShowBiasType();" style="height:100px; width:100%; font-size:70px;" > <option selected="selected" value="1">Series Resistor</option> <option value="2">Voltage Divider</option> </select></span></td>
+</tr>
+<tr id="a1">
+
+<td><font size="70"  face="Arial"><strong>R<sub>B<p> (Base resistor)</font></td>
+<td><span style="color: #030303;"><input id="RB" type="text" name="RB" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(K ohms)</span></td>
+</tr>
+<tr id="b1">
+
+<td><font size="70"  face="Arial"><strong>V<sub>B<p> (Bias Voltage)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Vin" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(V)</span></td>
+</tr>
+<tr id="c1" style="display: none;">
+<td><font size="70"  face="Arial"><strong>R1<p> </font></td>
+<td><span style="color: #030303;"><input id="R1" type="text" name="R1" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(K ohms)</span></td>
+</tr>
+<tr id="d1" style="display: none;">
+<td><font size="70"  face="Arial"><strong>R2<p> </font></td>
+<td><span style="color: #030303;"><input id="R2" type="text" name="R2" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(K ohms)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>R<sub>C<p> (Collector resistor)</font></td>
+<td><span style="color: #030303;"><input type="text" name="RC" value="1" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(K ohms)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>R<sub>E1 <p>(Emitter resistor 1)Bypassed </font></td>
+<td><span style="color: #030303;"><input type="text" name="RE1" value=".24" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(K ohms)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>R<sub>E2<p>(Emitter resistor 2) Gain control</font></td>
+<td><span style="color: #030303;"><input type="text" name="RE2" value="0" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(K ohms)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>VP<p>(Supply Voltage)</font></td>
+<td><span style="color: #030303;"><input type="text" name="VP" value="10" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(V)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>Beta<p>(DC Current Gain)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Beta" value="100" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial"></span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>V<sub>BE <p>(Base to emitter drop)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Vbe" value="0.6" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(V)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>R<sub>s<p>(Source Resistance):</font></td>
+<td><span style="color: #030303;"><input type="text" name="Rs" value="50" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(ohms)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>R<sub>L<p>(Load resistor)</font></td>
+<td><span style="color: #030303;"><input type="text" name="RL" value="50" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(ohms)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>f<sub>T<p>(Current Gain BW Product):</font></td>
+<td><span style="color: #030303;"><input type="text" name="Ft" value="650" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(MHz)</span></td>
+</tr>
+<tr>
+
+
+<td><font size="70"  face="Arial"><strong>C<sub>CB<p>(Collector-Base Cap.):Optional</font></td>
+<td><span style="color: #030303;"><input type="text" name="Ccb" value="1" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(pF)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>C<sub>BE<p>(Base-Emitter Cap.): Optional</font></td>
+<td><span style="color: #030303;"><input type="text" name="Cbe" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(pF)</span></td>
+</tr>
+<tr>
+<td colspan="2">
+
+<input type="Button" value="Calculate" style=" background-color: #167A04 ; border: 1; color: white; padding: 80px 450px; text-align: center; text-decoration: none; display: inline-block;
+               font-size: 70px; margin: 4px 2px;" onClick="Compute(document.ParamForm)"></font></td>
+
+</td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>Vc<p>(Collector Voltage)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Vc" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(V)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>Ve<p>(Emitter Voltage)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Ve" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(V)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>Vb<p>(Base Voltage)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Vb" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(V)</span></td>
+</tr>
+<tr>
+
+
+<td><font size="70"  face="Arial"><strong>Ic<p>(Collector Current)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Ic" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(mA)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>Ib<p>(Base Current)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Ib" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(mA)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>g<sub>m <p>(Transconductance)</font></td>
+<td><span style="color: #030303;"><input type="text" name="gm" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial"></span></td>
+</tr>
+<tr>
+ 
+
+<td><font size="70"  face="Arial"><strong>r<sub>&pi;<p>(Input Resistance of BJT,, at low freq)</font></td>
+<td><span style="color: #030303;"><input type="text" name="rpi" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial"></span></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td><span style="color: #030303; "><input type="checkbox" name="Saturated" value="ON" /><font face="Arial"  size="10">Saturated</font></span><span style="color: #030303;"><input type="checkbox" name="CutOff" value="ON" /><font face="Arial"  size="10">CutOff</font></span></td>
+</tr>
+<tr>
+
+
+</tr>
+<tr>
+<td colspan="2">
+<p align="center"><span style="color: #030303;"><strong><font face="Arial"  size="10">CE (Common Emitter) Configuration Parameters</font></strong></span></p>
+</td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>A<p>(Amplifier Voltage Gain)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Ace" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial"></span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>R<sub>in<p></font></td>
+<td><span style="color: #030303;"><input type="text" name="Rince" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(ohms)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>C<sub>MCE<p>(Miller Capacitance)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Cmce" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(pF)</span></td>
+</tr>
+<tr>
+
+
+<td><font size="70"  face="Arial"><strong>BW<sub>CE<p>(BW)</font></td>
+<td><span style="color: #030303;"><input type="text" name="BWce" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(MHz)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>R<sub>O<p></font></td>
+<td><span style="color: #030303;"><input type="text" name="Roce" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(ohms)</span></td>
+</tr>
+<tr>
+<td colspan="2">
+<p align="center"><span style="color: #030303;"><strong><font face="Arial"  size="10">CC (Common Collector) Configuration Parameters</font></strong></span></p>
+</td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>A<p>(Amplifier Voltage Gain)</font></td>
+<td><span style="color: #030303;"><input type="text" name="Acc" size="17"style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial"></span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>R<sub>in<p></font></td>
+<td><span style="color: #030303;"><input type="text" name="Rincc" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(ohms)</span></td>
+</tr>
+<tr>
+
+<td><font size="70"  face="Arial"><strong>BW<sub>CC<p>(BW)</font></td>
+<td><span style="color: #030303;"><input type="text" name="BWcc" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(MHz)</span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>R<sub>O<p></font></td>
+<td><span style="color: #030303;"><input type="text" name="Rocc" size="17" style= "font-size: 70px; padding: 50px ; border:2px solid #aaa; border-radius:4px; margin: 8px 0; outline:none; box-sizing:border-box; transition:.3s; focus= border-color:dodgerBlue;box-shadow:0 0 8px 0 dodgerBlue;" ></font>
+              <font size="70" face="Arial">(ohms)</span></td>
+</tr>
+</tbody>
+</table>
+</form></td>
+</tr>
+</tbody>
+</table>

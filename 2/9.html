@@ -1,0 +1,156 @@
+<style>
+body {
+    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
+}
+input[type=checkbox]{
+    width: 200px; 
+    height: 200px; 
+   
+  }
+
+body { 
+  background: #4CAF50 ; 
+}
+body {
+    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
+}
+</style>				                  
+		
+<head>
+
+<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+
+<META  name="description" content="Air Core Coil Inductor Inductance Calculator.">
+
+<META  name="keywords" content="Air, Core,Coil,Inductance, Inductor, Electronics, Calculator">
+				                  
+				                  
+
+<script language="JavaScript">
+
+
+function Compute(form) {
+	with(Math) {
+		var Kilo= 1000;
+		var Meg= Kilo*Kilo;
+		var micro= 1/Meg;
+		var Pico= 1/(Meg*Meg);
+		var Nano= 1/(Meg*Kilo);
+		var Precision= 3;
+		
+		var F= Number(form.F.value)*Kilo;
+		var Duty= Number(form.Duty.value)/100;
+		var RA= Number(form.RA.value)*Kilo;
+		var RB= Number(form.RB.value)*Kilo;
+		var C= Number(form.C.value)*micro;
+		
+		if(Duty<.5) {
+			form.Invert.checked= true;
+			Duty=1-Duty;
+		}
+		else form.Invert.checked= false;
+		
+		if(C!=0  && F!=0 && Duty!=0) {
+			RA= 1.44*(2*Duty-1)/(F*C);
+			RB= 1.44*(1-Duty)/(F*C);
+		} else 
+		if(F!=0 && Duty!=0) {
+			if(F>100*Kilo) C= .001*micro;
+			else if(F>10*Kilo) C= .01*micro;
+			else if(F>1*Kilo) C= .1*micro;
+			else if(F>100) C= 1*micro;
+			else if(F>10) C= 10*micro;
+			else if(F>1) C= 100*micro;
+			RA= 1.44*(2*Duty-1)/(F*C);
+			RB= 1.44*(1-Duty)/(F*C);
+		} else 
+		if(RA!=0 && RB!=0 && C!=0) {
+			F= 1.44/((RA+RB*2)*C);
+			Duty=  (RA + RB)/((RA + RB*2));
+		} else {
+			alert("You must either enter RA and RB or F and Duty Cycle");
+			return false;
+		}
+		
+
+		
+		C= C/micro;
+		RA= RA/Kilo;
+		RB= RB/Kilo;
+		F= F/Kilo;
+		Duty= Duty*100;
+				
+		form.C.value= C.toPrecision(Precision);
+		form.RA.value= RA.toPrecision(Precision);
+		form.RB.value= RB.toPrecision(Precision);		
+		form.F.value= F.toPrecision(Precision);
+		form.Duty.value= Duty.toPrecision(Precision);		
+	}
+}
+
+
+
+</script>
+
+
+
+
+</head>
+
+<body topmargin="0" leftmargin="0">
+
+<table border="0" width="820">
+ 
+      
+ 
+
+
+
+    <table border="1" width="100%" class="tools-details">
+        <table style=height="573" width="100%"" border="1">
+
+    
+      <form method="POST" name="ParamForm">
+        <table border="1" width="100%">
+          <tr>
+            <td height="16" align="center" colspan="2"><font face="Arial"font size="80" >Input</font></td>
+          </tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Frequency</font></td>
+<td><span style="color: #030303;"><INPUT type="text"  name="F"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial">(KHz)</span></span></td>
+</tr>
+
+<tr>
+<td><font size="70"  face="Arial"><strong>Duty Cycle</font></td>
+<td><span style="color: #030303;"><INPUT type="text"  name="Duty"style="height:150px;  width:100%;  font-size:70px;" ><font size="70" face="Arial">(%)</span></span><span></span><input type="checkbox" style="height:150px; width:150;" name="Invert" value="ON">Invert
+              Output</font></td>
+
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>RA</font></td>
+<td><span style="color: #030303;"><INPUT type="text"  name="RA"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial">(KOhm)</span></span></td>
+</tr>
+        
+
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>RB</font></td>
+<td><span style="color: #030303;"><INPUT type="text"  name="RB"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial">(KOhm)</span></span></td>
+</tr> 
+       
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>C</font></td>
+<td><span style="color: #030303;"><INPUT type="text"  name="C"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial">(KOhm)</span></span></td>
+</tr> 
+         
+      
+          <tr>
+            <td colspan="2" height="38">
+              <p align="center"><font face="Arial"><input type="button" style=" background-color: #167A04 ; border: 1; color: white; padding: 80px 450px; text-align: center; text-decoration: none; display: inline-block;
+               font-size: 70px; margin: 4px 2px;"value="CALCULATE" name="B1" onClick="Compute(document.ParamForm);"></font></td>
+          </tr>
+        </table>
+      </form>
+   
+      

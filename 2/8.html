@@ -1,0 +1,252 @@
+<style>
+body {
+    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
+}
+input[type=checkbox]{
+    width: 200px; 
+    height: 200px; 
+   
+  }
+
+body { 
+  background: #4CAF50 ; 
+}
+body {
+    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
+}
+</style>
+<script type="text/javascript" language="JavaScript">// <![CDATA[
+function Compute(form) {
+	with(Math) {
+		var Baud= Number(form.Baud.value);
+		var F= Number(form.F.value);
+		var nbits= Number(form.Bits.value);
+		var radix= 16;
+		var N;
+		var UxMCTL;
+		var UxBR1;
+		var UxBR0;
+		
+		var B0;
+		var B1;
+		var B2;
+		var B3;
+		var B4;
+		var B5;
+		var B6;
+		var B7;
+		var B8;
+		var B9;
+		var i;
+		var er1;
+		var er0;
+		var msum;
+		var txer= new Array(13);
+		var rxer= new Array(13);
+		var s=1;
+		
+		N= floor(F/Baud);
+		UxBR1= N>>8;   //floor(UxBR0/65536); // UxBR1= UxBR0>>8;
+		UxBR0= N & 0xFF;
+		
+		UxMCTL= 0x00;
+
+		for(i=0;i<13;i++) {
+			txer[i]= 0;
+			rxer[i]= 0;
+		}
+		
+		msum= 0;
+		for(i=0;i<8;i++) {
+			er0= (Baud/F*((i+1)*N+msum) -(i+1))*100;
+			er1= (Baud/F*((i+1)*N+msum+1) -(i+1))*100;
+			if(abs(er1)<abs(er0)) {
+				msum++;
+				UxMCTL|= s;
+				txer[i]= er1;
+			} else {
+				txer[i]= er0;
+			}
+			s<<=1;
+		}
+		s= 1;
+		for(i=8;i<nbits;i++) { // recycle modulation bits from bit 0
+			if(UxMCTL & s) {
+				er0= (Baud/F*((i+1)*N+msum+1) -(i+1))*100;
+				msum++;
+			} else {
+				er0= (Baud/F*((i+1)*N+msum) -(i+1))*100;
+			}
+			
+			txer[i]= er0;
+			s<<=1;
+		}
+		msum= 0;
+		for(i=0;i<nbits;i++) {
+			er0= (Baud/F*(2*((UxMCTL&1)+floor(N/2))+i*N+msum)-1-i)*100;
+			rxer[i]= er0;
+			s<<=1;
+			if(s>=0x100) s=1; // rotate back to bit 0.
+			if(UxMCTL & s) {
+				msum++;
+			} 
+		}
+		
+
+		form.UxMCTL.value= "0x" + UxMCTL.toString(16);
+		form.UxBR0.value= "0x" + UxBR0.toString(radix);
+		form.UxBR1.value= "0x" + UxBR1.toString(radix);
+		
+		form.B0.value= txer[0].toPrecision(3);
+		form.B1.value= txer[1].toPrecision(3);
+		form.B2.value= txer[2].toPrecision(3);
+		form.B3.value= txer[3].toPrecision(3);
+		form.B4.value= txer[4].toPrecision(3);
+		form.B5.value= txer[5].toPrecision(3);
+		form.B6.value= txer[6].toPrecision(3);
+		form.B7.value= txer[7].toPrecision(3);
+		form.B8.value= txer[8].toPrecision(3);
+		form.B9.value= txer[9].toPrecision(3);
+		form.B10.value= txer[10].toPrecision(3);
+		form.B11.value= txer[11].toPrecision(3);
+		form.B12.value= txer[12].toPrecision(3);
+		
+		form.BR0.value= rxer[0].toPrecision(3);
+		form.BR1.value= rxer[1].toPrecision(3);
+		form.BR2.value= rxer[2].toPrecision(3);
+		form.BR3.value= rxer[3].toPrecision(3);
+		form.BR4.value= rxer[4].toPrecision(3);
+		form.BR5.value= rxer[5].toPrecision(3);
+		form.BR6.value= rxer[6].toPrecision(3);
+		form.BR7.value= rxer[7].toPrecision(3);
+		form.BR8.value= rxer[8].toPrecision(3);
+		form.BR9.value= rxer[9].toPrecision(3);
+		form.BR10.value= rxer[10].toPrecision(3);
+		form.BR11.value= rxer[11].toPrecision(3);
+		form.BR12.value= rxer[12].toPrecision(3);
+	}
+}
+// ]]></script>
+
+<tbody>
+<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<tr>
+
+
+<form action="" method="POST" name="ParamForm">
+ <table border="1" width="100%" class="tools-details">
+        <table style=height="573" width="100%"" border="1">
+<tbody>
+<tr>
+<td><font size="70"  face="Arial"><strong>UART Clock </font></td>
+<td colspan="3"><span style="color: #030303;"><INPUT type="text" value="10" name="F"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial">Khz</span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Baud Rate </font></td>
+<td colspan="3"><span style="color: #030303;"><INPUT type="text" value="10" name="Baud"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial">Khz</span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Number of bits <p><font size="5"  face="Arial">(including start, parity, and stop bits)</font></td>
+<td colspan="3"><span style="color: #030303;"><INPUT type="text" value="10" name="Bits"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial">(&lt;13)</span></span></td>
+</tr>
+<tr>
+<td colspan="3" width="577">
+<p align="center"><span style="font-family: Arial; color: #ffffff;"> <input onclick="Compute(document.ParamForm)" type="Button" style=" background-color: #167A04 ; border: 1; color: white; padding: 80px 220px; text-align: center; text-decoration: none; display: inline-block;
+               font-size: 70px; margin: 4px 2px;"value="Calculate Register Values" /></span></p>
+</td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>UxMCTL (Modulation Register) </font></td>
+<td colspan="3"><span style="color: #030303;"><INPUT type="text"  name="UxMCTL"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>UxBR0 (Baud Rate LSW) </font></td>
+<td colspan="3"><span style="color: #030303;"><INPUT type="text"  name="UxBR0"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>UxBR1 (Baud Rate MSW)</font></td>
+<td colspan="3"><span style="color: #030303;"><INPUT type="text"  name="UxBR1"style="height:150px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td colspan="3" width="577">
+<p align="center"><span style= ><strong><font face="Arial"font size="80" >Bit Error Percent</font></p>
+</td>
+</tr>
+<tr>
+<td width="316">&nbsp;</td>
+<td align="center" <b><font face="Arial"font size="80" >TX</font></b></td>
+<td align="center" <b><font face="Arial"font size="80" >RX</font></b></td>
+
+</tr>
+
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 0</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B0"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR0"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 1</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B1"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR1"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 2</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B2"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR2"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 3</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B3"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR3"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 4</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B4"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR4"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 5</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B5"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR5"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 6</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B6"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR6"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 7</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B7"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR7"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 8</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B8"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR8"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 9</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B9"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR9"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 10</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B10"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR10"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 11</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B11"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR11"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+<tr>
+<td><font size="70"  face="Arial"><strong>Bit 12</font></td>
+<td><span style="color: #030303;"><INPUT type="text" name="B12"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+<td><span style="color: #030303;"><INPUT type="text" name="BR12"style="height:100px; width:100%; font-size:70px;" ><font size="70" face="Arial"></span></span></td>
+</tr>
+</tbody>
+</table>
+</form></td>
+</tr>
+</tbody>
+</table>
