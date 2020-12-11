@@ -1,0 +1,362 @@
+
+
+
+<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<style>
+#borderimg { 
+  border: 10px solid transparent;
+  padding: 10px;
+  width: 100%;
+  hight: 100%;
+  border-image-source: url();  
+  border-image-slice: 30;
+}
+
+body {
+  display: row;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+body {
+    font-family: 'Aclonica'; color:#404040;  font-size: 50px;
+}
+
+body { 
+  background: ; 
+}
+.intro{
+    width:200;    
+    font-size: 60px;
+    padding: 5px ;    
+    border:2px solid #aaa;
+    border-radius:4px;
+    margin: 8px 0;
+    outline:none;
+    
+    
+    box-sizing:border-box;
+    transition:.3s;
+  }
+  
+  .intro:focus{
+    border-color:dodgerBlue;
+    box-shadow:0 0 8px 0 dodgerBlue;
+  }
+
+.ids{
+     border: 2px solid red;
+  padding: 10px;
+  border-radius: 50px 20px;}
+
+input[type=checkbox]{
+    width: 120px; 
+    height: 120px; 
+   
+  }
+</style>
+<script>
+(function(window){
+    
+    var application = {
+    
+        init : function(){
+
+            var num_el = document.first_form.num_of_stages;
+            var num_of_stages =  num_el.options[num_el.selectedIndex].value;
+
+            document.getElementById("total_nf_result").innerHTML = "dB";
+            document.getElementById("total_gain_result").innerHTML = "dB";
+            document.getElementById("noise_temp_result").innerHTML = "K";
+            
+            num_el.onchange = function(){
+                application.init();
+            }
+
+            application.form =  document.secondForm;
+            
+            application.form.onsubmit=function(){
+                application.calculate();
+                return false;
+            }
+            
+            application.form.onkeydown = function(e){
+                var code;
+                if (!e) var e = window.event;
+                if (e.keyCode) code = e.keyCode;
+                else if (e.which) code = e.which;
+                
+                if(parseInt(code)==13){
+                    application.calculate();
+                }
+            }
+
+            var num_of_inputs = application.currentInputs();
+            var difference = num_of_stages - num_of_inputs;
+
+            if(difference > 0){
+
+                for(i=0;i<difference;i++){
+                    application.addInput();
+                }
+
+            }
+            else if(difference < 0){
+
+                for(i=0;i<-difference;i++){
+                    application.removeInput();
+                }
+
+            }
+            
+        },
+        calculate : function(){
+
+            if(application.validate()){
+
+                var inputs = application.form.getElementsByTagName("input");
+
+                var nf_values = new Array();
+                var gain_values = new Array();
+
+                 for(var i=0;i<inputs.length;i++){
+
+                    var input = inputs[i];
+
+                    if(input.id.split("_")[0]=="NF"){
+
+                        nf_values.push(parseFloat(input.value));
+                    }
+                    else {
+
+                        gain_values.push(parseFloat(input.value));
+                    }
+
+                }
+
+                var nf = application.calculateNF(nf_values,gain_values);
+                var gain = application.calculateGain(gain_values);
+                var noise_temp = application.calculateNoiseTemp(nf);
+
+                //window.console.log("NF : " + nf + " \n Gain : "+gain + " \n Noise Temp : "+noise_temp);
+
+                application.outputResults(nf,gain,noise_temp);
+            }
+
+        },
+        calculateNF : function(nf_array,gain_array){
+
+            var nf = 0;
+
+            for(var i=0;i<nf_array.length;i++){
+
+                var nf_db = nf_array[i];
+                var converted_nf = Math.pow(10,nf_db/10);
+                
+                var numerator=i==0?converted_nf:converted_nf-1;
+                var denominator = 1;
+
+                for(var j=0;j<i;j++){
+                    var gain_db = gain_array[j];
+                    var converted_gain = Math.pow(10,gain_db/10);
+                    denominator = denominator * converted_gain;
+                }
+
+                var nf = nf + numerator/denominator;
+
+            }
+
+            return 10*Math.log(nf)/2.302585093;
+
+        },
+        calculateGain : function(gain_array){
+
+            var gain = 0;
+
+            for(var i=0;i<gain_array.length;i++){
+                gain = gain + gain_array[i];
+            }
+
+            return gain;
+        },
+        calculateNoiseTemp : function(nf){
+
+          return 290*(Math.pow(10,nf/10)-1);
+
+        },
+        validate : function(){
+
+            document.getElementById("errorBox").innerHTML = '';
+
+            var inputs = application.form.getElementsByTagName("input");
+
+            var error_stages = '';
+
+            for(var i=0;i<inputs.length;i++){
+
+                var input = inputs[i];
+
+                if(application.numRegExp.test(input.value)==false){
+
+                    var type = input.id.split("_")[0];
+                    var stage = Math.floor(i/2)+1; 
+                    error_stages = error_stages + " <strong>Stage "+stage+" "+type+"</strong>,";
+
+                }
+
+            }
+
+            if(error_stages!=''){
+
+                application.outputError(error_stages);
+
+                return false;
+
+            }
+            else {
+
+                return true;
+            }
+        },
+        outputResults : function(nf,gain,noise_temp){
+
+            document.getElementById("total_nf_result").innerHTML = nf.toFixed(4)+" ";
+            document.getElementById("total_gain_result").innerHTML = gain.toFixed(4)+" ";
+            document.getElementById("noise_temp_result").innerHTML = noise_temp.toFixed(4)+" ";
+        },
+        outputError : function(html){
+
+            document.getElementById("total_nf_result").innerHTML = "<span class='errorResult' >Error!</span>";
+            document.getElementById("total_gain_result").innerHTML = "<span class='errorResult' >Error!</span>";
+            document.getElementById("noise_temp_result").innerHTML = "<span class='errorResult' >Error!</span>";
+            document.getElementById("errorBox").innerHTML = application.errorHTML.replace("%error_stages%",html);
+
+        },
+        currentInputs : function(){
+
+            return application.form.getElementsByTagName("fieldset").length;
+
+        },
+        addInput : function(){
+
+            var i =application.currentInputs()+1;
+            var fieldset = document.createElement("fieldset");
+
+            fieldset.innerHTML = application.fieldsetHtml.replace(/\%id\%/g,i);
+            application.form.appendChild(fieldset);
+        },
+        removeInput : function(){
+
+            application.form.removeChild(application.form.getElementsByTagName("fieldset")[application.form.getElementsByTagName("fieldset").length-1]);
+        },
+        fieldsetHtml : '<label for="NF_%id%" >Stage %id%</label><input style="position: absolute;border-radius:4px;font-size:50; text-align:center;   width:200; right: 250px;"type="number" value="" id="NF_%id%" class="nf_input"  /><input style="position: absolute;border-radius:4px; text-align:center;  width:200;font-size:50; right: 30px;"type="number" value="" id="Gain_%id%" class="gain_input" />',
+        numRegExp : new RegExp(/^[0-9]+(\.[0-9]+)?$/),
+        errorHTML : "Fill All Input Or Invelid Value"
+    }
+
+window.application = application;
+
+})(window);
+            
+            
+</script>
+<div id="borderimg">
+    <borderimg id="control-label" style="width:100%; height:500px;">
+
+
+<fieldset><legend><div colspan="2" align="center" height="19">
+<h3>Input</h3></div></legend>
+
+                            <form method="get" action="" id="first_form" name="first_form">
+                                <font face="Arial" size="6">NOS. of Cascaded Amplifiers</font><select style=" position:absolute; right:40;width:410;border-radius:4px;border:2px solid #aaa; height:70;font-size:60;"name="num_of_stages" >
+                                    <option value="2" selected="selected" >2</option>
+                                    <option value="3" >3</option>
+
+                                    <option value="4" >4</option>
+                                    <option value="5" >5</option>
+                                    <option value="6" >6</option>
+                                    <option value="7" >7</option>
+                                    <option value="8" >8</option>
+                                    <option value="9" >9</option>
+
+                                    <option value="10" >10</option>
+                                    <option value="11" >11</option>
+                                    <option value="12" >12</option>
+                                    <option value="13" >13</option>
+                                    <option value="14" >14</option>
+                                    <option value="15" >15</option>
+
+                                    <option value="16" >16</option>
+                                    <option value="17" >17</option>
+                                    <option value="18" >18</option>
+                                    <option value="19" >19</option>
+                                    <option value="20" >20</option>
+                                    <option value="21" >21</option>
+
+                                    <option value="22" >22</option>
+                                    <option value="23" >23</option>
+                                    <option value="24" >24</option>
+                                    <option value="25" >25</option>
+                                    <option value="26" >26</option>
+                                    <option value="27" >27</option>
+
+                                    <option value="28" >28</option>
+                                    <option value="29" >29</option>
+                                    <option value="30" >30</option>
+                                </select>
+                            </form>
+                       
+               
+           
+            <div id="bottom" >
+                <div id="form" >
+                    <label style="position:absolute; right:260;" id="nf_title">NF(db)</label>
+                    <label style="position:absolute; right:10;" id="gain_title">Gain(db)</label>
+
+                    <br clear="all" />
+                    <form name="secondForm" id="secondForm" method="get" action="" >
+                    </form></fieldset>
+<h1 style="font-size:30;"></h1>
+<fieldset><legend><div colspan="2" align="center" height="19"><a href="javascript:application.calculate()"  style="background-color: #167A04 ;
+  border: 1;
+  align:center;
+  color: white;
+ 
+  padding: 10px 200px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 70px;
+  margin: 4px 2px;
+  cursor: pointer;">calculate</a>
+</div></legend></fieldset>
+
+<fieldset><legend><div colspan="2" align="center" height="19">
+
+
+<h3>Outputs</h3></div></legend>
+<label for="r2" style="font-size:60;" >NF</label><font face="Arial" size="7">  </font><span  id="total_nf_result"  class="intro"  style="position: absolute;   width:500; text-align
+:center;right: 140px;"class="form-control" type="text" /></span><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:2px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">dB</label><h1 style="font-size:30;"></h1>
+<label for="r2" style="font-size:60;" >Gain</label><font face="Arial" size="7">  </font><span  id="total_gain_result"  class="intro"  style="position: absolute;   width:500; text-align
+:center;right: 140px;"class="form-control" type="text" /></span><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:2px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">dB</label><h1 style="font-size:30;"></h1>
+<label for="r2" style="font-size:60;" >Temp</label><font face="Arial" size="7">  </font><span  id="noise_temp_result"  class="intro"  style="position: absolute;   width:500; text-align
+:center;right: 140px;"class="form-control" type="text" /></span><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:2px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">K</label>
+
+                    <div style="text-align: right;padding-top:20px;">
+                        
+                    </div>
+                </div>
+                <div id="results" >
+                    
+
+                   
+                    <div id="errorBox" ></div>
+                </div>
+            </div>
+
+        </div>
+        <script type="text/javascript" >
+                application.init();
+        </script>
+
+
