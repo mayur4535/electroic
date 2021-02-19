@@ -1,0 +1,372 @@
+<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<style>
+#borderimg { 
+  border: 10px solid transparent;
+  padding: 10px;
+  width: 100%;
+  hight: 100%;
+  border-image-source: url();  
+  border-image-slice: 30;
+}
+
+body {
+  display: row;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+body {
+    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+}
+
+body { 
+  background: ; 
+}
+.intro{text-align:center;
+    width:250;    
+    font-size: 60px;
+    padding: 5px ;    
+    border:3px solid #aaa;
+    border-radius:4px;
+    margin: 8px 0;
+    outline:none;
+    
+    
+    box-sizing:border-box;
+    transition:.3s;
+  }
+  
+  .intro:focus{
+    border-color:dodgerBlue;
+    box-shadow:0 0 8px 0 dodgerBlue;
+  }
+
+.ids{
+     border: 2px solid red;
+  padding: 10px;
+  border-radius: 50px 20px;}
+
+input[type=checkbox]{
+    width: 120px; 
+    height: 120px; 
+</style>
+
+
+<script LANGUAGE="JavaScript">
+
+<!--  
+
+
+
+// CED subroutine for cleaning up JavaScript rounding errors 
+
+// to any reasonable number of decimal places 5/5/1997 last mod 2/19/2004
+
+// round for decimal of (value of precision) places, default is 3
+
+// This routine can be used to pass a number and a number for precision
+
+// or just a number only, that is to be rounded to a set number of decimal
+
+// places. This routine supports leading and trailing zeros, leading and
+
+// trailing spaces, and padding. To prevent errors, pass variables as a string.
+
+
+
+function perRound(num, precision) {
+
+        var precision = 3; //default value if not passed from caller, change if desired
+
+        // remark if passed from caller
+
+        precision = parseInt(precision); // make certain the decimal precision is an integer
+
+    var result1 = num * Math.pow(10, precision);
+
+    var result2 = Math.round(result1);
+
+    var result3 = result2 / Math.pow(10, precision);
+
+    return zerosPad(result3, precision);
+
+}
+
+
+
+function zerosPad(rndVal, decPlaces) {
+
+    var valStrg = rndVal.toString(); // Convert the number to a string
+
+    var decLoc = valStrg.indexOf("."); // Locate the decimal point
+
+    // check for a decimal 
+
+    if (decLoc == -1) {
+
+        decPartsecnum = 0; // If no decimal, then all decimal places will be padded with 0s
+
+        // If decPlaces is greater than zero, add a decimal point
+
+        valStrg += decPlaces > 0 ? "." : "";
+
+    }
+
+    else {
+
+        decPartsecnum = valStrg.secnumgth - decLoc - 1; // If there is a decimal already, only the needed decimal places will be padded with 0s
+
+    }
+
+     var totalPad = decPlaces - decPartsecnum;    // Calculate the number of decimal places that need to be padded with 0s
+
+    if (totalPad > 0) {
+
+        // Pad the string with 0s
+
+        for (var cntrVal = 1; cntrVal <= totalPad; cntrVal++) 
+
+            valStrg += "0";
+
+        }
+
+    return valStrg;
+
+}
+
+// send the value in as "num" in a variable
+
+
+
+// clears field of default value
+
+function clear_field(field) {
+
+                if (field.value==field.defaultValue) {
+
+                        field.value=''
+
+                }
+
+        }
+
+function CloseR(Rval, IEASeries){
+    //IEASeries = 192 for 0.1% standard values;
+    //IEASeries = 96 for 1% standard values;
+    if(Rval <= 0){
+        return 0;
+    }
+    Expo = Math.floor(Math.log(Rval) / Math.log(10));
+    Mant = Rval / Math.pow(10,Expo);
+    x = Math.floor(IEASeries * Math.log(Mant) / Math.log(10));
+    min_dist = 1000;
+    for (i = (x - 1) ; i <= (x + 1); i++ )
+    {
+        y = (Math.pow(10, (i / IEASeries))).toFixed(2);
+        dist = Math.abs(Mant - y);
+        if(dist < min_dist){
+            min_dist = dist;
+            closest = i;
+        }
+    }
+    x = (Math.pow(10, (closest / IEASeries))).toFixed(2);
+    y = Math.pow(10, Expo);
+    return x*y;
+}
+
+function E_6(Val){
+    if(Val <= 0){
+        return 0;
+    }
+    Clist = "1,1.5,2.2,3.3,4.7,6.8,10";
+    Vals = Clist.split(",") //convert to zero based array;
+    n = Vals.length
+    //find mantissa &#038; exponent of Val;
+    Expo = Math.floor(Math.log(Val) / Math.log(10));
+    Mant = Val / Math.pow(10,Expo);
+    min_dist = 1000;
+    for (i = 0; i<=  n; i++){
+        dist = Math.abs(Mant - Vals[i]);
+        if(dist < min_dist){
+            min_dist = dist;
+            closest = i;
+        }
+    }
+    return Vals[closest] * Math.pow(10,Expo);
+}
+function E_12(Val){
+    if(Val <= 0){
+        return 0;
+    }
+    Clist = "1,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2,10";
+    Vals = Clist.split(",") //convert to zero based array;
+    n = Vals.length
+    //find mantissa &#038; exponent of Val;
+    Expo = Math.floor(Math.log(Val) / Math.log(10));
+    Mant = Val / Math.pow(10,Expo);
+    min_dist = 1000;
+    for (i = 0; i<=  n; i++){
+        dist = Math.abs(Mant - Vals[i]);
+        if(dist < min_dist){
+            min_dist = dist;
+            closest = i;
+        }
+    }
+    return Vals[closest] * Math.pow(10,Expo);
+}
+
+function E_24(Val){
+    if(Val <= 0){
+        return 0;
+    }
+    Clist = "1,1.1,1.2,1.3,1.5,1.6,1.8,2.0,2.2,2.4,2.7,3.0,3.3,3.6,3.9,4.3,4.7,5.1,5.6,6.2,6.8,7.5,8.2,9.1,10" //2% &#038;& 5% vals;
+    Vals = Clist.split(",") //convert to zero based array;
+    n = Vals.length
+    //find mantissa &#038; exponent of Val;
+    Expo = Math.floor(Math.log(Val) / Math.log(10));
+    Mant = Val / Math.pow(10,Expo);
+    min_dist = 1000;
+    for (i = 0; i<=  n; i++){
+        dist = Math.abs(Mant - Vals[i]);
+        if(dist < min_dist){
+            min_dist = dist;
+            closest = i;
+        }
+    }
+    return Vals[closest] * Math.pow(10,Expo);
+}
+
+function E_48(Val){
+    return CloseR(Val, 48).toPrecision(3);
+}
+
+function E_96(Val){
+    return CloseR(Val, 96).toPrecision(3);
+}
+
+function E_192(Val){
+    return CloseR(Val, 192).toPrecision(3);
+}
+
+function Significant(x, d){
+    //rounds x to d significant digits;
+    if(x == 0){
+        return 0;
+    }
+    y = Math.log(Math.abs(x)) / Math.log(10);
+    if(Math.abs(Math.floor(y) - y) < 0.000000000000001){
+        y = Math.floor(y);
+    }
+    e = Math.floor(y);
+    m = x / Math.pow(10, e);
+    m = (m).toFixed(d - 1);
+    return m * Math.pow(10, e);
+}
+
+function Find(){
+ v=document.getElementById("Text1").value;
+ v6=E_6(v).toPrecision(3);
+ v12=E_12(v).toPrecision(3);
+ v24=E_24(v).toPrecision(3);
+ v48=E_48(v);
+ v96=E_96(v);
+ v192=E_192(v);
+
+ e6=(100*(v6-v)/v).toPrecision(3)  + "%";
+ e12=(100*(v12-v)/v).toPrecision(3)  + "%";
+ e24=(100*(v24-v)/v).toPrecision(3)  + "%";
+ e48=(100*(v48-v)/v).toPrecision(3)  + "%";
+ e96=(100*(v96-v)/v).toPrecision(3)  + "%";
+ e192=(100*(v192-v)/v).toPrecision(3)  + "%";
+ document.getElementById("Text2").value=v6;
+ document.getElementById("Text3").value=v12;
+ document.getElementById("Text4").value=v24;
+ document.getElementById("Text5").value=v48;
+ document.getElementById("Text6").value=v96;
+ document.getElementById("Text7").value=v192;
+
+ document.getElementById("Text8").value=e6;
+ document.getElementById("Text9").value=e12;
+ document.getElementById("Text10").value=e24;
+ document.getElementById("Text11").value=e48;
+ document.getElementById("Text12").value=e96;
+ document.getElementById("Text13").value=e192;
+
+}
+
+//  -->
+
+</SCRIPT>
+
+<div id="borderimg">
+    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>							  
+
+
+<fieldset><legend><div colspan="2" align="center" height="19">
+<h3>Inputs</h3></div></legend>
+
+<label><font></sub> </font><font face="Arial" size=""> Desired Resistor Value</font></label><INPUT   id="Text1" name="Text1" onKeyUp="Find()" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="number" />
+      
+
+
+
+        <h1 style="font-size:80px;"></h1>
+
+ <label style="padding: 5px ;  position: absolute;left: 70px;font-size:50px;  text-align:center; height:68.5;  ">EIA Series</label> 
+ <label style="padding: 5px ;  position: absolute;right: 295px;font-size:40px;  text-align:center; height:68.5;  ">Closest Value</label> 
+ <label style="padding: 5px ;  position: absolute;right: 90px;font-size:40px;  text-align:center; height:68.5;  ">Error</label> 
+
+ <h1 style="font-size:200px;"></h1>
+<label><font>E6</sub> </font><font face="Arial" size=""></font></label>
+<INPUT   id="Text8" name="Text8" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
+<INPUT  id="Text2" name="Text2"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
+
+
+ <h1 style="font-size:50px;"></h1>
+<label><font>E12</sub> </font><font face="Arial" size=""></font></label>
+<INPUT    id="Text9" name="Text9" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
+<INPUT   id="Text3" name="Text3"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
+
+
+ <h1 style="font-size:50px;"></h1>				
+			
+<label><font>E24</sub> </font><font face="Arial" size=""></font></label>
+<INPUT    id="Text10" name="Text10" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
+<INPUT   id="Text4" name="Text4"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
+
+
+ <h1 style="font-size:50px;"></h1>
+
+<label><font>E48</sub> </font><font face="Arial" size=""></font></label>
+<INPUT    id="Text11" name="Text11" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
+<INPUT   id="Text5" name="Text5" size="17"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
+
+
+ <h1 style="font-size:50px;"></h1>
+				
+<label><font>E96</sub> </font><font face="Arial" size=""></font></label>
+<INPUT   id="Text12" name="Text12"  size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
+<INPUT   id="Text6" name="Text6"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
+
+
+ <h1 style="font-size:50px;"></h1>			
+
+<label><font>E192</sub> </font><font face="Arial" size=""></font></label>
+<INPUT    id="Text13" name="Text13" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
+<INPUT   id="Text7" name="Text7"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
+
+
+ <h1 style="font-size:50px;"></h1>
+
+				
+			
+
+
+
+				
+			
+
+
+
+			
+
