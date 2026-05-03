@@ -29,10 +29,12 @@ body{
   padding:20px;
   border-radius:14px;
   box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  overflow:hidden;
 }
 
 .grid{
   display:grid;
+  grid-template-columns:1fr;
   gap:var(--gap);
 }
 
@@ -45,6 +47,7 @@ body{
 .row{
   display:flex;
   gap:8px;
+  width:100%;
 }
 
 .row input,
@@ -62,14 +65,18 @@ body{
 
 .row input{
   flex:1;
+  width:100%;
+  min-width:0;
 }
 
 .row select{
   width:90px;
+  min-width:90px;
 }
 
 .unit-box{
   width:90px;
+  min-width:90px;
   justify-content:center;
   background:#fafafa;
 }
@@ -93,13 +100,32 @@ button{
   gap:var(--gap);
 }
 
-/* Formula */
 .formula{
   margin-top:15px;
   font-size:14px;
   font-weight:bold;
   color:#333;
   line-height:1.6;
+}
+
+@media(max-width:600px){
+  body{
+    padding:10px;
+  }
+
+  .box{
+    padding:16px;
+    max-width:100%;
+    overflow:hidden;
+  }
+
+  .row select,
+  .unit-box{
+    width:72px;
+    min-width:72px;
+    padding:6px;
+    font-size:15px;
+  }
 }
 </style>
 </head>
@@ -110,7 +136,6 @@ button{
 
 <div class="grid">
 
-<!-- Diameter -->
 <div>
 <div class="label">Wire Diameter</div>
 <div class="row">
@@ -125,7 +150,6 @@ button{
 </div>
 </div>
 
-<!-- Spacing -->
 <div>
 <div class="label">Spacing</div>
 <div class="row">
@@ -140,7 +164,6 @@ button{
 </div>
 </div>
 
-<!-- Dielectric -->
 <div>
 <div class="label">Dielectric (εr)</div>
 <div class="row">
@@ -177,7 +200,6 @@ button{
 
 </div>
 
-<!-- FORMULA -->
 <div class="formula">
 Zo = (120 / √εr) × ln(2S / D) <br>
 Delay = 8.472 × √εr (ns/in) <br>
@@ -202,8 +224,8 @@ function calc(){
     return;
   }
 
-  d *= dUnit;
-  s *= sUnit;
+  d = d * dUnit;
+  s = s * sUnit;
 
   if(d <= 0 || s <= 0 || er <= 0){
     alert("Values must be greater than 0");
@@ -220,9 +242,9 @@ function calc(){
   let logValue = Math.log(ratio);
 
   let zo = (120 / Math.sqrt(er)) * logValue;
-  let delay = (8.472e-11 * Math.sqrt(er)) / 1e-9;
-  let ind = (1.016e-8 * logValue) / 1e-9;
-  let cap = ((7.065e-13 / logValue) * er) / 1e-12;
+  let delay = 8.472 * Math.sqrt(er);
+  let ind = 10.16 * logValue;
+  let cap = (0.7065 * er) / logValue;
 
   document.getElementById("zo").value = zo.toFixed(3);
   document.getElementById("delay").value = delay.toFixed(3);
