@@ -1,219 +1,105 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
+:root{--f:16px;--h:48px;--g:12px}
+body{background:#f4f7fb;padding:20px}
+.box{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.08);overflow:hidden}
+.grid{display:grid;gap:var(--g)}
+.label{font-size:14px;font-weight:bold;margin-bottom:5px}
+.row{display:flex;gap:8px}
+.row input,.unit-box{
+height:var(--h);border:1px solid #ccc;border-radius:8px;padding:8px;
+font-size:var(--f);font-weight:bold;display:flex;align-items:center}
+.row input{flex:1}
+.unit-box{width:90px;justify-content:center;background:#fafafa}
+button{
+width:100%;height:var(--h);margin-top:var(--g);
+background:#008000;color:#fff;border:0;border-radius:10px;
+font-size:var(--f);font-weight:bold}
+.result{margin-top:var(--g);display:grid;gap:var(--g)}
+.formula{margin-top:15px;font-size:14px;font-weight:bold}
+
+@media(max-width:600px){
+.unit-box{width:72px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-
-/* Style the tab */
-.tab {
-  overflow: hidden;
-  border: 10px solid #ccc;
- 
-  background-color: #f1f1f1;
-  text-align:center;
-}
-
-/* Style the buttons inside the tab */
-.tab button {
-  background-color: inherit;
-  
-  float:center;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 15px;
-  transition: 0.3s;
-  font-size: 70px;
-}
-
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #c4cc;
-}
-
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-  align:center;
-}
-.tab1 {
-border-radius: 25px;
-  background: #167A04;
-  padding: 20px; 
-  width: 100px;
-  height: 150px;
-  font-size:40px;
-  color:white;
-}
-
-
 </style>
+</head>
 
-<script language="JavaScript">
-<!-- start
-function Log10(x){
-return Math.log(x) / Math.log(10);
+<body>
+
+<div class="box">
+
+<div class="grid">
+
+<div>
+<div class="label">Capacitance (C)</div>
+<div class="row">
+<input id="c">
+<div class="unit-box">pF/m</div>
+</div>
+</div>
+
+<div>
+<div class="label">Cutoff Frequency (f)</div>
+<div class="row">
+<input id="f">
+<div class="unit-box">Hz</div>
+</div>
+</div>
+
+<div>
+<div class="label">Impedance (Z)</div>
+<div class="row">
+<input id="z">
+<div class="unit-box">Ω</div>
+</div>
+</div>
+
+</div>
+
+<button id="btn">Calculate</button>
+
+<div class="result">
+<div>
+<div class="label">Cable Length</div>
+<div class="row">
+<input id="o" readonly>
+<div class="unit-box">m</div>
+</div>
+</div>
+</div>
+
+<div class="formula">
+d = 1 / (2π × Z × C × f)
+</div>
+
+</div>
+
+<script>
+document.getElementById("btn").onclick=function(){
+
+let c=parseFloat(document.getElementById("c").value),
+f=parseFloat(document.getElementById("f").value),
+z=parseFloat(document.getElementById("z").value),
+o=document.getElementById("o");
+
+if(isNaN(c)||isNaN(f)||isNaN(z)){o.value="Enter values";return}
+
+if(c<=0||f<=0||z<=0){o.value="Invalid";return}
+
+// convert pF → F
+c = c * 1e-12;
+
+let d = 1 / (2 * Math.PI * z * c * f);
+
+o.value = d.toFixed(3);
+
 }
-function roundto(x,dp){
-return (Math.round(x*Math.pow(10,dp))/Math.pow(10,dp));
-}
-function sqr(x){
-return Math.sqrt(x,2);
-}
-function Calculate1_OnClick(){
-// main body of program
-var R;// source impedance
-var C;// capacity
-var D;// cable length (distance)
-// Get variables from form
-R = Number(document.CableDamping1.Impedance.value);
-C = Number(document.CableDamping1.Capacitance.value);
-D = Number(document.CableDamping1.Cablelength.value);
-// Check that sensible numbers were entered
-F = 1/(2*3.141592654*R*C*1e-12*D)
-document.CableDamping1.Frequency.value = roundto(F,0);
-}
-// end Calculation cable cutoff frequency -->
 </script>
 
-<!-- Calculation cable length -->
-<script language="JavaScript">
-<!-- start
-function Log10(x){
-return Math.log(x) / Math.log(10);
-}
-function roundto(x,dp){
-return (Math.round(x*Math.pow(10,dp))/Math.pow(10,dp));
-}
-function sqr(x){
-return Math.sqrt(x,2);
-}
-function Calculate2_OnClick(){
-// main body of program
-var Z;// source impedance
-var K;// capacity
-var G;// cutoff frequncy
-// Get variables from form
-Z = Number(document.CableDamping2.Impedance.value);
-K = Number(document.CableDamping2.Capacitance.value);
-G = Number(document.CableDamping2.Frequency.value);
-// Check that sensible numbers were entered
-E = 1/(2*3.141592654*Z*K*1e-12*G)
-document.CableDamping2.Cablelength.value = roundto(E,0);
-}
-// end Calculation cable length -->
-</script>
-
-
-
-<form name="CableDamping2">
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
-
-
-
-
-
-
-<label for="f">C<sub><font face="Arial" size="6">(Capacitance Per m)</font></label><input  name="Capacitance" class="intro"  style="position: absolute;  text-align:center; width:300; right: 155px;"class="form-control" type="number" />
- <label style="padding: 5px ;  position: absolute;right: 1px;font-size:47px;   border:3px solid #aaa;border-radius:4px;margin:8px 0;text-align:center; height:69;width:130px;">pF/m</label>
-
-<h1 style="font-size:40;"></h1>
-
-<label for="f"><i>f</i></font><sub>c</sub><font face="Arial" size="6"> (Cutoff frequency)</font></label><input  name="Frequency" class="intro"  style="position: absolute;  text-align:center; width:300; right: 155px;"class="form-control" type="number" />
- <label style="padding: 5px ;  position: absolute;right: 1px;font-size:56px;   border:3px solid #aaa;border-radius:4px;margin:8px 0;text-align:center; height:69;width:130px;">H<sub>z</label>
-<h1 style="font-size:30;"></h1>
-
-<label for="f">Z<sub>Out<font face="Arial" size="5.5">(Source of impedance)</font></label><input  name="Impedance" class="intro"  style="position: absolute;  text-align:center; width:300; right: 155px;"class="form-control" type="number" />
- <label style="padding: 5px ;  position: absolute;right: 1px;font-size:57px;   border:3px solid #aaa;border-radius:4px;margin:8px 0;text-align:center; height:69;width:130px;">&Omega;</label>
-</fieldset>
-<h1 style="font-size:30;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" onClick="Calculate2_OnClick();" value="&#160;calculate&#160;"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-
-<label for="f"><i>d</i></font><sub></sub><font face="Arial" size="6"> (Cable Length)</font></label><input  name="Cablelength" class="intro"  style="position: absolute;  text-align:center; width:300; right: 155px;"class="form-control" type="text" />
- <label style="padding: 5px ;  position: absolute;right: 1px;font-size:53px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; text-align:center;height:69;width:130px;">Mtr</label>
-</fieldset></div>
-
-
-
-
-
-
-</form>
+</body>
+</html>
