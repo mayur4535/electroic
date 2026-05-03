@@ -11,7 +11,6 @@
   font-family:Arial;
 }
 
-/* SYSTEM SETTINGS */
 :root{
   --font-main:16px;
   --box-height:48px;
@@ -23,7 +22,6 @@ body{
   padding:20px;
 }
 
-/* Container */
 .box{
   max-width:600px;
   margin:auto;
@@ -33,26 +31,22 @@ body{
   box-shadow:0 10px 25px rgba(0,0,0,0.08);
 }
 
-/* Layout */
 .grid{
   display:grid;
   gap:var(--gap);
 }
 
-/* Label */
 .label{
   font-size:14px;
   font-weight:bold;
   margin-bottom:5px;
 }
 
-/* Row */
 .row{
   display:flex;
   gap:8px;
 }
 
-/* ALL INPUT SAME STYLE */
 .row input,
 .row select,
 .unit-box{
@@ -66,24 +60,20 @@ body{
   align-items:center;
 }
 
-/* Input full width */
 .row input{
   flex:1;
 }
 
-/* Select width */
 .row select{
   width:90px;
 }
 
-/* Unit box */
 .unit-box{
   width:90px;
   justify-content:center;
   background:#fafafa;
 }
 
-/* Button */
 button{
   width:100%;
   height:var(--box-height);
@@ -97,11 +87,19 @@ button{
   cursor:pointer;
 }
 
-/* Result section */
 .result{
   margin-top:var(--gap);
   display:grid;
   gap:var(--gap);
+}
+
+/* Formula */
+.formula{
+  margin-top:15px;
+  font-size:14px;
+  font-weight:bold;
+  color:#333;
+  line-height:1.6;
 }
 </style>
 </head>
@@ -118,9 +116,11 @@ button{
 <div class="row">
 <input type="number" id="d">
 <select id="d_unit">
-<option value="0.001">mm</option>
-<option value="0.01">cm</option>
-<option value="1">m</option>
+<option value="0.001">mil</option>
+<option value="0.03937008">mm</option>
+<option value="0.3937008">cm</option>
+<option value="0.00003937008">um</option>
+<option value="1">inch</option>
 </select>
 </div>
 </div>
@@ -131,9 +131,11 @@ button{
 <div class="row">
 <input type="number" id="s">
 <select id="s_unit">
-<option value="0.001">mm</option>
-<option value="0.01">cm</option>
-<option value="1">m</option>
+<option value="0.001">mil</option>
+<option value="0.03937008">mm</option>
+<option value="0.3937008">cm</option>
+<option value="0.00003937008">um</option>
+<option value="1">inch</option>
 </select>
 </div>
 </div>
@@ -154,25 +156,33 @@ button{
 <div class="result">
 
 <div class="row">
-<input id="zo">
+<input id="zo" readonly>
 <div class="unit-box">Ω</div>
 </div>
 
 <div class="row">
-<input id="delay">
+<input id="delay" readonly>
 <div class="unit-box">ns/in</div>
 </div>
 
 <div class="row">
-<input id="ind">
+<input id="ind" readonly>
 <div class="unit-box">nH/in</div>
 </div>
 
 <div class="row">
-<input id="cap">
+<input id="cap" readonly>
 <div class="unit-box">pF/in</div>
 </div>
 
+</div>
+
+<!-- FORMULA -->
+<div class="formula">
+Zo = (120 / √εr) × ln(2S / D) <br>
+Delay = 8.472 × √εr (ns/in) <br>
+Inductance = 10.16 × ln(2S / D) (nH/in) <br>
+Capacitance = (0.7065 × εr) / ln(2S / D) (pF/in)
 </div>
 
 </div>
@@ -187,13 +197,18 @@ function calc(){
   let dUnit = parseFloat(document.getElementById("d_unit").value);
   let sUnit = parseFloat(document.getElementById("s_unit").value);
 
-  if(!d || !s || !er){
+  if(isNaN(d) || isNaN(s) || isNaN(er)){
     alert("Enter all values");
     return;
   }
 
   d *= dUnit;
   s *= sUnit;
+
+  if(d <= 0 || s <= 0 || er <= 0){
+    alert("Values must be greater than 0");
+    return;
+  }
 
   let ratio = (2 * s) / d;
 
@@ -202,12 +217,14 @@ function calc(){
     return;
   }
 
-  let Zo = (120 / Math.sqrt(er)) * Math.log(ratio);
-  let delay = (8.472e-11 * Math.sqrt(er)) / 1e-9;
-  let ind = (1.016e-8 * Math.log(ratio)) / 1e-9;
-  let cap = (7.065e-13 / Math.log(ratio) * er) / 1e-12;
+  let logValue = Math.log(ratio);
 
-  document.getElementById("zo").value = Zo.toFixed(3);
+  let zo = (120 / Math.sqrt(er)) * logValue;
+  let delay = (8.472e-11 * Math.sqrt(er)) / 1e-9;
+  let ind = (1.016e-8 * logValue) / 1e-9;
+  let cap = ((7.065e-13 / logValue) * er) / 1e-12;
+
+  document.getElementById("zo").value = zo.toFixed(3);
   document.getElementById("delay").value = delay.toFixed(3);
   document.getElementById("ind").value = ind.toFixed(3);
   document.getElementById("cap").value = cap.toFixed(3);
