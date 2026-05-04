@@ -11,22 +11,23 @@ body{font-family:Arial;margin:0;padding:20px;background:#fff;color:#123}
 .lbl{font-size:14px;margin-bottom:5px}
 .result{font-size:20px;font-weight:bold;margin:10px 0 15px}
 
-.picker{position:relative}
 .pick-btn{
-width:100%;height:42px;border:1px solid #8fa3bd;border-radius:8px;
-font-size:16px;font-weight:bold;text-align:left;padding:6px 35px 6px 12px;
-background:linear-gradient(#f8fbff,#c6d2e2 48%,#aebcd0 50%,#eef3fa);
-box-shadow:inset 0 1px 0 #fff,0 1px 3px #999;cursor:pointer
+width:100%;height:46px;border:1px solid #8fa3bd;border-radius:9px;
+font-size:16px;font-weight:bold;text-align:left;padding:6px 38px 6px 12px;
+background:linear-gradient(#f9fcff,#c8d5e6 48%,#a9b9cf 50%,#edf3fb);
+box-shadow:inset 0 1px 0 #fff,0 2px 5px #999;cursor:pointer;position:relative
 }
-.pick-btn:after{content:"⌄";position:absolute;right:12px}
-.list{
-display:none;position:absolute;z-index:99;top:46px;left:0;right:0;
-background:linear-gradient(#f9f9f9,#dce3ef);border:1px solid #777;
-border-radius:8px;box-shadow:0 8px 20px #777;max-height:230px;overflow:auto
-}
-.item{padding:9px 12px;font-weight:bold;cursor:pointer}
-.item:hover{background:#9fb3d5}
-.sw{display:inline-block;width:18px;height:18px;border:1px solid #888;margin-right:8px;vertical-align:middle}
+.pick-btn:after{content:"⌄";position:absolute;right:14px;top:8px;font-size:22px}
+.sw{display:inline-block;width:20px;height:20px;border:1px solid #777;margin-right:10px;vertical-align:middle}
+
+.ios-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:999}
+.ios-picker{position:fixed;left:0;right:0;bottom:0;background:#d8dee9;border-radius:18px 18px 0 0;box-shadow:0 -8px 25px rgba(0,0,0,.35);padding:12px;z-index:1000}
+.ios-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:bold}
+.ios-head button{border:0;background:#0b7cff;color:#fff;border-radius:8px;padding:8px 14px;font-weight:bold}
+.wheel{height:210px;overflow-y:auto;background:linear-gradient(#eef3fb,#cbd6e7,#eef3fb);border-radius:10px;border:1px solid #8e99aa;scroll-snap-type:y mandatory}
+.wheel div{height:42px;display:flex;align-items:center;padding:0 18px;font-size:22px;font-weight:bold;scroll-snap-align:center}
+.wheel div:hover{background:rgba(80,120,180,.25)}
+.wheel:before{content:"";position:absolute;left:12px;right:12px;bottom:96px;height:42px;border-top:1px solid #6f7f98;border-bottom:1px solid #6f7f98;pointer-events:none}
 
 .resistor{position:relative;width:90%;height:200px;margin:auto}
 .wire{position:absolute;top:80px;width:100%;height:40px;background:#888}
@@ -43,20 +44,19 @@ border-radius:8px;box-shadow:0 8px 20px #777;max-height:230px;overflow:auto
 #band6{right:10%;height:200px}
 
 @media(max-width:700px){
-body{padding:12px}.controls{grid-template-columns:1fr}.resistor{height:130px;width:100%}
+body{padding:12px}
+.controls{grid-template-columns:1fr}
+.resistor{height:130px;width:100%}
 .wire{top:50px;height:25px}.body{height:130px}.cap{height:130px}
 .mid{top:12px;height:100px}.band{height:130px}
 #band2,#band3,#band4{top:12px;height:100px}
 }
 </style>
 </head>
-<body>
 
+<body>
 <div class="wrap">
-<div class="top">
-<div class="lbl">SELECT BAND</div>
-<div id="modeBox"></div>
-</div>
+<div class="top"><div class="lbl">SELECT BAND</div><div id="modeBox"></div></div>
 
 <div class="controls">
 <div id="box1"><div class="lbl">1st Digit</div><div id="d1Box"></div></div>
@@ -78,28 +78,62 @@ body{padding:12px}.controls{grid-template-columns:1fr}.resistor{height:130px;wid
 </div></div>
 </div>
 
+<div class="ios-mask" id="mask">
+  <div class="ios-picker">
+    <div class="ios-head"><span id="pickTitle">Select</span><button onclick="closePicker()">Done</button></div>
+    <div class="wheel" id="wheel"></div>
+  </div>
+</div>
+
 <script>
 const digit=[["black",0,"#000"],["brown",1,"brown"],["red",2,"red"],["orange",3,"orange"],["yellow",4,"yellow"],["green",5,"green"],["blue",6,"blue"],["violet",7,"violet"],["gray",8,"gray"],["white",9,"white"]];
 const multi=[...digit.map(x=>[x[0],Math.pow(10,x[1]),x[2]]),["gold",0.1,"gold"],["silver",0.01,"silver"]];
 const tol=[["brown",1,"brown"],["red",2,"red"],["green",0.5,"green"],["blue",0.25,"blue"],["violet",0.1,"violet"],["gray",0.05,"gray"],["gold",5,"gold"],["silver",10,"silver"]];
 const temp=[["brown",100,"brown"],["red",50,"red"],["orange",15,"orange"],["yellow",25,"yellow"],["blue",10,"blue"],["violet",5,"violet"]];
 const modes=[["3 BAND",3,"#ddd"],["4 BAND",4,"#ddd"],["5 BAND",5,"#ddd"],["6 BAND",6,"#ddd"]];
-let state={mode:4,d1:1,d2:0,d3:0,m:1,t:10,c:100};
+let state={mode:4,d1:1,d2:0,d3:0,m:1,t:10,c:100}, buttons={};
 
-function picker(id,data,key){
-let box=document.getElementById(id),btn=document.createElement("button"),list=document.createElement("div");
-btn.className="pick-btn"; list.className="list"; box.className="picker";
-data.forEach(x=>{let it=document.createElement("div");it.className="item";it.innerHTML=`<span class="sw" style="background:${x[2]}"></span>${x[0]}`;it.onclick=()=>{state[key]=x[1];btn.innerHTML=`<span class="sw" style="background:${x[2]}"></span>${x[0]}`;list.style.display="none";calc()};list.appendChild(it)});
-btn.onclick=e=>{e.stopPropagation();document.querySelectorAll(".list").forEach(l=>l.style.display="none");list.style.display="block"};
-box.append(btn,list);
-let def=data.find(x=>x[1]==state[key])||data[0];btn.innerHTML=`<span class="sw" style="background:${def[2]}"></span>${def[0]}`;
+function makeButton(id,data,key,title){
+let box=document.getElementById(id),btn=document.createElement("button");
+btn.className="pick-btn"; buttons[key]=btn;
+btn.onclick=()=>openPicker(data,key,title);
+box.appendChild(btn); setBtn(data,key);
 }
-picker("modeBox",modes,"mode");picker("d1Box",digit,"d1");picker("d2Box",digit,"d2");picker("d3Box",digit,"d3");
-picker("mBox",multi,"m");picker("tBox",tol,"t");picker("cBox",temp,"c");
-document.body.onclick=()=>document.querySelectorAll(".list").forEach(l=>l.style.display="none");
+
+function setBtn(data,key){
+let x=data.find(a=>a[1]==state[key])||data[0];
+buttons[key].innerHTML=`<span class="sw" style="background:${x[2]}"></span>${x[0]}`;
+}
+
+function openPicker(data,key,title){
+pickTitle.innerText=title; wheel.innerHTML="";
+data.forEach(x=>{
+let r=document.createElement("div");
+r.innerHTML=`<span class="sw" style="background:${x[2]}"></span>${x[0]}`;
+r.onclick=()=>{state[key]=x[1];setBtn(data,key);calc();closePicker()};
+wheel.appendChild(r);
+});
+mask.style.display="block";
+}
+
+function closePicker(){mask.style.display="none"}
+mask.onclick=e=>{if(e.target.id==="mask")closePicker()}
+
+makeButton("modeBox",modes,"mode","Select Band");
+makeButton("d1Box",digit,"d1","1st Digit");
+makeButton("d2Box",digit,"d2","2nd Digit");
+makeButton("d3Box",digit,"d3","3rd Digit");
+makeButton("mBox",multi,"m","Multiplier");
+makeButton("tBox",tol,"t","Tolerance");
+makeButton("cBox",temp,"c","Temp. Coeff.");
 
 function col(data,val){return (data.find(x=>x[1]==val)||data[0])[2]}
-function ohm(v){if(v>=1e9)return +(v/1e9).toFixed(4)+" GΩ";if(v>=1e6)return +(v/1e6).toFixed(4)+" MΩ";if(v>=1e3)return +(v/1e3).toFixed(4)+" kΩ";return +v.toFixed(4)+" Ω"}
+function ohm(v){
+if(v>=1e9)return +(v/1e9).toFixed(4)+" GΩ";
+if(v>=1e6)return +(v/1e6).toFixed(4)+" MΩ";
+if(v>=1e3)return +(v/1e3).toFixed(4)+" kΩ";
+return +v.toFixed(4)+" Ω";
+}
 
 function calc(){
 let mode=state.mode;
