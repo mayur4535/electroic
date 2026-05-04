@@ -13,28 +13,27 @@ background:#fff;
 text-align:center;
 }
 
-/* ✅ TOP MARGIN EXACT 10px */
 .smd-wrap{
 width:100%;
-max-width:520px; /* reduced */
-margin:10px auto 0;
-padding:8px 10px;
+max-width:650px;
+margin:0 auto;
+padding:20px 12px;
+position:relative;
 }
 
-/* IMAGE BOX */
 .smd-box{
 position:relative;
 width:100%;
-max-width:340px; /* ~20% smaller */
-margin:8px auto;
+max-width:430px;
+margin:20px auto;
 }
 
 .smd-box img{
 width:100%;
+height:auto;
 display:block;
 }
 
-/* INPUT (20% smaller) */
 .SMDtexto{
 position:absolute;
 left:50%;
@@ -42,7 +41,7 @@ top:48%;
 transform:translate(-50%,-50%);
 width:42%;
 height:22%;
-font-size:clamp(22px, 7vw, 48px); /* reduced */
+font-size:clamp(38px, 11vw, 100px);
 text-align:center;
 color:white;
 background:#2b2b2b;
@@ -51,30 +50,25 @@ outline:0;
 font-weight:bold;
 }
 
-/* OUTPUT (20% smaller) */
 .outSMD{
-margin:12px auto 0;
-border-radius:16px;
+margin:28px auto 0;
+border-radius:28px;
 text-align:center;
-font-size:clamp(18px, 5.5vw, 30px);
-border:5px solid #73AD21;
-padding:6px 14px;
-width:min(85%, 220px);
+font-size:clamp(30px, 9vw, 60px);
+border:8px solid #73AD21;
+padding:14px 28px;
+width:min(95%, 350px);
 font-weight:bold;
 }
 
-/* MOBILE */
 @media(max-width:600px){
-.smd-wrap{padding:6px 8px}
-.smd-box{max-width:300px}
-
-.SMDtexto{
-font-size:clamp(20px,6vw,36px);
-}
+.smd-wrap{padding:12px 8px}
+.smd-box{max-width:360px}
 
 .outSMD{
-font-size:clamp(16px,5vw,26px);
-border-width:4px;
+border-width:6px;
+border-radius:22px;
+padding:12px 20px;
 }
 }
 </style>
@@ -85,16 +79,8 @@ border-width:4px;
 <div class="smd-wrap">
 
 <div class="smd-box">
-<img src="https://ik.imagekit.io/mak/color_code/smd_resistor_NH-x_6o2V0.png">
-
-<input 
-type="text" 
-class="SMDtexto" 
-id="code" 
-value="000" 
-maxlength="4"
-autocomplete="off"
->
+<img src="https://ik.imagekit.io/mak/color_code/smd_resistor_NH-x_6o2V0.png" alt="SMD Resistor">
+<input type="text" class="SMDtexto" id="code" value="000" maxlength="4" autocomplete="off" spellcheck="false">
 </div>
 
 <div class="outSMD" id="result">RES</div>
@@ -102,27 +88,28 @@ autocomplete="off"
 </div>
 
 <script>
-let input=document.getElementById("code");
+let codeBox=document.getElementById("code");
+let out=document.getElementById("result");
 
-/* CLEAR 000 */
-input.addEventListener("focus",function(){
-if(this.value==="000"){this.value="";}
-});
-
-/* RESTORE */
-input.addEventListener("blur",function(){
-if(this.value===""){
-this.value="000";
-calc();
+/* ✅ CLICK / TAP ON 000 = CLEAR */
+codeBox.addEventListener("focus",function(){
+if(codeBox.value==="000"){
+codeBox.value="";
+out.innerHTML="RES";
 }
 });
 
-/* CALC */
-function calc(){
-let code=input.value.trim();
-let out=document.getElementById("result");
+codeBox.addEventListener("click",function(){
+if(codeBox.value==="000"){
+codeBox.value="";
+out.innerHTML="RES";
+}
+});
 
-if(code===""){
+function calc(){
+let code=codeBox.value.trim().toUpperCase();
+
+if(code==="" || code==="000"){
 out.innerHTML="RES";
 return;
 }
@@ -135,25 +122,29 @@ return;
 let value;
 
 if(code.length===3){
-value=parseInt(code.slice(0,2))*Math.pow(10,parseInt(code[2]));
+let base=parseInt(code.substring(0,2));
+let mul=parseInt(code.substring(2,3));
+value=base*Math.pow(10,mul);
 }
 
 if(code.length===4){
-value=parseInt(code.slice(0,3))*Math.pow(10,parseInt(code[3]));
+let base=parseInt(code.substring(0,3));
+let mul=parseInt(code.substring(3,4));
+value=base*Math.pow(10,mul);
 }
 
-if(value>=1e6){
-out.innerHTML=(value/1e6).toFixed(2)+" MΩ";
+if(value>=1000000){
+out.innerHTML=(value/1000000).toFixed(2)+" MΩ";
 }
-else if(value>=1e3){
-out.innerHTML=(value/1e3).toFixed(2)+" kΩ";
+else if(value>=1000){
+out.innerHTML=(value/1000).toFixed(2)+" kΩ";
 }
 else{
 out.innerHTML=value+" Ω";
 }
 }
 
-input.addEventListener("input",calc);
+codeBox.addEventListener("input",calc);
 calc();
 </script>
 
