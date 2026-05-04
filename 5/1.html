@@ -2,70 +2,91 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 *{box-sizing:border-box}
 body{font-family:Arial;margin:0;padding:20px;background:#fff;color:#123}
 .wrap{max-width:1000px;margin:auto;text-align:center}
-.top{max-width:220px;margin:0 auto 22px;text-align:left}
-.controls{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;margin-bottom:18px;text-align:left}
+.controls{display:grid;grid-template-columns:repeat(7,1fr);gap:15px;margin-bottom:20px;text-align:left}
 .lbl{font-size:14px;margin-bottom:5px}
-.result{font-size:20px;font-weight:bold;margin:10px 0 15px}
 
 .pick-btn{
-width:100%;height:46px;border:1px solid #8fa3bd;border-radius:9px;
-font-size:16px;font-weight:bold;text-align:left;padding:6px 38px 6px 12px;
+width:100%;height:44px;border:1px solid #8fa3bd;border-radius:8px;
+font-size:16px;font-weight:bold;padding:6px 35px 6px 12px;
 background:linear-gradient(#f9fcff,#c8d5e6 48%,#a9b9cf 50%,#edf3fb);
-box-shadow:inset 0 1px 0 #fff,0 2px 5px #999;cursor:pointer;position:relative
+box-shadow:inset 0 1px 0 #fff,0 2px 5px #999;
+position:relative;cursor:pointer;text-align:left
 }
-.pick-btn:after{content:"⌄";position:absolute;right:14px;top:8px;font-size:22px}
-.sw{display:inline-block;width:20px;height:20px;border:1px solid #777;margin-right:10px;vertical-align:middle}
+.pick-btn:after{content:"⌄";position:absolute;right:12px;top:8px;font-size:20px}
+.sw{display:inline-block;width:18px;height:18px;border:1px solid #666;margin-right:8px;vertical-align:middle}
 
-.ios-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:999}
-.ios-picker{position:fixed;left:0;right:0;bottom:0;background:#d8dee9;border-radius:18px 18px 0 0;box-shadow:0 -8px 25px rgba(0,0,0,.35);padding:12px;z-index:1000}
+.result{font-size:20px;font-weight:bold;margin:10px 0}
+
+.ios-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.30);z-index:999}
+.ios-picker{
+position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+width:92%;max-width:420px;background:#d8dee9;border-radius:18px;
+box-shadow:0 10px 30px rgba(0,0,0,.4);padding:12px;z-index:1000
+}
 .ios-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:bold}
-.ios-head button{border:0;background:#0b7cff;color:#fff;border-radius:8px;padding:8px 14px;font-weight:bold}
-.wheel{height:210px;overflow-y:auto;background:linear-gradient(#eef3fb,#cbd6e7,#eef3fb);border-radius:10px;border:1px solid #8e99aa;scroll-snap-type:y mandatory}
-.wheel div{height:42px;display:flex;align-items:center;padding:0 18px;font-size:22px;font-weight:bold;scroll-snap-align:center}
-.wheel div:hover{background:rgba(80,120,180,.25)}
-.wheel:before{content:"";position:absolute;left:12px;right:12px;bottom:96px;height:42px;border-top:1px solid #6f7f98;border-bottom:1px solid #6f7f98;pointer-events:none}
+.ios-head button{border:0;background:#0b7cff;color:#fff;padding:7px 14px;border-radius:8px;font-weight:bold}
 
-.resistor{position:relative;width:90%;height:200px;margin:auto}
-.wire{position:absolute;top:80px;width:100%;height:40px;background:#888}
-.body{position:absolute;top:0;left:7%;right:7%;height:200px}
-.cap{position:absolute;width:25%;height:200px;background:#d8d8d8;border-radius:25px}
+.wheel-wrap{position:relative}
+.wheel{
+height:210px;overflow-y:auto;border-radius:10px;border:1px solid #8e99aa;
+background:linear-gradient(#eef3fb,#cbd6e7,#eef3fb);
+scroll-snap-type:y mandatory;
+padding:84px 0;
+}
+.wheel::-webkit-scrollbar{width:0}
+.wheel div{
+height:42px;display:flex;align-items:center;padding:0 18px;
+font-size:22px;font-weight:bold;scroll-snap-align:center;cursor:pointer
+}
+.wheel-highlight{
+position:absolute;left:0;right:0;top:84px;height:42px;
+border-top:1px solid #6f7f98;border-bottom:1px solid #6f7f98;
+background:rgba(255,255,255,.22);pointer-events:none
+}
+
+.resistor{position:relative;width:90%;height:180px;margin:auto}
+.wire{position:absolute;top:70px;width:100%;height:35px;background:#888}
+.body{position:absolute;top:0;left:7%;right:7%;height:180px}
+.cap{position:absolute;width:25%;height:180px;background:#d8d8d8;border-radius:20px}
 .cap.left{left:0}.cap.right{right:0}
-.mid{position:absolute;top:22px;left:23%;right:23%;height:156px;background:#d8d8d8}
+.mid{position:absolute;top:18px;left:23%;right:23%;height:140px;background:#d8d8d8}
 .band{position:absolute;width:6%}
-#band1{left:16%;height:200px}
-#band2{left:28%;top:22px;height:156px}
-#band3{left:40%;top:22px;height:156px}
-#band4{left:52%;top:22px;height:156px}
-#band5{right:18%;height:200px}
-#band6{right:10%;height:200px}
+#band1{left:16%;height:180px}
+#band2{left:28%;top:18px;height:140px}
+#band3{left:40%;top:18px;height:140px}
+#band4{left:52%;top:18px;height:140px}
+#band5{right:18%;height:180px}
+#band6{right:10%;height:180px}
 
 @media(max-width:700px){
 body{padding:12px}
-.controls{grid-template-columns:repeat(2,1fr);gap:12px}
-.resistor{height:130px;width:100%}
-.wire{top:50px;height:25px}
-.body{height:130px}
-.cap{height:130px}
-.mid{top:12px;height:100px}
-.band{height:130px}
-#band2,#band3,#band4{top:12px;height:100px}
+.controls{grid-template-columns:1fr}
+.resistor{width:100%;height:120px}
+.wire{top:45px;height:25px}
+.body{height:120px}
+.cap{height:120px}
+.mid{top:10px;height:90px}
+.band{height:120px}
+#band2,#band3,#band4{top:10px;height:90px}
 }
 </style>
 </head>
 
 <body>
+
 <div class="wrap">
-<div class="top"><div class="lbl">SELECT BAND</div><div id="modeBox"></div></div>
 
 <div class="controls">
-<div id="box1"><div class="lbl">1st Digit</div><div id="d1Box"></div></div>
-<div id="box2"><div class="lbl">2nd Digit</div><div id="d2Box"></div></div>
+<div><div class="lbl">Band Mode</div><div id="modeBox"></div></div>
+<div><div class="lbl">1st Digit</div><div id="d1Box"></div></div>
+<div><div class="lbl">2nd Digit</div><div id="d2Box"></div></div>
 <div id="box3"><div class="lbl">3rd Digit</div><div id="d3Box"></div></div>
-<div id="boxM"><div class="lbl">Multiplier</div><div id="mBox"></div></div>
+<div><div class="lbl">Multiplier</div><div id="mBox"></div></div>
 <div id="boxT"><div class="lbl">Tolerance</div><div id="tBox"></div></div>
 <div id="boxC"><div class="lbl">Temp. Coeff.</div><div id="cBox"></div></div>
 </div>
@@ -73,64 +94,118 @@ body{padding:12px}
 <div class="result" id="result"></div>
 
 <div class="resistor">
-<div class="wire"></div><div class="body">
-<div class="mid"></div><div class="cap left"></div><div class="cap right"></div>
-<div class="band" id="band1"></div><div class="band" id="band2"></div>
-<div class="band" id="band3"></div><div class="band" id="band4"></div>
-<div class="band" id="band5"></div><div class="band" id="band6"></div>
-</div></div>
+<div class="wire"></div>
+<div class="body">
+<div class="mid"></div>
+<div class="cap left"></div>
+<div class="cap right"></div>
+<div class="band" id="band1"></div>
+<div class="band" id="band2"></div>
+<div class="band" id="band3"></div>
+<div class="band" id="band4"></div>
+<div class="band" id="band5"></div>
+<div class="band" id="band6"></div>
+</div>
+</div>
+
 </div>
 
 <div class="ios-mask" id="mask">
-  <div class="ios-picker">
-    <div class="ios-head"><span id="pickTitle">Select</span><button onclick="closePicker()">Done</button></div>
-    <div class="wheel" id="wheel"></div>
-  </div>
+<div class="ios-picker">
+<div class="ios-head">
+<span id="title">Select</span>
+<button onclick="closePicker()">Done</button>
+</div>
+<div class="wheel-wrap">
+<div class="wheel-highlight"></div>
+<div class="wheel" id="wheel"></div>
+</div>
+</div>
 </div>
 
 <script>
-const digit=[["black",0,"#000"],["brown",1,"brown"],["red",2,"red"],["orange",3,"orange"],["yellow",4,"yellow"],["green",5,"green"],["blue",6,"blue"],["violet",7,"violet"],["gray",8,"gray"],["white",9,"white"]];
-const multi=[...digit.map(x=>[x[0],Math.pow(10,x[1]),x[2]]),["gold",0.1,"gold"],["silver",0.01,"silver"]];
-const tol=[["brown",1,"brown"],["red",2,"red"],["green",0.5,"green"],["blue",0.25,"blue"],["violet",0.1,"violet"],["gray",0.05,"gray"],["gold",5,"gold"],["silver",10,"silver"]];
-const temp=[["brown",100,"brown"],["red",50,"red"],["orange",15,"orange"],["yellow",25,"yellow"],["blue",10,"blue"],["violet",5,"violet"]];
-const modes=[["3 BAND",3,"#ddd"],["4 BAND",4,"#ddd"],["5 BAND",5,"#ddd"],["6 BAND",6,"#ddd"]];
-let state={mode:4,d1:1,d2:0,d3:0,m:1,t:10,c:100}, buttons={};
+const digits=[
+["black",0,"#000"],["brown",1,"brown"],["red",2,"red"],["orange",3,"orange"],
+["yellow",4,"yellow"],["green",5,"green"],["blue",6,"blue"],["violet",7,"violet"],
+["gray",8,"gray"],["white",9,"white"]
+];
 
-function makeButton(id,data,key,title){
-let box=document.getElementById(id),btn=document.createElement("button");
-btn.className="pick-btn"; buttons[key]=btn;
-btn.onclick=()=>openPicker(data,key,title);
-box.appendChild(btn); setBtn(data,key);
+const mult=[
+["black",1,"#000"],["brown",10,"brown"],["red",100,"red"],["orange",1000,"orange"],
+["yellow",10000,"yellow"],["green",100000,"green"],["blue",1000000,"blue"],
+["violet",10000000,"violet"],["gray",100000000,"gray"],["white",1000000000,"white"],
+["gold",0.1,"gold"],["silver",0.01,"silver"]
+];
+
+const tol=[
+["brown",1,"brown"],["red",2,"red"],["green",0.5,"green"],["blue",0.25,"blue"],
+["violet",0.1,"violet"],["gray",0.05,"gray"],["gold",5,"gold"],["silver",10,"silver"]
+];
+
+const temp=[
+["brown",100,"brown"],["red",50,"red"],["orange",15,"orange"],
+["yellow",25,"yellow"],["blue",10,"blue"],["violet",5,"violet"]
+];
+
+const modes=[["3 BAND",3,"#ddd"],["4 BAND",4,"#ddd"],["5 BAND",5,"#ddd"],["6 BAND",6,"#ddd"]];
+
+let state={mode:4,d1:1,d2:0,d3:0,m:1,t:10,c:100};
+let btns={}, activeData=[], activeKey="";
+
+function makeBtn(id,data,key,name){
+let b=document.createElement("div");
+b.className="pick-btn";
+b.onclick=()=>openPicker(data,key,name);
+document.getElementById(id).appendChild(b);
+btns[key]=b;
+setBtn(data,key);
 }
 
 function setBtn(data,key){
 let x=data.find(a=>a[1]==state[key])||data[0];
-buttons[key].innerHTML=`<span class="sw" style="background:${x[2]}"></span>${x[0]}`;
+btns[key].innerHTML=`<span class="sw" style="background:${x[2]}"></span>${x[0]}`;
 }
 
-function openPicker(data,key,title){
-pickTitle.innerText=title; wheel.innerHTML="";
-data.forEach(x=>{
+function openPicker(data,key,name){
+activeData=data; activeKey=key;
+title.innerText=name;
+wheel.innerHTML="";
+
+data.forEach((x,idx)=>{
 let r=document.createElement("div");
 r.innerHTML=`<span class="sw" style="background:${x[2]}"></span>${x[0]}`;
-r.onclick=()=>{state[key]=x[1];setBtn(data,key);calc();closePicker()};
+r.dataset.index=idx;
+r.onclick=()=>selectItem(idx);
 wheel.appendChild(r);
 });
+
 mask.style.display="block";
+
+let current=data.findIndex(x=>x[1]==state[key]);
+setTimeout(()=>wheel.scrollTop=(current<0?0:current)*42,30);
+}
+
+function selectItem(idx){
+let x=activeData[idx];
+state[activeKey]=x[1];
+setBtn(activeData,activeKey);
+calc();
+closePicker();
 }
 
 function closePicker(){mask.style.display="none"}
 mask.onclick=e=>{if(e.target.id==="mask")closePicker()}
 
-makeButton("modeBox",modes,"mode","Select Band");
-makeButton("d1Box",digit,"d1","1st Digit");
-makeButton("d2Box",digit,"d2","2nd Digit");
-makeButton("d3Box",digit,"d3","3rd Digit");
-makeButton("mBox",multi,"m","Multiplier");
-makeButton("tBox",tol,"t","Tolerance");
-makeButton("cBox",temp,"c","Temp. Coeff.");
+makeBtn("modeBox",modes,"mode","Select Band");
+makeBtn("d1Box",digits,"d1","1st Digit");
+makeBtn("d2Box",digits,"d2","2nd Digit");
+makeBtn("d3Box",digits,"d3","3rd Digit");
+makeBtn("mBox",mult,"m","Multiplier");
+makeBtn("tBox",tol,"t","Tolerance");
+makeBtn("cBox",temp,"c","Temp. Coeff.");
 
 function col(data,val){return (data.find(x=>x[1]==val)||data[0])[2]}
+
 function ohm(v){
 if(v>=1e9)return +(v/1e9).toFixed(4)+" GΩ";
 if(v>=1e6)return +(v/1e6).toFixed(4)+" MΩ";
@@ -140,21 +215,29 @@ return +v.toFixed(4)+" Ω";
 
 function calc(){
 let mode=state.mode;
+
 box3.style.display=(mode>=5)?"block":"none";
 boxT.style.display=(mode>=4)?"block":"none";
 boxC.style.display=(mode==6)?"block":"none";
 
-let val=(mode>=5?(state.d1*100+state.d2*10+state.d3):(state.d1*10+state.d2))*state.m;
-result.innerHTML="Resistance: "+ohm(val)+(mode>=4?" ± "+state.t+"%":"")+(mode==6?" "+state.c+" ppm/°C":"");
+let val=(mode>=5)
+? (state.d1*100 + state.d2*10 + state.d3) * state.m
+: (state.d1*10 + state.d2) * state.m;
 
-band1.style.background=col(digit,state.d1);
-band2.style.background=col(digit,state.d2);
-band3.style.background=mode>=5?col(digit,state.d3):col(multi,state.m);
-band4.style.background=mode>=5?col(multi,state.m):"transparent";
-band5.style.background=mode>=4?col(tol,state.t):"transparent";
-band6.style.background=mode==6?col(temp,state.c):"transparent";
+result.innerHTML="Resistance: "+ohm(val)
++(mode>=4?" ± "+state.t+"%":"")
++(mode==6?" "+state.c+" ppm/°C":"");
+
+band1.style.background=col(digits,state.d1);
+band2.style.background=col(digits,state.d2);
+band3.style.background=mode>=5 ? col(digits,state.d3) : col(mult,state.m);
+band4.style.background=mode>=5 ? col(mult,state.m) : "transparent";
+band5.style.background=mode>=4 ? col(tol,state.t) : "transparent";
+band6.style.background=mode==6 ? col(temp,state.c) : "transparent";
 }
+
 calc();
 </script>
+
 </body>
 </html>
