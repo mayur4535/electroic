@@ -6,18 +6,28 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial;background:#fff;color:#102033;padding:12px}
 
-.app{max-width:860px;margin:auto}
+body{
+  font-family:Arial;
+  background:#fff;
+  color:#102033;
+  padding:18px 22px;
+}
 
-.label{font-size:14px;margin-bottom:5px}
-.top{max-width:260px;margin:0 auto 18px}
+.app{
+  max-width:860px;
+  margin:auto;
+  padding:0 14px;
+}
 
-/* GRID */
+.label{font-size:14px;margin-bottom:6px}
+.top{max-width:280px;margin:0 auto 22px}
+
 .grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:12px;
+  gap:16px;
+  width:100%;
 }
 
 @media(max-width:900px){
@@ -25,11 +35,17 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
 }
 
 @media(max-width:480px){
-  .grid{grid-template-columns:repeat(2,1fr)}
+  body{padding:18px 18px}
+  .app{padding:0 12px}
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
 }
 
-/* BUTTON */
 .ios-btn{
+  width:100%;
+  min-width:0;
   height:44px;
   border:1px solid #788aa3;
   border-radius:7px;
@@ -44,7 +60,6 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   cursor:pointer;
 }
 
-/* DOT */
 .dot{
   width:17px;
   height:17px;
@@ -53,8 +68,11 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   margin-right:7px;
 }
 
-/* DIODE */
-.diode{display:flex;justify-content:center;margin:55px auto}
+.diode{
+  display:flex;
+  justify-content:center;
+  margin:60px auto;
+}
 
 .body{
   width:230px;
@@ -77,6 +95,7 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   background:linear-gradient(#ddd,#999);
   border-radius:7px;
 }
+
 .body:before{left:0}
 .body:after{right:0}
 
@@ -87,13 +106,12 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   width:14px;
 }
 
-/* RESULT */
 .result{
   max-width:340px;
-  margin:26px auto 0;
+  margin:30px auto 0;
   border:3px solid #73AD21;
   border-radius:22px;
-  padding:14px;
+  padding:16px;
   font-size:25px;
   font-weight:800;
   text-align:center;
@@ -101,42 +119,28 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   background:#fbfffb;
 }
 
-/* OVERLAY (CENTER + SAFE SPACE) */
 .overlay{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.35);
-
   display:none;
   align-items:center;
   justify-content:center;
-
-  padding:16px; /* ✅ margin from screen edges */
-
+  padding:22px;
   z-index:9999;
 }
+
 .overlay.show{display:flex}
 
-/* POPUP */
 .popup{
   width:100%;
   max-width:420px;
-
   background:#dce5f1;
   border-radius:16px;
-  padding:14px 12px 10px;
-
+  padding:16px 14px 12px;
   box-shadow:0 10px 30px rgba(0,0,0,.25);
-
-  max-height:90vh; /* ✅ prevent cut */
+  max-height:90vh;
   overflow:hidden;
-
-  animation:pop .2s ease;
-}
-
-@keyframes pop{
-  from{transform:scale(.9)}
-  to{transform:scale(1)}
 }
 
 .popup-head{
@@ -144,7 +148,7 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   justify-content:space-between;
   align-items:center;
   font-weight:800;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
 
 .done{
@@ -154,9 +158,9 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   padding:7px 15px;
   border-radius:9px;
   font-weight:800;
+  cursor:pointer;
 }
 
-/* LIST WRAP */
 .list-wrap{
   position:relative;
   height:230px;
@@ -164,11 +168,9 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   border-radius:12px;
   background:#eaf1fb;
   overflow:hidden;
-
-  margin:6px 4px; /* ✅ spacing inside popup */
+  margin:8px 6px;
 }
 
-/* CENTER LINES */
 .list-wrap::before{
   content:"";
   position:absolute;
@@ -176,23 +178,23 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   right:10px;
   top:92px;
   height:46px;
-  background:rgba(255,255,255,.7);
+  background:rgba(255,255,255,.72);
   border-top:1px solid rgba(0,0,0,.25);
   border-bottom:1px solid rgba(0,0,0,.25);
   z-index:2;
+  pointer-events:none;
 }
 
-/* SCROLL LIST */
 .list{
   height:230px;
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
   scroll-snap-type:y mandatory;
+  scroll-behavior:smooth;
   padding-top:92px;
   padding-bottom:92px;
 }
 
-/* OPTIONS */
 .option{
   height:46px;
   display:flex;
@@ -203,8 +205,13 @@ body{font-family:Arial;background:#fff;color:#102033;padding:12px}
   border-bottom:1px solid #aab8ca;
   cursor:pointer;
   scroll-snap-align:center;
+  position:relative;
+  z-index:1;
 }
 
+.option.active{
+  background:rgba(0,122,255,.12);
+}
 </style>
 </head>
 
@@ -284,7 +291,9 @@ let current="diode4";
 let selected=[];
 let active=0;
 
-function html(o){return `<span class="dot" style="background:${colors[o[2]]}"></span>${o[0]}`}
+function html(o){
+ return `<span class="dot" style="background:${colors[o[2]]}"></span>${o[0]}`;
+}
 
 function render(){
  let m=modes[current];
@@ -293,13 +302,17 @@ function render(){
 
  let h="";
  m.bands.forEach((b,i)=>{
-  h+=`<div><div class="label">${m.labels[i]}</div>
-  <div class="ios-btn" onclick="openPopup('band',${i})">
-  <span id="s${i}">${html(selected[i])}</span><span>v</span></div></div>`;
+  h+=`<div>
+    <div class="label">${m.labels[i]}</div>
+    <div class="ios-btn" onclick="openPopup('band',${i})">
+      <span id="s${i}">${html(selected[i])}</span><span>v</span>
+    </div>
+  </div>`;
  });
 
  document.getElementById("selectors").innerHTML=h;
- draw();update();
+ draw();
+ update();
 }
 
 function draw(){
@@ -322,23 +335,38 @@ function openPopup(type,i=0){
  if(type==="mode"){
   document.getElementById("popupTitle").innerText="Band Mode";
   Object.keys(modes).forEach(k=>{
-   list.innerHTML+=`<div class="option" onclick="setMode('${k}')">${modes[k].title}</div>`;
+   list.innerHTML+=`<div class="option ${k===current?'active':''}" onclick="setMode('${k}')">${modes[k].title}</div>`;
   });
  }else{
   document.getElementById("popupTitle").innerText=modes[current].labels[i];
   modes[current].bands[i].forEach((o,x)=>{
-   list.innerHTML+=`<div class="option" onclick="setBand(${x})">${html(o)}</div>`;
+   const isActive = selected[i][1] === o[1] ? "active" : "";
+   list.innerHTML+=`<div class="option ${isActive}" onclick="setBand(${x})">${html(o)}</div>`;
   });
  }
 
  document.getElementById("overlay").classList.add("show");
+
+ setTimeout(()=>{
+   const activeItem = list.querySelector(".option.active");
+   if(activeItem){
+     list.scrollTop = activeItem.offsetTop - 92;
+   }
+ },60);
 }
 
-function setMode(m){current=m;closePopup();render()}
+function setMode(m){
+ current=m;
+ closePopup();
+ render();
+}
+
 function setBand(i){
  selected[active]=modes[current].bands[active][i];
  document.getElementById("s"+active).innerHTML=html(selected[active]);
- draw();update();closePopup();
+ draw();
+ update();
+ closePopup();
 }
 
 function update(){
@@ -349,6 +377,10 @@ function update(){
 function closePopup(){
  document.getElementById("overlay").classList.remove("show");
 }
+
+document.getElementById("overlay").addEventListener("click",function(e){
+ if(e.target.id==="overlay") closePopup();
+});
 
 render();
 </script>
