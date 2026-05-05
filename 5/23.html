@@ -5,385 +5,305 @@
 <title>Diode Calculator</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box}
+body{font-family:Arial;margin:0;padding:12px;background:#fff;color:#123}
+.wrap{max-width:1000px;margin:auto;text-align:center;padding:0 18px}
+.top{max-width:260px;margin:0 auto 18px;text-align:left}
+.controls{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px;text-align:left}
+.lbl{font-size:14px;margin-bottom:5px;white-space:nowrap}
 
-body{
-  font-family:Arial;
-  background:#fff;
-  color:#102033;
-  padding:18px 22px;
+.pick-btn{
+  width:100%;height:44px;border:1px solid #8fa3bd;border-radius:8px;
+  font-size:16px;font-weight:bold;padding:6px 35px 6px 12px;
+  background:linear-gradient(#f9fcff,#c8d5e6 48%,#a9b9cf 50%,#edf3fb);
+  box-shadow:inset 0 1px 0 #fff,0 2px 5px #999;
+  position:relative;cursor:pointer;text-align:left;overflow:hidden;white-space:nowrap
 }
-
-.app{
-  max-width:860px;
-  margin:auto;
-  padding:0 14px;
-}
-
-.label{font-size:14px;margin-bottom:6px}
-.top{max-width:280px;margin:0 auto 22px}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-  width:100%;
-}
-
-@media(max-width:900px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-}
-
-@media(max-width:480px){
-  body{padding:18px 18px}
-  .app{padding:0 12px}
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
-  }
-}
-
-.ios-btn{
-  width:100%;
-  min-width:0;
-  height:44px;
-  border:1px solid #788aa3;
-  border-radius:7px;
-  background:linear-gradient(#eef6ff,#b9c9dc);
-  box-shadow:inset 0 1px 0 #fff,0 3px 8px rgba(0,0,0,.35);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 12px;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.dot{
-  width:17px;
-  height:17px;
-  border:1px solid #555;
-  display:inline-block;
-  margin-right:7px;
-}
-
-.diode{
-  display:flex;
-  justify-content:center;
-  margin:60px auto;
-}
-
-.body{
-  width:230px;
-  height:72px;
-  border-radius:20px;
-  position:relative;
-  background:linear-gradient(145deg,#9d1f1f,#e95345,#a61e1e);
-  box-shadow:
-    inset 0 6px 12px rgba(255,255,255,.25),
-    inset 0 -6px 12px rgba(0,0,0,.4),
-    0 8px 18px rgba(0,0,0,.25);
-}
-
-.body:before,.body:after{
-  content:"";
-  position:absolute;
-  top:0;
-  width:22px;
-  height:72px;
-  background:linear-gradient(#ddd,#999);
-  border-radius:7px;
-}
-
-.body:before{left:0}
-.body:after{right:0}
-
-.band{
-  position:absolute;
-  top:0;
-  height:100%;
-  width:14px;
-}
+.pick-btn:after{content:"⌄";position:absolute;right:12px;top:7px;font-size:22px}
+.sw{display:inline-block;width:18px;height:18px;border:1px solid #666;margin-right:8px;vertical-align:middle}
 
 .result{
-  max-width:340px;
-  margin:30px auto 0;
-  border:3px solid #73AD21;
-  border-radius:22px;
-  padding:16px;
-  font-size:25px;
-  font-weight:800;
-  text-align:center;
-  color:#0b6b18;
-  background:#fbfffb;
+  max-width:360px;margin:22px auto 0;border:3px solid #73AD21;border-radius:22px;
+  padding:14px;font-size:24px;font-weight:bold;color:#0b6b18;background:#fbfffb
 }
 
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.35);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:22px;
-  z-index:9999;
+.ios-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.30);z-index:9999;padding:18px}
+.ios-picker{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:92%;max-width:420px;background:#d8dee9;border-radius:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);padding:12px;z-index:10000
+}
+.ios-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:bold}
+.ios-head button{border:0;background:#0b7cff;color:#fff;padding:7px 14px;border-radius:8px;font-weight:bold;cursor:pointer}
+.wheel-wrap{position:relative}
+.wheel{
+  height:210px;overflow-y:auto;border-radius:10px;border:1px solid #8e99aa;
+  background:linear-gradient(#eef3fb,#cbd6e7,#eef3fb);
+  scroll-snap-type:y mandatory;padding:84px 0;-webkit-overflow-scrolling:touch
+}
+.wheel::-webkit-scrollbar{width:0}
+.wheel div{height:42px;display:flex;align-items:center;padding:0 18px;font-size:22px;font-weight:bold;scroll-snap-align:center;cursor:pointer}
+.wheel-highlight{
+  position:absolute;left:0;right:0;top:84px;height:42px;
+  border-top:1px solid #6f7f98;border-bottom:1px solid #6f7f98;
+  background:rgba(255,255,255,.25);pointer-events:none
 }
 
-.overlay.show{display:flex}
-
-.popup{
-  width:100%;
-  max-width:420px;
-  background:#dce5f1;
-  border-radius:16px;
-  padding:16px 14px 12px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25);
-  max-height:90vh;
-  overflow:hidden;
+.diode{position:relative;width:320px;height:120px;margin:10px auto 10px}
+.diode-body{
+  position:absolute;left:35px;right:35px;top:22px;height:76px;border-radius:20px;
+  background:linear-gradient(145deg,#9d1f1f,#e95345,#a61e1e);
+  box-shadow:inset 0 6px 12px rgba(255,255,255,.25),inset 0 -6px 12px rgba(0,0,0,.4),0 8px 18px rgba(0,0,0,.25);
+  overflow:hidden
 }
-
-.popup-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-weight:800;
-  margin-bottom:10px;
+.diode-body:before,.diode-body:after{
+  content:"";position:absolute;top:0;width:24px;height:76px;background:linear-gradient(#ddd,#999);z-index:5
 }
+.diode-body:before{left:0}.diode-body:after{right:0}
+.band{position:absolute;top:0;width:15px;height:76px;z-index:4}
+#band1{left:48px} #band2{left:82px} #band3{left:116px} #band4{left:150px} #band5{left:184px}
 
-.done{
-  border:0;
-  background:#007aff;
-  color:#fff;
-  padding:7px 15px;
-  border-radius:9px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-.list-wrap{
-  position:relative;
-  height:230px;
-  border:1px solid #9aaabe;
-  border-radius:12px;
-  background:#eaf1fb;
-  overflow:hidden;
-  margin:8px 6px;
-}
-
-.list-wrap::before{
-  content:"";
-  position:absolute;
-  left:10px;
-  right:10px;
-  top:92px;
-  height:46px;
-  background:rgba(255,255,255,.72);
-  border-top:1px solid rgba(0,0,0,.25);
-  border-bottom:1px solid rgba(0,0,0,.25);
-  z-index:2;
-  pointer-events:none;
-}
-
-.list{
-  height:230px;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-  scroll-snap-type:y mandatory;
-  scroll-behavior:smooth;
-  padding-top:92px;
-  padding-bottom:92px;
-}
-
-.option{
-  height:46px;
-  display:flex;
-  align-items:center;
-  padding:0 18px;
-  font-size:22px;
-  font-weight:800;
-  border-bottom:1px solid #aab8ca;
-  cursor:pointer;
-  scroll-snap-align:center;
-  position:relative;
-  z-index:1;
-}
-
-.option.active{
-  background:rgba(0,122,255,.12);
+@media(max-width:700px){
+  .wrap{padding-left:18px;padding-right:18px}
+  .controls{grid-template-columns:repeat(2,1fr);gap:14px 12px}
+  .lbl{font-size:13px;padding-left:2px}
+  .pick-btn{height:42px;font-size:14px;padding-left:10px;padding-right:30px}
+  .pick-btn:after{right:9px;top:7px;font-size:20px}
+  .result{font-size:20px}
+  .diode{width:100%;max-width:320px}
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
-
+<div class="wrap">
   <div class="top">
-    <div class="label">Band Mode</div>
-    <div class="ios-btn" onclick="openPopup('mode')">
-      <span id="modeText">▣ 4 BAND</span><span>v</span>
-    </div>
+    <div class="lbl">Band Mode</div>
+    <div id="modeBox"></div>
   </div>
 
-  <div class="grid" id="selectors"></div>
+  <div class="controls">
+    <div id="box1"><div class="lbl" id="lbl1">First</div><div id="b1Box"></div></div>
+    <div id="box2"><div class="lbl" id="lbl2">Second</div><div id="b2Box"></div></div>
+    <div id="box3"><div class="lbl" id="lbl3">Third</div><div id="b3Box"></div></div>
+    <div id="box4"><div class="lbl" id="lbl4">Forth</div><div id="b4Box"></div></div>
+    <div id="box5"><div class="lbl" id="lbl5">Fifth</div><div id="b5Box"></div></div>
+  </div>
 
   <div class="diode">
-    <div class="body" id="diodeBody"></div>
+    <div class="diode-body">
+      <div class="band" id="band1"></div>
+      <div class="band" id="band2"></div>
+      <div class="band" id="band3"></div>
+      <div class="band" id="band4"></div>
+      <div class="band" id="band5"></div>
+    </div>
   </div>
 
-  <div class="result" id="resultBox">--</div>
-
+  <div class="result" id="result"></div>
 </div>
 
-<div class="overlay" id="overlay">
-  <div class="popup">
-    <div class="popup-head">
-      <span id="popupTitle">Select</span>
-      <button class="done" onclick="closePopup()">Done</button>
+<div class="ios-mask" id="mask">
+  <div class="ios-picker">
+    <div class="ios-head">
+      <span id="title">Select</span>
+      <button onclick="closePicker()">Done</button>
     </div>
-
-    <div class="list-wrap">
-      <div class="list" id="optionList"></div>
+    <div class="wheel-wrap">
+      <div class="wheel-highlight"></div>
+      <div class="wheel" id="wheel"></div>
     </div>
   </div>
 </div>
 
 <script>
-const colors={black:"#000",brown:"brown",red:"red",orange:"orange",yellow:"yellow",green:"green",blue:"blue",violet:"violet",grey:"grey",white:"#fff"};
-
-const digit=[
- ["black","0","black"],["brown","1","brown"],["red","2","red"],
- ["orange","3","orange"],["yellow","4","yellow"],["green","5","green"],
- ["blue","6","blue"],["violet","7","violet"],["grey","8","grey"],["white","9","white"]
+const modeData=[
+  ["4 BAND","diode4","#ddd"],
+  ["GENERAL DIODE","general","#ddd"],
+  ["JEDEC SERIES","jedec","#ddd"]
 ];
 
-const modes={
- diode4:{
-  title:"▣ 4 BAND",
-  labels:["First","Second","Third","Forth"],
-  bands:[
-   [["black","AA","black"],["red","BA","red"]],
-   [["black","X","black"],["red","S","red"],["yellow","T","yellow"],["green","V","green"],["blue","W","blue"],["grey","Y","grey"],["white","Z","white"]],
-   digit,digit
-  ],
-  formula:v=>v[0]+v[1]+v[2]+v[3]
- },
- general:{
-  title:"▣ GENERAL",
-  labels:["Select Colour"],
-  bands:[
-   [["black","General Purpose","black"],["yellow","Switching","yellow"],["green","Schottkey","green"],["blue","Zener","blue"]]
-  ],
-  formula:v=>v[0]
- },
- jedec:{
-  title:"▣ JEDEC",
-  labels:["1","2","3","4","5"],
-  bands:[digit,digit,digit,digit,
-   [["brown","A","brown"],["red","B","red"],["orange","C","orange"],["yellow","D","yellow"],["green","E","green"],["blue","F","blue"],["violet","G","violet"],["grey","H","grey"],["white","J","white"]]
-  ],
-  formula:v=>"1N"+v.join("")
- }
+const digit=[
+ ["black","0","#000"],["brown","1","brown"],["red","2","red"],["orange","3","orange"],
+ ["yellow","4","yellow"],["green","5","green"],["blue","6","blue"],["violet","7","violet"],
+ ["grey","8","grey"],["white","9","#fff"]
+];
+
+const first4=[
+ ["black","AA","#000"],
+ ["red","BA","red"]
+];
+
+const second4=[
+ ["black","X","#000"],
+ ["red","S","red"],
+ ["yellow","T","yellow"],
+ ["green","V","green"],
+ ["blue","W","blue"],
+ ["grey","Y","grey"],
+ ["white","Z","#fff"]
+];
+
+const general=[
+ ["black","General Purpose","#000"],
+ ["yellow","Switching","yellow"],
+ ["green","Schottkey","green"],
+ ["blue","Zener","blue"]
+];
+
+const jedec5=[
+ ["brown","A","brown"],["red","B","red"],["orange","C","orange"],
+ ["yellow","D","yellow"],["green","E","green"],["blue","F","blue"],
+ ["violet","G","violet"],["grey","H","grey"],["white","J","#fff"]
+];
+
+let state={mode:"diode4",b1:"AA",b2:"X",b3:"0",b4:"0",b5:"A"};
+let btns={}, activeData=[], activeKey="";
+
+function makeBtn(id,data,key,name){
+  let b=document.createElement("div");
+  b.className="pick-btn";
+  b.onclick=function(){openPicker(data,key,name)};
+  document.getElementById(id).appendChild(b);
+  btns[key]=b;
+  setBtn(data,key);
+}
+
+function setBtn(data,key){
+  let x=data.find(a=>a[1]==state[key]) || data[0];
+  btns[key].innerHTML='<span class="sw" style="background:'+x[2]+'"></span>'+x[0];
+}
+
+function openPicker(data,key,name){
+  activeData=data;
+  activeKey=key;
+  document.getElementById("title").innerText=name;
+
+  let wheel=document.getElementById("wheel");
+  wheel.innerHTML="";
+
+  data.forEach(function(x,idx){
+    let r=document.createElement("div");
+    r.innerHTML='<span class="sw" style="background:'+x[2]+'"></span>'+x[0];
+    r.onclick=function(){selectItem(idx)};
+    wheel.appendChild(r);
+  });
+
+  document.getElementById("mask").style.display="block";
+  let current=data.findIndex(x=>x[1]==state[key]);
+  setTimeout(function(){ wheel.scrollTop=(current<0?0:current)*42; },30);
+}
+
+function selectItem(idx){
+  let x=activeData[idx];
+  state[activeKey]=x[1];
+  setBtn(activeData,activeKey);
+  calc();
+  closePicker();
+}
+
+function closePicker(){
+  document.getElementById("mask").style.display="none";
+}
+
+document.getElementById("mask").onclick=function(e){
+  if(e.target.id==="mask")closePicker();
 };
 
-let current="diode4";
-let selected=[];
-let active=0;
-
-function html(o){
- return `<span class="dot" style="background:${colors[o[2]]}"></span>${o[0]}`;
+function colorOf(data,val){
+  return (data.find(x=>x[1]==val)||data[0])[2];
 }
 
-function render(){
- let m=modes[current];
- selected=m.bands.map(b=>b[0]);
- document.getElementById("modeText").innerHTML=m.title;
+makeBtn("modeBox",modeData,"mode","Band Mode");
+makeBtn("b1Box",first4,"b1","First");
+makeBtn("b2Box",second4,"b2","Second");
+makeBtn("b3Box",digit,"b3","Third");
+makeBtn("b4Box",digit,"b4","Forth");
+makeBtn("b5Box",jedec5,"b5","Fifth");
 
- let h="";
- m.bands.forEach((b,i)=>{
-  h+=`<div>
-    <div class="label">${m.labels[i]}</div>
-    <div class="ios-btn" onclick="openPopup('band',${i})">
-      <span id="s${i}">${html(selected[i])}</span><span>v</span>
-    </div>
-  </div>`;
- });
+function setControlsForMode(){
+  let mode=state.mode;
 
- document.getElementById("selectors").innerHTML=h;
- draw();
- update();
+  box1.style.display="block";
+  box2.style.display=mode==="general"?"none":"block";
+  box3.style.display=mode==="general"?"none":"block";
+  box4.style.display=mode==="general"?"none":"block";
+  box5.style.display=mode==="jedec"?"block":"none";
+
+  if(mode==="general"){
+    lbl1.innerText="Select Colour";
+    btns.b1.onclick=function(){openPicker(general,"b1","Select Colour")};
+    if(!general.find(x=>x[1]===state.b1)) state.b1="General Purpose";
+    setBtn(general,"b1");
+  }
+
+  if(mode==="diode4"){
+    lbl1.innerText="First"; lbl2.innerText="Second"; lbl3.innerText="Third"; lbl4.innerText="Forth";
+    btns.b1.onclick=function(){openPicker(first4,"b1","First")};
+    btns.b2.onclick=function(){openPicker(second4,"b2","Second")};
+    btns.b3.onclick=function(){openPicker(digit,"b3","Third")};
+    btns.b4.onclick=function(){openPicker(digit,"b4","Forth")};
+
+    if(!first4.find(x=>x[1]===state.b1)) state.b1="AA";
+    if(!second4.find(x=>x[1]===state.b2)) state.b2="X";
+    if(!digit.find(x=>x[1]===state.b3)) state.b3="0";
+    if(!digit.find(x=>x[1]===state.b4)) state.b4="0";
+
+    setBtn(first4,"b1"); setBtn(second4,"b2"); setBtn(digit,"b3"); setBtn(digit,"b4");
+  }
+
+  if(mode==="jedec"){
+    lbl1.innerText="1 Band"; lbl2.innerText="2 Band"; lbl3.innerText="3 Band"; lbl4.innerText="4 Band"; lbl5.innerText="5 Band";
+    btns.b1.onclick=function(){openPicker(digit,"b1","1 Band")};
+    btns.b2.onclick=function(){openPicker(digit,"b2","2 Band")};
+    btns.b3.onclick=function(){openPicker(digit,"b3","3 Band")};
+    btns.b4.onclick=function(){openPicker(digit,"b4","4 Band")};
+    btns.b5.onclick=function(){openPicker(jedec5,"b5","5 Band")};
+
+    if(!digit.find(x=>x[1]===state.b1)) state.b1="0";
+    if(!digit.find(x=>x[1]===state.b2)) state.b2="0";
+    if(!digit.find(x=>x[1]===state.b3)) state.b3="0";
+    if(!digit.find(x=>x[1]===state.b4)) state.b4="0";
+    if(!jedec5.find(x=>x[1]===state.b5)) state.b5="A";
+
+    setBtn(digit,"b1"); setBtn(digit,"b2"); setBtn(digit,"b3"); setBtn(digit,"b4"); setBtn(jedec5,"b5");
+  }
 }
 
-function draw(){
- let body=document.getElementById("diodeBody");
- body.innerHTML="";
- selected.forEach((o,i)=>{
-  let b=document.createElement("div");
-  b.className="band";
-  b.style.left=(45+i*30)+"px";
-  b.style.background=colors[o[2]];
-  body.appendChild(b);
- });
+function clearBands(){
+  [band1,band2,band3,band4,band5].forEach(b=>b.style.background="transparent");
 }
 
-function openPopup(type,i=0){
- active=i;
- let list=document.getElementById("optionList");
- list.innerHTML="";
+function calc(){
+  setBtn(modeData,"mode");
+  setControlsForMode();
+  clearBands();
 
- if(type==="mode"){
-  document.getElementById("popupTitle").innerText="Band Mode";
-  Object.keys(modes).forEach(k=>{
-   list.innerHTML+=`<div class="option ${k===current?'active':''}" onclick="setMode('${k}')">${modes[k].title}</div>`;
-  });
- }else{
-  document.getElementById("popupTitle").innerText=modes[current].labels[i];
-  modes[current].bands[i].forEach((o,x)=>{
-   const isActive = selected[i][1] === o[1] ? "active" : "";
-   list.innerHTML+=`<div class="option ${isActive}" onclick="setBand(${x})">${html(o)}</div>`;
-  });
- }
+  if(state.mode==="diode4"){
+    result.innerText=state.b1+state.b2+state.b3+state.b4;
+    band1.style.background=colorOf(first4,state.b1);
+    band2.style.background=colorOf(second4,state.b2);
+    band3.style.background=colorOf(digit,state.b3);
+    band4.style.background=colorOf(digit,state.b4);
+  }
 
- document.getElementById("overlay").classList.add("show");
+  if(state.mode==="general"){
+    result.innerText=state.b1;
+    band1.style.background=colorOf(general,state.b1);
+  }
 
- setTimeout(()=>{
-   const activeItem = list.querySelector(".option.active");
-   if(activeItem){
-     list.scrollTop = activeItem.offsetTop - 92;
-   }
- },60);
+  if(state.mode==="jedec"){
+    result.innerText="1N"+state.b1+state.b2+state.b3+state.b4+state.b5;
+    band1.style.background=colorOf(digit,state.b1);
+    band2.style.background=colorOf(digit,state.b2);
+    band3.style.background=colorOf(digit,state.b3);
+    band4.style.background=colorOf(digit,state.b4);
+    band5.style.background=colorOf(jedec5,state.b5);
+  }
 }
 
-function setMode(m){
- current=m;
- closePopup();
- render();
-}
-
-function setBand(i){
- selected[active]=modes[current].bands[active][i];
- document.getElementById("s"+active).innerHTML=html(selected[active]);
- draw();
- update();
- closePopup();
-}
-
-function update(){
- let v=selected.map(x=>x[1]);
- document.getElementById("resultBox").innerText=modes[current].formula(v);
-}
-
-function closePopup(){
- document.getElementById("overlay").classList.remove("show");
-}
-
-document.getElementById("overlay").addEventListener("click",function(e){
- if(e.target.id==="overlay") closePopup();
-});
-
-render();
+calc();
 </script>
-
 </body>
 </html>
