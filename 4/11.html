@@ -1,175 +1,254 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
-:root{--f:16px;--h:48px;--g:12px}
-
-body{background:#f4f7fb;padding:20px}
-
-.box{
-max-width:600px;
-margin:auto;
-background:#fff;
-padding:20px;
-border-radius:14px;
-box-shadow:0 10px 25px rgba(0,0,0,.08)
+#wire-size-calc,
+#wire-size-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-.grid{display:grid;gap:var(--g)}
-
-.label{
-font-size:14px;
-font-weight:bold;
-margin-bottom:5px
+body{
+  background:#f6f8fb;
+  padding:12px;
 }
 
-.row{
-display:flex;
-gap:8px;
-width:100%
+#wire-size-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
 }
 
-.row input,.row select,.unit-box{
-height:var(--h);
-border:1px solid #ccc;
-border-radius:8px;
-padding:8px;
-font-size:var(--f);
-font-weight:bold;
-display:flex;
-align-items:center
+#wire-size-calc .calc-grid{
+  display:grid;
+  gap:15px;
 }
 
-.row input{flex:1;min-width:0}
-.row select,.unit-box{width:90px}
-.unit-box{justify-content:center;background:#fafafa}
-
-button{
-width:100%;
-height:var(--h);
-margin-top:var(--g);
-background:#008000;
-color:#fff;
-border:0;
-border-radius:10px;
-font-size:var(--f);
-font-weight:bold;
-cursor:pointer
+#wire-size-calc .calc-label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:7px;
 }
 
-.result{
-margin-top:var(--g);
-display:grid;
-gap:var(--g)
+#wire-size-calc .calc-row{
+  width:100%;
+  display:flex;
+  gap:8px;
+  align-items:center;
 }
 
-.formula{
-margin-top:15px;
-font-size:14px;
-font-weight:bold;
-color:#333
+#wire-size-calc input,
+#wire-size-calc select{
+  flex:1;
+  min-width:0;
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  color:#111827;
+  background:#fff;
+  outline:none;
+}
+
+#wire-size-calc .unit-box{
+  flex:0 0 82px;
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fafafa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:700;
+  color:#111827;
+}
+
+#wire-size-calc input:focus,
+#wire-size-calc select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#wire-size-calc button{
+  width:100%;
+  height:45px;
+  margin-top:24px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#wire-size-calc .result-title{
+  margin-top:30px;
+  margin-bottom:14px;
+  font-size:14px;
+  font-weight:800;
+  color:#a7afbd;
+  letter-spacing:.5px;
+}
+
+#wire-size-calc .result-card{
+  min-height:64px;
+  padding:14px;
+  border-radius:9px;
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+
+#wire-size-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:7px;
+  color:#2563eb;
+}
+
+#wire-size-calc .result-value{
+  font-size:16px;
+  font-weight:900;
+  color:#059669;
+  word-break:break-word;
+}
+
+#wire-size-calc .formula{
+  margin-top:18px;
+  padding:14px;
+  border-radius:9px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  font-size:14px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
 }
 
 @media(max-width:600px){
-body{padding:10px}
-.box{padding:16px}
-.row select,.unit-box{width:72px}
+  body{padding:10px}
+
+  #wire-size-calc{
+    padding:16px;
+  }
+
+  #wire-size-calc .calc-row{
+    gap:7px;
+  }
+
+  #wire-size-calc .unit-box{
+    flex:0 0 72px;
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+    font-size:15px;
+  }
+
+  #wire-size-calc input,
+  #wire-size-calc select{
+    font-size:15px;
+    padding:0 10px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div id="wire-size-calc">
 
-<div class="grid">
+  <div class="calc-grid">
 
-<!-- Voltage -->
-<div>
-<div class="label">Source Voltage</div>
-<div class="row">
-<select id="vd">
-<option value="3.6">120</option>
-<option value="6.2">208</option>
-<option value="6.6">220</option>
-<option value="6.9">230</option>
-<option value="7.2">240</option>
-<option value="8.3">277</option>
-<option value="13.2">440</option>
-<option value="14.4">480</option>
-</select>
-<div class="unit-box">V</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Source Voltage</label>
+      <div class="calc-row">
+        <select id="vd">
+          <option value="3.6">120</option>
+          <option value="6.2">208</option>
+          <option value="6.6">220</option>
+          <option value="6.9">230</option>
+          <option value="7.2">240</option>
+          <option value="8.3">277</option>
+          <option value="13.2">440</option>
+          <option value="14.4">480</option>
+        </select>
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
-<!-- Phase -->
-<div>
-<div class="label">Phase</div>
-<div class="row">
-<select id="phs">
-<option value="2">Single</option>
-<option value="1.732">Three</option>
-</select>
-<div class="unit-box">Ø</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Phase</label>
+      <div class="calc-row">
+        <select id="phs">
+          <option value="2">Single</option>
+          <option value="1.732">Three</option>
+        </select>
+        <div class="unit-box">Ø</div>
+      </div>
+    </div>
 
-<!-- Material -->
-<div>
-<div class="label">Material</div>
-<div class="row">
-<select id="mat">
-<option value="12.9">Copper</option>
-<option value="21.2">Aluminium</option>
-</select>
-<div class="unit-box">Type</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Material</label>
+      <div class="calc-row">
+        <select id="mat">
+          <option value="12.9">Copper</option>
+          <option value="21.2">Aluminium</option>
+        </select>
+        <div class="unit-box">Type</div>
+      </div>
+    </div>
 
-<!-- Current -->
-<div>
-<div class="label">Current</div>
-<div class="row">
-<input type="number" id="amps">
-<div class="unit-box">A</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Current</label>
+      <div class="calc-row">
+        <input type="number" id="amps">
+        <div class="unit-box">A</div>
+      </div>
+    </div>
 
-<!-- Distance -->
-<div>
-<div class="label">Distance</div>
-<div class="row">
-<input type="number" id="dist">
-<div class="unit-box">ft</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Distance</label>
+      <div class="calc-row">
+        <input type="number" id="dist">
+        <div class="unit-box">ft</div>
+      </div>
+    </div>
 
-</div>
+  </div>
 
-<button id="btn">Calculate</button>
+  <button id="btn">Calculate</button>
 
-<!-- Output -->
-<div class="result">
-<div>
-<div class="label">Wire Size</div>
-<div class="row">
-<input id="wire" readonly>
-<div class="unit-box">AWG</div>
-</div>
-</div>
-</div>
+  <div class="result-title">RESULTS</div>
 
-<div class="formula">
-CM = (Phase × K × Distance × Current) / Voltage Drop
-</div>
+  <div class="result-card">
+    <div class="result-label">Wire Size</div>
+    <div class="result-value"><span id="wire">-</span> AWG</div>
+  </div>
+
+  <div class="formula">
+    CM = (Phase × K × Distance × Current) / Voltage Drop
+  </div>
 
 </div>
 
 <script>
-
 document.getElementById("btn").onclick=function(){
 
 let vp=parseFloat(document.getElementById("vd").value),
@@ -179,42 +258,36 @@ l=parseFloat(document.getElementById("dist").value),
 i=parseFloat(document.getElementById("amps").value),
 out=document.getElementById("wire");
 
-// validation
 if(isNaN(l)||isNaN(i)){
-out.value="Enter values";return;
+out.innerText="Enter values";return;
 }
 
 if(l<=0||i<=0){
-out.value="Invalid";return;
+out.innerText="Invalid";return;
 }
 
-// calculation
 let Cm=(phase*k*l*i)/vp;
 
-// tables (original logic)
 let L=[2580,4110,6530,10380,16510,26240,41740,52620,66360,83690,105600,133100,167800,211600,250000,300000,350000,400000,500000,600000,700000,750000,800000,900000,1000000,1250000,1500000,1750000];
 
 let H=[4110,6530,10380,16510,26240,41740,52620,66360,83690,105600,133100,167800,211600,250000,300000,350000,400000,500000,600000,700000,750000,800000,900000,1000000,1250000,1500000,1750000,2000000];
 
 let S=["14","12","10","8","6","4","3","2","1","1/0","2/0","3/0","4/0","250 MCM","300 MCM","350 MCM","400 MCM","500 MCM","600 MCM","700 MCM","750 MCM","800 MCM","900 MCM","1000 MCM","1250 MCM","1500 MCM","1750 MCM","2000 MCM"];
 
-// result logic
 if(Cm<=L[0]){
-out.value=S[0];
+out.innerText=S[0];
 return;
 }
 
 for(let x=0;x<L.length;x++){
 if(Cm>L[x] && Cm<=H[x]){
-out.value=S[x];
+out.innerText=S[x];
 return;
 }
 }
 
-out.value="Out of Range";
-
+out.innerText="Out of Range";
 };
-
 </script>
 
 </body>
