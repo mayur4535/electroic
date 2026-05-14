@@ -4,121 +4,165 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial, sans-serif;
-}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
 
 body{
-  background:#f4f7fb;
-  padding:20px;
-  color:#111827;
+  background:#f6f8fb;
+  padding:24px;
+  color:#1f2937;
 }
 
 .calculator-box{
-  max-width:600px; /* better for single column */
+  max-width:620px;
   margin:auto;
   background:#fff;
-  padding:24px;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  padding:28px;
+  border-radius:8px;
+  border:1px solid #e5e7eb;
 }
 
-h2{
-  margin-bottom:10px;
+.section-title{
+  font-size:14px;
+  font-weight:800;
+  color:#a7afbd;
+  margin-bottom:14px;
+  padding-bottom:12px;
+  border-bottom:1px solid #edf0f5;
+  letter-spacing:.5px;
 }
 
-.subtitle{
-  color:#6b7280;
-  margin-bottom:20px;
-}
-
-/* ALWAYS SINGLE COLUMN */
 .form-grid{
   display:grid;
   grid-template-columns:1fr;
-  gap:16px;
+  gap:14px;
 }
 
 .form-group label{
   display:block;
-  font-weight:600;
-  margin-bottom:6px;
+  font-size:14px;
+  font-weight:700;
+  color:#566174;
+  margin-bottom:7px;
 }
 
-/* Input row */
 .input-row{
   display:flex;
   gap:8px;
-}
-
-.input-row input,
-.input-row select{
-  height:46px;
-  border:1px solid #d1d5db;
-  border-radius:10px;
-  padding:10px;
-  font-size:15px;
+  width:100%;
 }
 
 .input-row input{
   flex:1;
+  min-width:0;
+  height:40px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  color:#374151;
+  outline:none;
+  background:#fff;
 }
 
 .input-row select{
-  width:80px;
+  flex:0 0 95px;
+  width:95px;
+  height:40px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 10px;
+  font-size:15px;
+  color:#374151;
+  outline:none;
+  background:#fff;
 }
 
-/* Button */
+.input-row input:focus,
+.input-row select:focus{
+  border-color:#ff7a1a;
+  box-shadow:0 0 0 3px rgba(255,122,26,.12);
+}
+
 button{
   width:100%;
-  height:50px;
-  margin-top:18px;
+  height:43px;
+  margin-top:26px;
   border:0;
-  border-radius:12px;
-  background:#008000;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7819,#ff5b00);
   color:white;
-  font-size:18px;
-  font-weight:700;
+  font-size:14px;
+  font-weight:800;
   cursor:pointer;
+  box-shadow:0 5px 12px rgba(255,91,0,.22);
 }
 
-button:hover{
-  background:#006b00;
+.result-title{
+  margin-top:30px;
+  margin-bottom:16px;
+  font-size:14px;
+  font-weight:800;
+  color:#a7afbd;
+  letter-spacing:.5px;
 }
 
-/* Result */
-.result-box{
-  margin-top:18px;
-  padding:16px;
-  border-radius:12px;
-  background:#f0fdf4;
-  border:1px solid #bbf7d0;
+.result-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
 }
 
-.result-box input{
-  width:100%;
-  height:45px;
-  border:1px solid #86efac;
-  border-radius:10px;
-  padding:10px;
-  font-weight:700;
+.result-card{
+  min-height:58px;
+  padding:13px 14px;
+  border-radius:8px;
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+
+.result-label{
+  font-size:13px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:6px;
+  color:#2563eb;
+}
+
+.result-value{
+  font-size:15px;
+  font-weight:800;
+  color:#2563eb;
 }
 
 .formula{
-  margin-top:15px;
-  font-size:14px;
-  color:#4b5563;
+  margin-top:18px;
+  padding:13px;
+  border-radius:8px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
 }
 
-/* Mobile small tweak */
 @media(max-width:600px){
-  body{
-    padding:12px;
+  body{padding:12px}
+  .calculator-box{padding:18px}
+  .input-row{gap:7px}
+
+  .input-row input{
+    height:40px;
+    font-size:14px;
+    padding:0 10px;
+  }
+
+  .input-row select{
+    flex:0 0 78px;
+    width:78px;
+    height:40px;
+    font-size:14px;
+    padding:0 8px;
   }
 }
 </style>
@@ -128,71 +172,72 @@ button:hover{
 
 <div class="calculator-box">
 
+  <div class="section-title">INPUTS</div>
 
+  <div class="form-grid">
 
-<div class="form-grid">
+    <div class="form-group">
+      <label>Wire Diameter (D)</label>
+      <div class="input-row">
+        <input type="number" id="diameter" placeholder="12">
+        <select id="diameterUnit">
+          <option value="0.001">mm</option>
+          <option value="0.01">cm</option>
+          <option value="1">m</option>
+        </select>
+      </div>
+    </div>
 
-<!-- Diameter -->
-<div class="form-group">
-<label>Wire Diameter (D)</label>
-<div class="input-row">
-<input type="number" id="diameter">
-<select id="diameterUnit">
-<option value="0.001">mm</option>
-<option value="0.01">cm</option>
-<option value="1">m</option>
-</select>
-</div>
-</div>
+    <div class="form-group">
+      <label>Center Spacing (S)</label>
+      <div class="input-row">
+        <input type="number" id="spacing" placeholder="12">
+        <select id="spacingUnit">
+          <option value="0.001">mm</option>
+          <option value="0.01">cm</option>
+          <option value="1">m</option>
+        </select>
+      </div>
+    </div>
 
-<!-- Spacing -->
-<div class="form-group">
-<label>Center Spacing (S)</label>
-<div class="input-row">
-<input type="number" id="spacing">
-<select id="spacingUnit">
-<option value="0.001">mm</option>
-<option value="0.01">cm</option>
-<option value="1">m</option>
-</select>
-</div>
-</div>
+    <div class="form-group">
+      <label>Wire Length (l)</label>
+      <div class="input-row">
+        <input type="number" id="length" placeholder="12">
+        <select id="lengthUnit">
+          <option value="0.001">mm</option>
+          <option value="0.01">cm</option>
+          <option value="1" selected>m</option>
+        </select>
+      </div>
+    </div>
 
-<!-- Length -->
-<div class="form-group">
-<label>Wire Length (l)</label>
-<div class="input-row">
-<input type="number" id="length">
-<select id="lengthUnit">
-<option value="0.001">mm</option>
-<option value="0.01">cm</option>
-<option value="1" selected>m</option>
-</select>
-</div>
-</div>
+    <div class="form-group">
+      <label>Relative Permeability (μr)</label>
+      <div class="input-row">
+        <input type="number" id="ur" value="1">
+        <select disabled>
+          <option>-</option>
+        </select>
+      </div>
+    </div>
 
-<!-- μr -->
-<div class="form-group">
-<label>Relative Permeability (μr)</label>
-<div class="input-row">
-<input type="number" id="ur" value="1">
-<select disabled>
-<option>-</option>
-</select>
-</div>
-</div>
+  </div>
 
-</div>
+  <button onclick="calculate()">Calculate</button>
 
-<button onclick="calculate()">Calculate</button>
+  <div class="result-title">RESULTS</div>
 
-<div class="result-box">
-<input type="text" id="result" readonly placeholder="Result will appear here">
-</div>
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="result-label">Inductance</div>
+      <div class="result-value" id="result">-</div>
+    </div>
+  </div>
 
-<div class="formula">
-Formula: L = (μ₀ × μr × l / π) × acosh(S / D)
-</div>
+  <div class="formula">
+    Formula: L = (μ₀ × μr × l / π) × acosh(S / D)
+  </div>
 
 </div>
 
@@ -208,12 +253,11 @@ function calculate(){
   let SUnit = parseFloat(document.getElementById("spacingUnit").value);
   let lUnit = parseFloat(document.getElementById("lengthUnit").value);
 
-  if(isNaN(D) || isNaN(S) || isNaN(l)){
+  if(isNaN(D) || isNaN(S) || isNaN(l) || isNaN(ur)){
     alert("Enter all values");
     return;
   }
 
-  // Convert to meters
   D *= DUnit;
   S *= SUnit;
   l *= lUnit;
@@ -224,11 +268,8 @@ function calculate(){
   }
 
   const mu0 = 4 * Math.PI * 1e-7;
-
-  // acosh(x)
   let x = S / D;
   let acosh = Math.log(x + Math.sqrt(x*x - 1));
-
   let L = (mu0 * ur * l / Math.PI) * acosh;
 
   let output;
@@ -243,7 +284,7 @@ function calculate(){
     output = L.toFixed(6) + " H";
   }
 
-  document.getElementById("result").value = output;
+  document.getElementById("result").innerText = output;
 }
 </script>
 
