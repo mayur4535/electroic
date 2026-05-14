@@ -1,104 +1,246 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
-:root{--f:16px;--h:48px;--g:12px}
-body{background:#f4f7fb;padding:20px}
-.box{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.08);overflow:hidden}
-.grid{display:grid;gap:var(--g)}
-.label{font-size:14px;font-weight:bold;margin-bottom:5px}
-.row{display:flex;gap:8px}
-.row input,.row select,.unit-box{
-height:var(--h);border:1px solid #ccc;border-radius:8px;padding:8px;
-font-size:var(--f);font-weight:bold;display:flex;align-items:center
+#wire-plane-calc,
+#wire-plane-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
-.row input{flex:1;min-width:0}
-.row select,.unit-box{width:90px}
-.unit-box{justify-content:center;background:#fafafa}
-button{
-width:100%;height:var(--h);margin-top:var(--g);
-background:#008000;color:#fff;border:0;border-radius:10px;
-font-size:var(--f);font-weight:bold
+
+body{
+  background:#f6f8fb;
+  padding:14px;
 }
-.result{margin-top:var(--g);display:grid;gap:var(--g)}
-.formula{margin-top:15px;font-size:14px;font-weight:bold}
+
+#wire-plane-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+}
+
+#wire-plane-calc .ej-form{
+  display:grid;
+  gap:15px;
+}
+
+#wire-plane-calc .ej-label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:7px;
+}
+
+#wire-plane-calc .ej-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  align-items:center;
+}
+
+#wire-plane-calc input,
+#wire-plane-calc select,
+#wire-plane-calc .unit-box{
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fff;
+  color:#111827;
+  font-size:15px;
+  outline:none;
+}
+
+#wire-plane-calc input{
+  width:100%;
+  min-width:0;
+  padding:0 12px;
+}
+
+#wire-plane-calc select,
+#wire-plane-calc .unit-box{
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  padding:0 8px;
+}
+
+#wire-plane-calc .unit-box{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  background:#fafafa;
+}
+
+#wire-plane-calc input:focus,
+#wire-plane-calc select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#wire-plane-calc button{
+  width:100%;
+  height:45px;
+  margin-top:24px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#wire-plane-calc .result-title{
+  margin-top:30px;
+  margin-bottom:14px;
+  font-size:14px;
+  font-weight:800;
+  color:#a7afbd;
+  letter-spacing:.5px;
+}
+
+#wire-plane-calc .result-card{
+  min-height:64px;
+  padding:14px;
+  border-radius:9px;
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+
+#wire-plane-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:7px;
+  color:#2563eb;
+}
+
+#wire-plane-calc .result-value{
+  font-size:16px;
+  font-weight:900;
+  color:#059669;
+  word-break:break-word;
+}
+
+#wire-plane-calc .formula{
+  margin-top:18px;
+  padding:14px;
+  border-radius:9px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  font-size:14px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
 
 @media(max-width:600px){
-.row select,.unit-box{width:72px}
+  body{padding:10px}
+
+  #wire-plane-calc{
+    padding:16px;
+  }
+
+  #wire-plane-calc .ej-row{
+    grid-template-columns:minmax(0,1fr) 72px;
+    gap:7px;
+  }
+
+  #wire-plane-calc select,
+  #wire-plane-calc .unit-box{
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+    font-size:15px;
+    padding:0 6px;
+  }
+
+  #wire-plane-calc input{
+    font-size:15px;
+    padding:0 10px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div id="wire-plane-calc">
 
-<div class="grid">
+  <div class="ej-form">
 
-<div>
-<div class="label">Wire Diameter (d)</div>
-<div class="row">
-<input id="d"><select id="du">
-<option value="0.001">mm</option>
-<option value="0.01">cm</option>
-<option value="0.000001">um</option>
-<option value="0.0254">inch</option>
-</select>
-</div>
-</div>
+    <div>
+      <label class="ej-label">Wire Diameter (d)</label>
+      <div class="ej-row">
+        <input type="number" id="d">
+        <select id="du">
+          <option value="0.001">mm</option>
+          <option value="0.01">cm</option>
+          <option value="0.000001">um</option>
+          <option value="0.0254">inch</option>
+        </select>
+      </div>
+    </div>
 
-<div>
-<div class="label">Height Above Plane (h)</div>
-<div class="row">
-<input id="h"><select id="hu">
-<option value="0.001">mm</option>
-<option value="0.01">cm</option>
-<option value="0.000001">um</option>
-<option value="0.0254">inch</option>
-</select>
-</div>
-</div>
+    <div>
+      <label class="ej-label">Height Above Plane (h)</label>
+      <div class="ej-row">
+        <input type="number" id="h">
+        <select id="hu">
+          <option value="0.001">mm</option>
+          <option value="0.01">cm</option>
+          <option value="0.000001">um</option>
+          <option value="0.0254">inch</option>
+        </select>
+      </div>
+    </div>
 
-<div>
-<div class="label">Length (l)</div>
-<div class="row">
-<input id="l"><select id="lu">
-<option value="0.001">mm</option>
-<option value="0.01">cm</option>
-<option value="0.000001">um</option>
-<option value="0.0254">inch</option>
-</select>
-</div>
-</div>
+    <div>
+      <label class="ej-label">Length (l)</label>
+      <div class="ej-row">
+        <input type="number" id="l">
+        <select id="lu">
+          <option value="0.001">mm</option>
+          <option value="0.01">cm</option>
+          <option value="0.000001">um</option>
+          <option value="0.0254">inch</option>
+        </select>
+      </div>
+    </div>
 
-<div>
-<div class="label">Relative Permeability</div>
-<div class="row">
-<input id="ur" value="1">
-<div class="unit-box">-</div>
-</div>
-</div>
+    <div>
+      <label class="ej-label">Relative Permeability</label>
+      <div class="ej-row">
+        <input type="number" id="ur" value="1">
+        <div class="unit-box">-</div>
+      </div>
+    </div>
 
-</div>
+  </div>
 
-<button id="btn">Calculate</button>
+  <button id="btn">Calculate</button>
 
-<div class="result">
-<div>
-<div class="label">Inductance</div>
-<div class="row">
-<input id="o" readonly>
-<div class="unit-box">H</div>
-</div>
-</div>
-</div>
+  <div class="result-title">RESULTS</div>
 
-<div class="formula">
-L = (μ₀ μr / 2π) × l × acosh(2h / d)
-</div>
+  <div class="result-card">
+    <div class="result-label">Inductance</div>
+    <div class="result-value"><span id="o">-</span> H</div>
+  </div>
+
+  <div class="formula">
+    L = (μ₀ μr / 2π) × l × acosh(2h / d)
+  </div>
 
 </div>
 
@@ -114,20 +256,20 @@ hu=parseFloat(document.getElementById("hu").value),
 lu=parseFloat(document.getElementById("lu").value),
 o=document.getElementById("o");
 
-if(isNaN(d)||isNaN(h)||isNaN(l)||isNaN(ur)){o.value="Enter values";return}
+if(isNaN(d)||isNaN(h)||isNaN(l)||isNaN(ur)){o.innerText="Enter values";return}
 
 d*=du;h*=hu;l*=lu;
 
-if(d<=0||h<=0||l<=0||ur<=0){o.value="Invalid";return}
+if(d<=0||h<=0||l<=0||ur<=0){o.innerText="Invalid";return}
 
 let x=(2*h)/d;
-if(x<=1){o.value="Invalid ratio";return}
+if(x<=1){o.innerText="Invalid ratio";return}
 
 let acosh=Math.log(x+Math.sqrt(x*x-1));
 
 let L=(4*Math.PI*1e-7)*ur/(2*Math.PI)*l*acosh;
 
-o.value=L.toExponential(3);
+o.innerText=L.toExponential(3);
 
 }
 </script>
