@@ -1,141 +1,317 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
-:root{--f:16px;--h:48px;--g:12px}
-body{background:#f4f7fb;padding:20px}
-.box{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.08);overflow:hidden}
-.grid{display:grid;gap:var(--g)}
-.label{font-size:14px;font-weight:bold;margin-bottom:5px}
-.row{display:flex;gap:8px;width:100%}
-.row input,.row select,.unit-box{height:var(--h);border:1px solid #ccc;border-radius:8px;padding:8px;font-size:var(--f);font-weight:bold;display:flex;align-items:center}
-.row input{flex:1;min-width:0}
-.row select,.unit-box{width:90px;min-width:90px}
-.unit-box{justify-content:center;background:#fafafa}
-button{width:100%;height:var(--h);margin-top:var(--g);background:#008000;color:#fff;border:0;border-radius:10px;font-size:var(--f);font-weight:bold;cursor:pointer}
-.result{margin-top:var(--g);display:grid;gap:var(--g)}
-.formula{margin-top:15px;font-size:14px;font-weight:bold;color:#333;line-height:1.6}
+#awg-material-calc,
+#awg-material-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f6f8fb;
+  padding:12px;
+}
+
+#awg-material-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+}
+
+#awg-material-calc .calc-grid{
+  display:grid;
+  gap:15px;
+}
+
+#awg-material-calc .calc-label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:7px;
+}
+
+#awg-material-calc .calc-row{
+  width:100%;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+#awg-material-calc input,
+#awg-material-calc select{
+  flex:1;
+  min-width:0;
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  color:#111827;
+  background:#fff;
+  outline:none;
+}
+
+#awg-material-calc .unit-box{
+  flex:0 0 82px;
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fafafa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:700;
+  color:#111827;
+}
+
+#awg-material-calc input:focus,
+#awg-material-calc select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#awg-material-calc button{
+  width:100%;
+  height:45px;
+  margin-top:24px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#awg-material-calc .result-title{
+  margin-top:30px;
+  margin-bottom:14px;
+  font-size:14px;
+  font-weight:800;
+  color:#a7afbd;
+  letter-spacing:.5px;
+}
+
+#awg-material-calc .result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+#awg-material-calc .result-card{
+  min-height:64px;
+  padding:14px;
+  border-radius:9px;
+}
+
+#awg-material-calc .result-card:nth-child(1),
+#awg-material-calc .result-card:nth-child(5){
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+#awg-material-calc .result-card:nth-child(1) .result-label,
+#awg-material-calc .result-card:nth-child(1) .result-value,
+#awg-material-calc .result-card:nth-child(5) .result-label,
+#awg-material-calc .result-card:nth-child(5) .result-value{
+  color:#2563eb;
+}
+
+#awg-material-calc .result-card:nth-child(2),
+#awg-material-calc .result-card:nth-child(6){
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+}
+#awg-material-calc .result-card:nth-child(2) .result-label,
+#awg-material-calc .result-card:nth-child(2) .result-value,
+#awg-material-calc .result-card:nth-child(6) .result-label,
+#awg-material-calc .result-card:nth-child(6) .result-value{
+  color:#059669;
+}
+
+#awg-material-calc .result-card:nth-child(3),
+#awg-material-calc .result-card:nth-child(7){
+  background:#f5f3ff;
+  border:1px solid #ddd6fe;
+}
+#awg-material-calc .result-card:nth-child(3) .result-label,
+#awg-material-calc .result-card:nth-child(3) .result-value,
+#awg-material-calc .result-card:nth-child(7) .result-label,
+#awg-material-calc .result-card:nth-child(7) .result-value{
+  color:#7c3aed;
+}
+
+#awg-material-calc .result-card:nth-child(4){
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+}
+#awg-material-calc .result-card:nth-child(4) .result-label,
+#awg-material-calc .result-card:nth-child(4) .result-value{
+  color:#ea580c;
+}
+
+#awg-material-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+#awg-material-calc .result-value{
+  font-size:16px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+#awg-material-calc .formula{
+  margin-top:18px;
+  padding:14px;
+  border-radius:9px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  font-size:14px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
 @media(max-width:600px){
-body{padding:10px}
-.box{padding:16px}
-.row select,.unit-box{width:72px;min-width:72px;padding:6px;font-size:15px}
+  body{padding:10px}
+
+  #awg-material-calc{
+    padding:16px;
+  }
+
+  #awg-material-calc .calc-row{
+    gap:7px;
+  }
+
+  #awg-material-calc .unit-box{
+    flex:0 0 72px;
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+    font-size:15px;
+  }
+
+  #awg-material-calc input,
+  #awg-material-calc select{
+    font-size:15px;
+    padding:0 10px;
+  }
+
+  #awg-material-calc .result-grid{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div id="awg-material-calc">
 
-<div class="grid">
+  <div class="calc-grid">
 
-<div>
-<div class="label">Material</div>
-<div class="row">
-<select id="mat">
-<option>Select</option>
-<option>Copper</option>
-<option>Silver</option>
-<option>Gold</option>
-<option>Aluminium</option>
-<option>Tungsten</option>
-<option>Platinum</option>
-<option>Lead</option>
-<option>Graphite</option>
-</select>
-<div class="unit-box">Type</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Material</label>
+      <div class="calc-row">
+        <select id="mat">
+          <option>Select</option>
+          <option>Copper</option>
+          <option>Silver</option>
+          <option>Gold</option>
+          <option>Aluminium</option>
+          <option>Tungsten</option>
+          <option>Platinum</option>
+          <option>Lead</option>
+          <option>Graphite</option>
+        </select>
+        <div class="unit-box">Type</div>
+      </div>
+    </div>
 
-<div>
-<div class="label">Gauge</div>
-<div class="row">
-<input id="awg" placeholder="ex: 10 or 4/0">
-<div class="unit-box">AWG</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Gauge</label>
+      <div class="calc-row">
+        <input id="awg" placeholder="ex: 10 or 4/0">
+        <div class="unit-box">AWG</div>
+      </div>
+    </div>
 
-<div>
-<div class="label">Resistivity</div>
-<div class="row">
-<input id="res" readonly>
-<div class="unit-box">Ω·m</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Resistivity</label>
+      <div class="calc-row">
+        <input id="res" readonly>
+        <div class="unit-box">Ω·m</div>
+      </div>
+    </div>
 
-</div>
+  </div>
 
-<button id="btn">Calculate</button>
+  <button id="btn">Calculate</button>
 
-<div class="result">
+  <div class="result-title">RESULTS</div>
 
-<div>
-<div class="label">Diameter</div>
-<div class="row">
-<input id="din" readonly>
-<div class="unit-box">in</div>
-</div>
-</div>
+  <div class="result-grid">
 
-<div>
-<div class="label">Diameter</div>
-<div class="row">
-<input id="dmm" readonly>
-<div class="unit-box">mm</div>
-</div>
-</div>
+    <div class="result-card">
+      <div class="result-label">Diameter</div>
+      <div class="result-value"><span id="din">-</span> in</div>
+    </div>
 
-<div>
-<div class="label">Resistance</div>
-<div class="row">
-<input id="rft" readonly>
-<div class="unit-box">Ω/kft</div>
-</div>
-</div>
+    <div class="result-card">
+      <div class="result-label">Diameter</div>
+      <div class="result-value"><span id="dmm">-</span> mm</div>
+    </div>
 
-<div>
-<div class="label">kcmil</div>
-<div class="row">
-<input id="amil" readonly>
-<div class="unit-box">kcmil</div>
-</div>
-</div>
+    <div class="result-card">
+      <div class="result-label">Resistance</div>
+      <div class="result-value"><span id="rft">-</span> Ω/kft</div>
+    </div>
 
-<div>
-<div class="label">Resistance</div>
-<div class="row">
-<input id="rm" readonly>
-<div class="unit-box">Ω/km</div>
-</div>
-</div>
+    <div class="result-card">
+      <div class="result-label">kcmil</div>
+      <div class="result-value"><span id="amil">-</span> kcmil</div>
+    </div>
 
-<div>
-<div class="label">Area</div>
-<div class="row">
-<input id="ain" readonly>
-<div class="unit-box">in²</div>
-</div>
-</div>
+    <div class="result-card">
+      <div class="result-label">Resistance</div>
+      <div class="result-value"><span id="rm">-</span> Ω/km</div>
+    </div>
 
-<div>
-<div class="label">Area</div>
-<div class="row">
-<input id="amm" readonly>
-<div class="unit-box">mm²</div>
-</div>
-</div>
+    <div class="result-card">
+      <div class="result-label">Area</div>
+      <div class="result-value"><span id="ain">-</span> in²</div>
+    </div>
 
-</div>
+    <div class="result-card">
+      <div class="result-label">Area</div>
+      <div class="result-value"><span id="amm">-</span> mm²</div>
+    </div>
 
-<div class="formula">
-d(in) = 0.005 × 92^((36 − n)/39)<br>
-d(mm) = 0.127 × 92^((36 − n)/39)<br>
-A = (π / 4) × d²<br>
-R = ρ × Length / Area
-</div>
+  </div>
+
+  <div class="formula">
+    d(in) = 0.005 × 92^((36 − n)/39)<br>
+    d(mm) = 0.127 × 92^((36 − n)/39)<br>
+    A = (π / 4) × d²<br>
+    R = ρ × Length / Area
+  </div>
 
 </div>
 
@@ -169,7 +345,7 @@ else if(n==="3/0"||n==="000")n=-2;
 else if(n==="2/0"||n==="00")n=-1;
 else n=parseFloat(n);
 
-if(isNaN(n)||isNaN(r)){o.forEach(x=>x.value="Enter values");return}
+if(isNaN(n)||isNaN(r)){o.forEach(x=>x.innerText="Enter values");return}
 
 let din=0.005*Math.pow(92,((36-n)/39)),
 dmm=0.127*Math.pow(92,((36-n)/39)),
@@ -179,13 +355,13 @@ amm=Math.PI/4*dmm*dmm,
 rft=0.3048e9*r/(25.4*25.4*ain),
 rm=1e9*r/amm;
 
-o[0].value=din.toFixed(4);
-o[1].value=dmm.toFixed(4);
-o[2].value=rft.toFixed(4);
-o[3].value=amil.toFixed(4);
-o[4].value=rm.toFixed(4);
-o[5].value=ain.toFixed(4);
-o[6].value=amm.toFixed(4);
+o[0].innerText=din.toFixed(4);
+o[1].innerText=dmm.toFixed(4);
+o[2].innerText=rft.toFixed(4);
+o[3].innerText=amil.toFixed(4);
+o[4].innerText=rm.toFixed(4);
+o[5].innerText=ain.toFixed(4);
+o[6].innerText=amm.toFixed(4);
 };
 </script>
 
