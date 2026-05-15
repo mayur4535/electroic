@@ -1,141 +1,324 @@
-<script>
-		function Compute(form) {
-			with(Math) {
-				var MEGA = 1000000;
-				var KILO = 1000;
-				var V = Number(form.V.value);
-				var L = Number(form.L.value) / MEGA;
-				var Isat = Number(form.Isat.value);
-				var Precision = 3;
-				Tonmax = Isat * L / V;
-				Fmin = 1 / (2 * Tonmax);
-				Pmax = V * Isat / sqrt(6);
-				Esat = Isat * Isat * L / 2;
-				Tonmax *= MEGA;
-				Fmin /= KILO;
-				Esat *= MEGA;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-				form.Tonmax.value = Tonmax.toFixed(Precision);
-				form.Fmin.value = Fmin.toFixed(Precision);
-				form.Pmax.value = Pmax.toFixed(Precision);
-				form.Esat.value = Esat.toFixed(Precision);
-			}
-		}
-	</script>
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#inductor-saturation-calc,
+#inductor-saturation-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+body{
+  background:#f6f8fb;
+  padding:12px;
 }
 
-body { 
-  background: ; 
+#inductor-saturation-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
+
+#inductor-saturation-calc .calc-grid{
+  display:grid;
+  gap:15px;
+}
+
+#inductor-saturation-calc .calc-label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:7px;
+}
+
+#inductor-saturation-calc .calc-row{
+  width:100%;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+#inductor-saturation-calc input{
+  flex:1;
+  min-width:0;
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  color:#111827;
+  background:#fff;
+  outline:none;
+}
+
+#inductor-saturation-calc .unit-box{
+  flex:0 0 82px;
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fafafa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:700;
+  color:#111827;
+}
+
+#inductor-saturation-calc input:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#inductor-saturation-calc button{
+  width:100%;
+  height:45px;
+  margin-top:24px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#inductor-saturation-calc .result-title{
+  margin-top:30px;
+  margin-bottom:14px;
+  font-size:14px;
+  font-weight:800;
+  color:#a7afbd;
+  letter-spacing:.5px;
+}
+
+#inductor-saturation-calc .result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+#inductor-saturation-calc .result-card{
+  min-height:64px;
+  padding:14px;
+  border-radius:9px;
+}
+
+#inductor-saturation-calc .result-card:nth-child(1){
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+#inductor-saturation-calc .result-card:nth-child(1) .result-label,
+#inductor-saturation-calc .result-card:nth-child(1) .result-value{
+  color:#2563eb;
+}
+
+#inductor-saturation-calc .result-card:nth-child(2){
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+}
+#inductor-saturation-calc .result-card:nth-child(2) .result-label,
+#inductor-saturation-calc .result-card:nth-child(2) .result-value{
+  color:#059669;
+}
+
+#inductor-saturation-calc .result-card:nth-child(3){
+  background:#f5f3ff;
+  border:1px solid #ddd6fe;
+}
+#inductor-saturation-calc .result-card:nth-child(3) .result-label,
+#inductor-saturation-calc .result-card:nth-child(3) .result-value{
+  color:#7c3aed;
+}
+
+#inductor-saturation-calc .result-card:nth-child(4){
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+}
+#inductor-saturation-calc .result-card:nth-child(4) .result-label,
+#inductor-saturation-calc .result-card:nth-child(4) .result-value{
+  color:#ea580c;
+}
+
+#inductor-saturation-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+#inductor-saturation-calc .result-value{
+  font-size:16px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+#inductor-saturation-calc .formula{
+  margin-top:18px;
+  padding:14px;
+  border-radius:9px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  font-size:14px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+@media(max-width:600px){
+  body{padding:10px}
+
+  #inductor-saturation-calc{
+    padding:16px;
   }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
+
+  #inductor-saturation-calc .calc-row{
+    gap:7px;
   }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
+  #inductor-saturation-calc .unit-box{
+    flex:0 0 72px;
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+    font-size:15px;
   }
+
+  #inductor-saturation-calc input{
+    font-size:15px;
+    padding:0 10px;
+  }
+
+  #inductor-saturation-calc .result-grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  #inductor-saturation-calc .result-card{
+    padding:12px 10px;
+  }
+
+  #inductor-saturation-calc .result-value{
+    font-size:14px;
+  }
+}
 </style>
+</head>
 
+<body>
 
+<div id="inductor-saturation-calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+  <div class="calc-grid">
 
+    <div>
+      <label class="calc-label">Voltage Across Inductor</label>
+      <div class="calc-row">
+        <input type="number" id="V">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<form method="POST" name="ParamForm" action="">
-						
+    <div>
+      <label class="calc-label">Inductance</label>
+      <div class="calc-row">
+        <input type="number" id="L">
+        <div class="unit-box">µH</div>
+      </div>
+    </div>
 
-<label for="r2" style="font-size:55;" >Voltage </label><font face="Arial" size="6">(Across Ind.)  </font><input  name="V"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:50px;"></h1>
-<label for="r2" style="font-size:55;" >Inductance</label><font face="Arial" size="6">  </font><input  name="L"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&micro;H</label>
-<h1 style="font-size:50px;"></h1>
-<label for="r2" style="font-size:55;" >I<sub>SAT</sub></label><font face="Arial" size="6"> (Satu. current of ind.)  </font><input  name="Isat"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-<h1 style="font-size:30;"></h1>
-</fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="Button" value="CALCULATE" onClick="Compute(document.ParamForm)"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+    <div>
+      <label class="calc-label">I<sub>SAT</sub> Saturation Current</label>
+      <div class="calc-row">
+        <input type="number" id="Isat">
+        <div class="unit-box">A</div>
+      </div>
+    </div>
 
+  </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <button onclick="computeInductor()">Calculate</button>
 
+  <div class="result-title">RESULTS</div>
 
-<h3>Outputs</h3></div></legend>
-<label for="r2" style="font-size:55;" >T<sub>On</sub></label><font face="Arial" size="6"> (Max Time On)  </font><input  name="Tonmax"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:45px; height:69;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&micro;sec</label>						
-<h1 style="font-size:35px;"></h1>							
-<label for="r2" style="font-size:55;" >Frequency</label><font face="Arial" size="6"> (Min)  </font><input name="Fmin"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:45px; height:69;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">KHz</label>						
-<h1 style="font-size:50px;"></h1>								
-<label for="r2" style="font-size:55;" >Power</label><font face="Arial" size="6"> (Max)  </font><input name="Pmax"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:45px; height:69;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>						
-<h1 style="font-size:50px;"></h1>							
-<label for="r2" style="font-size:55;" >Enerfy</label><font face="Arial" size="6"> (saturation)  </font><input name="Esat"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:45px; height:69;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&micro;J</label>						
-<h1 style="font-size:30;"></h1>								
-							
-							
-					</form>
+  <div class="result-grid">
 
+    <div class="result-card">
+      <div class="result-label">T On Max</div>
+      <div class="result-value"><span id="Tonmax">-</span> µsec</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-label">Frequency Min</div>
+      <div class="result-value"><span id="Fmin">-</span> KHz</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-label">Power Max</div>
+      <div class="result-value"><span id="Pmax">-</span> W</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-label">Energy Saturation</div>
+      <div class="result-value"><span id="Esat">-</span> µJ</div>
+    </div>
+
+  </div>
+
+  <div class="formula">
+    Tonmax = Isat × L / V<br>
+    Fmin = 1 / (2 × Tonmax)<br>
+    Pmax = V × Isat / √6<br>
+    Esat = Isat² × L / 2
+  </div>
+
+</div>
+
+<script>
+function computeInductor(){
+  const MEGA = 1000000;
+  const KILO = 1000;
+
+  let V = Number(document.getElementById("V").value);
+  let L = Number(document.getElementById("L").value) / MEGA;
+  let Isat = Number(document.getElementById("Isat").value);
+  let Precision = 3;
+
+  let outputs = ["Tonmax","Fmin","Pmax","Esat"];
+
+  if(!V || !L || !Isat){
+    outputs.forEach(id => document.getElementById(id).innerText = "Enter values");
+    return;
+  }
+
+  let Tonmax = Isat * L / V;
+  let Fmin = 1 / (2 * Tonmax);
+  let Pmax = V * Isat / Math.sqrt(6);
+  let Esat = Isat * Isat * L / 2;
+
+  Tonmax *= MEGA;
+  Fmin /= KILO;
+  Esat *= MEGA;
+
+  document.getElementById("Tonmax").innerText = Tonmax.toFixed(Precision);
+  document.getElementById("Fmin").innerText = Fmin.toFixed(Precision);
+  document.getElementById("Pmax").innerText = Pmax.toFixed(Precision);
+  document.getElementById("Esat").innerText = Esat.toFixed(Precision);
+}
+</script>
+
+</body>
+</html>
