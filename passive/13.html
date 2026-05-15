@@ -1,182 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#capacitor-energy-calc,*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f4f7fb;padding:10px}
+#capacitor-energy-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:12px}
+.calc-label{display:block;font-size:13px;font-weight:700;color:#344054;margin-bottom:6px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select,.unit-box{
+  width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;
+  padding:0 10px;font-size:14px;background:#fff;text-align:center;outline:none;
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{display:flex;align-items:center;justify-content:center;font-weight:900;color:#111827}
+.unit-select{width:82px;min-width:82px;font-size:12px;font-weight:800}
+button{
+  width:100%;height:45px;margin-top:22px;border:0;border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);color:#fff;
+  font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 7px 16px rgba(255,91,0,.22)
 }
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.result-title{margin-top:26px;margin-bottom:12px;font-size:13px;font-weight:900;color:#98a2b3;letter-spacing:.8px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result-card{padding:13px;border-radius:8px}
+.blue{background:#eef5ff;border:1px solid #bcd7ff}
+.green{background:#ecfdf5;border:1px solid #a7f3d0}
+.result-label{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:8px}
+.blue .result-label,.blue .result-value{color:#2563eb}
+.green .result-label,.green .result-value{color:#059669}
+.result-value{font-size:15px;font-weight:900}
+.formula-box{margin-top:14px;padding:14px;border-radius:9px;border:1px solid #e5e7eb;background:#f9fafb;color:#4b5563;font-size:13px;font-weight:700;line-height:1.6}
+
+@media(max-width:600px){
+  body{padding:0}
+  .calc-row{grid-template-columns:minmax(0,1fr) 72px;gap:7px}
+  .unit-select,.unit-box{width:72px;min-width:72px;font-size:12px}
+  .result-grid{grid-template-columns:1fr 1fr}
 }
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
 
+<body>
 
+<div id="capacitor-energy-calc">
+<form id="tool">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+  <div class="calc-grid">
 
+    <div>
+      <label class="calc-label">VIN</label>
+      <div class="calc-row">
+        <input id="Vc" type="number" step="any">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
+    <div>
+      <label class="calc-label">Capacitance</label>
+      <div class="calc-row">
+        <input id="C" type="number" step="any">
+        <select id="Cunit" class="unit-select">
+          <option value="1e-6" selected>µF</option>
+          <option value="1e-9">nF</option>
+          <option value="1e-12">pF</option>
+          <option value="1e-3">mF</option>
+          <option value="1">F</option>
+        </select>
+      </div>
+    </div>
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+    <div>
+      <label class="calc-label">Resistance (Series)</label>
+      <div class="calc-row">
+        <input id="R" type="number" step="any">
+        <select id="Runit" class="unit-select">
+          <option value="1" selected>Ω</option>
+          <option value="1000">kΩ</option>
+          <option value="1000000">MΩ</option>
+        </select>
+      </div>
+    </div>
 
+  </div>
+
+  <button type="button" id="tool_submit">Calculate</button>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue">
+      <div class="result-label">Energy</div>
+      <div class="result-value"><span id="energyOut">-</span> J</div>
+    </div>
+
+    <div class="result-card green">
+      <div class="result-label">Time Constant</div>
+      <div class="result-value"><span id="timeOut">-</span> Sec</div>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    Energy = 0.5 × C × V²<br>
+    Time Constant = R × C
+  </div>
+
+</form>
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >V<sub>IN</sub></label><font face="Arial" size="7">  </font><input  id="Vc"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
 
-</div>
-</div>
-<h1 style="font-size:35px;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<script>
+document.getElementById("tool_submit").addEventListener("click", function(){
+  var Precision = 3;
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Capacitance</label><font face="Arial" size="7">  </font><input  id="C"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">µF</label>
+  var Vc = Number(document.getElementById("Vc").value);
+  var C = Number(document.getElementById("C").value) * Number(document.getElementById("Cunit").value);
+  var R = Number(document.getElementById("R").value) * Number(document.getElementById("Runit").value);
 
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  var timeConstant = R * C;
+  var energy = C * Vc * Vc * 0.5;
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Resistance</label><font face="Arial" size="6"> (Series) </font><input  id="R"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-
-
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12">
-
-<div class="col-sm-4">
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Outputs</h3></div></legend>
-
-
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Energy</label><font face="Arial" size="7">  </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">J</label>
-
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-<h1 style="font-size:50;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Time</label><font face="Arial" size="7"> (Constant) </font><input  id="tool_output2"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Sec</label>
-
-
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<script type="text/javascript">
-!function(t){"use strict";var o={calculate:function(){var o=Math.pow(10, -6),u=3,l=Number(t("#Vc").val()),e=Number(t("#C").val())*o,i=Number(t("#R").val()),a=i*e,c=(e)*l*l*0.5;t("#tool_output1").val(c.toPrecision(u)),t("#tool_output2").val(a.toPrecision(u))}};t("#tool :input").keyup(function(){var o=!1;t("#tool :input").each(function(){""==t(this).val()&&(o=!0)}),o?t("#tool_submit").attr("disabled","disabled"):t("#tool_submit").removeAttr("disabled")}),t("#tool_submit").on("click",function(t){t.preventDefault(),o.calculate()})}(jQuery);
-</script></p>
-<p>
-
+  document.getElementById("energyOut").innerText = energy.toPrecision(Precision);
+  document.getElementById("timeOut").innerText = timeConstant.toPrecision(Precision);
+});
+</script>
 
 </body>
 </html>
