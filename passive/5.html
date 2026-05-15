@@ -1,149 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script>
-	function calculate(zen) {
-		vinMin = parseFloat(zen.VinMin.value)
-		vinMax = parseFloat(zen.VinMax.value)
-		vOut = parseFloat(zen.Vout.value)
-		IL = parseFloat(zen.Iload.value)
-		if ((vOut + 0.8) > vinMin) {
-			
-			return
-		}
-		R = round(1000 * ((vinMin - vOut) / (IL + 10)))
-		Rp = round(Math.pow((vinMax - vOut), 2) / R)
-		zen.R.value = R;
-		zen.Rp.value = Rp;
-		//zen.res.value = "  " + R + " Ohms " +", "+ Rp + " Watts"
-		It = 1000 * ((vinMax - vOut) / R)
-		Zp = round((It * vOut) / 1000)
-		zen.vOut.value = vOut;
-		zen.Zp.value = Zp;
-		//zen.zen.value="  " + vOut + " Volts " +", "+ Zp + " Watts"
-	}
-	function round(n) {
-		return parseInt((n * 100) + 0.5) / 100
-	}
-</script>
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#vr-current-limit-calc,
+#vr-current-limit-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+body{
+  background:#f4f7fb;
+  padding:10px;
 }
 
-body { 
-  background: ; 
+#vr-current-limit-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  padding-top:14px;
+  background:transparent;
+  border:none;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
+
+#vr-current-limit-calc .calc-grid{
+  display:grid;
+  gap:12px;
+}
+
+#vr-current-limit-calc .calc-label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  color:#344054;
+  margin-bottom:6px;
+}
+
+#vr-current-limit-calc .calc-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  align-items:center;
+}
+
+#vr-current-limit-calc input{
+  width:100%;
+  min-width:0;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:14px;
+  color:#111827;
+  background:#fff;
+  outline:none;
+}
+
+#vr-current-limit-calc input:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#vr-current-limit-calc .unit-box{
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:800;
+  color:#111827;
+}
+
+#vr-current-limit-calc button{
+  width:100%;
+  height:45px;
+  margin-top:22px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:14px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#vr-current-limit-calc .result-title{
+  margin-top:26px;
+  margin-bottom:12px;
+  font-size:13px;
+  font-weight:900;
+  color:#98a2b3;
+  letter-spacing:.8px;
+}
+
+#vr-current-limit-calc .result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+#vr-current-limit-calc .result-card{
+  min-height:64px;
+  padding:13px;
+  border-radius:8px;
+}
+
+#vr-current-limit-calc .blue{
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+
+#vr-current-limit-calc .green{
+  background:#ecfdf5;
+  border:1px solid #a7f3d0;
+}
+
+#vr-current-limit-calc .purple{
+  background:#f5f3ff;
+  border:1px solid #ddd6fe;
+}
+
+#vr-current-limit-calc .orange{
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+}
+
+#vr-current-limit-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+#vr-current-limit-calc .blue .result-label,
+#vr-current-limit-calc .blue .result-value{
+  color:#2563eb;
+}
+
+#vr-current-limit-calc .green .result-label,
+#vr-current-limit-calc .green .result-value{
+  color:#059669;
+}
+
+#vr-current-limit-calc .purple .result-label,
+#vr-current-limit-calc .purple .result-value{
+  color:#7c3aed;
+}
+
+#vr-current-limit-calc .orange .result-label,
+#vr-current-limit-calc .orange .result-value{
+  color:#ea580c;
+}
+
+#vr-current-limit-calc .result-value{
+  font-size:15px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+#vr-current-limit-calc .formula-box{
+  margin-top:14px;
+  padding:14px;
+  border-radius:9px;
+  border:1px solid #e5e7eb;
+  background:#f9fafb;
+  color:#4b5563;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.6;
+}
+
+@media(max-width:600px){
+  body{
+    padding:0;
   }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
+
+  #vr-current-limit-calc{
+    padding-top:12px;
   }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
+  #vr-current-limit-calc .calc-row{
+    grid-template-columns:minmax(0,1fr) 72px;
+    gap:7px;
   }
+
+  #vr-current-limit-calc .unit-box{
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+  }
+
+  #vr-current-limit-calc input{
+    font-size:14px;
+    padding:0 10px;
+  }
+
+  #vr-current-limit-calc .result-grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  #vr-current-limit-calc .result-card{
+    padding:12px 10px;
+  }
+
+  #vr-current-limit-calc .result-value{
+    font-size:14px;
+  }
+}
 </style>
+</head>
 
+<body>
 
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+<div id="vr-current-limit-calc">
 
   <form name="form" id="form">
-	
-	 
-<label for="r2" style="font-size:55;" >V<sub>IN</sub></label><font face="Arial" size="6"> (MAX) </font><input  name="VinMax"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-<h1 style="font-size:35px;"></h1>
-<label for="r2" style="font-size:55;" >In<sub>slet</sub></label><font face="Arial" size="6"> (min 6) </font><input  name="VinMin"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-<h1 style="font-size:35;"></h1>
-<label for="r2" style="font-size:55;" >V<sub>Out</sub></label><font face="Arial" size="6"> (Max 54V)  </font><input name="Vout"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:35;"></h1>
-<label for="r2" style="font-size:55;" >Load</sub></label><font face="Arial" size="6"> (Max current)  </font><input name="Iload"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:30;"></h1>
-</fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input name="button" type="button"  onclick="calculate(this.form)"  value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
 
+    <div class="calc-grid">
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+      <div>
+        <label class="calc-label">Input Voltage Max</label>
+        <div class="calc-row">
+          <input name="VinMax" type="number" step="any">
+          <div class="unit-box">V</div>
+        </div>
+      </div>
 
+      <div>
+        <label class="calc-label">Input Voltage Min</label>
+        <div class="calc-row">
+          <input name="VinMin" type="number" step="any">
+          <div class="unit-box">V</div>
+        </div>
+      </div>
 
-<h3>Outputs</h3></div></legend>
+      <div>
+        <label class="calc-label">Output Voltage</label>
+        <div class="calc-row">
+          <input name="Vout" type="number" step="any">
+          <div class="unit-box">V</div>
+        </div>
+      </div>
 
-<label for="r2" style="font-size:55;" >R</label><font face="Arial" size="6"> (Current limiting resistor)  </font><input  name="R"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>		
-<h1 style="font-size:50;"></h1>		
-<label for="r2" style="font-size:55;" >Power rating</label><font face="Arial" size="6">   </font><input  name="Rp"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>		
-<h1 style="font-size:20;color:white;">5</h1>	
-<hr></hr>
-<label for="r2" style="font-size:55;" >Zener diode</label><font face="Arial" size="6">   </font><input  name="vOut"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>		
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >Power rating</label><font face="Arial" size="6">   </font><input  name="Zp"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>	
-	   
-<h1 style="font-size:30;"></h1>	   
-		
-		
-		
+      <div>
+        <label class="calc-label">Load Current</label>
+        <div class="calc-row">
+          <input name="Iload" type="number" step="any">
+          <div class="unit-box">mA</div>
+        </div>
+      </div>
+
+    </div>
+
+    <button type="button" onclick="calculate(this.form)">Calculate</button>
+
+    <div class="result-title">RESULTS</div>
+
+    <div class="result-grid">
+
+      <div class="result-card blue">
+        <div class="result-label">Resistor</div>
+        <div class="result-value"><span id="Rout">-</span> Ω</div>
+      </div>
+
+      <div class="result-card green">
+        <div class="result-label">Resistor Power</div>
+        <div class="result-value"><span id="Rpout">-</span> W</div>
+      </div>
+
+      <div class="result-card purple">
+        <div class="result-label">Regulator Voltage</div>
+        <div class="result-value"><span id="VoutResult">-</span> V</div>
+      </div>
+
+      <div class="result-card orange">
+        <div class="result-label">Regulator Power</div>
+        <div class="result-value"><span id="Zpout">-</span> W</div>
+      </div>
+
+    </div>
+
+    <div class="formula-box">
+      R = 1000 × ((VinMin − Vout) / (IL + 10))<br>
+      Rp = (VinMax − Vout)² / R<br>
+      It = 1000 × ((VinMax − Vout) / R)<br>
+      Regulator Power = (It × Vout) / 1000
+    </div>
+
   </form>
-                    
-              
+
+</div>
+
+<script>
+function calculate(zen) {
+  vinMin = parseFloat(zen.VinMin.value)
+  vinMax = parseFloat(zen.VinMax.value)
+  vOut = parseFloat(zen.Vout.value)
+  IL = parseFloat(zen.Iload.value)
+  if ((vOut + 0.8) > vinMin) {
+    return
+  }
+  R = round(1000 * ((vinMin - vOut) / (IL + 10)))
+  Rp = round(Math.pow((vinMax - vOut), 2) / R)
+  It = 1000 * ((vinMax - vOut) / R)
+  Zp = round((It * vOut) / 1000)
+
+  document.getElementById("Rout").innerText = R;
+  document.getElementById("Rpout").innerText = Rp;
+  document.getElementById("VoutResult").innerText = vOut;
+  document.getElementById("Zpout").innerText = Zp;
+}
+
+function round(n) {
+  return parseInt((n * 100) + 0.5) / 100
+}
+</script>
+
+</body>
+</html>
