@@ -1,154 +1,344 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
-:root{--f:16px;--h:48px;--g:12px}
-body{background:#f4f7fb;padding:20px}
-.box{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.08);overflow:hidden}
-.grid{display:grid;gap:var(--g)}
-.label{font-size:14px;font-weight:bold;margin-bottom:5px}
-.row{display:flex;gap:8px;width:100%}
-.row input,.row select,.unit-box{height:var(--h);border:1px solid #ccc;border-radius:8px;padding:8px;font-size:var(--f);font-weight:bold;display:flex;align-items:center}
-.row input{flex:1;min-width:0}
-.row select,.unit-box{width:90px;min-width:90px}
-.unit-box{justify-content:center;background:#fafafa}
-button{width:100%;height:var(--h);margin-top:var(--g);background:#008000;color:#fff;border:0;border-radius:10px;font-size:var(--f);font-weight:bold;cursor:pointer}
-.result{margin-top:var(--g);display:grid;gap:var(--g)}
-.formula{margin-top:15px;font-size:14px;font-weight:bold;color:#333;line-height:1.6}
+#voltage-drop-wire-calc,
+#voltage-drop-wire-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f6f8fb;
+  padding:12px;
+}
+
+#voltage-drop-wire-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+}
+
+#voltage-drop-wire-calc .calc-grid{
+  display:grid;
+  gap:15px;
+}
+
+#voltage-drop-wire-calc .calc-label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:7px;
+}
+
+#voltage-drop-wire-calc .calc-row{
+  width:100%;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+#voltage-drop-wire-calc input,
+#voltage-drop-wire-calc select{
+  flex:1;
+  min-width:0;
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  color:#111827;
+  background:#fff;
+  outline:none;
+}
+
+#voltage-drop-wire-calc .unit-box{
+  flex:0 0 82px;
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fafafa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:700;
+  color:#111827;
+}
+
+#voltage-drop-wire-calc .fixed-select{
+  flex:0 0 82px;
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  padding:0 8px;
+}
+
+#voltage-drop-wire-calc input:focus,
+#voltage-drop-wire-calc select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#voltage-drop-wire-calc button{
+  width:100%;
+  height:45px;
+  margin-top:24px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#voltage-drop-wire-calc .result-title{
+  margin-top:30px;
+  margin-bottom:14px;
+  font-size:14px;
+  font-weight:800;
+  color:#a7afbd;
+  letter-spacing:.5px;
+}
+
+#voltage-drop-wire-calc .result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+#voltage-drop-wire-calc .result-card{
+  min-height:64px;
+  padding:14px;
+  border-radius:9px;
+}
+
+#voltage-drop-wire-calc .result-card:nth-child(1){
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+#voltage-drop-wire-calc .result-card:nth-child(1) .result-label,
+#voltage-drop-wire-calc .result-card:nth-child(1) .result-value{
+  color:#2563eb;
+}
+
+#voltage-drop-wire-calc .result-card:nth-child(2){
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+}
+#voltage-drop-wire-calc .result-card:nth-child(2) .result-label,
+#voltage-drop-wire-calc .result-card:nth-child(2) .result-value{
+  color:#059669;
+}
+
+#voltage-drop-wire-calc .result-card:nth-child(3){
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+}
+#voltage-drop-wire-calc .result-card:nth-child(3) .result-label,
+#voltage-drop-wire-calc .result-card:nth-child(3) .result-value{
+  color:#ea580c;
+}
+
+#voltage-drop-wire-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+#voltage-drop-wire-calc .result-value{
+  font-size:16px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+#voltage-drop-wire-calc .formula{
+  margin-top:18px;
+  padding:14px;
+  border-radius:9px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  font-size:14px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
 @media(max-width:600px){
-body{padding:10px}
-.box{padding:16px}
-.row select,.unit-box{width:72px;min-width:72px;padding:6px;font-size:15px}
+  body{padding:10px}
+
+  #voltage-drop-wire-calc{
+    padding:16px;
+  }
+
+  #voltage-drop-wire-calc .calc-row{
+    gap:7px;
+  }
+
+  #voltage-drop-wire-calc .unit-box,
+  #voltage-drop-wire-calc .fixed-select{
+    flex:0 0 72px;
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+    font-size:15px;
+  }
+
+  #voltage-drop-wire-calc input,
+  #voltage-drop-wire-calc select{
+    font-size:15px;
+    padding:0 10px;
+  }
+
+  #voltage-drop-wire-calc .fixed-select{
+    padding:0 6px;
+  }
+
+  #voltage-drop-wire-calc .result-grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  #voltage-drop-wire-calc .result-card{
+    padding:12px 10px;
+  }
+
+  #voltage-drop-wire-calc .result-value{
+    font-size:14px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div id="voltage-drop-wire-calc">
 
-<div class="grid">
+  <div class="calc-grid">
 
-<div>
-<div class="label">Material</div>
-<div class="row">
-<select id="mat">
-<option>Select</option>
-<option>Copper</option>
-<option>Silver</option>
-<option>Gold</option>
-<option>Aluminium</option>
-<option>Tungsten</option>
-<option>Platinum</option>
-<option>Lead</option>
-<option>Graphite</option>
-<option>Nichrome</option>
-<option>Nickel</option>
-</select>
-<div class="unit-box">Type</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Material</label>
+      <div class="calc-row">
+        <select id="mat">
+          <option>Select</option>
+          <option>Copper</option>
+          <option>Silver</option>
+          <option>Gold</option>
+          <option>Aluminium</option>
+          <option>Tungsten</option>
+          <option>Platinum</option>
+          <option>Lead</option>
+          <option>Graphite</option>
+          <option>Nichrome</option>
+          <option>Nickel</option>
+        </select>
+        <div class="unit-box">Type</div>
+      </div>
+    </div>
 
-<div>
-<div class="label">Resistivity</div>
-<div class="row">
-<input id="res" readonly>
-<div class="unit-box">Ω·m</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Resistivity</label>
+      <div class="calc-row">
+        <input id="res" readonly>
+        <div class="unit-box">Ω·m</div>
+      </div>
+    </div>
 
-<div>
-<div class="label">Wire Diameter</div>
-<div class="row">
-<input id="s" placeholder="ex: 10 or 4/0">
-<select id="ssel">
-<option>AWG</option>
-<option>inch</option>
-<option>mm</option>
-</select>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Wire Diameter</label>
+      <div class="calc-row">
+        <input id="s" placeholder="ex: 10 or 4/0">
+        <select id="ssel" class="fixed-select">
+          <option>AWG</option>
+          <option>inch</option>
+          <option>mm</option>
+        </select>
+      </div>
+    </div>
 
-<div>
-<div class="label">Wire Length One Way</div>
-<div class="row">
-<input type="number" id="len">
-<select id="lsel">
-<option>feet</option>
-<option>meters</option>
-</select>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Wire Length One Way</label>
+      <div class="calc-row">
+        <input type="number" id="len">
+        <select id="lsel" class="fixed-select">
+          <option>feet</option>
+          <option>meters</option>
+        </select>
+      </div>
+    </div>
 
-<div>
-<div class="label">Current Type</div>
-<div class="row">
-<select id="phase">
-<option>DC</option>
-<option>AC Single Ø</option>
-<option selected>AC Three Ø</option>
-</select>
-<div class="unit-box">Type</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Current Type</label>
+      <div class="calc-row">
+        <select id="phase">
+          <option>DC</option>
+          <option>AC Single Ø</option>
+          <option selected>AC Three Ø</option>
+        </select>
+        <div class="unit-box">Type</div>
+      </div>
+    </div>
 
-<div>
-<div class="label">Voltage</div>
-<div class="row">
-<input type="number" id="v">
-<div class="unit-box">V</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Voltage</label>
+      <div class="calc-row">
+        <input type="number" id="v">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
-<div>
-<div class="label">Current</div>
-<div class="row">
-<input type="number" id="i">
-<div class="unit-box">A</div>
-</div>
-</div>
+    <div>
+      <label class="calc-label">Current</label>
+      <div class="calc-row">
+        <input type="number" id="i">
+        <div class="unit-box">A</div>
+      </div>
+    </div>
 
-</div>
+  </div>
 
-<button id="btn">Calculate</button>
+  <button id="btn">Calculate</button>
 
-<div class="result">
+  <div class="result-title">RESULTS</div>
 
-<div>
-<div class="label">Voltage Drop</div>
-<div class="row">
-<input id="vd" readonly>
-<div class="unit-box">V</div>
-</div>
-</div>
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="result-label">Voltage Drop</div>
+      <div class="result-value"><span id="vd">-</span> V</div>
+    </div>
 
-<div>
-<div class="label">Voltage Drop</div>
-<div class="row">
-<input id="vdp" readonly>
-<div class="unit-box">%</div>
-</div>
-</div>
+    <div class="result-card">
+      <div class="result-label">Voltage Drop</div>
+      <div class="result-value"><span id="vdp">-</span> %</div>
+    </div>
 
-<div>
-<div class="label">Resistance</div>
-<div class="row">
-<input id="r" readonly>
-<div class="unit-box">Ω</div>
-</div>
-</div>
+    <div class="result-card">
+      <div class="result-label">Resistance</div>
+      <div class="result-value"><span id="r">-</span> Ω</div>
+    </div>
+  </div>
 
-</div>
-
-<div class="formula">
-A = πd² / 4<br>
-R = 2 × ρ × Length / A<br>
-Vdrop = Current × R<br>
-For 3 Phase: Vdrop × 1.732 / 2
-</div>
+  <div class="formula">
+    A = πd² / 4<br>
+    R = 2 × ρ × Length / A<br>
+    Vdrop = Current × R<br>
+    For 3 Phase: Vdrop × 1.732 / 2
+  </div>
 
 </div>
 
@@ -195,7 +385,7 @@ let o2=document.getElementById("vdp");
 let o3=document.getElementById("r");
 
 if(n===""||isNaN(len)||isNaN(v)||isNaN(i)||isNaN(res)){
-o1.value=o2.value=o3.value="Enter values";
+o1.innerText=o2.innerText=o3.innerText="Enter values";
 return;
 }
 
@@ -210,7 +400,7 @@ else if(n==="00"||n==="2/0")n=-1;
 else n=parseFloat(n);
 
 if(isNaN(n)||n>40){
-o1.value=o2.value=o3.value="Invalid AWG";
+o1.innerText=o2.innerText=o3.innerText="Invalid AWG";
 return;
 }
 
@@ -228,7 +418,7 @@ len*=0.3048;
 }
 
 if(d<=0||len<=0||v<=0||i<=0){
-o1.value=o2.value=o3.value="Invalid";
+o1.innerText=o2.innerText=o3.innerText="Invalid";
 return;
 }
 
@@ -242,9 +432,9 @@ vd*=(1.732/2);
 
 let vdp=vd/v*100;
 
-o1.value=vd.toPrecision(6);
-o2.value=vdp.toPrecision(6);
-o3.value=r.toPrecision(6);
+o1.innerText=vd.toPrecision(6);
+o2.innerText=vdp.toPrecision(6);
+o3.innerText=r.toPrecision(6);
 
 };
 </script>
