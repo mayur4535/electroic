@@ -1,236 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+function getR(value, unit){
+  return Number(value) * Number(unit);
+}
+
+function calculateBridge(form){
+  var Precision = 6;
+
+  var Vin = Number(form.Vin.value);
+  var R1 = getR(form.R1.value, form.R1Unit.value);
+  var R2 = getR(form.R2.value, form.R2Unit.value);
+  var R3 = getR(form.R3.value, form.R3Unit.value);
+  var Rx = getR(form.Rx.value, form.RxUnit.value);
+
+  if(!Vin || !R1 || !R2 || !R3 || !Rx){
+    document.getElementById("Vout").innerText = "Enter values";
+    document.getElementById("RxBal").innerText = "Enter values";
+    document.getElementById("Status").innerText = "Enter values";
+    document.getElementById("Error").innerText = "Enter values";
+    return;
+  }
+
+  var Vout = Vin * ((Rx / (R3 + Rx)) - (R2 / (R1 + R2)));
+  var RxBalanced = (R2 * R3) / R1;
+
+  document.getElementById("Vout").innerText = Vout.toPrecision(Precision);
+  document.getElementById("RxBal").innerText = RxBalanced.toPrecision(Precision);
+  document.getElementById("Status").innerText = Math.abs(Vout) < 0.000001 ? "Balanced" : "Unbalanced";
+  document.getElementById("Error").innerText = Math.abs(Vout).toPrecision(Precision);
+}
+</script>
 
 <style>
-#wheatstone-bridge-calc,
-#wheatstone-bridge-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  margin:0;
-  background:#f4f7fb;
-  padding:10px;
-}
-
-#wheatstone-bridge-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-  background:transparent;
-  border:none;
-}
-
-#wheatstone-bridge-calc .calc-grid{
-  display:grid;
-  gap:12px;
-}
-
-#wheatstone-bridge-calc .calc-label{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  color:#344054;
-  margin-bottom:6px;
-}
-
-#wheatstone-bridge-calc .calc-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#wheatstone-bridge-calc input{
-  width:100%;
-  min-width:0;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:14px;
-  color:#111827;
-  background:#fff;
-  outline:none;
-  text-align:center;
-}
-
-#wheatstone-bridge-calc input:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#wheatstone-bridge-calc .unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:13px;
-  font-weight:800;
-  color:#111827;
-}
-
-#wheatstone-bridge-calc .button-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:22px;
-}
-
-#wheatstone-bridge-calc button{
-  width:100%;
-  height:45px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:13px;
-  font-weight:900;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#wheatstone-bridge-calc .result-title{
-  margin-top:26px;
-  margin-bottom:12px;
-  font-size:13px;
-  font-weight:900;
-  color:#98a2b3;
-  letter-spacing:.8px;
-}
-
-#wheatstone-bridge-calc .result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-#wheatstone-bridge-calc .result-card{
-  min-height:64px;
-  padding:13px;
-  border-radius:8px;
-}
-
-#wheatstone-bridge-calc .blue{
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#wheatstone-bridge-calc .green{
-  background:#ecfdf5;
-  border:1px solid #a7f3d0;
-}
-
-#wheatstone-bridge-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:8px;
-}
-
-#wheatstone-bridge-calc .blue .result-label,
-#wheatstone-bridge-calc .blue input{
-  color:#2563eb;
-}
-
-#wheatstone-bridge-calc .green .result-label,
-#wheatstone-bridge-calc .green input{
-  color:#059669;
-}
-
-#wheatstone-bridge-calc .result-card input{
-  height:auto;
-  border:0;
-  background:transparent;
-  padding:0;
-  font-size:15px;
-  font-weight:900;
-  text-align:left;
-}
-
-#wheatstone-bridge-calc .formula-box{
-  margin-top:14px;
-  padding:14px;
-  border-radius:9px;
-  border:1px solid #e5e7eb;
-  background:#f9fafb;
-  color:#4b5563;
-  font-size:13px;
-  font-weight:700;
-  line-height:1.6;
-}
-
-@media(max-width:600px){
-  body{
-    padding:0;
-  }
-
-  #wheatstone-bridge-calc{
-    padding-top:12px;
-  }
-
-  #wheatstone-bridge-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #wheatstone-bridge-calc .unit-box{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:12px;
-  }
-
-  #wheatstone-bridge-calc input{
-    font-size:14px;
-    padding:0 10px;
-  }
-
-  #wheatstone-bridge-calc .button-grid{
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-  }
-
-  #wheatstone-bridge-calc button{
-    font-size:12px;
-  }
-
-  #wheatstone-bridge-calc .result-grid{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  #wheatstone-bridge-calc .result-card{
-    padding:12px 10px;
-  }
-
-  #wheatstone-bridge-calc .result-card input{
-    font-size:14px;
-  }
-}
+#wheatstone4,*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f4f7fb;padding:10px}
+#wheatstone4{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:12px}
+.calc-label{display:block;font-size:13px;font-weight:700;color:#344054;margin-bottom:6px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:14px;background:#fff;text-align:center}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12);outline:none}
+.unit-box,select{font-weight:800;color:#111827}
+button{width:100%;height:45px;margin-top:22px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff3d00);color:#fff;font-size:14px;font-weight:900;cursor:pointer}
+.result-title{margin-top:26px;margin-bottom:12px;font-size:13px;font-weight:900;color:#98a2b3;letter-spacing:.8px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result-card{min-height:64px;padding:13px;border-radius:8px}
+.blue{background:#eef5ff;border:1px solid #bcd7ff;color:#2563eb}
+.green{background:#ecfdf5;border:1px solid #a7f3d0;color:#059669}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe;color:#7c3aed}
+.orange{background:#fff7ed;border:1px solid #fed7aa;color:#ea580c}
+.result-label{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:8px}
+.result-value{font-size:15px;font-weight:900}
+.formula-box{margin-top:14px;padding:14px;border-radius:9px;border:1px solid #e5e7eb;background:#f9fafb;color:#4b5563;font-size:13px;font-weight:700;line-height:1.6}
+@media(max-width:600px){body{padding:0}.calc-row{grid-template-columns:minmax(0,1fr) 72px}.result-grid{grid-template-columns:1fr 1fr}}
 </style>
-</head>
 
-<body>
-
-<div id="wheatstone-bridge-calc">
-
-<form method="POST" name="ParamForm">
+<div id="wheatstone4">
+<form name="WheatstoneForm">
 
   <div class="calc-grid">
-
     <div>
       <label class="calc-label">Input Voltage</label>
       <div class="calc-row">
@@ -243,7 +70,11 @@ body{
       <label class="calc-label">R1</label>
       <div class="calc-row">
         <input name="R1" type="number" step="any">
-        <div class="unit-box">Ω</div>
+        <select name="R1Unit">
+          <option value="1">Ω</option>
+          <option value="1000">kΩ</option>
+          <option value="1000000">MΩ</option>
+        </select>
       </div>
     </div>
 
@@ -251,7 +82,11 @@ body{
       <label class="calc-label">R2</label>
       <div class="calc-row">
         <input name="R2" type="number" step="any">
-        <div class="unit-box">Ω</div>
+        <select name="R2Unit">
+          <option value="1">Ω</option>
+          <option value="1000">kΩ</option>
+          <option value="1000000">MΩ</option>
+        </select>
       </div>
     </div>
 
@@ -259,84 +94,57 @@ body{
       <label class="calc-label">R3</label>
       <div class="calc-row">
         <input name="R3" type="number" step="any">
-        <div class="unit-box">Ω</div>
+        <select name="R3Unit">
+          <option value="1">Ω</option>
+          <option value="1000">kΩ</option>
+          <option value="1000000">MΩ</option>
+        </select>
       </div>
     </div>
 
+    <div>
+      <label class="calc-label">Rx / R4</label>
+      <div class="calc-row">
+        <input name="Rx" type="number" step="any">
+        <select name="RxUnit">
+          <option value="1">Ω</option>
+          <option value="1000">kΩ</option>
+          <option value="1000000">MΩ</option>
+        </select>
+      </div>
+    </div>
   </div>
 
-  <div class="result-title">INPUT / OUTPUT</div>
+  <button type="button" onclick="calculateBridge(document.WheatstoneForm)">Calculate</button>
+
+  <div class="result-title">RESULTS</div>
 
   <div class="result-grid">
-
     <div class="result-card blue">
-      <div class="result-label">Rx Resistance</div>
-      <input name="Rx" type="number" step="any" value="-">
+      <div class="result-label">Bridge Output</div>
+      <div class="result-value"><span id="Vout">-</span> V</div>
     </div>
 
     <div class="result-card green">
-      <div class="result-label">Bridge Voltage</div>
-      <input name="Vb" type="number" step="any" value="-">
+      <div class="result-label">Balanced Rx</div>
+      <div class="result-value"><span id="RxBal">-</span> Ω</div>
     </div>
 
-  </div>
+    <div class="result-card purple">
+      <div class="result-label">Bridge Status</div>
+      <div class="result-value"><span id="Status">-</span></div>
+    </div>
 
-  <div class="button-grid">
-    <button type="button" name="B1" onclick="Compute1(document.ParamForm);">
-      Calculate Vb →
-    </button>
-
-    <button type="button" name="B2" onclick="Compute2(document.ParamForm);">
-      ← Calculate Rx
-    </button>
+    <div class="result-card orange">
+      <div class="result-label">Balance Error</div>
+      <div class="result-value"><span id="Error">-</span> V</div>
+    </div>
   </div>
 
   <div class="formula-box">
-    Calculate Bridge Voltage:<br>
-    Vb = Vin × (Rx / (R3 + Rx) − R2 / (R1 + R2))<br><br>
-    Calculate Unknown Resistance:<br>
-    Rx = (R2 × R3 + R3 × (R1 + R2) × (Vb / Vin)) / (R1 − (R1 + R2) × (Vb / Vin))
+    Vout = Vin × (Rx / (R3 + Rx) − R2 / (R1 + R2))<br>
+    Balanced Rx = R2 × R3 / R1
   </div>
 
 </form>
-
 </div>
-
-<script>
-function Compute1(form) {
-	with(Math) {
-		var Precision= 3;
-		var Vb;
-		
-		var Vin= Number(form.Vin.value);
-		var R1= Number(form.R1.value);
-		var R2= Number(form.R2.value);
-		var R3= Number(form.R3.value);
-		var Rx= Number(form.Rx.value);
-
-		Vb= Vin*(Rx/(R3+Rx)- R2/(R1+R2) );
-		
-		form.Vb.value= Vb.toPrecision(Precision);
-	}
-}
-
-function Compute2(form) {
-	with(Math) {
-		var Precision= 3;
-		var Rx;
-		
-		var Vin= Number(form.Vin.value);
-		var R1= Number(form.R1.value);
-		var R2= Number(form.R2.value);
-		var R3= Number(form.R3.value);
-		var Vb= Number(form.Vb.value);
-
-		Rx= (R2*R3 + R3*(R1+R2)*(Vb/Vin)) / (R1- (R1+R2)*(Vb/Vin));
-
-		form.Rx.value= Rx.toPrecision(Precision);
-	}
-}
-</script>
-
-</body>
-</html>
