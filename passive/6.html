@@ -1,6 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+#spz-calc,
+#spz-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  margin:0;
+  background:#f4f7fb;
+  padding:10px;
+}
+
+#spz-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  padding-top:14px;
+  background:transparent;
+  border:none;
+}
+
+#spz-calc .calc-grid{
+  display:grid;
+  gap:12px;
+}
+
+#spz-calc .calc-label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  color:#344054;
+  margin-bottom:6px;
+}
+
+#spz-calc .calc-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  align-items:center;
+}
+
+#spz-calc .full-row{
+  grid-template-columns:1fr;
+}
+
+#spz-calc input,
+#spz-calc select{
+  width:100%;
+  min-width:0;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 10px;
+  font-size:14px;
+  color:#111827;
+  background:#fff;
+  outline:none;
+  text-align:center;
+  text-align-last:center;
+}
+
+#spz-calc select{
+  appearance:auto;
+  -webkit-appearance:menulist;
+}
+
+#spz-calc input:focus,
+#spz-calc select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#spz-calc .unit-select{
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  font-size:13px;
+  font-weight:800;
+  padding:0 3px;
+}
+
+#spz-calc button{
+  width:100%;
+  height:45px;
+  margin-top:22px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:14px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#spz-calc .result-title{
+  margin-top:26px;
+  margin-bottom:12px;
+  font-size:13px;
+  font-weight:900;
+  color:#98a2b3;
+  letter-spacing:.8px;
+}
+
+#spz-calc .result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+#spz-calc .result-card{
+  min-height:64px;
+  padding:13px;
+  border-radius:8px;
+}
+
+#spz-calc .blue{background:#eef5ff;border:1px solid #bcd7ff;}
+#spz-calc .green{background:#ecfdf5;border:1px solid #a7f3d0;}
+#spz-calc .purple{background:#f5f3ff;border:1px solid #ddd6fe;}
+#spz-calc .orange{background:#fff7ed;border:1px solid #fed7aa;}
+
+#spz-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+#spz-calc .blue .result-label,
+#spz-calc .blue input{color:#2563eb;}
+
+#spz-calc .green .result-label,
+#spz-calc .green input{color:#059669;}
+
+#spz-calc .purple .result-label,
+#spz-calc .purple input{color:#7c3aed;}
+
+#spz-calc .orange .result-label,
+#spz-calc .orange input{color:#ea580c;}
+
+#spz-calc .result-card input{
+  height:auto;
+  border:0;
+  background:transparent;
+  padding:0;
+  font-size:15px;
+  font-weight:900;
+  text-align:left;
+  text-align-last:left;
+}
+
+#spz-calc .formula-box{
+  margin-top:14px;
+  padding:14px;
+  border-radius:9px;
+  border:1px solid #e5e7eb;
+  background:#f9fafb;
+  color:#4b5563;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.6;
+}
+
+@media(max-width:600px){
+  body{padding:0;}
+
+  #spz-calc{
+    padding-top:12px;
+  }
+
+  #spz-calc .calc-row{
+    grid-template-columns:minmax(0,1fr) 72px;
+    gap:7px;
+  }
+
+  #spz-calc .full-row{
+    grid-template-columns:1fr;
+  }
+
+  #spz-calc .unit-select{
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+    font-size:12px;
+  }
+
+  #spz-calc input,
+  #spz-calc select{
+    font-size:14px;
+    padding:0 8px;
+  }
+
+  #spz-calc .result-grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  #spz-calc .result-card{
+    padding:12px 10px;
+  }
+
+  #spz-calc .result-card input{
+    font-size:14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="spz-calc">
+
+<form action="" method="POST" name="CalcSPZ" onsubmit="spCalculate(); return false;">
+
+  <div class="calc-grid">
+
+    <div>
+      <label class="calc-label">Select Converter</label>
+      <div class="calc-row full-row">
+        <select name="SerPar" tabindex="1" onchange="spDoText()">
+          <option value="0" selected>Series to Parallel</option>
+          <option value="1">Parallel to Series</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Resistance</label>
+      <div class="calc-row">
+        <input type="number" name="Valu1" size="20" maxlength="10" tabindex="2">
+        <select name="Mult1" tabindex="3" class="unit-select">
+          <option value="1000">KΩ</option>
+          <option value="1" selected>Ω</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Component Type</label>
+      <div class="calc-row full-row">
+        <select name="React" tabindex="4" onchange="spDoText()">
+          <option value="1" selected>Reactance</option>
+          <option value="2">Capacitance</option>
+          <option value="4">Inductance</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Reactance / Capacitance / Inductance Value</label>
+      <div class="calc-row">
+        <input type="number" name="Valu2" maxlength="10" tabindex="5">
+        <select name="Mult2" tabindex="6" class="unit-select">
+          <option value="1000">KΩ</option>
+          <option value="1" selected>Ω</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Frequency</label>
+      <div class="calc-row">
+        <input type="number" name="Valu3" size="20" maxlength="10" tabindex="7">
+        <select name="Mult3" tabindex="8" class="unit-select">
+          <option value="1000000" selected>MHz</option>
+          <option value="1000">KHz</option>
+          <option value="1">Hz</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+  <button type="button" name="Button" tabindex="9" onclick="spCalculate();">Calculate</button>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+
+    <div class="result-card blue">
+      <div class="result-label">R Series</div>
+      <input type="text" name="rSeries" readonly value="-">
+    </div>
+
+    <div class="result-card green">
+      <div class="result-label">R Parallel</div>
+      <input type="text" name="rParallel" readonly value="-">
+    </div>
+
+    <div class="result-card purple">
+      <div class="result-label">X Series</div>
+      <input type="text" name="xSeries" readonly value="-">
+    </div>
+
+    <div class="result-card orange">
+      <div class="result-label">X Parallel</div>
+      <input type="text" name="xParallel" readonly value="-">
+    </div>
+
+    <div class="result-card blue">
+      <div class="result-label">Series Component</div>
+      <input type="text" name="sComponent" readonly value="-">
+    </div>
+
+    <div class="result-card green">
+      <div class="result-label">Parallel Component</div>
+      <input type="text" name="pComponent" readonly value="-">
+    </div>
+
+    <div class="result-card purple">
+      <div class="result-label">Frequency</div>
+      <input type="text" name="frequency" readonly value="-">
+    </div>
+
+  </div>
+
+  <div class="formula-box">
+    Series to Parallel:<br>
+    Rp = Rs × (1 + Xs² / Rs²)<br>
+    Xp = Xs × (1 + Rs² / Xs²)<br><br>
+    Parallel to Series:<br>
+    Rs = (Rp × Xp²) / (Rp² + Xp²)<br>
+    Xs = (Xp × Rp²) / (Rp² + Xp²)<br><br>
+    Capacitance: Xc = -1 / (2πfC)<br>
+    Inductance: XL = 2πfL
+  </div>
+
+</form>
+
+</div>
 
 <script>
-
 function gSetRange(v, ch) {
    var pwr, sy;
    var sign = "";
@@ -47,33 +385,17 @@ function gSetRange(v, ch) {
       }
    }
 
-
-// This function sets the Select Multiplier menu with the proper
-// values as chosen by the arguments:
-// selOpts is the object of the desired Select menu.
-// ch is a string that sets the type of parameter "V" for voltage,
-// "A" for current etc. that will be displayed.
-// allowed is an 8-bit hex word with a one for each of the allowed
-// multiplier fields from giga (MSB) down to pico (LSB).
-// myDefault is an 8-bit word with only one bit set that is the
-// default position on the Select menu.
-// Note: selOpts is set as:
-// selOpts = document.nameOfForm.nameOfSelector
- 
 function gSetMultipliers(selOpts, ch, allowed, myDefault) {
    var sy, myOpt, txt, val, def;
-   var sym = "GMK mľnp";        // Symbols for the powers
-   var pow = 1e9;               // Start with 'Giga'
-   var key = 0x80;              // Bit mask that gets shifted right
-   var k = 0;                   // Symbol index
-   selOpts.length = 0;          // Clear selector
+   var sym = "GMK mľnp";
+   var pow = 1e9;
+   var key = 0x80;
+   var k = 0;
+   selOpts.length = 0;
    do {
       if (allowed & key) {
          sy = sym[k];
-         myOpt = new Option(sy + ch,             // text property
-                             pow,                // value Property
-                             (myDefault & key),  // set default
-                             (myDefault & key)); // selected
+         myOpt = new Option(sy + ch, pow, (myDefault & key), (myDefault & key));
          selOpts[selOpts.length] = myOpt;
          }
       pow = pow/1000;
@@ -89,6 +411,7 @@ function gGetPopupSelected(theControl) {
 function gSetPopupSelected(theControl, theSelected) {
     theControl.selectedIndex = theSelected;
    }
+
 function spzInit() {
    gSetMultipliers(document.CalcSPZ.Mult1.options, "\u03a9 series", 0x30, 0x10);
    gSetMultipliers(document.CalcSPZ.Mult2.options, "\u03a9 series", 0x30, 0x10);
@@ -98,7 +421,6 @@ function spzInit() {
 function spzHelp() {
    var w = window.open ("Help_SPZ.html", "help", "width = 400, height=350, status=yes, resizable=yes");
    }
-
 
 function spDoText() {
    var theSelected = 0x10;
@@ -122,7 +444,7 @@ function spDoText() {
       gSetMultipliers (opt2, "F" + sORp, 0x1F, 0x04);
       break;
       case 4:
-      gSetMultipliers (opt2, "H" + sORp, 0x1C, 0x08); /////ffffffff///////
+      gSetMultipliers (opt2, "H" + sORp, 0x1C, 0x08);
       break;
    }
 }
@@ -146,7 +468,7 @@ function display(rs, xs, sComp, f, rp, xp, pComp) {
       document.CalcSPZ.sComponent.value = m;
       m = gSetRange(pComp, comp);
       document.CalcSPZ.pComponent.value = m;
-      m = gSetRange(f, "Hz");    ///////fwrwr//////
+      m = gSetRange(f, "Hz");
       document.CalcSPZ.frequency.value = m;
       }
    else {
@@ -157,27 +479,26 @@ function display(rs, xs, sComp, f, rp, xp, pComp) {
       }
    }
 
-// Convert Parallel to Series Impedance
 function psCalc(unit, rp, valu, f) {
    var xp, rs, xs, pComp, sComp, denom;
    var pi2 = 2 * Math.PI;
    switch (unit) {
-      case 1:                   // Reactance
+      case 1:
          xp = valu;
-         if (f != 0) {          // If a frequency has been specified
-            if (xp >= 0) {       // Solve for Xs is zero or inductive
+         if (f != 0) {
+            if (xp >= 0) {
                pComp = xp/(pi2 * f);
                }
-            else {              // Solve for Xs capacitive
+            else {
                pComp = -1/(pi2 * f * xp);
                }
             }
          break;
-      case 2:                   // Capacitance
+      case 2:
          pComp = valu;
          xp = -1/(pi2 * f * valu);
          break;
-      case 4:                   // Inductance
+      case 4:
          pComp = valu;
          xp = (pi2 * f * valu);
          break;
@@ -185,49 +506,48 @@ function psCalc(unit, rp, valu, f) {
    denom = (rp * rp) + (xp * xp);
    rs = (rp * xp * xp)/denom;
    xs = (xp * rp * rp)/denom;
-   if (f != 0) {          // If a frequency has been specified
-      if (xp >= 0) {      // Solve for Xs is zero or inductive
+   if (f != 0) {
+      if (xp >= 0) {
          sComp = xs/(pi2 * f);
          }
-      else {              // Solve for Xs capacitive
+      else {
          sComp = -1/(pi2 * f * xs);
          }
       }
    display(rs, xs, sComp, f, rp, xp, pComp);
   }
 
-// Convert Series to Parallel Impedance
 function spCalc(unit, rs, valu, f) {
    var xs, rp, xp, sComp, pComp;
    var pi2 = 2 * Math.PI;
    switch (unit) {
-      case 1:                   // Reactance
+      case 1:
          xs = valu;
-         if (f != 0) {          // If a frequency has been specified
-            if (xs >= 0) {       // Solve for Xs is zero or inductive
+         if (f != 0) {
+            if (xs >= 0) {
                sComp = xs/(pi2 * f);
                }
-            else {              // Solve for Xs capacitive
+            else {
                sComp = -1/(pi2 * f * xs);
                }
             }
          break;
-      case 2:                   // Capacitance
+      case 2:
          sComp = valu;
          xs = -1/(pi2 * f * valu);
          break;
-      case 4:                   // Inductance
+      case 4:
          sComp = valu;
          xs = (pi2 * f * valu);
          break;
       }
    rp = rs * (1 + (xs * xs)/(rs * rs));
    xp = xs * (1 + (rs * rs)/(xs * xs));
-   if (f != 0) {          // If a frequency has been specified
-      if (xs >= 0) {       // Solve for Xs is zero or inductive
+   if (f != 0) {
+      if (xs >= 0) {
          pComp = xp/(pi2 * f);
          }
-      else {              // Solve for Xs capacitive
+      else {
          pComp = -1/(pi2 * f * xp);
          }
       }
@@ -235,14 +555,14 @@ function spCalc(unit, rs, valu, f) {
   }
 
 function spCalculate() {
-   var sp = Number(document.CalcSPZ.SerPar.value);    // Series-Parallel Selector
-   var unit = Number(document.CalcSPZ.React.value);   // Reactance-C-L Selector
-   var mult1 = Number(document.CalcSPZ.Mult1.value);  // Resistance Multiplier
-   var mult2 = Number(document.CalcSPZ.Mult2.value);  // Reactance Multiplier
-   var mult3 = Number(document.CalcSPZ.Mult3.value);  // Frequency Multiplier
-   var valu1 = Number(document.CalcSPZ.Valu1.value);  // Resistance Text Field
-   var valu2 = Number(document.CalcSPZ.Valu2.value);  // Reactance-C-L Text Field
-   var valu3 = Number(document.CalcSPZ.Valu3.value);  // Frequency Text Field
+   var sp = Number(document.CalcSPZ.SerPar.value);
+   var unit = Number(document.CalcSPZ.React.value);
+   var mult1 = Number(document.CalcSPZ.Mult1.value);
+   var mult2 = Number(document.CalcSPZ.Mult2.value);
+   var mult3 = Number(document.CalcSPZ.Mult3.value);
+   var valu1 = Number(document.CalcSPZ.Valu1.value);
+   var valu2 = Number(document.CalcSPZ.Valu2.value);
+   var valu3 = Number(document.CalcSPZ.Valu3.value);
      if ((unit != 1) && (valu3 == 0)) {
       ;
       }
@@ -262,201 +582,11 @@ function spCalculate() {
       }
    }
 
+document.addEventListener("DOMContentLoaded", function(){
+  spzInit();
+  spDoText();
+});
 </script>
 
-
-<script>
-	function calculate(zen) {
-		vinMin = parseFloat(zen.VinMin.value)
-		vinMax = parseFloat(zen.VinMax.value)
-		vOut = parseFloat(zen.Vout.value)
-		IL = parseFloat(zen.Iload.value)
-		if ((vOut + 0.8) > vinMin) {
-			
-			return
-		}
-		R = round(1000 * ((vinMin - vOut) / (IL + 10)))
-		Rp = round(Math.pow((vinMax - vOut), 2) / R)
-		zen.R.value = R;
-		zen.Rp.value = Rp;
-		//zen.res.value = "  " + R + " Ohms " +", "+ Rp + " Watts"
-		It = 1000 * ((vinMax - vOut) / R)
-		Zp = round((It * vOut) / 1000)
-		zen.vOut.value = vOut;
-		zen.Zp.value = Zp;
-		//zen.zen.value="  " + vOut + " Volts " +", "+ Zp + " Watts"
-	}
-	function round(n) {
-		return parseInt((n * 100) + 0.5) / 100
-	}
-</script>
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-
-<form action="" method="POST" name="CalcSPZ" onsubmit="spCalculate(); return false;">
-<label for="r2" style="font-size:55;" >Select<font face="Arial" size="6"> (converter) </font></label>
-<select name="SerPar" tabindex="1" onchange="spDoText()" style="padding: 5px ;  position: absolute;right: 10px; height:85; font-size:50px;margin:8px 0;width:430px;border-radius:4px; border:3px solid #aaa;">   
-
-               <option value="0" selected="">Series to Parallel
-               </option><option value="1">Parallel to Series
-            </option></select>
-
-<h1 style="font-size:50;"></h1>
-<label for="r2" style="font-size:55;" >Resistance<font face="Arial" size="6">  </font></label><input type="number" name="Valu1"  size="20" maxlength="10" tabindex="2"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 165px;"class="form-control"  />
-<select name="Mult1" tabindex="3" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px;  height:85px; border:3px solid #aaa;"><option value="1000">KΩ</option><option value="1" selected=""> Ω</option></select>
-
-<h1 style="font-size:50;"></h1>
-
-<select name="React" tabindex="4" onchange="spDoText()" style="padding: 5px ;  font-size:58px;margin:8px 0;width:430px;border-radius:4px; height:85px; border:3px solid #aaa;">
-
-               <option value="1" selected="">Reactance
-               </option><option value="2">Capacitance
-               </option><option value="4">Inductance
-            </option></select>
-<input type="number" name="Valu2"  maxlength="10" tabindex="5"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 165px;"class="form-control"  />
-
-<select name="Mult2" tabindex="6" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; height:85px; border:3px solid #aaa;"><option value="1000">KΩ</option><option value="1" selected=""> Ω</option></select>
-
-
-<h1 style="font-size:1;"></h1>
-
-<label for="r2" style="font-size:55;" >Frequency<font face="Arial" size="6">  </font></label><input type="number" name="Valu3"  size="20" maxlength="10" tabindex="7"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 165px;"class="form-control"  />
-<select name="Mult3" tabindex="8" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; height:85px; border:3px solid #aaa;">
-
-            <option value="1000000" selected="">MHz</option><option value="1000">KHz</option><option value="1"> Hz</option></select>
-
-
-<h1 style="font-size:80;"></h1>
-
-</fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" name="Button" value="CALCULATE" tabindex="9" onclick="spCalculate();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-
-<label for="r2" style="font-size:55;" >R
-                     Series</label><font face="Arial" size="6"> </font><input type="text" name="rSeries"  size="20" readonly=""  class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="text" />	
-
-
-<h1 style="font-size:50;"></h1>
-
-<label for="r2" style="font-size:55;" >R
-                     Parallel</label><font face="Arial" size="6"> </font><input type="text" name="rParallel" value="" size="20" readonly=""  class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="text" />	
-
-
-<h1 style="font-size:50;"></h1>
-
-<label for="r2" style="font-size:55;" >X
-                     Series</label><font face="Arial" size="6"> </font><input type="text" name="xSeries" value="" size="20" readonly=""  class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="text" />	
-
-<h1 style="font-size:50;"></h1>
-
-<label for="r2" style="font-size:55;" >X
-                     Parallel</label><font face="Arial" size="6"> </font><input type="text" name="xParallel" value="" size="20" readonly=""  class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="text" />	
-
-
-<h1 style="font-size:50;"></h1>
-
-<label for="r2" style="font-size:55;" >Series</label><font face="Arial" size="6"> (Component)  </font><input type="text" name="sComponent" value="" size="20" readonly=""  class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="text" />
-
-
-<h1 style="font-size:50;"></h1>
-
-<label for="r2" style="font-size:55;" >Parallel </label><font face="Arial" size="6">(Component) </font><input type="text" name="pComponent" value="" size="20" readonly=""  class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="text" />
-
-<h1 style="font-size:50;"></h1>
-
-<label for="r2" style="font-size:55;" >Frequency</label><font face="Arial" size="6"> </font><input type="text" name="frequency" value="" size="20" readonly=""  class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="text" />
-
-
-<h1 style="font-size:30;"></h1>
+</body>
+</html>
