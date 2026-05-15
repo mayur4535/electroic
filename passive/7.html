@@ -1,168 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-<script language="JavaScript">
-
-
-
-function Compute1(form) {
-	with(Math) {
-		var GIGA= 1000000000;
-		var MEGA= 1000000;
-		var KILO= 1000;
-		
-		var I= Number(form.I.value);
-		var N= Number(form.N.value);				
-		var A= Number(form.A.value);		
-		var g= Number(form.g.value);		
-		
-		var Precision= 3;
-		
-		F= (N*I)*(N*I)*4*PI*1e-7*A/(2*g*g);
-       FL= 0.224808942443*F; // convert to LBS. 
-
-		form.F.value= F.toFixed(Precision);		
-		form.FL.value= FL.toFixed(Precision);		
-	}
+<style>
+#solenoid-force-calc,
+#solenoid-force-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
+body{
+  margin:0;
+  background:#f4f7fb;
+  padding:10px;
+}
 
+#solenoid-force-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  padding-top:14px;
+  background:transparent;
+  border:none;
+}
 
+#solenoid-force-calc .calc-grid{
+  display:grid;
+  gap:12px;
+}
 
+#solenoid-force-calc .calc-label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  color:#344054;
+  margin-bottom:6px;
+}
+
+#solenoid-force-calc .calc-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  align-items:center;
+}
+
+#solenoid-force-calc input{
+  width:100%;
+  min-width:0;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:14px;
+  color:#111827;
+  background:#fff;
+  outline:none;
+  text-align:center;
+}
+
+#solenoid-force-calc input:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#solenoid-force-calc .unit-box{
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:800;
+  color:#111827;
+}
+
+#solenoid-force-calc button{
+  width:100%;
+  height:45px;
+  margin-top:22px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:14px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#solenoid-force-calc .result-title{
+  margin-top:26px;
+  margin-bottom:12px;
+  font-size:13px;
+  font-weight:900;
+  color:#98a2b3;
+  letter-spacing:.8px;
+}
+
+#solenoid-force-calc .result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+#solenoid-force-calc .result-card{
+  min-height:64px;
+  padding:13px;
+  border-radius:8px;
+}
+
+#solenoid-force-calc .blue{
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+
+#solenoid-force-calc .green{
+  background:#ecfdf5;
+  border:1px solid #a7f3d0;
+}
+
+#solenoid-force-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+#solenoid-force-calc .blue .result-label,
+#solenoid-force-calc .blue .result-value{
+  color:#2563eb;
+}
+
+#solenoid-force-calc .green .result-label,
+#solenoid-force-calc .green .result-value{
+  color:#059669;
+}
+
+#solenoid-force-calc .result-value{
+  font-size:15px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+#solenoid-force-calc .formula-box{
+  margin-top:14px;
+  padding:14px;
+  border-radius:9px;
+  border:1px solid #e5e7eb;
+  background:#f9fafb;
+  color:#4b5563;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.6;
+}
+
+@media(max-width:600px){
+  body{
+    padding:0;
+  }
+
+  #solenoid-force-calc{
+    padding-top:12px;
+  }
+
+  #solenoid-force-calc .calc-row{
+    grid-template-columns:minmax(0,1fr) 72px;
+    gap:7px;
+  }
+
+  #solenoid-force-calc .unit-box{
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+    font-size:12px;
+  }
+
+  #solenoid-force-calc input{
+    font-size:14px;
+    padding:0 10px;
+  }
+
+  #solenoid-force-calc .result-grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  #solenoid-force-calc .result-card{
+    padding:12px 10px;
+  }
+
+  #solenoid-force-calc .result-value{
+    font-size:14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="solenoid-force-calc">
+
+  <form method="POST" name="ParamForm1" action="">
+
+    <div class="calc-grid">
+
+      <div>
+        <label class="calc-label">Current</label>
+        <div class="calc-row">
+          <input name="I" type="number" step="any">
+          <div class="unit-box">A</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Turns</label>
+        <div class="calc-row">
+          <input name="N" type="number" step="any">
+          <div class="unit-box">tns</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Area</label>
+        <div class="calc-row">
+          <input name="A" type="number" step="any">
+          <div class="unit-box">Unit²</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Gap</label>
+        <div class="calc-row">
+          <input name="g" type="number" step="any">
+          <div class="unit-box">Units</div>
+        </div>
+      </div>
+
+    </div>
+
+    <button type="button" onclick="Compute1(document.ParamForm1)">Calculate</button>
+
+    <div class="result-title">RESULTS</div>
+
+    <div class="result-grid">
+
+      <div class="result-card blue">
+        <div class="result-label">Force</div>
+        <div class="result-value"><span id="Fout">-</span> N</div>
+      </div>
+
+      <div class="result-card green">
+        <div class="result-label">Force</div>
+        <div class="result-value"><span id="FLout">-</span> LBS</div>
+      </div>
+
+    </div>
+
+    <input name="F" type="hidden">
+    <input name="FL" type="hidden">
+
+    <div class="formula-box">
+      F = (N × I)² × 4 × π × 10⁻⁷ × A / (2 × g²)<br>
+      FL = 0.224808942443 × F
+    </div>
+
+  </form>
+
+</div>
+
+<script>
+function Compute1(form) {
+  with(Math) {
+    var GIGA= 1000000000;
+    var MEGA= 1000000;
+    var KILO= 1000;
+
+    var I= Number(form.I.value);
+    var N= Number(form.N.value);
+    var A= Number(form.A.value);
+    var g= Number(form.g.value);
+
+    var Precision= 3;
+
+    F= (N*I)*(N*I)*4*PI*1e-7*A/(2*g*g);
+    FL= 0.224808942443*F;
+
+    form.F.value= F.toFixed(Precision);
+    form.FL.value= FL.toFixed(Precision);
+
+    document.getElementById("Fout").innerText = form.F.value;
+    document.getElementById("FLout").innerText = form.FL.value;
+  }
+}
 </script>
 
-
-
-      <form method="POST" name="ParamForm1" action="">
-      <table border="1" height="185">
-
-
-
-
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-
-<label for="r2" style="font-size:55;" >Current</label><font face="Arial" size="7">  </font><input  name="I"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-       
-<h1 style="font-size:50px;"></h1>       
-
-<label for="r2" style="font-size:55;" >N</label><font face="Arial" size="7"> (Turns)  </font><input  name="N"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">tns</label>
-
-<h1 style="font-size:50;"></h1> 
-<label for="r2" style="font-size:55;" >A</label><font face="Arial" size="7"> (Length)  </font><input  name="A"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;height:68;right: 10px;font-size:40px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Unit<sup>2</sup></label>
-<h1 style="font-size:50;"></h1> 
-<label for="r2" style="font-size:55;" >G</label><font face="Arial" size="7"> (Length)  </font><input  name="g"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;height:68;right: 10px;font-size:40px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Units</label>        
-<h1 style="font-size:50;"></h1>        
-</fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="Button"  onClick="Compute1(document.ParamForm1)" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-<label for="r2" style="font-size:55;" >F</label><font face="Arial" size="7"> </font><input  name="F"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;height:68;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">N</label>
-<h1 style="font-size:50;"></h1> 
-<label for="r2" style="font-size:0;color:white;" >F</label><font face="Arial" size="7"> </font><input  name="FL"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;height:68;right: 10px;font-size:55px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">LBS</label>
-<h1 style="font-size:120;"></h1> 
-
-
-        
-            
-      </form>
-
-
-
-
-    
-
-
-
-     
-      
-
+</body>
+</html>
