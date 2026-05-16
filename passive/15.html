@@ -1,189 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coil Inductance Calculator</title>
 
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#coil-inductance-calc,
+#coil-inductance-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+body{
+  margin:0;
+  background:#f6f8fb;
+  padding:10px;
 }
 
-body { 
-  background: ; 
+#coil-inductance-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  padding-top:14px;
+  background:transparent;
+  border:none;
+  border-radius:0;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
+
+#coil-inductance-calc .mode-tabs{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:15px;
+}
+
+#coil-inductance-calc .mode-tabs button{
+  margin:0;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fff;
+  color:#111827;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:none;
+}
+
+#coil-inductance-calc .mode-tabs button.active{
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  border-color:#ff6a00;
+}
+
+#coil-inductance-calc .calc-grid{
+  display:grid;
+  gap:15px;
+}
+
+#coil-inductance-calc .form-group{
+  display:none;
+}
+
+#coil-inductance-calc .form-group.active{
+  display:grid;
+  gap:15px;
+}
+
+#coil-inductance-calc .calc-label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:7px;
+}
+
+#coil-inductance-calc .calc-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  align-items:center;
+}
+
+#coil-inductance-calc input,
+#coil-inductance-calc select{
+  width:100%;
+  min-width:0;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  color:#111827;
+  background:#fff;
+  outline:none;
+}
+
+#coil-inductance-calc select{
+  text-align:center;
+  padding:0 6px;
+  font-weight:700;
+}
+
+#coil-inductance-calc input:focus,
+#coil-inductance-calc select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#coil-inductance-calc .calc-btn{
+  width:100%;
+  height:45px;
+  margin-top:24px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#coil-inductance-calc .result-title{
+  margin-top:30px;
+  margin-bottom:14px;
+  font-size:14px;
+  font-weight:800;
+  color:#a7afbd;
+  letter-spacing:.5px;
+}
+
+#coil-inductance-calc .result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+#coil-inductance-calc .result-card{
+  min-height:64px;
+  padding:14px;
+  border-radius:9px;
+}
+
+#coil-inductance-calc .result-card:nth-child(1){
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+#coil-inductance-calc .result-card:nth-child(1) .result-label,
+#coil-inductance-calc .result-card:nth-child(1) .result-value{
+  color:#2563eb;
+}
+
+#coil-inductance-calc .result-card:nth-child(2){
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+}
+#coil-inductance-calc .result-card:nth-child(2) .result-label,
+#coil-inductance-calc .result-card:nth-child(2) .result-value{
+  color:#059669;
+}
+
+#coil-inductance-calc .result-card:nth-child(3){
+  background:#f5f3ff;
+  border:1px solid #ddd6fe;
+}
+#coil-inductance-calc .result-card:nth-child(3) .result-label,
+#coil-inductance-calc .result-card:nth-child(3) .result-value{
+  color:#7c3aed;
+}
+
+#coil-inductance-calc .result-card:nth-child(4){
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+}
+#coil-inductance-calc .result-card:nth-child(4) .result-label,
+#coil-inductance-calc .result-card:nth-child(4) .result-value{
+  color:#ea580c;
+}
+
+#coil-inductance-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+#coil-inductance-calc .result-value{
+  font-size:16px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+#coil-inductance-calc .formula{
+  margin-top:18px;
+  padding:14px;
+  border-radius:9px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  font-size:14px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+@media(max-width:600px){
+  body{
+    padding:0;
   }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
+
+  #coil-inductance-calc{
+    padding-top:12px;
   }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
+  #coil-inductance-calc .mode-tabs{
+    grid-template-columns:1fr;
   }
+
+  #coil-inductance-calc .calc-row{
+    grid-template-columns:minmax(0,1fr) 72px;
+    gap:7px;
+  }
+
+  #coil-inductance-calc input,
+  #coil-inductance-calc select{
+    font-size:15px;
+    padding:0 10px;
+  }
+
+  #coil-inductance-calc .result-grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  #coil-inductance-calc .result-card{
+    padding:12px 10px;
+  }
+
+  #coil-inductance-calc .result-value{
+    font-size:14px;
+  }
+}
 </style>
+</head>
 
+<body>
 
+<div id="coil-inductance-calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+  <div class="mode-tabs">
+    <button class="active" onclick="setMode('single',this)">Single Layer</button>
+    <button onclick="setMode('multi',this)">Multi Layer</button>
+    <button onclick="setMode('spiral',this)">Flat Spiral</button>
+  </div>
 
+  <div class="calc-grid">
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
+    <div id="single" class="form-group active">
 
+      <div>
+        <label class="calc-label">Coil Diameter</label>
+        <div class="calc-row">
+          <input id="s_dia" type="number" value="25">
+          <select id="s_dia_unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="in">inch</option>
+          </select>
+        </div>
+      </div>
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+      <div>
+        <label class="calc-label">Coil Length</label>
+        <div class="calc-row">
+          <input id="s_len" type="number" value="50">
+          <select id="s_len_unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="in">inch</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Number of Turns</label>
+        <input id="s_turns" type="number" value="20">
+      </div>
+
+      <div>
+        <label class="calc-label">Relative Permeability μr</label>
+        <input id="s_mur" type="number" value="1">
+      </div>
+
+    </div>
+
+    <div id="multi" class="form-group">
+
+      <div>
+        <label class="calc-label">Average Coil Diameter</label>
+        <div class="calc-row">
+          <input id="m_dia" type="number" value="25">
+          <select id="m_dia_unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="in">inch</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Coil Length</label>
+        <div class="calc-row">
+          <input id="m_len" type="number" value="30">
+          <select id="m_len_unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="in">inch</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Coil Thickness / Depth</label>
+        <div class="calc-row">
+          <input id="m_depth" type="number" value="10">
+          <select id="m_depth_unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="in">inch</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Total Number of Turns</label>
+        <input id="m_turns" type="number" value="80">
+      </div>
+
+      <div>
+        <label class="calc-label">Relative Permeability μr</label>
+        <input id="m_mur" type="number" value="1">
+      </div>
+
+    </div>
+
+    <div id="spiral" class="form-group">
+
+      <div>
+        <label class="calc-label">Outer Diameter</label>
+        <div class="calc-row">
+          <input id="f_outer" type="number" value="50">
+          <select id="f_outer_unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="in">inch</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Inner Diameter</label>
+        <div class="calc-row">
+          <input id="f_inner" type="number" value="10">
+          <select id="f_inner_unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="in">inch</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Number of Turns</label>
+        <input id="f_turns" type="number" value="8">
+      </div>
+
+      <div>
+        <label class="calc-label">Relative Permeability μr</label>
+        <input id="f_mur" type="number" value="1">
+      </div>
+
+    </div>
+
+  </div>
+
+  <button class="calc-btn" onclick="calculate()">Calculate</button>
+
+  <div id="errorBox">Please enter valid positive values.</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="result-label">Inductance</div>
+      <div class="result-value" id="res_uH">- µH</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-label">Millihenry</div>
+      <div class="result-value" id="res_mH">- mH</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-label">Henry</div>
+      <div class="result-value" id="res_H">- H</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-label">Formula Type</div>
+      <div class="result-value" id="res_type">-</div>
+    </div>
+  </div>
+
+  <div class="formula" id="formulaText">
+    Formula will show here.
+  </div>
 
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Turns</label><font face="Arial" size="6"> (Number)  </font><input   id="coil_turns"  class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="number" />
 
+<script>
+let currentMode = "single";
 
-</div>
+function setMode(mode,btn){
+  currentMode = mode;
 
-</div>
-</div><h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  document.querySelectorAll("#coil-inductance-calc .form-group").forEach(el=>{
+    el.classList.remove("active");
+  });
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Diameter<font face="Arial" size="6"> (Loop) </font></label><input type="number" id="coil_diameter"    class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 165px;"class="form-control"  />
-<select class="form-control" id="coil_diameter_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="2.54e-5">mil</option>
-<option value="0.01">cm</option>
-<option selected="selected" value="0.001">mm</option>
-<option value="0.000001">um</option>
-<option value="0.0254">inch</option>
-</select>
+  document.getElementById(mode).classList.add("active");
 
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  document.querySelectorAll("#coil-inductance-calc .mode-tabs button").forEach(b=>{
+    b.classList.remove("active");
+  });
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Diameter<font face="Arial" size="6"> (Wire) </font></label><input type="number" id="wire_diameter"    class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 165px;"class="form-control"  />
-<select class="form-control" id="wire_diameter_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="2.54e-5">mil</option>
-<option value="0.01">cm</option>
-<option selected="selected" value="0.001">mm</option>
-<option value="0.000001">um</option>
-<option value="0.0254">inch</option>
-</select>
+  btn.classList.add("active");
 
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  calculate();
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Relative </label><font face="Arial" size="6"> (Permeability)  </font><input   id="rel_perm"  class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="number" />
+function toInch(value,unit){
+  value = parseFloat(value);
 
-</div>
+  if(unit === "mm") return value / 25.4;
+  if(unit === "cm") return value / 2.54;
+  return value;
+}
 
-</div>
-</div>
-<div class="row">
-<div class="col-sm-12">
+function formatValue(v){
+  if(!isFinite(v)) return "-";
+  if(Math.abs(v) >= 1000) return v.toFixed(2);
+  if(Math.abs(v) >= 1) return v.toFixed(4);
+  return v.toPrecision(4);
+}
 
-<div class="col-sm-4">
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+function showError(show){
+  document.getElementById("errorBox").style.display = show ? "block" : "none";
+}
 
+function output(uH,type,formula){
+  document.getElementById("res_uH").innerText = formatValue(uH) + " µH";
+  document.getElementById("res_mH").innerText = formatValue(uH / 1000) + " mH";
+  document.getElementById("res_H").innerText = formatValue(uH / 1000000) + " H";
+  document.getElementById("res_type").innerText = type;
+  document.getElementById("formulaText").innerHTML = formula;
+}
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Outputs</h3></div></legend>
+function calculate(){
+  showError(false);
 
+  let uH = 0;
 
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  if(currentMode === "single"){
+    let dia = toInch(document.getElementById("s_dia").value, document.getElementById("s_dia_unit").value);
+    let len = toInch(document.getElementById("s_len").value, document.getElementById("s_len_unit").value);
+    let N = parseFloat(document.getElementById("s_turns").value);
+    let mur = parseFloat(document.getElementById("s_mur").value);
+    let r = dia / 2;
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Inductance</label><font face="Arial" size="7">  </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">H</label>
+    if(dia <= 0 || len <= 0 || N <= 0 || mur <= 0){
+      showError(true);
+      return;
+    }
 
+    uH = (r * r * N * N * mur) / ((9 * r) + (10 * len));
 
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<script type="text/javascript">
-var _0x54a1=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x63\x6F\x69\x6C\x5F\x74\x75\x72\x6E\x73","\x23\x63\x6F\x69\x6C\x5F\x64\x69\x61\x6D\x65\x74\x65\x72","\x23\x63\x6F\x69\x6C\x5F\x64\x69\x61\x6D\x65\x74\x65\x72\x5F\x75\x6E\x69\x74","\x23\x77\x69\x72\x65\x5F\x64\x69\x61\x6D\x65\x74\x65\x72","\x23\x77\x69\x72\x65\x5F\x64\x69\x61\x6D\x65\x74\x65\x72\x5F\x75\x6E\x69\x74","\x23\x72\x65\x6C\x5F\x70\x65\x72\x6D","\x50\x49","\x6C\x6F\x67","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x73\x71\x72\x74","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];!function(_0xe89ax1){_0x54a1[0];var _0xe89ax2={calculate:function(){var _0xe89ax2=parseFloat(_0xe89ax1(_0x54a1[2])[_0x54a1[1]]()),_0xe89ax3=parseFloat(_0xe89ax1(_0x54a1[3])[_0x54a1[1]]())* parseFloat(_0xe89ax1(_0x54a1[4])[_0x54a1[1]]()),_0xe89ax4=parseFloat(_0xe89ax1(_0x54a1[5])[_0x54a1[1]]())* parseFloat(_0xe89ax1(_0x54a1[6])[_0x54a1[1]]()),_0xe89ax5=parseFloat(_0xe89ax1(_0x54a1[7])[_0x54a1[1]]()),_0xe89ax6=4* Math[_0x54a1[8]]* 1e-7,_0xe89ax7=_0xe89ax2* _0xe89ax2* _0xe89ax6* _0xe89ax5* (_0xe89ax3/ 2)* (Math[_0x54a1[9]](8* (_0xe89ax3/ 2)/ (_0xe89ax4/ 2))- 2);_0xe89ax1(_0x54a1[11])[_0x54a1[1]](_0xe89ax7[_0x54a1[10]](3))},acosh:function(_0xe89ax1){return Math[_0x54a1[9]](_0xe89ax1+ Math[_0x54a1[12]](_0xe89ax1* _0xe89ax1- 1))}};_0xe89ax1(_0x54a1[15])[_0x54a1[20]](function(){var _0xe89ax2=!1;_0xe89ax1(_0x54a1[15])[_0x54a1[14]](function(){_0x54a1[13]== _0xe89ax1(this)[_0x54a1[1]]()&& (_0xe89ax2=  !0)}),_0xe89ax2?_0xe89ax1(_0x54a1[18])[_0x54a1[17]](_0x54a1[16],_0x54a1[16]):_0xe89ax1(_0x54a1[18])[_0x54a1[19]](_0x54a1[16])}),_0xe89ax1(_0x54a1[18])[_0x54a1[24]](_0x54a1[21],function(_0xe89ax1){_0xe89ax1[_0x54a1[22]](),_0xe89ax2[_0x54a1[23]]()})}(jQuery)
+    output(
+      uH,
+      "Single Layer",
+      "Single Layer Wheeler Formula:<br>L(µH) = (r² × N² × μr) / (9r + 10l)"
+    );
+  }
+
+  if(currentMode === "multi"){
+    let dia = toInch(document.getElementById("m_dia").value, document.getElementById("m_dia_unit").value);
+    let len = toInch(document.getElementById("m_len").value, document.getElementById("m_len_unit").value);
+    let depth = toInch(document.getElementById("m_depth").value, document.getElementById("m_depth_unit").value);
+    let N = parseFloat(document.getElementById("m_turns").value);
+    let mur = parseFloat(document.getElementById("m_mur").value);
+    let r = dia / 2;
+
+    if(dia <= 0 || len <= 0 || depth <= 0 || N <= 0 || mur <= 0){
+      showError(true);
+      return;
+    }
+
+    uH = (0.8 * r * r * N * N * mur) / ((6 * r) + (9 * len) + (10 * depth));
+
+    output(
+      uH,
+      "Multi Layer",
+      "Multi Layer Wheeler Formula:<br>L(µH) = (0.8 × r² × N² × μr) / (6r + 9l + 10d)"
+    );
+  }
+
+  if(currentMode === "spiral"){
+    let outer = toInch(document.getElementById("f_outer").value, document.getElementById("f_outer_unit").value);
+    let inner = toInch(document.getElementById("f_inner").value, document.getElementById("f_inner_unit").value);
+    let N = parseFloat(document.getElementById("f_turns").value);
+    let mur = parseFloat(document.getElementById("f_mur").value);
+
+    if(outer <= 0 || inner <= 0 || outer <= inner || N <= 0 || mur <= 0){
+      showError(true);
+      return;
+    }
+
+    let rAvg = (outer + inner) / 4;
+    let width = (outer - inner) / 2;
+
+    uH = (rAvg * rAvg * N * N * mur) / ((8 * rAvg) + (11 * width));
+
+    output(
+      uH,
+      "Flat Spiral",
+      "Flat Spiral Wheeler Formula:<br>L(µH) = (r² × N² × μr) / (8r + 11w)"
+    );
+  }
+}
+
+document.addEventListener("DOMContentLoaded", calculate);
 </script>
-</div>
+
 </body>
 </html>
