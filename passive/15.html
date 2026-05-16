@@ -28,32 +28,6 @@ body{
   border-radius:0;
 }
 
-#coil-inductance-calc .mode-tabs{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-bottom:15px;
-}
-
-#coil-inductance-calc .mode-tabs button{
-  margin:0;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fff;
-  color:#111827;
-  font-size:14px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:none;
-}
-
-#coil-inductance-calc .mode-tabs button.active{
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  border-color:#ff6a00;
-}
-
 #coil-inductance-calc .calc-grid{
   display:grid;
   gap:15px;
@@ -102,6 +76,22 @@ body{
   text-align:center;
   padding:0 6px;
   font-weight:700;
+}
+
+#coil-inductance-calc .unit-box{
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fafafa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:700;
+  color:#111827;
 }
 
 #coil-inductance-calc input:focus,
@@ -215,16 +205,13 @@ body{
 }
 
 @media(max-width:600px){
+
   body{
     padding:0;
   }
 
   #coil-inductance-calc{
     padding-top:12px;
-  }
-
-  #coil-inductance-calc .mode-tabs{
-    grid-template-columns:1fr;
   }
 
   #coil-inductance-calc .calc-row{
@@ -236,6 +223,13 @@ body{
   #coil-inductance-calc select{
     font-size:15px;
     padding:0 10px;
+  }
+
+  #coil-inductance-calc .unit-box{
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+    font-size:15px;
   }
 
   #coil-inductance-calc .result-grid{
@@ -258,14 +252,23 @@ body{
 
 <div id="coil-inductance-calc">
 
-  <div class="mode-tabs">
-    <button class="active" onclick="setMode('single',this)">Single Layer</button>
-    <button onclick="setMode('multi',this)">Multi Layer</button>
-    <button onclick="setMode('spiral',this)">Flat Spiral</button>
-  </div>
-
   <div class="calc-grid">
 
+    <div>
+      <label class="calc-label">Coil Type</label>
+
+      <div class="calc-row">
+        <select id="coilMode" onchange="changeMode(this.value)">
+          <option value="single">Single Layer</option>
+          <option value="multi">Multi Layer</option>
+          <option value="spiral">Flat Spiral</option>
+        </select>
+
+        <div class="unit-box">TYPE</div>
+      </div>
+    </div>
+
+    <!-- SINGLE -->
     <div id="single" class="form-group active">
 
       <div>
@@ -304,6 +307,7 @@ body{
 
     </div>
 
+    <!-- MULTI -->
     <div id="multi" class="form-group">
 
       <div>
@@ -354,6 +358,7 @@ body{
 
     </div>
 
+    <!-- SPIRAL -->
     <div id="spiral" class="form-group">
 
       <div>
@@ -401,6 +406,7 @@ body{
   <div class="result-title">RESULTS</div>
 
   <div class="result-grid">
+
     <div class="result-card">
       <div class="result-label">Inductance</div>
       <div class="result-value" id="res_uH">- µH</div>
@@ -420,6 +426,7 @@ body{
       <div class="result-label">Formula Type</div>
       <div class="result-value" id="res_type">-</div>
     </div>
+
   </div>
 
   <div class="formula" id="formulaText">
@@ -431,36 +438,37 @@ body{
 <script>
 let currentMode = "single";
 
-function setMode(mode,btn){
+function changeMode(mode){
+
   currentMode = mode;
 
-  document.querySelectorAll("#coil-inductance-calc .form-group").forEach(el=>{
+  document.querySelectorAll(".form-group").forEach(el=>{
     el.classList.remove("active");
   });
 
   document.getElementById(mode).classList.add("active");
 
-  document.querySelectorAll("#coil-inductance-calc .mode-tabs button").forEach(b=>{
-    b.classList.remove("active");
-  });
-
-  btn.classList.add("active");
-
   calculate();
 }
 
 function toInch(value,unit){
+
   value = parseFloat(value);
 
   if(unit === "mm") return value / 25.4;
   if(unit === "cm") return value / 2.54;
+
   return value;
 }
 
 function formatValue(v){
+
   if(!isFinite(v)) return "-";
+
   if(Math.abs(v) >= 1000) return v.toFixed(2);
+
   if(Math.abs(v) >= 1) return v.toFixed(4);
+
   return v.toPrecision(4);
 }
 
@@ -469,31 +477,58 @@ function showError(show){
 }
 
 function output(uH,type,formula){
-  document.getElementById("res_uH").innerText = formatValue(uH) + " µH";
-  document.getElementById("res_mH").innerText = formatValue(uH / 1000) + " mH";
-  document.getElementById("res_H").innerText = formatValue(uH / 1000000) + " H";
+
+  document.getElementById("res_uH").innerText =
+    formatValue(uH) + " µH";
+
+  document.getElementById("res_mH").innerText =
+    formatValue(uH / 1000) + " mH";
+
+  document.getElementById("res_H").innerText =
+    formatValue(uH / 1000000) + " H";
+
   document.getElementById("res_type").innerText = type;
+
   document.getElementById("formulaText").innerHTML = formula;
 }
 
 function calculate(){
+
   showError(false);
 
   let uH = 0;
 
+  // SINGLE
   if(currentMode === "single"){
-    let dia = toInch(document.getElementById("s_dia").value, document.getElementById("s_dia_unit").value);
-    let len = toInch(document.getElementById("s_len").value, document.getElementById("s_len_unit").value);
-    let N = parseFloat(document.getElementById("s_turns").value);
-    let mur = parseFloat(document.getElementById("s_mur").value);
+
+    let dia =
+      toInch(
+        document.getElementById("s_dia").value,
+        document.getElementById("s_dia_unit").value
+      );
+
+    let len =
+      toInch(
+        document.getElementById("s_len").value,
+        document.getElementById("s_len_unit").value
+      );
+
+    let N =
+      parseFloat(document.getElementById("s_turns").value);
+
+    let mur =
+      parseFloat(document.getElementById("s_mur").value);
+
     let r = dia / 2;
 
-    if(dia <= 0 || len <= 0 || N <= 0 || mur <= 0){
+    if(dia<=0 || len<=0 || N<=0 || mur<=0){
       showError(true);
       return;
     }
 
-    uH = (r * r * N * N * mur) / ((9 * r) + (10 * len));
+    uH =
+      (r*r*N*N*mur) /
+      ((9*r)+(10*len));
 
     output(
       uH,
@@ -502,20 +537,43 @@ function calculate(){
     );
   }
 
+  // MULTI
   if(currentMode === "multi"){
-    let dia = toInch(document.getElementById("m_dia").value, document.getElementById("m_dia_unit").value);
-    let len = toInch(document.getElementById("m_len").value, document.getElementById("m_len_unit").value);
-    let depth = toInch(document.getElementById("m_depth").value, document.getElementById("m_depth_unit").value);
-    let N = parseFloat(document.getElementById("m_turns").value);
-    let mur = parseFloat(document.getElementById("m_mur").value);
+
+    let dia =
+      toInch(
+        document.getElementById("m_dia").value,
+        document.getElementById("m_dia_unit").value
+      );
+
+    let len =
+      toInch(
+        document.getElementById("m_len").value,
+        document.getElementById("m_len_unit").value
+      );
+
+    let depth =
+      toInch(
+        document.getElementById("m_depth").value,
+        document.getElementById("m_depth_unit").value
+      );
+
+    let N =
+      parseFloat(document.getElementById("m_turns").value);
+
+    let mur =
+      parseFloat(document.getElementById("m_mur").value);
+
     let r = dia / 2;
 
-    if(dia <= 0 || len <= 0 || depth <= 0 || N <= 0 || mur <= 0){
+    if(dia<=0 || len<=0 || depth<=0 || N<=0 || mur<=0){
       showError(true);
       return;
     }
 
-    uH = (0.8 * r * r * N * N * mur) / ((6 * r) + (9 * len) + (10 * depth));
+    uH =
+      (0.8*r*r*N*N*mur) /
+      ((6*r)+(9*len)+(10*depth));
 
     output(
       uH,
@@ -524,13 +582,28 @@ function calculate(){
     );
   }
 
+  // SPIRAL
   if(currentMode === "spiral"){
-    let outer = toInch(document.getElementById("f_outer").value, document.getElementById("f_outer_unit").value);
-    let inner = toInch(document.getElementById("f_inner").value, document.getElementById("f_inner_unit").value);
-    let N = parseFloat(document.getElementById("f_turns").value);
-    let mur = parseFloat(document.getElementById("f_mur").value);
 
-    if(outer <= 0 || inner <= 0 || outer <= inner || N <= 0 || mur <= 0){
+    let outer =
+      toInch(
+        document.getElementById("f_outer").value,
+        document.getElementById("f_outer_unit").value
+      );
+
+    let inner =
+      toInch(
+        document.getElementById("f_inner").value,
+        document.getElementById("f_inner_unit").value
+      );
+
+    let N =
+      parseFloat(document.getElementById("f_turns").value);
+
+    let mur =
+      parseFloat(document.getElementById("f_mur").value);
+
+    if(outer<=0 || inner<=0 || outer<=inner || N<=0 || mur<=0){
       showError(true);
       return;
     }
@@ -538,7 +611,9 @@ function calculate(){
     let rAvg = (outer + inner) / 4;
     let width = (outer - inner) / 2;
 
-    uH = (rAvg * rAvg * N * N * mur) / ((8 * rAvg) + (11 * width));
+    uH =
+      (rAvg*rAvg*N*N*mur) /
+      ((8*rAvg)+(11*width));
 
     output(
       uH,
