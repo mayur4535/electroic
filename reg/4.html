@@ -1,323 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script type="text/javascript">
-// 
-function roundNumber(num, dec) {
-	var result = Math.round( Math.round( num * Math.pow( 10, dec + 1 ) ) / Math.pow( 10, 1 ) ) / Math.pow(10,dec);
-	return result;
-}
-
-function parse(val, scale){
-	var l = parseFloat(val);
-
-	if(scale == "Pico") 	l /= 1000000000000;
-	if(scale == "Nano")		l /= 1000000000;
-	if(scale == "Micro")	l /= 1000000;
-	if(scale == "Mili")		l /= 1000;
-	
-	if(scale == "Kilo")		l *= 1000;
-	if(scale == "Mega")		l *= 1000000;
-	if(scale == "Giga")		l *= 1000000000;	
-	
-	return l;
-}
-
-function compute_v(){
-	var r1 = parse($("#r1_v").val(), $("#r1Scale_v").val());
-	var r2 = parse($("#r2_v").val(), $("#r2Scale_v").val());
-
-	var vreg=0;
-	if($("#regulador_v").val() == "LM317"){
-		vreg = 1.25;
-	}else if($("#regulador_v").val() == "7805"){
-		vreg = 5;
-	}else if($("#regulador_v").val() == "7808"){
-		vreg = 8;
-	}else if($("#regulador_v").val() == "7812"){
-		vreg = 12;
-	}else if($("#regulador_v").val() == "7824"){
-		vreg = 24;
-	}
-	
-	var vout = vreg*(1+r2/r1);
-
-	$("#vout_v").val(roundNumber(vout,3) );
-	
-	if(vout<1){
-		$("#vout_v").val(roundNumber(vout*1000,3) + " mV");
-	}
-}
-
-function compute_i(){
-	var r = parse($("#r_i").val(), $("#rScale_i").val());
-
-	var vreg=0;
-	if($("#regulador_i").val() == "LM317"){
-		vreg = 1.25;
-	}else if($("#regulador_i").val() == "7805"){
-		vreg = 5;
-	}else if($("#regulador_i").val() == "7808"){
-		vreg = 8;
-	}else if($("#regulador_i").val() == "7812"){
-		vreg = 12;
-	}else if($("#regulador_i").val() == "7824"){
-		vreg = 24;
-	}
-	
-	var iout = vreg/r;
-
-	$("#iout_i").val(roundNumber(iout,3) + " amps");
-	
-	if(iout<1){
-		$("#iout_i").val(roundNumber(iout*1000,3) );
-	}
-	
-	var pout = vreg*iout;
-
-	$("#pout_i").val(roundNumber(pout,3) + " watts");
-	
-	if(pout<1){
-		$("#pout_i").val(roundNumber(pout*1000,3) );
-	}	
-	
-}
-document.onreadystatechange = function () {
-	if (document.readyState == "complete") {
-		$("#reguladorf_v input").keyup(compute_v);
-		$("#reguladorf_v select").change(compute_v);
-		compute_v();	
-		$("#reguladorf_i input").keyup(compute_i);
-		$("#reguladorf_i select").change(compute_i);
-		compute_i();	
-	}
-}
-//
-</script>
-
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-
-/* Style the tab */
-.tab {
-  overflow: hidden;
-  border: 10px solid #ccc;
- 
-  background-color: #f1f1f1;
-  text-align:center;
-}
-
-/* Style the buttons inside the tab */
-.tab button {
-  background-color: inherit;
-  
-  float:center;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 15px;
-  transition: 0.3s;
-  font-size: 70px;
-}
-
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #c4cc;
-}
-
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-  align:center;
-}
-.tab1 {
-border-radius: 25px;
-  background: #167A04;
-  padding: 20px; 
-  width: 100px;
-  height: 150px;
-  font-size:40px;
-  color:white;
+#regulator-calc,*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px}
+#regulator-calc{max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:700;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box,.unit-select{width:82px;min-width:82px;max-width:82px;height:43px}
+.unit-box{border:1px solid #cfd6df;border-radius:8px;background:#fafafa;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#111827}
+.section{display:none}.section.active{display:block}
+.calc-btn{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff3d00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:14px;font-weight:800;color:#a7afbd;letter-spacing:.5px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:64px;padding:14px;border-radius:9px}
+.result-card:nth-child(1){background:#eef5ff;border:1px solid #bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border:1px solid #bbf7d0}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2563eb}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#059669}
+.result-label{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:7px}
+.result-value{font-size:16px;font-weight:900;min-height:18px;word-break:break-word}
+.formula{margin-top:18px;padding:14px;border-radius:9px;background:#f9fafb;border:1px solid #e5e7eb;font-size:14px;line-height:1.6;color:#667085;font-weight:700}
+.error{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+@media(max-width:600px){
+body{padding:0}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box,.unit-select{width:72px;min-width:72px;max-width:72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
 }
 </style>
+</head>
 
+<body>
 
+<div id="regulator-calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <label class="calc-label">Mode Selection</label>
+  <div class="calc-row">
+    <select id="modeSelect" onchange="changeMode()">
+      <option value="voltage">Voltage Adj</option>
+      <option value="current">Current Adj</option>
+    </select>
+    <div class="unit-box">MODE</div>
+  </div>
 
-<div class="tab">
-  <button class=  "tablinks" onclick="openCity(event, 'London')"><font class="tab1">VOLTAGE ADJ</font></button>
-  <button class="tablinks" onclick="openCity(event, 'Paris')"><font class="tab1">CURRENT ADJ</font></button>
+  <div id="voltage" class="section active">
+    <div class="calc-grid">
 
-</div>
+      <div>
+        <label class="calc-label">R1</label>
+        <div class="calc-row">
+          <input type="number" id="r1_v" value="25">
+          <select id="r1Scale_v" class="unit-select">
+            <option value="">Ω</option>
+            <option value="Kilo" selected>kΩ</option>
+            <option value="Mega">MΩ</option>
+          </select>
+        </div>
+      </div>
 
+      <div>
+        <label class="calc-label">R2</label>
+        <div class="calc-row">
+          <input type="number" id="r2_v" value="25">
+          <select id="r2Scale_v" class="unit-select">
+            <option value="">Ω</option>
+            <option value="Kilo" selected>kΩ</option>
+            <option value="Mega">MΩ</option>
+          </select>
+        </div>
+      </div>
 
+      <div>
+        <label class="calc-label">Regulator</label>
+        <div class="calc-row">
+          <select id="regulador_v">
+            <option selected>LM317</option>
+            <option>7805</option>
+            <option>7808</option>
+            <option>7812</option>
+            <option>7824</option>
+          </select>
+          <div class="unit-box">IC</div>
+        </div>
+      </div>
 
+    </div>
 
+    <button class="calc-btn" onclick="compute_v()">Calculate</button>
+    <div id="err_v" class="error">Please enter valid values.</div>
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+    <div class="result-title">RESULTS</div>
+    <div class="result-grid">
+      <div class="result-card">
+        <div class="result-label">Vout</div>
+        <div class="result-value"><span id="vout_v"></span></div>
+      </div>
+    </div>
 
-<div id="London" class="tabcontent">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+    <div class="formula">Vout = Vreg × (1 + R2 / R1)</div>
+  </div>
 
-<form action="" id="reguladorf_v">
+  <div id="current" class="section">
+    <div class="calc-grid">
 
-<label for="r2" style="font-size:55;" >R<sub>1</sub><font face="Arial" size="6"> </font></label><input type="number" id="r1_v" value="25" class="intro"  style="position: absolute;   text-align
-:center;width:282; right: 159px;"class="form-control"  />
-<select class="form-control" id="r1Scale_v" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:138px;height:85px;border-radius:4px; border:3px solid #aaa;">
-<option></option>
-<option selected="selected">K&Omega;</option>
-<option>M&Omega;</option>
-</select>
-<h1 style="font-size:35;"></h1>
-<label for="r2" style="font-size:55;" >R<sub>2</sub><font face="Arial" size="6"> </font></label><input type="number" id="r2_v"  value="25" class="intro"  style="position: absolute;   text-align
-:center;width:282; right: 159px;"class="form-control"  />
-<select class="form-control" id="r2Scale_v" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:138px;border-radius:4px;height:85px; border:3px solid #aaa;">
-<option></option>
-<option selected="selected">K&Omega;</option>
-<option>M&Omega;</option>
-</select>
-<h1 style="font-size:35;"></h1>
-<label for="r2" style="font-size:55;" >Regulator<font face="Arial" size="6"> </font></label>
-<select class="form-control" id="regulador_v" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:430px;border-radius:4px; border:3px solid #aaa;">
-<option selected="selected">LM317</option>
-<option>7805</option>
-<option>7808</option>
-<option>7812</option>
-<option>7824</option>
-</select>
-</fieldset>
+      <div>
+        <label class="calc-label">R</label>
+        <div class="calc-row">
+          <input type="number" id="r_i" value="50">
+          <select id="rScale_i" class="unit-select">
+            <option value="">Ω</option>
+            <option value="Kilo" selected>kΩ</option>
+            <option value="Mega">MΩ</option>
+          </select>
+        </div>
+      </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+      <div>
+        <label class="calc-label">Regulator</label>
+        <div class="calc-row">
+          <select id="regulador_i">
+            <option selected>LM317</option>
+            <option>7805</option>
+            <option>7808</option>
+            <option>7812</option>
+            <option>7824</option>
+          </select>
+          <div class="unit-box">IC</div>
+        </div>
+      </div>
 
- 
-<h3>Outputs</h3></div></legend>
-<label for="r2" style="font-size:55;" >V<sub>Out</sub></label><font face="Arial" size="7">  </font><input  id="vout_v"  class="intro"    style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">V</label>
+    </div>
 
-</form>
-</fieldset>
-</div>
+    <button class="calc-btn" onclick="compute_i()">Calculate</button>
+    <div id="err_i" class="error">Please enter valid values.</div>
 
+    <div class="result-title">RESULTS</div>
+    <div class="result-grid">
+      <div class="result-card">
+        <div class="result-label">Iout</div>
+        <div class="result-value"><span id="iout_i"></span></div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Pr</div>
+        <div class="result-value"><span id="pout_i"></span></div>
+      </div>
+    </div>
 
-<div id="Paris" class="tabcontent">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+    <div class="formula">Iout = Vreg / R<br>Pr = Vreg × Iout</div>
+  </div>
 
-<form action="" id="reguladorf_i">
-
-
-<label for="r2" style="font-size:55;" >R<sub>1</sub><font face="Arial" size="6"> </font></label><input type="number" id="r_i"  value="50" class="intro"  style="position: absolute;   text-align
-:center;width:280; right: 159px;"class="form-control"  />
-<select class="form-control" id="rScale_i" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:138px;border-radius:4px; height:85px; border:3px solid #aaa;">
-
-<option selected="selected">K&Omega;</option>
-<option>M&Omega;</option>
-</select>
-
-<h1 style="font-size:35;"></h1>
-<label for="r2" style="font-size:55;" >Regulator<font face="Arial" size="6"> </font></label>
-<select class="form-control" id="regulador_i" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:430px;border-radius:4px; border:3px solid #aaa;">
-<option selected="selected">LM317</option>
-<option>7805</option>
-<option>7808</option>
-<option>7812</option>
-<option>7824</option>
-</select>
-</fieldset>
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-<label for="r2" style="font-size:55;" >I<sub>Out</sub></label><font face="Arial" size="7">  </font><input  id="iout_i"   class="intro"  style="position: absolute; width:350; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:103px;">mA</label>
-<h1 style="font-size:35;"></h1>
-<label for="r2" style="font-size:55;" >P<sub>r</sub></label><font face="Arial" size="7">  </font><input  id="pout_i"   class="intro"  style="position: absolute; width:350; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:54px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:103px;">mW</label>
-
-
-</form>
-</fieldset>
 </div>
 
 <script>
-function openCity(evt, cityName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
+function roundNumber(num, dec){
+  return Math.round(Math.round(num * Math.pow(10, dec + 1)) / 10) / Math.pow(10, dec);
+}
+
+function parseValue(val, scale){
+  var l = parseFloat(val);
+  if(scale == "Pico") l /= 1000000000000;
+  if(scale == "Nano") l /= 1000000000;
+  if(scale == "Micro") l /= 1000000;
+  if(scale == "Mili") l /= 1000;
+  if(scale == "Kilo") l *= 1000;
+  if(scale == "Mega") l *= 1000000;
+  if(scale == "Giga") l *= 1000000000;
+  return l;
+}
+
+function getReg(id){
+  var r = document.getElementById(id).value;
+  if(r == "LM317") return 1.25;
+  if(r == "7805") return 5;
+  if(r == "7808") return 8;
+  if(r == "7812") return 12;
+  if(r == "7824") return 24;
+  return 0;
+}
+
+function compute_v(){
+  var r1 = parseValue(document.getElementById("r1_v").value, document.getElementById("r1Scale_v").value);
+  var r2 = parseValue(document.getElementById("r2_v").value, document.getElementById("r2Scale_v").value);
+  var vreg = getReg("regulador_v");
+
+  if(isNaN(r1) || isNaN(r2) || r1 <= 0){
+    document.getElementById("err_v").style.display = "block";
+    document.getElementById("vout_v").innerText = "";
+    return;
   }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
+
+  document.getElementById("err_v").style.display = "none";
+
+  var vout = vreg * (1 + r2 / r1);
+
+  if(vout < 1){
+    document.getElementById("vout_v").innerText = roundNumber(vout * 1000, 3) + " mV";
+  }else{
+    document.getElementById("vout_v").innerText = roundNumber(vout, 3) + " V";
   }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " active";
+}
+
+function compute_i(){
+  var r = parseValue(document.getElementById("r_i").value, document.getElementById("rScale_i").value);
+  var vreg = getReg("regulador_i");
+
+  if(isNaN(r) || r <= 0){
+    document.getElementById("err_i").style.display = "block";
+    document.getElementById("iout_i").innerText = "";
+    document.getElementById("pout_i").innerText = "";
+    return;
+  }
+
+  document.getElementById("err_i").style.display = "none";
+
+  var iout = vreg / r;
+  var pout = vreg * iout;
+
+  if(iout < 1){
+    document.getElementById("iout_i").innerText = roundNumber(iout * 1000, 3) + " mA";
+  }else{
+    document.getElementById("iout_i").innerText = roundNumber(iout, 3) + " A";
+  }
+
+  if(pout < 1){
+    document.getElementById("pout_i").innerText = roundNumber(pout * 1000, 3) + " mW";
+  }else{
+    document.getElementById("pout_i").innerText = roundNumber(pout, 3) + " W";
+  }
+}
+
+function changeMode(){
+  var mode = document.getElementById("modeSelect").value;
+  document.getElementById("voltage").classList.remove("active");
+  document.getElementById("current").classList.remove("active");
+  document.getElementById(mode).classList.add("active");
 }
 </script>
+
+</body>
+</html>
