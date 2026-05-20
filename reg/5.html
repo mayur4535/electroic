@@ -1,152 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-n=Number(document.calculator.number1.value);
-Vin=Number(document.calculator.number2.value);
-Vref=Number(document.calculator.number3.value);
-n1= Math.pow(2,n);
-d_out=  ((n1*Vin)/Vref);
-d_out=Math.floor(d_out);
-number=d_out;
-bin =" ";
-while (number >0)
-{
-bin = ( (number%2) + bin) ;
-number = Math.floor(number/2);
-}
-b_out= bin;
-document.calculator.Num_Digital_output.value=d_out;
-document.calculator.Binary_output.value=b_out;
-}
-</SCRIPT>
-
-
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#adc-calc,
+#adc-calc *{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+body{
+  margin:0;
+  background:#f6f8fb;
+  padding:10px;
 }
 
-body { 
-  background: ; 
+#adc-calc{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  padding-top:14px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
+
+#adc-calc .calc-grid{
+  display:grid;
+  gap:15px;
+}
+
+#adc-calc .calc-label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:7px;
+}
+
+#adc-calc .calc-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  align-items:center;
+}
+
+#adc-calc input,
+#adc-calc select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
+}
+
+#adc-calc input:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+#adc-calc .unit-box{
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fafafa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:700;
+  color:#111827;
+}
+
+#adc-calc button{
+  width:100%;
+  height:45px;
+  margin-top:24px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+#adc-calc .result-title{
+  margin-top:30px;
+  margin-bottom:14px;
+  font-size:14px;
+  font-weight:800;
+  color:#a7afbd;
+  letter-spacing:.5px;
+}
+
+#adc-calc .result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+#adc-calc .result-card{
+  min-height:64px;
+  padding:14px;
+  border-radius:9px;
+}
+
+#adc-calc .result-card:nth-child(1){
+  background:#eef5ff;
+  border:1px solid #bcd7ff;
+}
+
+#adc-calc .result-card:nth-child(2){
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+}
+
+#adc-calc .result-card:nth-child(1) .result-label,
+#adc-calc .result-card:nth-child(1) .result-value{
+  color:#2563eb;
+}
+
+#adc-calc .result-card:nth-child(2) .result-label,
+#adc-calc .result-card:nth-child(2) .result-value{
+  color:#059669;
+}
+
+#adc-calc .result-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+#adc-calc .result-value{
+  font-size:16px;
+  font-weight:900;
+  word-break:break-word;
+  min-height:18px;
+}
+
+#adc-calc .formula{
+  margin-top:18px;
+  padding:14px;
+  border-radius:9px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  font-size:14px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+@media(max-width:600px){
+  body{
+    padding:0;
   }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
+
+  #adc-calc .calc-row{
+    grid-template-columns:minmax(0,1fr) 72px;
   }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
+  #adc-calc .unit-box{
+    width:72px;
+    min-width:72px;
+    max-width:72px;
   }
+
+  #adc-calc .result-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  #adc-calc .result-value{
+    font-size:14px;
+  }
+}
 </style>
+</head>
 
+<body>
 
+<div id="adc-calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+  <div class="calc-grid">
 
+    <div>
+      <label class="calc-label">Bits</label>
+      <div class="calc-row">
+        <input id="number1" type="number" placeholder="Enter bits">
+        <div class="unit-box">N</div>
+      </div>
+    </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+    <div>
+      <label class="calc-label">VIN</label>
+      <div class="calc-row">
+        <input id="number2" type="number" placeholder="Analog voltage">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">RV / Vref</label>
+      <div class="calc-row">
+        <input id="number3" type="number" placeholder="Reference voltage">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
+  </div>
 
+  <button onclick="calc()">Calculate</button>
 
+  <div id="errorBox">
+    Please enter valid values.
+  </div>
 
+  <div class="result-title">
+    RESULTS
+  </div>
 
-<FORM name="calculator">
+  <div class="result-grid">
 
+    <div class="result-card">
+      <div class="result-label">Numeric Digital</div>
+      <div class="result-value">
+        <span id="Num_Digital_output"></span>
+      </div>
+    </div>
 
-<label for="r2" style="font-size:50;" >Bits</label><font face="Arial" size="6"> (Numbers) </font><input name="number1" class="intro"  style="position: absolute;   width:400; text-align
-:center;right: 10px;"class="form-control" type="number" />
+    <div class="result-card">
+      <div class="result-label">Binary Digital</div>
+      <div class="result-value">
+        <span id="Binary_output"></span>
+      </div>
+    </div>
 
+  </div>
 
+  <div class="formula">
+    Digital Output = floor((2<sup>n</sup> × VIN) / Vref)<br>
+    Binary Output = Digital Output converted to binary
+  </div>
 
-<h1 style="font-size:60;"></h1>
+</div>
 
-<label for="r2" style="font-size:50;" >V<sub>IN</sub></label><font face="Arial" size="6"> (Analog Voltage) </font><input name="number2" class="intro"  style="position: absolute;   width:400; text-align
-:center;right: 10px;"class="form-control" type="number" />
+<script>
+function calc(){
 
+  n = Number(document.getElementById("number1").value);
+  Vin = Number(document.getElementById("number2").value);
+  Vref = Number(document.getElementById("number3").value);
 
+  var errorBox = document.getElementById("errorBox");
 
-<h1 style="font-size:47;"></h1>
+  if(
+    isNaN(n) || isNaN(Vin) || isNaN(Vref) ||
+    n <= 0 || Vref <= 0
+  ){
+    errorBox.style.display = "block";
+    document.getElementById("Num_Digital_output").innerText = "";
+    document.getElementById("Binary_output").innerText = "";
+    return;
+  }
 
-<label for="r2" style="font-size:50;" >R<sub>V</sub></label><font face="Arial" size="6"> (Reference voltage) </font><input name="number3" class="intro"  style="position: absolute;   width:400; text-align
-:center;right: 10px;"class="form-control" type="number" />
+  errorBox.style.display = "none";
 
+  /* ORIGINAL FORMULA PRESERVED */
 
+  n1 = Math.pow(2,n);
 
-<h1 style="font-size:40;"></h1></fieldset><h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+  d_out = ((n1 * Vin) / Vref);
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+  d_out = Math.floor(d_out);
 
+  number = d_out;
 
-<h3>Outputs</h3></div></legend>
+  bin = " ";
 
-<label for="r2" style="font-size:55;" >Numeric</label><font face="Arial" size="7"> (Digital) </font><input name="Num_Digital_output" class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="text" />
-<h1 style="font-size:50;"></h1>
-<label for="r2" style="font-size:55;" >Binary</label><font face="Arial" size="7"> (Digital) </font><input name="Binary_output" class="intro"  style="position: absolute;   width:430; text-align
-:center;right: 10px;"class="form-control" type="text" />
-<h1 style="font-size:25;"></h1>
+  while(number > 0){
 
+    bin = ((number % 2) + bin);
 
+    number = Math.floor(number / 2);
+  }
 
+  b_out = bin;
 
-</FORM>
+  document.getElementById("Num_Digital_output").innerText = d_out;
 
+  document.getElementById("Binary_output").innerText = b_out;
+}
+</script>
+
+</body>
+</html>
