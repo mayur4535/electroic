@@ -1,117 +1,241 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+body{
+  margin:0;
+  background:#f6f8fb;
+  padding:0;
 }
 
-body { 
-  background: ; 
+.calc{
+  max-width:620px;
+  margin:auto;
+  padding:14px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
+
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+input,
+select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
+}
+
+select{
+  text-align:center;
+  font-weight:700;
+  padding:0 6px;
+}
+
+input:focus,
+select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+.resultTitle{
+  margin-top:26px;
+  font-size:13px;
+  font-weight:800;
+  color:#8b95a7;
+  letter-spacing:1px;
+}
+
+.resultGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+
+.card{
+  border-radius:10px;
+  padding:16px;
+  min-height:76px;
+}
+
+.card:nth-child(1){
+  background:#eef5ff;
+  border:1px solid #c8dbff;
+}
+
+.cardLabel{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  color:#2563eb;
+}
+
+.cardValue{
+  margin-top:6px;
+  font-size:18px;
+  font-weight:800;
+  min-height:24px;
+  color:#2563eb;
+}
+
+.formula{
+  margin-top:16px;
+  padding:14px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+@media(max-width:600px){
+  .row{
+    grid-template-columns:minmax(0,1fr) 72px;
   }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
+
+  .resultGrid{
+    grid-template-columns:1fr 1fr;
   }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
+  .cardValue{
+    font-size:14px;
   }
-.h11 {text-align: center; font-size:40; }
+}
 </style>
+</head>
 
-<article>
+<body>
 
+<div class="calc">
 
+  <label>Bandwidth</label>
+  <div class="row">
+    <input id="bandwidth" type="number" step="any">
+    <select id="bandwidthUnit">
+      <option value="1">Hz</option>
+      <option value="1000">kHz</option>
+      <option value="1000000">MHz</option>
+      <option value="1000000000">GHz</option>
+    </select>
+  </div>
 
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-B=Number(document.calculator.number1.value);
-NF= Number(document.calculator.number2.value);
-// -174 is the noise floor in dBm/Hz at 290 kelvin and with 1Hz bandwidth
-c1 = (-174 + (10*Math.log10(B)) + NF) ;
-document.calculator.MDS.value=c1;
+  <label>Noise Figure</label>
+  <div class="row">
+    <input id="noiseFigure" type="number" step="any">
+    <div style="
+      height:43px;
+      border:1px solid #cfd6df;
+      border-radius:8px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+    ">dB</div>
+  </div>
+
+  <button class="btn" onclick="calc()">CALCULATE</button>
+
+  <div id="errorBox">Please enter valid values.</div>
+
+  <div class="resultTitle">RESULTS</div>
+
+  <div class="resultGrid">
+
+    <div class="card">
+      <div class="cardLabel">MDS</div>
+      <div class="cardValue" id="mdsResult"></div>
+    </div>
+
+  </div>
+
+  <div class="formula">
+    Original formula preserved:<br><br>
+    MDS = -174 + 10 × log10(Bandwidth in Hz) + Noise Figure<br><br>
+    -174 dBm/Hz is thermal noise floor at 290K with 1Hz bandwidth.
+  </div>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("mdsResult").innerHTML = "";
 }
-</SCRIPT>
-<FORM name="calculator">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
+function calc(){
 
-<label style="font-size:60;">Bandwidth<font face="Arial" size="6">(Min)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:60px;text-align:center;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">Hz</label>
-<h1 style="font-size:40;"></h1>
-<label style="font-size:60;">Noise Figure<font face="Arial" size="6">(Min)</font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:60px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">dB</label>
+  var bandwidthValue = Number(document.getElementById("bandwidth").value);
+  var bandwidthUnit = Number(document.getElementById("bandwidthUnit").value);
+  var NF = Number(document.getElementById("noiseFigure").value);
 
+  if(
+    document.getElementById("bandwidth").value === "" ||
+    document.getElementById("noiseFigure").value === "" ||
+    isNaN(bandwidthValue) ||
+    isNaN(NF) ||
+    bandwidthValue <= 0
+  ){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
+  document.getElementById("errorBox").style.display = "none";
 
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  /* ORIGINAL FORMULA */
+  var B = bandwidthValue * bandwidthUnit;
+  var c1 = (-174 + (10 * Math.log10(B)) + NF);
 
+  document.getElementById("mdsResult").innerHTML = c1.toFixed(4) + " dBm";
+}
+</script>
 
-<h3>Outputs</h3></div></legend>
-
-
-<label style="font-size:60;">MDS<font face="Arial" size="5">(Minimum Detectable Signal)</font></label><input  name="MDS" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:45px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">dBm</label>
-
-
-</fieldset></div>
-
-
-</FORM>
+</body>
+</html>
