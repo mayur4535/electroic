@@ -1,126 +1,204 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
 }
 
-body { 
-  background: ; 
+input,select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+select{
+  text-align:center;
+  font-weight:700;
+  padding:0 6px;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-.h11 {text-align: center; font-size:40; }
+input:focus,select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+.resultTitle{
+  margin-top:26px;
+  font-size:13px;
+  font-weight:800;
+  color:#8b95a7;
+  letter-spacing:1px;
+}
+
+.bigResult{
+  margin-top:12px;
+  padding:18px;
+  border-radius:12px;
+  background:#eef5ff;
+  border:1px solid #c8dbff;
+  text-align:center;
+}
+
+.bigLabel{
+  font-size:12px;
+  font-weight:900;
+  color:#2563eb;
+  text-transform:uppercase;
+}
+
+.bigValue{
+  margin-top:8px;
+  font-size:30px;
+  font-weight:900;
+  color:#2563eb;
+  min-height:38px;
+}
+
+.formula{
+  margin-top:16px;
+  padding:14px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+@media(max-width:600px){
+  .calc{padding:14px}
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .bigValue{font-size:24px}
+}
 </style>
+</head>
 
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-TOI=Number(document.calculator.number1.value);
-PIN=Number(document.calculator.number2.value);
-G=Number(document.calculator.number3.value);
-m1 = (-((TOI-PIN-G)/10));
-c1 = ( 13.2 * (Math.pow(10, m1)) ) ;
-document.calculator.AM_to_PM_conversion.value=c1;
+<body>
+
+<div class="calc">
+
+  <label>TOI (Third Order Intercept Point)</label>
+  <div class="row">
+    <input id="toi" type="number" step="any">
+    <select id="toiUnit">
+      <option value="dbm">dBm</option>
+    </select>
+  </div>
+
+  <label>IPL (Input Power Level)</label>
+  <div class="row">
+    <input id="pin" type="number" step="any">
+    <select id="pinUnit">
+      <option value="dbm">dBm</option>
+    </select>
+  </div>
+
+  <label>GTD (Gain of the DUT)</label>
+  <div class="row">
+    <input id="gain" type="number" step="any">
+    <select id="gainUnit">
+      <option value="db">dB</option>
+    </select>
+  </div>
+
+  <button class="btn" onclick="calc()">CALCULATE</button>
+
+  <div id="errorBox">Please enter valid values.</div>
+
+  <div class="resultTitle">RESULTS</div>
+
+  <div class="bigResult">
+    <div class="bigLabel">AM to PM Conversion</div>
+    <div class="bigValue" id="result"></div>
+  </div>
+
+  <div class="formula">
+    Original formula preserved:<br><br>
+    m = −((TOI − PIN − G) / 10)<br>
+    Result = 13.2 × 10<sup>m</sup>
+  </div>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("result").innerHTML = "";
 }
-</SCRIPT>
-<FORM name="calculator">
 
+function calc(){
 
+  var TOI = Number(document.getElementById("toi").value);
+  var PIN = Number(document.getElementById("pin").value);
+  var G = Number(document.getElementById("gain").value);
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
+  if(
+    document.getElementById("toi").value === "" ||
+    document.getElementById("pin").value === "" ||
+    document.getElementById("gain").value === "" ||
+    isNaN(TOI) ||
+    isNaN(PIN) ||
+    isNaN(G)
+  ){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
-<label style="font-size:60;">TOI<font face="Arial" size="5"> (Third Order Intercept Point)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:45px;text-align:center; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">dBm</label>
-<h1 style="font-size:40;"></h1>
-<label style="font-size:60;">IPL<font face="Arial" size="6"> (Input Power Level)</font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:45px;text-align:center;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">dBm</label>
+  document.getElementById("errorBox").style.display = "none";
 
-<h1 style="font-size:50;"></h1>
-<label style="font-size:60;">GTD <font face="Arial" size="6"> (Gain of the DUT)</font></label><input  name="number3" class="intro"  style="position: absolute;  text-align:center; width:420; right: 1px;"class="form-control" type="number" />
+  /* ORIGINAL FORMULA */
+  var m1 = (-((TOI - PIN - G) / 10));
+  var c1 = (13.2 * (Math.pow(10, m1)));
 
-
-<h1 style="font-size:50;"></h1>
-
-
-
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-<label style="font-size:60;">Result<font face="Arial" size="6"></font></label><input  name="AM_to_PM_conversion" class="intro"  style="position: absolute;  text-align:center; width:350; right: 1px;"class="form-control" type="number" />
-
-<h1 style="font-size:50;"></h1>
-
-
-</fieldset></div>
-
-</FORM>
-<br/>
+  document.getElementById("result").innerHTML = c1.toFixed(6);
+}
+</script>
 
 </body>
 </html>
