@@ -1,118 +1,391 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+
+*{
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+body{
+margin:0;
+background:#f6f8fb;
+padding:0;
 }
 
-body { 
-  background: ; 
+.calc{
+max-width:620px;
+margin:auto;
+padding:14px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+label{
+display:block;
+font-size:15px;
+font-weight:700;
+color:#555;
+margin-bottom:6px;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-.h11 {text-align: center; font-size:40; }
+.row{
+display:grid;
+grid-template-columns:minmax(0,1fr) 82px;
+gap:8px;
+margin-bottom:16px;
+}
+
+input,select{
+width:100%;
+height:43px;
+border:1px solid #cfd6df;
+border-radius:8px;
+padding:0 12px;
+font-size:15px;
+background:#fff;
+outline:none;
+}
+
+select{
+text-align:center;
+font-weight:800;
+}
+
+input:focus,
+select:focus{
+border-color:#ff6a00;
+box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+width:100%;
+height:48px;
+border:none;
+border-radius:10px;
+background:linear-gradient(90deg,#ff7a18,#ff4b00);
+color:#fff;
+font-size:16px;
+font-weight:800;
+cursor:pointer;
+margin-top:8px;
+}
+
+#errorBox{
+display:none;
+margin-top:12px;
+color:#dc2626;
+font-size:14px;
+font-weight:800;
+}
+
+.resultTitle{
+font-size:13px;
+font-weight:800;
+letter-spacing:1px;
+color:#7b8794;
+margin-top:22px;
+margin-bottom:12px;
+}
+
+.resultGrid{
+display:grid;
+grid-template-columns:1fr;
+gap:12px;
+}
+
+.card{
+padding:16px;
+border-radius:12px;
+min-height:82px;
+}
+
+.cardLabel{
+font-size:12px;
+font-weight:900;
+letter-spacing:.5px;
+margin-bottom:10px;
+}
+
+.cardLine{
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+}
+
+.cardValue{
+font-size:18px;
+font-weight:900;
+min-height:22px;
+word-break:break-word;
+}
+
+.cardUnit{
+font-size:18px;
+font-weight:900;
+}
+
+.blue{
+background:#eef5ff;
+border:1px solid #bfd3ff;
+}
+
+.blue .cardLabel,
+.blue .cardValue,
+.blue .cardUnit{
+color:#2359e8;
+}
+
+.formula{
+margin-top:16px;
+padding:14px;
+background:#f9fafb;
+border:1px solid #e5e7eb;
+border-radius:10px;
+font-size:13px;
+line-height:1.6;
+color:#667085;
+font-weight:700;
+}
+
+@media(max-width:600px){
+
+.row{
+grid-template-columns:minmax(0,1fr) 72px;
+}
+
+.cardValue,
+.cardUnit{
+font-size:16px;
+}
+
+}
+
 </style>
 
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-Ve=Number(document.calculator.number1.value);
-Td=Number(document.calculator.number2.value);
-c1 = ( ( (3*Math.pow(10,8))*Ve*Td/2 ));
-document.calculator.TDR_length.value=c1;
+</head>
+
+<body>
+
+<div class="calc">
+
+<label>
+U (Velocity Factor of Transmission Line)
+</label>
+
+<div class="row">
+
+<input
+id="velocityFactor"
+type="number"
+step="any">
+
+<select>
+<option>U</option>
+</select>
+
+</div>
+
+
+
+<label>
+Td (Round Trip Time)
+</label>
+
+<div class="row">
+
+<input
+id="roundTripTime"
+type="number"
+step="any">
+
+<select>
+<option>Td</option>
+</select>
+
+</div>
+
+
+
+<button
+class="btn"
+onclick="calc()">
+
+CALCULATE
+
+</button>
+
+
+
+<div id="errorBox">
+
+Please enter valid values.
+
+</div>
+
+
+
+<div class="resultTitle">
+
+RESULTS
+
+</div>
+
+
+
+<div class="resultGrid">
+
+<div class="card blue">
+
+<div class="cardLabel">
+
+TDR LENGTH
+
+</div>
+
+<div class="cardLine">
+
+<span
+class="cardValue"
+id="tdrLengthResult">
+</span>
+
+<span
+class="cardUnit"
+id="tdrLengthUnit">
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="formula">
+
+Website matched formula:<br><br>
+
+TDR Length =
+
+(3 × 10⁸ × U × Td ÷ 2)
+
+<br><br>
+
+Result stored as signed 32-bit integer
+(to match website)
+
+</div>
+
+</div>
+
+
+
+<script>
+
+function clearResults(){
+
+tdrLengthResult.innerHTML="";
+
+tdrLengthUnit.innerHTML="";
+
 }
-</SCRIPT>
-<FORM name="calculator">
 
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
 
-<label style="font-size:60;">U<font face="Arial" size="5"> (Velocity factor of transmission line)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:350; right: 1px;"class="form-control" type="number" />
+function calc(){
 
-<h1 style="font-size:45;"></h1>
-<label style="font-size:60;">T<sub>d</sub><font face="Arial" size="6"> (Round trip time) </font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:350; right: 1px;"class="form-control" type="number" />
+let U=
 
+Number(
+velocityFactor.value
+);
 
-<h1 style="font-size:50;"></h1>
+let Td=
 
-
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+Number(
+roundTripTime.value
+);
 
 
-<h3>Outputs</h3></div></legend>
+if(
+
+velocityFactor.value===""
+
+||
+
+roundTripTime.value===""
+
+||
+
+isNaN(U)
+
+||
+
+isNaN(Td)
+
+){
+
+errorBox.style.display=
+"block";
+
+clearResults();
+
+return;
+
+}
 
 
-<label style="font-size:60;">TDR Length<font face="Arial" size="6"></font></label><input  name="TDR_length" class="intro"  style="position: absolute;  text-align:center; width:300; right: 140px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:115px;">Mtr</label>
-<h1 style="font-size:50;"></h1>
+errorBox.style.display=
+"none";
 
 
-</fieldset></div>
+/* WEBSITE MATCH */
 
-</FORM>
-<br/>
+let raw =
+
+(
+3
+*
+Math.pow(
+10,
+8
+)
+*
+U
+*
+Td
+)
+
+/
+
+2;
+
+
+/* OVERFLOW MATCH */
+
+let length = raw | 0;
+
+
+
+tdrLengthResult.innerHTML=
+
+length;
+
+
+
+tdrLengthUnit.innerHTML=
+
+"m";
+
+}
+
+clearResults();
+
+</script>
 
 </body>
 </html>
