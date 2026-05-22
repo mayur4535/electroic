@@ -1,130 +1,243 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
 }
 
-body { 
-  background: ; 
+input,select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+select{
+  text-align:center;
+  font-weight:700;
+  padding:0 6px;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-.h11 {text-align: center; font-size:40; }
+input:focus,select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+.resultTitle{
+  margin-top:26px;
+  font-size:13px;
+  font-weight:800;
+  color:#8b95a7;
+  letter-spacing:1px;
+}
+
+.resultGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+
+.card{
+  border-radius:10px;
+  padding:16px;
+  min-height:76px;
+}
+
+.card:nth-child(1){
+  background:#eef5ff;
+  border:1px solid #c8dbff;
+}
+
+.card:nth-child(2){
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+}
+
+.cardLabel{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.card:nth-child(1) .cardLabel,
+.card:nth-child(1) .cardValue{
+  color:#2563eb;
+}
+
+.card:nth-child(2) .cardLabel,
+.card:nth-child(2) .cardValue{
+  color:#059669;
+}
+
+.cardValue{
+  margin-top:6px;
+  font-size:18px;
+  font-weight:800;
+  min-height:24px;
+  word-break:break-word;
+}
+
+.formula{
+  margin-top:16px;
+  padding:14px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+@media(max-width:600px){
+  .calc{padding:14px}
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .cardValue{font-size:14px}
+}
 </style>
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-E=Number(document.calculator.number1.value);
-sigma=Number(document.calculator.number2.value);
-md=Number(document.calculator.number3.value);
-c1 = ( (sigma * (Math.pow(E,2))) / md  ) ;
-c2 = ( (Math.pow(E,2))/377 );
-document.calculator.SAR.value=c1;
-document.calculator.PD.value=c2;
+</head>
+
+<body>
+
+<div class="calc">
+
+  <label>Electric Field RMS</label>
+  <div class="row">
+    <input id="electricField" type="number" step="any">
+    <select id="electricUnit">
+      <option value="1">V/m</option>
+      <option value="0.001">mV/m</option>
+      <option value="1000">kV/m</option>
+    </select>
+  </div>
+
+  <label>Material Conductivity</label>
+  <div class="row">
+    <input id="conductivity" type="number" step="any">
+    <select id="conductivityUnit">
+      <option value="1">S/m</option>
+      <option value="0.001">mS/m</option>
+    </select>
+  </div>
+
+  <label>Mass Density</label>
+  <div class="row">
+    <input id="massDensity" type="number" step="any">
+    <select id="densityUnit">
+      <option value="1">kg/m³</option>
+      <option value="1000">g/cm³</option>
+    </select>
+  </div>
+
+  <button class="btn" onclick="calc()">CALCULATE</button>
+
+  <div id="errorBox">Please enter valid values.</div>
+
+  <div class="resultTitle">RESULTS</div>
+
+  <div class="resultGrid">
+
+    <div class="card">
+      <div class="cardLabel">SAR</div>
+      <div class="cardValue" id="sarResult"></div>
+    </div>
+
+    <div class="card">
+      <div class="cardLabel">IPD</div>
+      <div class="cardValue" id="ipdResult"></div>
+    </div>
+
+  </div>
+
+  <div class="formula">
+    Original formula preserved:<br><br>
+    SAR = σ × E² / ρ<br>
+    IPD = E² / 377<br><br>
+    E = Electric field RMS, σ = Conductivity, ρ = Mass density
+  </div>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("sarResult").innerHTML = "";
+  document.getElementById("ipdResult").innerHTML = "";
 }
-</SCRIPT>
-<FORM name="calculator">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
+function calc(){
 
-<label style="font-size:50;">Electric Field <font face="Arial" size="6"> (RMS)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:51px;text-align:center;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">V/m</label>
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Material<font face="Arial" size="5"> (Conductivity) </font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:51px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">S/m</label>
+  var E = Number(document.getElementById("electricField").value) * Number(document.getElementById("electricUnit").value);
+  var sigma = Number(document.getElementById("conductivity").value) * Number(document.getElementById("conductivityUnit").value);
+  var md = Number(document.getElementById("massDensity").value) * Number(document.getElementById("densityUnit").value);
 
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Mass Density <font face="Arial" size="6"></font></label><input  name="number3" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:30px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">Kg/m<sup>3</label>
+  if(
+    document.getElementById("electricField").value === "" ||
+    document.getElementById("conductivity").value === "" ||
+    document.getElementById("massDensity").value === "" ||
+    isNaN(E) || isNaN(sigma) || isNaN(md) ||
+    md === 0
+  ){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
-<h1 style="font-size:50;"></h1>
+  document.getElementById("errorBox").style.display = "none";
 
+  /* ORIGINAL FORMULA */
+  var c1 = ((sigma * (Math.pow(E,2))) / md);
+  var c2 = ((Math.pow(E,2)) / 377);
 
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-<label style="font-size:50;">SAR<font face="Arial" size="6">(Specific Absorption Rate)</font></label><input  name="SAR" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:30px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">Kg/m<sup>3</label>
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">IPD<font face="Arial" size="6"> (Incident Power Density) </font></label><input  name="PD" class="intro"  style="position: absolute;  text-align:center; width:430; right: 1px;"class="form-control" type="number" />
-
-
-<h1 style="font-size:50;"></h1>
-
-
-
-</fieldset></div>
-
-
-
-</FORM>
-<br/>
+  document.getElementById("sarResult").innerHTML = c1.toFixed(6) + " W/kg";
+  document.getElementById("ipdResult").innerHTML = c2.toFixed(6) + " W/m²";
+}
+</script>
 
 </body>
 </html>
