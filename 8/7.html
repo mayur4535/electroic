@@ -1,132 +1,244 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
 }
 
-body { 
-  background: ; 
+input,select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+select{
+  text-align:center;
+  font-weight:700;
+  padding:0 6px;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-.h11 {text-align: center; font-size:40; }
+input:focus,select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+.resultTitle{
+  margin-top:26px;
+  font-size:13px;
+  font-weight:800;
+  color:#8b95a7;
+  letter-spacing:1px;
+}
+
+.resultGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+
+.card{
+  border-radius:10px;
+  padding:16px;
+  min-height:76px;
+}
+
+.card:nth-child(1){
+  background:#eef5ff;
+  border:1px solid #c8dbff;
+}
+
+.card:nth-child(2){
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+}
+
+.cardLabel{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.card:nth-child(1) .cardLabel,
+.card:nth-child(1) .cardValue{
+  color:#2563eb;
+}
+
+.card:nth-child(2) .cardLabel,
+.card:nth-child(2) .cardValue{
+  color:#059669;
+}
+
+.cardValue{
+  margin-top:6px;
+  font-size:18px;
+  font-weight:800;
+  min-height:24px;
+  word-break:break-word;
+}
+
+.formula{
+  margin-top:16px;
+  padding:14px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+@media(max-width:600px){
+  .calc{padding:14px}
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .cardValue{font-size:14px}
+}
 </style>
-<article>
+</head>
 
+<body>
 
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-ZL=Number(document.calculator.number1.value);
-ZS=Number(document.calculator.number2.value);
-VI=Number(document.calculator.number3.value);
-c1= ( (ZL-ZS)/(ZL+ZS) );
-c2 = (c1 * VI ) ;
-document.calculator.reflection_coefficient.value=c1;
-document.calculator.reflected_voltage.value=c2;
+<div class="calc">
+
+  <label>Z<sub>L</sub> (Load Impedance)</label>
+  <div class="row">
+    <input id="zl" type="number" step="any">
+    <select id="zlUnit">
+      <option value="1">Ω</option>
+      <option value="1000">kΩ</option>
+      <option value="1000000">MΩ</option>
+    </select>
+  </div>
+
+  <label>Z<sub>S</sub> (Source Impedance)</label>
+  <div class="row">
+    <input id="zs" type="number" step="any">
+    <select id="zsUnit">
+      <option value="1">Ω</option>
+      <option value="1000">kΩ</option>
+      <option value="1000000">MΩ</option>
+    </select>
+  </div>
+
+  <label>V<sub>rms</sub> (Incident Voltage)</label>
+  <div class="row">
+    <input id="vi" type="number" step="any">
+    <select id="viUnit">
+      <option value="1">V</option>
+      <option value="0.001">mV</option>
+      <option value="1000">kV</option>
+    </select>
+  </div>
+
+  <button class="btn" onclick="calc()">CALCULATE</button>
+
+  <div id="errorBox">Please enter valid values.</div>
+
+  <div class="resultTitle">RESULTS</div>
+
+  <div class="resultGrid">
+
+    <div class="card">
+      <div class="cardLabel">Γ Reflection Coefficient</div>
+      <div class="cardValue" id="reflectionResult"></div>
+    </div>
+
+    <div class="card">
+      <div class="cardLabel">Vref Reflected Voltage</div>
+      <div class="cardValue" id="voltageResult"></div>
+    </div>
+
+  </div>
+
+  <div class="formula">
+    Original formula preserved:<br><br>
+    Γ = (Z<sub>L</sub> − Z<sub>S</sub>) / (Z<sub>L</sub> + Z<sub>S</sub>)<br>
+    V<sub>ref</sub> = Γ × V<sub>incident</sub>
+  </div>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("reflectionResult").innerHTML = "";
+  document.getElementById("voltageResult").innerHTML = "";
 }
-</SCRIPT>
-<FORM name="calculator">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
+function calc(){
 
-<label style="font-size:60;">Z<sub>L</sub><font face="Arial" size="6"> (
-Load Impedance)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:350; right: 1px;"class="form-control" type="number" />
+  var ZL = Number(document.getElementById("zl").value) * Number(document.getElementById("zlUnit").value);
+  var ZS = Number(document.getElementById("zs").value) * Number(document.getElementById("zsUnit").value);
+  var VI = Number(document.getElementById("vi").value) * Number(document.getElementById("viUnit").value);
 
-<h1 style="font-size:25;"></h1>
-<label style="font-size:60;">Z<sub>S</sub><font face="Arial" size="6"> (Source Impedance) </font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:350; right: 1px;"class="form-control" type="number" />
+  if(
+    document.getElementById("zl").value === "" ||
+    document.getElementById("zs").value === "" ||
+    document.getElementById("vi").value === "" ||
+    isNaN(ZL) || isNaN(ZS) || isNaN(VI) ||
+    (ZL + ZS) === 0
+  ){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
+  document.getElementById("errorBox").style.display = "none";
 
-<h1 style="font-size:25;"></h1>
-<label style="font-size:60;">V<sub>rms</sub><font face="Arial" size="6"> (Incident Voltage)</font></label><input  name="number3" class="intro"  style="position: absolute;  text-align:center; width:350; right: 1px;"class="form-control" type="number" />
+  /* ORIGINAL FORMULA */
+  var c1 = ((ZL - ZS) / (ZL + ZS));
+  var c2 = (c1 * VI);
 
-
-<h1 style="font-size:50;"></h1>
-
-
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-<label style="font-size:60;">Γ<font face="Arial" size="6"> (Reflection Coefficient)</font></label><input  name="reflection_coefficient" class="intro"  style="position: absolute;  text-align:center; width:350; right: 1px;"class="form-control" type="text" />
-
-<h1 style="font-size:30;"></h1>
-<label style="font-size:60;">V<sub>ref</sub><font face="Arial" size="6"> (Reflected Voltage)</font></label><input  name="reflected_voltage" class="intro"  style="position: absolute;  text-align:center; width:350; right: 1px;"class="form-control" type="text" />
-
-
-<h1 style="font-size:50;"></h1>
-
-
-</fieldset></div>
-
-
-</FORM>
-<br/>
+  document.getElementById("reflectionResult").innerHTML = c1.toFixed(6);
+  document.getElementById("voltageResult").innerHTML = c2.toFixed(6) + " V";
+}
+</script>
 
 </body>
 </html>
