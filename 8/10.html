@@ -1,130 +1,348 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+
+body{
+  margin:0;
+  background:#f6f8fb;
+  padding:0;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.calc{
+  max-width:620px;
+  margin:auto;
+  padding:14px;
 }
 
-body { 
-  background: ; 
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
+
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+input,select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
+}
+
+select{
+  text-align:center;
+  font-weight:700;
+  padding:0 6px;
+}
+
+input:focus,select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+.resultTitle{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#7b8794;
+  margin-top:22px;
+  margin-bottom:12px;
+}
+
+.resultGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.card{
+  padding:16px;
+  border-radius:12px;
+  min-height:82px;
+}
+
+.cardLabel{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.5px;
+  margin-bottom:10px;
+}
+
+.cardLine{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.cardValue{
+  font-size:18px;
+  font-weight:900;
+  line-height:1;
+  min-height:22px;
+}
+
+.cardUnit{
+  font-size:18px;
+  font-weight:900;
+}
+
+.blue{
+  background:#eef5ff;
+  border:1px solid #bfd3ff;
+}
+
+.blue .cardLabel,
+.blue .cardValue,
+.blue .cardUnit{
+  color:#2359e8;
+}
+
+.green{
+  background:#edfdf3;
+  border:1px solid #bff0d0;
+}
+
+.green .cardLabel,
+.green .cardValue,
+.green .cardUnit{
+  color:#019863;
+}
+
+.formula{
+  margin-top:16px;
+  padding:14px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+@media(max-width:600px){
+  .calc{
+    padding:14px;
   }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
+
+  .row{
+    grid-template-columns:minmax(0,1fr) 72px;
   }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
+  .resultGrid{
+    grid-template-columns:1fr 1fr;
   }
-.h11 {text-align: center; font-size:40; }
+
+  .card{
+    padding:14px;
+  }
+
+  .cardValue,
+  .cardUnit{
+    font-size:16px;
+  }
+}
 </style>
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-ht=Number(document.calculator.number1.value);
-hr=Number(document.calculator.number2.value);
-current=Number(document.calculator.number3.value);
-d=Number(document.calculator.number4.value);
-f=Number(document.calculator.number5.value);
-lambda= ( (3*Math.pow(10,8))/(f*Math.pow(10,9)) );
-pi_val = Math.PI;
-c = ( (120 * pi_val * ht * hr * current) / ( lambda * d ) );
-document.calculator.fieldstrength.value=c;
+</head>
+
+<body>
+
+<div class="calc">
+
+<label>Effective Height of Transmitting Antenna</label>
+<div class="row">
+  <input id="ht" type="number" step="any">
+  <select id="htUnit">
+    <option value="1">m</option>
+    <option value="0.01">cm</option>
+    <option value="0.001">mm</option>
+    <option value="0.3048">ft</option>
+  </select>
+</div>
+
+<label>Effective Height of Receiving Antenna</label>
+<div class="row">
+  <input id="hr" type="number" step="any">
+  <select id="hrUnit">
+    <option value="1">m</option>
+    <option value="0.01">cm</option>
+    <option value="0.001">mm</option>
+    <option value="0.3048">ft</option>
+  </select>
+</div>
+
+<label>Antenna Current</label>
+<div class="row">
+  <input id="current" type="number" step="any">
+  <select id="currentUnit">
+    <option value="1">A</option>
+    <option value="0.001">mA</option>
+  </select>
+</div>
+
+<label>Distance from Transmitting Antenna</label>
+<div class="row">
+  <input id="distance" type="number" step="any">
+  <select id="distanceUnit">
+    <option value="1">m</option>
+    <option value="1000">km</option>
+    <option value="0.3048">ft</option>
+  </select>
+</div>
+
+<label>Operating Frequency</label>
+<div class="row">
+  <input id="frequency" type="number" step="any">
+  <select id="frequencyUnit">
+    <option value="hz">Hz</option>
+    <option value="khz" selected>kHz</option>
+    <option value="mhz">MHz</option>
+    <option value="ghz">GHz</option>
+  </select>
+</div>
+
+<button class="btn" onclick="calc()">CALCULATE</button>
+
+<div id="errorBox">Please enter valid values.</div>
+
+<div class="resultTitle">RESULTS</div>
+
+<div class="resultGrid">
+
+  <div class="card blue">
+    <div class="cardLabel">WAVELENGTH</div>
+    <div class="cardLine">
+      <span class="cardValue" id="waveResult"></span>
+      <span class="cardUnit">m</span>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="cardLabel">RF FIELD STRENGTH</div>
+    <div class="cardLine">
+      <span class="cardValue" id="fieldResult"></span>
+      <span class="cardUnit">A/m</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="formula">
+Original formula preserved:<br><br>
+λ = 3 × 10⁸ / f<br>
+RF Field Strength = (120 × π × Ht × Hr × I) / (λ × d)
+</div>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("waveResult").innerHTML = "";
+  document.getElementById("fieldResult").innerHTML = "";
 }
-</SCRIPT>
-<FORM name="calculator">
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
 
-<label style="font-size:60;">Heignt<font face="Arial" size="6"> (TX Ant.)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:50px;text-align:center;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">Mtr</label>
-<h1 style="font-size:45;"></h1>
-<label style="font-size:60;">Height<font face="Arial" size="6"> (RX Ant.) </font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:51px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">Mtr</label>
+function getFrequencyHz(value,unit){
+  if(unit === "hz") return value;
+  if(unit === "khz") return value * 1000;
+  if(unit === "mhz") return value * 1000000;
+  if(unit === "ghz") return value * 1000000000;
+  return value;
+}
 
-<h1 style="font-size:45;"></h1>
-<label style="font-size:60;">Current<font face="Arial" size="6"> (Antenna)</font></label><input  name="number3" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">A</label>
+function calc(){
 
-<h1 style="font-size:45;"></h1>
-<label style="font-size:60;">Distance <font face="Arial" size="6"> (TX Ant.)</font></label><input  name="number4" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">M</label>
+  var htVal = Number(document.getElementById("ht").value);
+  var hrVal = Number(document.getElementById("hr").value);
+  var currentVal = Number(document.getElementById("current").value);
+  var distanceVal = Number(document.getElementById("distance").value);
+  var frequencyVal = Number(document.getElementById("frequency").value);
 
-<h1 style="font-size:45;"></h1>
-<label style="font-size:60;">Fq.  <font face="Arial" size="6"> (Frequency of operation)</font></label><input  name="number5" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:53px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">GH<sub>z</label>
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  if(
+    document.getElementById("ht").value === "" ||
+    document.getElementById("hr").value === "" ||
+    document.getElementById("current").value === "" ||
+    document.getElementById("distance").value === "" ||
+    document.getElementById("frequency").value === "" ||
+    isNaN(htVal) ||
+    isNaN(hrVal) ||
+    isNaN(currentVal) ||
+    isNaN(distanceVal) ||
+    isNaN(frequencyVal)
+  ){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
+  var ht = htVal * Number(document.getElementById("htUnit").value);
+  var hr = hrVal * Number(document.getElementById("hrUnit").value);
+  var current = currentVal * Number(document.getElementById("currentUnit").value);
+  var d = distanceVal * Number(document.getElementById("distanceUnit").value);
+  var f = getFrequencyHz(frequencyVal, document.getElementById("frequencyUnit").value);
 
-<h3>Outputs</h3></div></legend>
+  if(ht <= 0 || hr <= 0 || current <= 0 || d <= 0 || f <= 0){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
+  document.getElementById("errorBox").style.display = "none";
 
-<label style="font-size:60;">RFS<font face="Arial" size="6"> (RF Field Strength)</font></label><input  name="fieldstrength" class="intro"  style="position: absolute;  text-align:center; width:300; right: 1px;"class="form-control" type="text" />
+  /* ORIGINAL FORMULA */
+  var lambda = (3 * Math.pow(10,8)) / f;
 
-<h1 style="font-size:50;"></h1>
+  var field = (
+    (120 * Math.PI * ht * hr * current) /
+    (lambda * d)
+  );
 
+  document.getElementById("waveResult").innerHTML =
+    lambda % 1 === 0 ? lambda.toFixed(0) : lambda.toFixed(7);
 
-</fieldset></div>
+  document.getElementById("fieldResult").innerHTML =
+    field.toFixed(7);
+}
 
-
-
-
-</FORM>
+clearResults();
+</script>
 
 </body>
 </html>
