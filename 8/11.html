@@ -1,123 +1,462 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+
+body{
+margin:0;
+background:#f6f8fb;
+padding:0;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.calc{
+max-width:620px;
+margin:auto;
+padding:14px;
 }
 
-body { 
-  background: ; 
+label{
+display:block;
+font-size:15px;
+font-weight:700;
+color:#555;
+margin-bottom:6px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+.row{
+display:grid;
+grid-template-columns:minmax(0,1fr) 82px;
+gap:8px;
+margin-bottom:16px;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-.h11 {text-align: center; font-size:40; }
+input,select{
+width:100%;
+height:43px;
+border:1px solid #cfd6df;
+border-radius:8px;
+padding:0 12px;
+font-size:15px;
+background:#fff;
+outline:none;
+}
+
+select{
+font-weight:800;
+text-align:center;
+}
+
+input:focus,
+select:focus{
+border-color:#ff6a00;
+box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+width:100%;
+height:48px;
+border:none;
+border-radius:10px;
+background:linear-gradient(90deg,#ff7a18,#ff4b00);
+color:#fff;
+font-size:16px;
+font-weight:800;
+cursor:pointer;
+}
+
+#errorBox{
+display:none;
+margin-top:12px;
+color:#dc2626;
+font-size:14px;
+font-weight:800;
+}
+
+.resultTitle{
+font-size:13px;
+font-weight:800;
+letter-spacing:1px;
+color:#7b8794;
+margin-top:22px;
+margin-bottom:12px;
+}
+
+.resultGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.card{
+padding:16px;
+border-radius:12px;
+min-height:82px;
+}
+
+.cardLabel{
+font-size:12px;
+font-weight:900;
+margin-bottom:10px;
+}
+
+.cardLine{
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+}
+
+.cardValue{
+font-size:18px;
+font-weight:900;
+min-height:22px;
+}
+
+.cardUnit{
+font-size:18px;
+font-weight:900;
+}
+
+.blue{
+background:#eef5ff;
+border:1px solid #bfd3ff;
+}
+
+.blue .cardLabel,
+.blue .cardValue,
+.blue .cardUnit{
+color:#2359e8;
+}
+
+.green{
+background:#edfdf3;
+border:1px solid #bff0d0;
+}
+
+.green .cardLabel,
+.green .cardValue,
+.green .cardUnit{
+color:#019863;
+}
+
+.formula{
+margin-top:16px;
+padding:14px;
+background:#f9fafb;
+border:1px solid #e5e7eb;
+border-radius:10px;
+font-size:13px;
+line-height:1.6;
+color:#667085;
+font-weight:700;
+}
+
+@media(max-width:600px){
+
+.row{
+grid-template-columns:minmax(0,1fr) 72px;
+}
+
+.resultGrid{
+grid-template-columns:1fr 1fr;
+}
+
+}
+
 </style>
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-f=Number(document.calculator.number1.value);
-PN=Number(document.calculator.number2.value);
-p1=PN/10;
-p2 = 2*Math.pow(10,p1);
-c1 = Math.pow(p2,0.5);
-c2 = c1/(2*Math.PI*f*1e6);
-document.calculator.phasejitter.value=c1;
-document.calculator.jitter.value=c2;
+</head>
+
+<body>
+
+<div class="calc">
+
+<label>Frequency Oscillator</label>
+
+<div class="row">
+
+<input
+id="frequency"
+type="number">
+
+<select
+id="frequencyUnit">
+
+<option value="khz">
+kHz
+</option>
+
+<option value="mhz" selected>
+MHz
+</option>
+
+<option value="ghz">
+GHz
+</option>
+
+</select>
+
+</div>
+
+
+<label>Phase Noise Integrated</label>
+
+<div class="row">
+
+<input
+id="phaseNoise"
+type="number">
+
+<select>
+
+<option>
+dBc
+</option>
+
+</select>
+
+</div>
+
+
+<button
+class="btn"
+onclick="calc()">
+
+CALCULATE
+
+</button>
+
+
+<div id="errorBox">
+
+Please enter valid values
+
+</div>
+
+
+
+<div class="resultTitle">
+
+RESULTS
+
+</div>
+
+
+<div class="resultGrid">
+
+
+<div class="card blue">
+
+<div class="cardLabel">
+
+RMS PHASE JITTER IN MICRO SECONDS
+
+</div>
+
+<div class="cardLine">
+
+<span
+class="cardValue"
+id="jitterResult">
+</span>
+
+<span
+class="cardUnit"
+id="jitterUnit">
+</span>
+
+</div>
+
+</div>
+
+
+<div class="card green">
+
+<div class="cardLabel">
+
+RMS PHASE JITTER IN RADIANS
+
+</div>
+
+<div class="cardLine">
+
+<span
+class="cardValue"
+id="phaseJitterResult">
+</span>
+
+<span
+class="cardUnit"
+id="phaseUnit">
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="formula">
+
+Formula Used:<br><br>
+
+RMS Phase Jitter (Rad)
+=
+√(2 × 10^(PN/10))
+
+<br><br>
+
+RMS Phase Jitter (uS)
+=
+PhaseJitter
+÷
+(2πf)
+× 10⁶
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+function clearResults(){
+
+jitterResult.innerHTML="";
+phaseJitterResult.innerHTML="";
+jitterUnit.innerHTML="";
+phaseUnit.innerHTML="";
+
 }
-</SCRIPT>
-<FORM name="calculator">
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
 
-<label style="font-size:50;">Frequency<font face="Arial" size="6">
-(Oscillator)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:45px;text-align:center; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">MH<sub>z</label>
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Phase Noise<font face="Arial" size="5"> (Integrated) </font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:52px;text-align:center;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">dBc</label>
+function getFrequencyForWebsite(v,u){
 
-<h1 style="font-size:50;"></h1>
+if(u==="khz")
+return v/1000;
+
+if(u==="mhz")
+return v;
+
+if(u==="ghz")
+return v*1000000;
+
+return v;
+
+}
+
+function calc(){
+
+let freq=
+Number(
+frequency.value
+);
+
+let pn=
+Number(
+phaseNoise.value
+);
+
+if(
+frequency.value===""||
+phaseNoise.value===""||
+isNaN(freq)||
+isNaN(pn)||
+freq<=0
+){
+
+errorBox.style.display=
+"block";
+
+clearResults();
+
+return;
+
+}
+
+errorBox.style.display=
+"none";
 
 
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+let f=
+getFrequencyForWebsite(
+freq,
+frequencyUnit.value
+);
 
 
-<h3>Outputs</h3></div></legend>
+let phaseJitter=
+
+Math.sqrt(
+
+2*
+
+Math.pow(
+
+10,
+
+pn/10
+
+)
+
+);
 
 
-<label style="font-size:50;">Jitter<font face="Arial" size="6"> (RMS)</font></label><input  name="jitter" class="intro"  style="position: absolute;  text-align:center; width:300; right: 112px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:55px;text-align:center;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:85px;">S</label>
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Phase Jitter<font face="Arial" size="6"> (RMS) </font></label><input  name="phasejitter" class="intro"  style="position: absolute;  text-align:center; width:300; right: 112px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:55px;text-align:center;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:85px;"><sup>rad</label>
 
-<h1 style="font-size:50;"></h1>
+let jitterUS=
+
+(
+
+phaseJitter
+
+/
+
+(
+
+2*
+
+Math.PI*
+
+f
+
+)
+
+)
+
+*
+
+1000000;
 
 
-</fieldset></div>
 
-</FORM>
+phaseJitterResult.innerHTML=
+
+phaseJitter.toFixed(7);
+
+phaseUnit.innerHTML=
+
+"Rad";
+
+
+
+jitterResult.innerHTML=
+
+jitterUS.toFixed(8);
+
+jitterUnit.innerHTML=
+
+"uS";
+
+}
+
+clearResults();
+
+</script>
 
 </body>
 </html>
