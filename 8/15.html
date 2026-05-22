@@ -1,144 +1,209 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+
+input,select{
+  width:100%;height:43px;border:1px solid #cfd6df;
+  border-radius:8px;padding:0 12px;font-size:15px;
+  background:#fff;outline:none;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+select{text-align:center;font-weight:800;padding:0 6px}
+
+input:focus,select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
 }
 
-body { 
-  background: ; 
+.btn{
+  width:100%;height:48px;border:none;border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;font-size:16px;font-weight:800;
+  cursor:pointer;margin-top:8px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-.h11 {text-align: center; font-size:40; }
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:12px;font-weight:900;letter-spacing:.5px;margin-bottom:10px}
+.cardValue{font-size:18px;font-weight:900;min-height:22px;word-break:break-word}
+
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.green{background:#edfdf3;border:1px solid #bff0d0}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe}
+.orange{background:#fff7ed;border:1px solid #fed7aa}
+
+.blue .cardLabel,.blue .cardValue{color:#2359e8}
+.green .cardLabel,.green .cardValue{color:#019863}
+.purple .cardLabel,.purple .cardValue{color:#7c3aed}
+.orange .cardLabel,.orange .cardValue{color:#ea580c}
+
+.formula{
+  margin-top:16px;padding:14px;background:#f9fafb;
+  border:1px solid #e5e7eb;border-radius:10px;
+  font-size:13px;line-height:1.6;color:#667085;font-weight:700;
+}
+
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .card{padding:14px}
+  .cardValue{font-size:16px}
+}
 </style>
+</head>
 
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-F=Number(document.calculator.number1.value);
-K=Number(document.calculator.number2.value);
-V=Number(document.calculator.number3.value);
-I=Number(document.calculator.number4.value);
-Vo=Number(document.calculator.number5.value);
-L=Number(document.calculator.number6.value);
-Pi = 3.14159;
-F = (F * (Math.pow(10,9)));
-I = I * Math.pow(10,-3);
-V = V * Math.pow(10,3);
-m1 =  ( (I * K)/(4*V) );
-m2 = Math.pow(m1,0.3333);
-m3 = ( L* 2* Pi * F ) / (2* Pi * Vo );
-c1= 47.3 * m3 * m2;
-c2 = -9.45 + c1;
-document.calculator.TWT_Gain.value=c2;
+<body>
+
+<div class="calc">
+
+<label>RF Frequency</label>
+<div class="row">
+  <input id="input1" type="number" value="3">
+  <select><option>GHz</option></select>
+</div>
+
+<label>Helix Impedance K</label>
+<div class="row">
+  <input id="input2" type="number" value="50">
+  <select><option>Ω</option></select>
+</div>
+
+<label>Applied DC Voltage</label>
+<div class="row">
+  <input id="input3" type="number" value="3">
+  <select><option>kV</option></select>
+</div>
+
+<label>DC Current</label>
+<div class="row">
+  <input id="input4" type="number" value="20">
+  <select><option>mA</option></select>
+</div>
+
+<label>Electron Velocity</label>
+<div class="row">
+  <input id="input5" type="number" value="3.25E7">
+  <select><option>m/s</option></select>
+</div>
+
+<label>Length</label>
+<div class="row">
+  <input id="input6" type="number" value="0.3">
+  <select><option>m</option></select>
+</div>
+
+<button class="btn" onclick="calc()">CALCULATE</button>
+
+<div id="errorBox">Please enter valid values.</div>
+
+<div class="resultTitle">RESULTS</div>
+
+<div class="resultGrid">
+
+<div class="card blue">
+  <div class="cardLabel">TWT PIERCE GAIN PARAMETER C</div>
+  <div class="cardValue" id="TWT_C"></div>
+</div>
+
+<div class="card green">
+  <div class="cardLabel">TWT PROPAGATION CONSTANT k</div>
+  <div class="cardValue" id="TWT_k"></div>
+</div>
+
+<div class="card purple">
+  <div class="cardLabel">TWT ELECTRONIC LENGTH N</div>
+  <div class="cardValue" id="TWT_N"></div>
+</div>
+
+<div class="card orange">
+  <div class="cardLabel">TWT PIERCE SMALL SIGNAL GAIN NEPER</div>
+  <div class="cardValue" id="TWT_Gain_Neper_simplified"></div>
+</div>
+
+<div class="card blue">
+  <div class="cardLabel">TWT PIERCE SMALL SIGNAL GAIN dB</div>
+  <div class="cardValue" id="TWT_Gain_dB_simplified"></div>
+</div>
+
+<div class="card green">
+  <div class="cardLabel">TWT GAIN IDEAL THREE WAVE THEORY dB</div>
+  <div class="cardValue" id="TWT_Gain_dB_Three_wave"></div>
+</div>
+
+</div>
+
+<div class="formula">
+
+</div>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("TWT_C").innerHTML="";
+  document.getElementById("TWT_k").innerHTML="";
+  document.getElementById("TWT_N").innerHTML="";
+  document.getElementById("TWT_Gain_Neper_simplified").innerHTML="";
+  document.getElementById("TWT_Gain_dB_simplified").innerHTML="";
+  document.getElementById("TWT_Gain_dB_Three_wave").innerHTML="";
 }
-</SCRIPT>
-<FORM name="calculator">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
+function calc(){
+  const a=Number(document.getElementById("input1").value),
+  d=Number(document.getElementById("input2").value),
+  s=Number(document.getElementById("input3").value),
+  p=Number(document.getElementById("input4").value),
+  e=Number(document.getElementById("input5").value),
+  n=Number(document.getElementById("input6").value);
 
-<label style="font-size:50;">
-RF Frequency<font face="Arial" size="6"></font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:50px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;height:68;">GH<sub>z</sub></label>
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Helix Impedance<font face="Arial" size="6"> </font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:60px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;height:68;">K&Omega;</label>
+  if(isNaN(a)||isNaN(d)||isNaN(s)||isNaN(p)||isNaN(e)||isNaN(n)){
+    document.getElementById("errorBox").style.display="block";
+    clearResults();
+    return;
+  }
 
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">DC Voltage <font face="Arial" size="6">(Applied)</font></label><input  name="number3" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:60px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;height:68;">KV</label>
+  document.getElementById("errorBox").style.display="none";
 
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">DC Current <font face="Arial" size="6">(Applied) </font></label><input  name="number4" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:60px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;height:68;">mA</label>
+  const _=3.14159,
+  u=a*Math.pow(10,9),
+  v=p*Math.pow(10,-3),
+  S=s*Math.pow(10,3),
+  w=v*d/(4*S),
+  o=Math.pow(w,.3333),
+  m=2*_*u/e,
+  T=2*o*m*n,
+  f=n*u/e,
+  c=o,
+  F=m,
+  l=f,
+  i=T,
+  y=i*8.686,
+  I=-9.54+47.3*c*l;
 
+  document.getElementById("TWT_C").innerHTML=String(c);
+  document.getElementById("TWT_k").innerHTML=String(F);
+  document.getElementById("TWT_N").innerHTML=String(l);
+  document.getElementById("TWT_Gain_Neper_simplified").innerHTML=String(i);
+  document.getElementById("TWT_Gain_dB_simplified").innerHTML=String(y);
+  document.getElementById("TWT_Gain_dB_Three_wave").innerHTML=String(I);
+}
 
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Electron velocity<font face="Arial" size="6"></font></label><input  name="number5" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:35px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px; height:68;">m/<br>sec</label>
-
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Length<font face="Arial" size="6"></font></label><input  name="number6" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:55px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;height:68;">mtr</label>
-<h1 style="font-size:50;"></h1>
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-<label style="font-size:60;">TWT<font face="Arial" size="6"> (Traveling Wave Tube)</font></label><input  name="TWT_Gain" class="intro"  style="position: absolute;  text-align:center; width:350; right: 1px;"class="form-control" type="text" />
-
-<h1 style="font-size:50;"></h1>
-
-
-</fieldset></div>
-
-
-<br/>
+clearResults();
+</script>
 
 </body>
 </html>
