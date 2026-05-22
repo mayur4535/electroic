@@ -1,128 +1,301 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
 }
 
-body { 
-  background: ; 
+input,select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+select{
+  text-align:center;
+  font-weight:700;
+  padding:0 6px;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-.h11 {text-align: center; font-size:40; }
+input:disabled,
+select:disabled{
+  background:#eef1f5;
+  color:#999;
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+.resultTitle{
+  margin-top:26px;
+  font-size:13px;
+  font-weight:800;
+  color:#8b95a7;
+  letter-spacing:1px;
+}
+
+.bigResult{
+  margin-top:12px;
+  padding:18px;
+  border-radius:12px;
+  background:#eef5ff;
+  border:1px solid #c8dbff;
+  text-align:center;
+}
+
+.bigLabel{
+  font-size:12px;
+  font-weight:900;
+  color:#2563eb;
+  text-transform:uppercase;
+}
+
+.bigValue{
+  margin-top:8px;
+  font-size:30px;
+  font-weight:900;
+  color:#2563eb;
+  min-height:38px;
+}
+
+.formula{
+  margin-top:16px;
+  padding:14px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+@media(max-width:600px){
+  .calc{padding:14px}
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .bigValue{font-size:24px}
+}
 </style>
+</head>
 
+<body>
 
-<article>
+<div class="calc">
 
+<label>RCS (Radar Cross Section)</label>
+<div class="row">
+  <input id="rcs" type="number" step="any">
+  <select id="rcsUnit">
+    <option value="m2">m²</option>
+    <option value="dbsm">dBsm</option>
+  </select>
+</div>
 
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-RCS=Number(document.calculator.number1.value);
-Fr=Number(document.calculator.number2.value);
-//Lambda= ( (3*Math.pow(10,8))/Fr );    (10*Log10(var1))+(20*Log10(3*Pow(10,8)/var2))-38.54"
-//Lambda1 = 3*Math.pow(10,8)/Lambda;
-P1 = 10*Math.log10(RCS);
-P2 = 20*Math.log10(Fr);
-c1 = P1+P2-38.54;
-document.calculator.Radar_target_gain_factor.value=c1;
+<label>Input Type</label>
+<div class="row">
+  <select id="inputType" onchange="toggleInputType()">
+    <option value="wavelength">Wavelength</option>
+    <option value="frequency">Frequency</option>
+  </select>
+  <div style="height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">TYPE</div>
+</div>
+
+<label>Wavelength</label>
+<div class="row">
+  <input id="wavelength" type="number" step="any">
+  <select id="waveUnit">
+    <option value="angstrom">Angstron</option>
+    <option value="nm">nm</option>
+    <option value="um">µm</option>
+    <option value="mm">mm</option>
+    <option value="m">m</option>
+  </select>
+</div>
+
+<label>Frequency</label>
+<div class="row">
+  <input id="frequency" type="number" step="any" disabled>
+  <select id="freqUnit" disabled>
+    <option value="hz">Hz</option>
+    <option value="khz">kHz</option>
+    <option value="mhz" selected>MHz</option>
+    <option value="ghz">GHz</option>
+  </select>
+</div>
+
+<button class="btn" onclick="calc()">CALCULATE</button>
+
+<div id="errorBox">Please enter valid values.</div>
+
+<div class="resultTitle">RESULTS</div>
+
+<div class="bigResult">
+  <div class="bigLabel">TGF (Gσ) Target Gain Factor</div>
+  <div class="bigValue" id="tgfResult"></div>
+</div>
+
+<div class="formula">
+MATCH ELITERF formula behavior:<br><br>
+TGF = 10 × log10(4π × RCS / λ²)<br><br>
+EliteRF-style wavelength mapping used:<br>
+Angstron × 10⁻⁶, nm × 10⁻⁵, µm × 10⁻², mm × 10¹, m × 10⁴
+</div>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("tgfResult").innerHTML = "";
 }
-</SCRIPT>
-<FORM name="calculator">
 
+function toggleInputType(){
+  var type = document.getElementById("inputType").value;
 
+  document.getElementById("wavelength").disabled = type !== "wavelength";
+  document.getElementById("waveUnit").disabled = type !== "wavelength";
 
+  document.getElementById("frequency").disabled = type !== "frequency";
+  document.getElementById("freqUnit").disabled = type !== "frequency";
 
+  document.getElementById("wavelength").value = "";
+  document.getElementById("frequency").value = "";
 
+  document.getElementById("errorBox").style.display = "none";
+  clearResults();
+}
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
+function getRcsM2(value,unit){
+  if(unit === "dbsm"){
+    return Math.pow(10,value / 10);
+  }
+  return value;
+}
 
-<label style="font-size:60;">RCS<font face="Arial" size="6"> (Radar Cross Section)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:51px;text-align:center;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">m<sup>2</sup> </label>
-<h1 style="font-size:40;"></h1>
-<label style="font-size:60;">Frequency<font face="Arial" size="6"> </font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">Hz</label>
+function getWavelengthMeter_EliteRF(value,unit){
+  if(unit === "angstrom") return value * 1e-6;
+  if(unit === "nm")       return value * 1e-5;
+  if(unit === "um")       return value * 1e-2;
+  if(unit === "mm")       return value * 1e1;
+  if(unit === "m")        return value * 1e4;
+  return value;
+}
 
-<h1 style="font-size:50;"></h1>
+function getFrequencyHz(value,unit){
+  if(unit === "hz") return value;
+  if(unit === "khz") return value * 1000;
+  if(unit === "mhz") return value * 1000000;
+  if(unit === "ghz") return value * 1000000000;
+  return value;
+}
 
+function calc(){
 
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  var rcsVal = Number(document.getElementById("rcs").value);
+  var rcsUnit = document.getElementById("rcsUnit").value;
+  var inputType = document.getElementById("inputType").value;
 
+  if(
+    document.getElementById("rcs").value === "" ||
+    isNaN(rcsVal)
+  ){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
-<h3>Outputs</h3></div></legend>
+  var RCS = getRcsM2(rcsVal,rcsUnit);
+  var lambda;
 
+  if(inputType === "wavelength"){
 
-<label style="font-size:60;">TGF (Gσ)  <font face="Arial" size="5">(Target Gain Factor)</font></label><input  name="Radar_target_gain_factor" class="intro"  style="position: absolute;  text-align:center; width:300; right: 115px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:85px;">dB</label>
-<h1 style="font-size:50;"></h1>
+    var waveVal = Number(document.getElementById("wavelength").value);
+    var waveUnit = document.getElementById("waveUnit").value;
 
+    if(
+      document.getElementById("wavelength").value === "" ||
+      isNaN(waveVal)
+    ){
+      document.getElementById("errorBox").style.display = "block";
+      clearResults();
+      return;
+    }
 
-</fieldset></div>
+    lambda = getWavelengthMeter_EliteRF(waveVal,waveUnit);
 
+  }else{
 
-</FORM>
+    var freqVal = Number(document.getElementById("frequency").value);
+    var freqUnit = document.getElementById("freqUnit").value;
 
+    if(
+      document.getElementById("frequency").value === "" ||
+      isNaN(freqVal)
+    ){
+      document.getElementById("errorBox").style.display = "block";
+      clearResults();
+      return;
+    }
+
+    lambda = 299792458 / getFrequencyHz(freqVal,freqUnit);
+  }
+
+  if(RCS <= 0 || lambda <= 0){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  document.getElementById("errorBox").style.display = "none";
+
+  var tgf = 10 * Math.log10((4 * Math.PI * RCS) / (lambda * lambda));
+
+  document.getElementById("tgfResult").innerHTML = tgf.toFixed(6) + " dB";
+}
+
+toggleInputType();
+</script>
+
+</body>
+</html>
