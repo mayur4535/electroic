@@ -1,118 +1,121 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:12px;font-weight:900;letter-spacing:.5px;margin-bottom:10px}
+.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cardValue{font-size:18px;font-weight:900;min-height:22px;word-break:break-word}
+.cardUnit{font-size:18px;font-weight:900}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue .cardLabel,.blue .cardValue,.blue .cardUnit{color:#2359e8}
+.formula{margin-top:16px;padding:14px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+@media(max-width:600px){
+.calc{padding:14px}
+.row{grid-template-columns:minmax(0,1fr) 72px}
+.cardValue,.cardUnit{font-size:16px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-.h11 {text-align: center; font-size:40; }
 </style>
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-IIP3=Number(document.calculator.number1.value);
-MDS1= Number(document.calculator.number2.value);
-c1 = ((2/3)* (IIP3- MDS1))                          
-document.calculator.SFDR.value=c1;
+</head>
+
+<body>
+<div class="calc">
+
+<label>IIP3</label>
+<div class="row">
+  <input id="iip3" type="number" step="any">
+  <select id="iip3Unit">
+    <option value="dbm" selected>dBm</option>
+    <option value="w">W</option>
+  </select>
+</div>
+
+<label>MDS</label>
+<div class="row">
+  <input id="mds" type="number" step="any">
+  <select>
+    <option>dBm</option>
+  </select>
+</div>
+
+<button class="btn" onclick="calc()">CALCULATE</button>
+
+<div id="errorBox">Please enter valid values.</div>
+
+<div class="resultTitle">RESULTS</div>
+
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">SPURIOUS FREE DYNAMIC RANGE</div>
+    <div class="cardLine">
+      <span class="cardValue" id="sfdrResult"></span>
+      <span class="cardUnit" id="sfdrUnit"></span>
+    </div>
+  </div>
+</div>
+
+<div class="formula">
+Formula Used:<br><br>
+If IIP3 is in Watt:<br>
+IIP3(dBm) = 10 × log10(W × 1000)<br><br>
+SFDR = 2 / 3 × (IIP3(dBm) − MDS(dBm))
+</div>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("sfdrResult").innerHTML = "";
+  document.getElementById("sfdrUnit").innerHTML = "";
 }
-</SCRIPT>
-<FORM name="calculator">
 
+function wattToDbm(w){
+  return 10 * Math.log10(w * 1000);
+}
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
+function calc(){
+  var iip3Val = Number(document.getElementById("iip3").value);
+  var mds = Number(document.getElementById("mds").value);
+  var unit = document.getElementById("iip3Unit").value;
 
-<label style="font-size:60;">IIP3<font face="Arial" size="4"> (Third Order Intercept Point)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:45px;text-align:center; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">dBm</label>
-<h1 style="font-size:45;"></h1>
-<label style="font-size:60;">MDS<font face="Arial" size="4"> (Minimum Detectable Signal) </font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:45px;text-align:center;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">dBm</label>
+  if(
+    document.getElementById("iip3").value === "" ||
+    document.getElementById("mds").value === "" ||
+    isNaN(iip3Val) ||
+    isNaN(mds) ||
+    (unit === "w" && iip3Val <= 0)
+  ){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
-<h1 style="font-size:50;"></h1>
+  document.getElementById("errorBox").style.display = "none";
 
+  var iip3Dbm = unit === "w" ? wattToDbm(iip3Val) : iip3Val;
 
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  var sfdr = (2 / 3) * (iip3Dbm - mds);
 
+  document.getElementById("sfdrResult").innerHTML = sfdr.toFixed(7);
+  document.getElementById("sfdrUnit").innerHTML = "dB";
+}
 
-<h3>Outputs</h3></div></legend>
-
-
-<label style="font-size:60;">SFDR<font face="Arial" size="4"> (Spurious Free Dynamic Range)</font></label><input  name="SFDR" class="intro"  style="position: absolute;  text-align:center; width:300; right: 112px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:85px;">dB</label>
-<h1 style="font-size:50;"></h1>
-
-
-</fieldset></div>
-
-
-</FORM>
-<br/>
+clearResults();
+</script>
 
 </body>
 </html>
