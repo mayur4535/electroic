@@ -1,148 +1,161 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:12px;font-weight:900;margin-bottom:10px}
+.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cardValue{font-size:18px;font-weight:900;min-height:22px;word-break:break-word}
+.cardUnit{font-size:18px;font-weight:900}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.green{background:#edfdf3;border:1px solid #bff0d0}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe}
+.orange{background:#fff7ed;border:1px solid #fed7aa}
+.blue .cardLabel,.blue .cardValue,.blue .cardUnit{color:#2359e8}
+.green .cardLabel,.green .cardValue,.green .cardUnit{color:#019863}
+.purple .cardLabel,.purple .cardValue,.purple .cardUnit{color:#7c3aed}
+.orange .cardLabel,.orange .cardValue,.orange .cardUnit{color:#ea580c}
+@media(max-width:600px){
+.row{grid-template-columns:minmax(0,1fr) 72px}
+.resultGrid{grid-template-columns:1fr 1fr}
+.card{padding:14px}
+.cardValue,.cardUnit{font-size:16px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-.h11 {text-align: center; font-size:40; }
 </style>
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-Fr=Number(document.calculator.number1.value);
-Len=Number(document.calculator.number2.value);
-Dia=Number(document.calculator.number3.value);
-c1 = (17*(Len/12)/((Math.log10((24*(Len/12))/Dia)-1)*(1-(Fr*(Len/12)/234)*(Fr*(Len/12)/234))) ) ;
-re1 = c1;
-c2 =  ( ( 1/((2*3.14159265359*Fr*1000000)*(2*3.14159265359*Fr*1000000)*re1*0.000000000001) )/0.000000001 );
-c3 = ( 300/Fr);
-c3 =c3/4;
-re2 = c3;
-c4 = ( (Len*0.0254)/re2)*100 ;
-c5 =  ( (Math.pow(((Len/12)/984*Fr*360),2))/312 );
-document.calculator.whip_antenna_capacitance.value=c1;
-document.calculator.whip_antenna_inductance.value=c2;
-document.calculator.whip_antenna_quarter_wavelength.value=c3;
-document.calculator.whip_antenna_length.value=c4;
-document.calculator.whip_antenna_radiation_resistance.value=c5;
+</head>
+
+<body>
+
+<div class="calc">
+
+<label>Frequency</label>
+<div class="row">
+<input id="Fr" type="number" step="any">
+<select id="freqUnit">
+<option value="khz">kHz</option>
+<option value="mhz">MHz</option>
+<option value="ghz" selected>GHz</option>
+</select>
+</div>
+
+<label>Length</label>
+<div class="row">
+<input id="Len" type="number" step="any">
+<select id="lenUnit">
+<option value="in">in</option>
+<option value="ft" selected>ft</option>
+<option value="m">m</option>
+</select>
+</div>
+
+<label>Diameter</label>
+<div class="row">
+<input id="Dia" type="number" step="any">
+<select id="diaUnit">
+<option value="in">in</option>
+<option value="ft" selected>ft</option>
+<option value="m">m</option>
+</select>
+</div>
+
+<button class="btn" onclick="calc()">CALCULATE</button>
+
+<div id="errorBox">Please enter valid values.</div>
+
+<div class="resultTitle">RESULTS</div>
+
+<div class="resultGrid">
+<div class="card blue"><div class="cardLabel">CAPACITANCE</div><div class="cardLine"><span class="cardValue" id="capacitance"></span><span class="cardUnit" id="capUnit"></span></div></div>
+<div class="card green"><div class="cardLabel">INDUCTANCE</div><div class="cardLine"><span class="cardValue" id="inductance"></span><span class="cardUnit" id="indUnit"></span></div></div>
+<div class="card purple"><div class="cardLabel">QUARTER WAVELENGTH</div><div class="cardLine"><span class="cardValue" id="quarterWave"></span><span class="cardUnit" id="waveUnit"></span></div></div>
+<div class="card orange"><div class="cardLabel">ANTENNA LENGTH</div><div class="cardLine"><span class="cardValue" id="antennaLength"></span><span class="cardUnit" id="lengthUnit"></span></div></div>
+<div class="card blue"><div class="cardLabel">RADIATION RESISTANCE</div><div class="cardLine"><span class="cardValue" id="radiationResistance"></span><span class="cardUnit" id="resUnit"></span></div></div>
+</div>
+
+</div>
+
+<script>
+function clearResults(){
+["capacitance","inductance","quarterWave","antennaLength","radiationResistance","capUnit","indUnit","waveUnit","lengthUnit","resUnit"].forEach(id=>{
+document.getElementById(id).innerHTML="";
+});
 }
-</SCRIPT>
-<FORM name="calculator">
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div>
-<h3>Inputs</h3></div></legend>
 
-<label style="font-size:50;">Frequency<font face="Arial" size="5"> (Whip Antenna)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:45px;text-align:center;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">MH<sub>z</sub></label>
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Length<font face="Arial" size="5"> (Whip Antenna) </font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:45px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">mtr</label>
+function freqToMHz(v,u){
+if(u==="khz") return v/1000;
+if(u==="mhz") return v;
+if(u==="ghz") return v*1000;
+return v;
+}
 
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Diameter<font face="Arial" size="5">(Whip Antenna)</font></label><input  name="number3" class="intro"  style="position: absolute;  text-align:center; width:300; right: 130px;"class="form-control" type="number" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:45px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">In</label>
+function toInch(v,u){
+if(u==="in") return v;
+if(u==="ft") return v*12;
+if(u==="m") return v/0.0254;
+return v;
+}
 
-<h1 style="font-size:50;"></h1>
+function calc(){
+let FrVal=Number(document.getElementById("Fr").value);
+let LenVal=Number(document.getElementById("Len").value);
+let DiaVal=Number(document.getElementById("Dia").value);
 
+if(FrVal<=0||LenVal<=0||DiaVal<=0||isNaN(FrVal)||isNaN(LenVal)||isNaN(DiaVal)){
+document.getElementById("errorBox").style.display="block";
+clearResults();
+return;
+}
 
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+document.getElementById("errorBox").style.display="none";
 
+let Fr=freqToMHz(FrVal,document.getElementById("freqUnit").value);
+let Len=toInch(LenVal,document.getElementById("lenUnit").value);
+let Dia=toInch(DiaVal,document.getElementById("diaUnit").value);
 
-<h3>Outputs</h3></div></legend>
+let Lft=Len/12;
 
+let c1=(17*Lft)/((Math.log10((24*Lft)/Dia)-1)*(1-Math.pow((Fr*Lft/234),2)));
 
-<label style="font-size:50;">Capacitance<font face="Arial" size="6"></font></label><input  name="whip_antenna_capacitance" class="intro"  style="position: absolute;  text-align:center; width:300; right: 111px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:85px;">pf</label>
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Inductance<font face="Arial" size="6"> </font></label><input  name="whip_antenna_inductance" class="intro"  style="position: absolute;  text-align:center; width:300; right: 111px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:85px;">nH</label>
+let c2=(1/(Math.pow((2*3.14159265359*Fr*1000000),2)*c1*0.000000000001))/0.000000001;
 
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;"> Wavelength<font face="Arial" size="6"> (Quarter)</font></label><input  name="whip_antenna_quarter_wavelength" class="intro"  style="position: absolute;  text-align:center; width:300; right: 111px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:85px;">M</label>
+let c3=(300/Fr)/4;
 
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Antenna Length<font face="Arial" size="6"></font></label><input  name="whip_antenna_length" class="intro"  style="position: absolute;  text-align:center; width:300; right: 111px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:61px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:85px;">%</label>
+let c4=((Len*0.0254)/c3)*100;
 
-<h1 style="font-size:60;"></h1>
-<label style="font-size:50;">Resistance<font face="Arial" size="6"> (Radiation)</font></label><input  name="whip_antenna_radiation_resistance" class="intro"  style="position: absolute;  text-align:center; width:300; right: 111px;"class="form-control" type="text" />
-<label style="padding: 5px ;  position: absolute;right: 1px;font-size:55px;text-align:center;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:85px;">&Omega;</label>
-<h1 style="font-size:50;"></h1>
-</fieldset></div>
+let c5=(Math.pow((Lft/984*Fr*360),2))/312;
 
+document.getElementById("capacitance").innerHTML=c1.toFixed(8);
+document.getElementById("capUnit").innerHTML="pF";
 
+document.getElementById("inductance").innerHTML=c2.toFixed(8);
+document.getElementById("indUnit").innerHTML="nH";
 
+document.getElementById("quarterWave").innerHTML=c3.toFixed(8);
+document.getElementById("waveUnit").innerHTML="m";
 
+document.getElementById("antennaLength").innerHTML=c4.toFixed(7);
+document.getElementById("lengthUnit").innerHTML="%";
 
-</FORM>
-<br/>
+document.getElementById("radiationResistance").innerHTML=c5.toFixed(8);
+document.getElementById("resUnit").innerHTML="Ω";
+}
+
+clearResults();
+</script>
 
 </body>
 </html>
