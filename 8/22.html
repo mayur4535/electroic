@@ -1,245 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Coax Impedance Calculator</title>
 
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#f6f8fb;
+  font-family:Arial,sans-serif;
+  color:#1f2937;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.coax-wrap{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  padding:14px 22px 30px;
 }
 
-body { 
-  background: ; 
+.input-grid{
+  display:grid;
+  gap:14px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
+
+.field label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:6px;
+  padding-left:8px;
+}
+
+.input-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+}
+
+.input-row.single{
+  grid-template-columns:1fr;
+}
+
+input,
+select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 10px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
+}
+
+select{
+  text-align:center;
+  font-weight:700;
+}
+
+.calc-btn{
+  width:100%;
+  height:46px;
+  border:0;
+  border-radius:9px;
+  margin-top:24px;
+  background:linear-gradient(135deg,#ff8a00,#ff5a00);
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.error-box{
+  display:none;
+  margin-top:10px;
+  padding:12px;
+  border-radius:8px;
+  background:#fef2f2;
+  border:1px solid #fecaca;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:700;
+  line-height:1.45;
+}
+
+.section-title{
+  margin:22px 0 10px;
+  font-size:13px;
+  color:#6b7280;
+  letter-spacing:.08em;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.result-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:12px;
+}
+
+.result-card span{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.result-card b{
+  display:block;
+  font-size:16px;
+  margin-top:6px;
+  min-height:22px;
+  word-break:break-word;
+}
+
+.result-card:nth-child(1) span,
+.result-card:nth-child(1) b{color:#2563eb}
+
+.result-card:nth-child(2) span,
+.result-card:nth-child(2) b{color:#16a34a}
+
+.result-card:nth-child(3) span,
+.result-card:nth-child(3) b{color:#9333ea}
+
+.result-card:nth-child(4) span,
+.result-card:nth-child(4) b{color:#ea580c}
+
+.info-box,
+.diagram-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:16px;
+  margin-top:10px;
+  font-size:14px;
+  line-height:1.55;
+}
+
+.diagram-card{
+  overflow-x:auto;
+}
+
+.formula{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  padding:10px;
+  margin-top:8px;
+  font-family:Consolas,monospace;
+  overflow:auto;
+}
+
+svg{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+@media(max-width:480px){
+  .coax-wrap{
+    padding-left:22px;
+    padding-right:22px;
   }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
+
+  .input-row{
+    grid-template-columns:minmax(0,1fr) 72px;
   }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
+  .input-row.single{
+    grid-template-columns:1fr;
   }
+
+  .result-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .result-card b{
+    font-size:14px;
+  }
+
+  svg{
+    min-width:680px;
+  }
+}
 </style>
 
+<script>
+function showCoaxError(msg){
+  var box = document.getElementById("coax_error");
+  box.style.display = "block";
+  box.innerHTML = msg;
+}
 
+function clearCoaxError(){
+  var box = document.getElementById("coax_error");
+  box.style.display = "none";
+  box.innerHTML = "";
+}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+function coaxAACRun(){
 
+  clearCoaxError();
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<div class="mx-4">
-<div class="bootstrap3-legacy">
-<form id="tool">
+  var d1v = parseFloat(document.getElementById("aac_coax_d1").value);
+  var d2v = parseFloat(document.getElementById("aac_coax_d2").value);
+  var erv = parseFloat(document.getElementById("aac_coax_er").value);
 
+  var d1u = parseFloat(document.getElementById("aac_coax_d1_unit").value);
+  var d2u = parseFloat(document.getElementById("aac_coax_d2_unit").value);
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  if(isNaN(d1v) || isNaN(d2v) || isNaN(erv)){
+    showCoaxError("Please enter all values.");
+    return false;
+  }
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >In Dia <font face="Arial" size="6">(Conductor ID) </font></label><input type="number" id="d1"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 145px;"class="form-control"  />
-<select style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;  height:85px; border:3px solid #aaa;border-radius:4px;margin:8px 0; text-align:center;width:125px;" class="form-control" id="d1_unit">
-<option selected="selected" value="0.001">mil</option>
-<option value="0.3937008">cm</option>
-<option value="0.03937008">mm</option>
-<option value="0.00003937008">um</option>
-<option value="1">in</option>
-</select>
-</div>
+  var d1 = d1v * d1u;
+  var d2 = d2v * d2u;
 
-</div>
-</div><h1 style="font-size:55;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  if(d1 <= 0 || d2 <= 0 || erv <= 0){
+    showCoaxError("Values must be greater than 0.");
+    return false;
+  }
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >In Dia <font face="Arial" size="6">(Surface Shield ID) </font></label><input type="number" id="d2"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 145px;"class="form-control"  />
-<select style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;   height:85px; border:3px solid #aaa;border-radius:4px;margin:8px 0; text-align:center;width:125px;" class="form-control" id="d2_unit">
-<option selected="selected" value="0.001">mil</option>
-<option value="0.3937008">cm</option>
-<option value="0.03937008">mm</option>
-<option value="0.00003937008">um</option>
-<option value="1">inch</option>
-</select>
-</div>
-<div class="col-sm-4 col-xs-4">
+  if(d2 <= d1){
+    showCoaxError(
+      "❌ Surface Shield ID must be larger than Conductor ID.<br><br>" +
+      "Example:<br>" +
+      "Conductor ID = 20 mil<br>" +
+      "Surface Shield ID = 67 mil<br>" +
+      "Dielectric = 2.25"
+    );
+    return false;
+  }
 
-</div>
-</div>
-</div><h1 style="font-size:55;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  var lnRatio = Math.log(d2 / d1);
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
+  var zo = (60 / Math.sqrt(erv)) * lnRatio;
+  var delay = 84.72e-3 * Math.sqrt(erv);
+  var ind = 5.08 * lnRatio;
+  var cap = 1.41 / lnRatio;
 
-<label for="r2" style="font-size:55;" >Dielectric</label><font face="Arial" size="6"> (Substrate) </font><input type="number" id="er"  class="intro"  style="position: absolute;   text-align
-:center;width:435; right: 10px;"class="form-control" type="text" />
+  document.getElementById("aac_coax_zo").innerHTML = zo.toPrecision(3) + " Ω";
+  document.getElementById("aac_coax_delay").innerHTML = delay.toPrecision(3) + " ns/in";
+  document.getElementById("aac_coax_ind").innerHTML = ind.toPrecision(3) + " nH/in";
+  document.getElementById("aac_coax_cap").innerHTML = cap.toPrecision(3) + " pF/in";
 
-</div>
-
-</div>
-</div></form></fieldset>
-
-<div class="row">
-<div class="col-sm-12">
-<div class="col-sm-4">&nbsp;</div>
-<div class="col-sm-4">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="tool_submit" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-
-
-    
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:50;" >Impedance</label><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 132px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:96px;"><b>&Omega;</b></label>
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:60;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:50;" >Delay</label><font face="Arial" size="6"> (Inch) </font><input  id="tool_output2"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 132px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:96px;">ns</label>
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div><h1 style="font-size:60;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:50;" >Inductance</label><font face="Arial" size="6"> (per Inch) </font><input  id="tool_output3"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 132px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:96px;">nH</label>
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:60;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:48;" >Capacitance</label><font face="Arial" size="6"> (per Inch) </font><input  id="tool_output4"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 130px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:96px;">pF</label>
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div><h1 style="font-size:60;"></h1>
-<script type="text/javascript">
-var _0x2815=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x64\x31","\x23\x64\x31\x5F\x75\x6E\x69\x74","\x23\x64\x32","\x23\x64\x32\x5F\x75\x6E\x69\x74","\x23\x65\x72","\x63\x6F\x61\x78\x5F\x63\x61\x6C\x63","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x7A\x6F","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x64\x65\x6C\x61\x79","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x32","\x63\x61\x70","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x34","\x69\x6E\x64","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x33","\x73\x71\x72\x74","\x6C\x6F\x67","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];!function(_0x3723x1){_0x2815[0];var _0x3723x2={calculate:function(){var _0x3723x3=parseFloat(_0x3723x1(_0x2815[2])[_0x2815[1]]())* _0x3723x1(_0x2815[3])[_0x2815[1]](),_0x3723x4=parseFloat(_0x3723x1(_0x2815[4])[_0x2815[1]]())* _0x3723x1(_0x2815[5])[_0x2815[1]](),_0x3723x5=parseFloat(_0x3723x1(_0x2815[6])[_0x2815[1]]()),_0x3723x6=_0x3723x2[_0x2815[7]](_0x3723x3,_0x3723x4,_0x3723x5);_0x3723x1(_0x2815[10])[_0x2815[1]](_0x3723x6[_0x2815[9]][_0x2815[8]](3)),_0x3723x1(_0x2815[12])[_0x2815[1]](_0x3723x6[_0x2815[11]][_0x2815[8]](3)),_0x3723x1(_0x2815[14])[_0x2815[1]](_0x3723x6[_0x2815[13]][_0x2815[8]](3)),_0x3723x1(_0x2815[16])[_0x2815[1]](_0x3723x6[_0x2815[15]][_0x2815[8]](3))},coax_calc:function(_0x3723x1,_0x3723x2,_0x3723x3){var _0x3723x4=60/ Math[_0x2815[17]](_0x3723x3)* Math[_0x2815[18]](_0x3723x2/ _0x3723x1),_0x3723x5=8.472e-11* Math[_0x2815[17]](_0x3723x3)/ 1e-9,_0x3723x6=5.08* Math[_0x2815[18]](_0x3723x2/ _0x3723x1),_0x3723x7=1.41/ Math[_0x2815[18]](_0x3723x2/ _0x3723x1);return {zo:_0x3723x4,delay:_0x3723x5,ind:_0x3723x6,cap:_0x3723x7}}};_0x3723x1(_0x2815[21])[_0x2815[26]](function(){var _0x3723x2=!1;_0x3723x1(_0x2815[21])[_0x2815[20]](function(){_0x2815[19]== _0x3723x1(this)[_0x2815[1]]()&& (_0x3723x2=  !0)}),_0x3723x2?_0x3723x1(_0x2815[24])[_0x2815[23]](_0x2815[22],_0x2815[22]):_0x3723x1(_0x2815[24])[_0x2815[25]](_0x2815[22])}),_0x3723x1(_0x2815[24])[_0x2815[30]](_0x2815[27],function(_0x3723x1){_0x3723x1[_0x2815[28]](),_0x3723x2[_0x2815[29]]()})}(jQuery)
+  return false;
+}
 </script>
+</head>
+
+<body>
+
+<div class="coax-wrap">
+
+  <div class="input-grid">
+
+    <div class="field">
+      <label>In Dia (Conductor ID)</label>
+      <div class="input-row">
+        <input type="number" id="aac_coax_d1" step="any" placeholder="Enter value">
+        <select id="aac_coax_d1_unit">
+          <option selected value="0.001">mil</option>
+          <option value="0.3937008">cm</option>
+          <option value="0.03937008">mm</option>
+          <option value="0.00003937008">µm</option>
+          <option value="1">in</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>In Dia (Surface Shield ID)</label>
+      <div class="input-row">
+        <input type="number" id="aac_coax_d2" step="any" placeholder="Enter value">
+        <select id="aac_coax_d2_unit">
+          <option selected value="0.001">mil</option>
+          <option value="0.3937008">cm</option>
+          <option value="0.03937008">mm</option>
+          <option value="0.00003937008">µm</option>
+          <option value="1">inch</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Dielectric (Substrate)</label>
+      <div class="input-row single">
+        <input type="number" id="aac_coax_er" step="any" placeholder="Example: 2.25">
+      </div>
+    </div>
+
+  </div>
+
+  <button type="button" class="calc-btn" onclick="coaxAACRun();return false;">
+    Calculate
+  </button>
+
+  <div id="coax_error" class="error-box"></div>
+
+  <div class="section-title">Results</div>
+
+  <div class="result-grid">
+    <div class="result-card">
+      <span>Impedance</span>
+      <b id="aac_coax_zo"></b>
+    </div>
+
+    <div class="result-card">
+      <span>Delay</span>
+      <b id="aac_coax_delay"></b>
+    </div>
+
+    <div class="result-card">
+      <span>Inductance</span>
+      <b id="aac_coax_ind"></b>
+    </div>
+
+    <div class="result-card">
+      <span>Capacitance</span>
+      <b id="aac_coax_cap"></b>
+    </div>
+  </div>
+
+  <div class="section-title">Diagram & Theory</div>
+
+  <div class="diagram-card">
+    <svg viewBox="-35 0 830 360" aria-label="Coax impedance diagram">
+      <rect x="10" y="10" width="740" height="340" rx="18" fill="#fff"/>
+
+      <circle cx="235" cy="180" r="120" fill="#e5e7eb" stroke="#111827" stroke-width="5"/>
+      <circle cx="235" cy="180" r="82" fill="#fde68a" stroke="#f59e0b" stroke-width="3"/>
+      <circle cx="235" cy="180" r="34" fill="#ef4444" stroke="#991b1b" stroke-width="3"/>
+
+      <text x="235" y="180" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="700" fill="#fff">d1</text>
+
+      <line x1="201" y1="226" x2="269" y2="226" stroke="#ef4444" stroke-width="3"/>
+      <text x="235" y="250" text-anchor="middle" font-size="15" font-weight="700" fill="#991b1b">Conductor ID</text>
+
+      <line x1="153" y1="315" x2="317" y2="315" stroke="#111827" stroke-width="3"/>
+      <text x="235" y="338" text-anchor="middle" font-size="15" font-weight="700" fill="#111827">Shield Inner ID</text>
+
+      <text x="235" y="55" text-anchor="middle" font-size="18" font-weight="700" fill="#111827">Coax Cross Section</text>
+      <text x="235" y="105" text-anchor="middle" font-size="14" fill="#92400e">Dielectric εr</text>
+
+      <rect x="430" y="75" width="260" height="210" rx="14" fill="#f8fafc" stroke="#d1d5db"/>
+      <text x="560" y="108" text-anchor="middle" font-size="19" font-weight="700" fill="#111827">Characteristic Impedance</text>
+      <text x="560" y="155" text-anchor="middle" font-size="22" font-weight="700" fill="#2563eb">Zo = 60 / √εr × ln(d2/d1)</text>
+      <text x="560" y="200" text-anchor="middle" font-size="17" font-weight="700" fill="#16a34a">d2 = Shield Inner ID</text>
+      <text x="560" y="228" text-anchor="middle" font-size="17" font-weight="700" fill="#ef4444">d1 = Conductor ID</text>
+      <text x="560" y="258" text-anchor="middle" font-size="14" fill="#4b5563">Bigger d2/d1 ratio increases impedance</text>
+    </svg>
+  </div>
+
+  <div class="info-box">
+    Coax impedance depends on conductor diameter, shield inner diameter and dielectric constant.
+  </div>
+
+  <div class="section-title">Formulas</div>
+
+  <div class="info-box">
+    <div class="formula">Zo = 60 / √εr × ln(d2 / d1)</div>
+    <div class="formula">Delay = 84.72 × 10⁻³ × √εr</div>
+    <div class="formula">Inductance = 5.08 × ln(d2 / d1)</div>
+    <div class="formula">Capacitance = 1.41 / ln(d2 / d1)</div>
+  </div>
+
+  <div class="section-title">Example</div>
+
+  <div class="info-box">
+    d1 = 20 mil, d2 = 67 mil, εr = 2.25<br>
+    Impedance ≈ 48.3 Ω<br>
+    Delay ≈ 0.127 ns/in<br>
+    Inductance ≈ 6.14 nH/in<br>
+    Capacitance ≈ 1.17 pF/in
+  </div>
+
 </div>
-</div>
-<script type="text/javascript">
-                    $(document).ready(function () {
-                        $('#tool_submit').on('click',function () {
-                            ga('send', 'event', 'calc-use', 'https://www.allaboutcircuits.com/tools/coax-impedance-calculator', 'https://www.allaboutcircuits.com/tools/coax-impedance-calculator');
-                        });
-                    });
-                </script>
+
+</body>
+</html>
