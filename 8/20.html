@@ -1,185 +1,389 @@
-
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
- 
-<article>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Bridged-Tee Attenuator Calculator - R1 R2 Resistor Values</title>
+<meta name="description" content="Free Bridged-Tee Attenuator Calculator to calculate R1 and R2 resistor values from attenuation in dB and impedance in ohms. Includes formulas, theory, example, and original copyright-safe circuit diagram.">
 
-<fieldset><legend>
-<h3>Input</h3></legend>
-<div class="container-fluid">
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
 
-<p><div class="container-fluid">
-<form id="tool-form">
+body{margin:0;background:#f6f8fb;padding:0}
 
+.calc{max-width:620px;margin:auto;padding:14px}
+
+h1{font-size:20px;color:#374151;margin:0 0 16px}
+
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.valueBox,
+input{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
+}
+
+.valueBox{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#374151;
+}
+
+input:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+.resultTitle{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#7b8794;
+  margin-top:22px;
+  margin-bottom:12px;
+}
+
+.resultGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.card{
+  padding:16px;
+  border-radius:12px;
+  min-height:82px;
+}
+
+.cardLabel{
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.cardLine{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.cardValue,
+.cardUnit{
+  font-size:18px;
+  font-weight:900;
+}
+
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.green{background:#edfdf3;border:1px solid #bff0d0}
+
+.blue *{color:#2359e8}
+.green *{color:#019863}
+
+.infoBox{
+  margin-top:16px;
+  padding:14px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+}
+
+.infoBox h2,
+.infoBox h3{
+  margin:0 0 10px;
+  font-size:16px;
+  color:#374151;
+}
+
+.infoBox p,
+.infoBox li{
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+.formulaLine{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  padding:10px;
+  margin:8px 0;
+  font-size:13px;
+  color:#475467;
+  font-weight:800;
+  overflow-x:auto;
+}
+
+.diagramBox{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:10px;
+  overflow-x:auto;
+}
+
+svg{
+  width:100%;
+  min-width:560px;
+  height:auto;
+}
+
+.exampleGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.exampleCard{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:10px;
+}
+
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .card{padding:14px}
+  .cardValue,.cardUnit{font-size:16px}
+  .exampleGrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<main class="calc">
+
+<h1>Bridged-Tee Attenuator Calculator</h1>
+
+<label>Attenuation</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <input type="number" id="att" step="any">
+  <div class="valueBox">dB</div>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:70;" >Attenuation</label><input type="number" id="att"  class="intro"  style="position: absolute;   text-align:center;width:300; right: 130px;"class="form-control"  /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:96px;">dB</label>
-
-</div>
-</div><h1 style="font-size:25;"></h1>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-</div>
+<label>Impedance</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:70;" >Impedance</label><input type="number" id="imp"  class="intro"  style="position: absolute;   text-align:center;width:300; right: 130px;"class="form-control"  /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:96px;"><b>&Omega;</label>
-
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-</div>
-</form></fieldset>
-
-
-
-<div class="col-sm-4">
-<div class="form-group"><h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" disabled="disabled" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-</div>
+  <input type="number" id="imp" step="any">
+  <div class="valueBox">Ω</div>
 </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+<button class="btn" onclick="calc()">CALCULATE</button>
 
+<div id="errorBox">Please enter valid values.</div>
 
-<h3>Outputs</h3></div></legend>
+<div class="resultTitle">RESULTS</div>
 
+<div class="resultGrid">
 
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <div class="card blue">
+    <div class="cardLabel">R1 RESISTOR</div>
+    <div class="cardLine">
+      <span class="cardValue" id="r1"></span>
+      <span class="cardUnit" id="r1Unit"></span>
+    </div>
+  </div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:70;" >R<sub>1</sub></label><input type="text" id="r1"  class="intro"  style="position: absolute;   text-align:center;width:300; right: 130px;"class="form-control"  /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:96px;"><b>&Omega;</label>
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-<h1 style="font-size:10px;"></h1>
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:70;" >R<sub>2</sub></label><input type="text" id="r2"  class="intro"  style="position: absolute;   text-align:center;width:300; right: 130px;"class="form-control"  /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:96px;"><b>&Omega;</label>
+  <div class="card green">
+    <div class="cardLabel">R2 RESISTOR</div>
+    <div class="cardLine">
+      <span class="cardValue" id="r2"></span>
+      <span class="cardUnit" id="r2Unit"></span>
+    </div>
+  </div>
 
 </div>
-</div>
-<div class="col-sm-4 col-xs-4">
 
-</div>
-</div>
-</div>
-</div>
-</div>
-<script type="text/javascript">
-var _0x7433=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x61\x74\x74","\x23\x69\x6D\x70","\x70\x6F\x77","\x74\x6F\x46\x69\x78\x65\x64","\x23\x72\x32","\x23\x72\x31","\x6F\x6E"];!function(_0x2e2cx1){_0x7433[0];function _0x2e2cx2(){_0x2e2cx1(_0x7433[10])[_0x7433[9]](function(){_0x2e2cx1(this)[_0x7433[4]](_0x7433[3])[_0x7433[2]](_0x7433[1]),_0x2e2cx1(this)[_0x7433[4]](_0x7433[3])[_0x7433[6]](_0x7433[5]),_0x2e2cx1(this)[_0x7433[8]](_0x7433[7])})}function _0x2e2cx3(){_0x2e2cx1(_0x7433[10])[_0x7433[9]](function(){_0x2e2cx1(this)[_0x7433[4]](_0x7433[3])[_0x7433[2]](_0x7433[5]),_0x2e2cx1(this)[_0x7433[4]](_0x7433[3])[_0x7433[6]](_0x7433[1])})}var _0x2e2cx4,_0x2e2cx5=_0x2e2cx1(_0x7433[11]);_0x2e2cx1(_0x7433[16])[_0x7433[17]](function(){_0x2e2cx1(this)[_0x7433[4]](_0x7433[3])[_0x7433[2]](_0x7433[12]),_0x2e2cx2(),_0x2e2cx5[_0x7433[14]](_0x7433[13],!1),_0x2e2cx1[_0x7433[15]](_0x2e2cx1(this)[_0x7433[8]]())=== !1?(_0x2e2cx1(this)[_0x7433[4]](_0x7433[3])[_0x7433[6]](_0x7433[12]),_0x2e2cx5[_0x7433[14]](_0x7433[13],!1)):_0x2e2cx1(this)[_0x7433[4]](_0x7433[3])[_0x7433[2]](_0x7433[12]),_0x2e2cx4= 0,_0x2e2cx1(_0x7433[16])[_0x7433[9]](function(){_0x7433[7]!= _0x2e2cx1(this)[_0x7433[8]]()&& _0x2e2cx1[_0x7433[15]](_0x2e2cx1(this)[_0x7433[8]]())!== !1|| _0x2e2cx4++}),_0x2e2cx4> 0&& _0x2e2cx5[_0x7433[14]](_0x7433[13],!0)}),_0x2e2cx5[_0x7433[26]](_0x7433[18],function(_0x2e2cx2){_0x2e2cx2[_0x7433[19]]();var _0x2e2cx4,_0x2e2cx5,_0x2e2cx6,_0x2e2cx7,_0x2e2cx8;_0x2e2cx4= _0x2e2cx1(_0x7433[20])[_0x7433[8]](),_0x2e2cx5= _0x2e2cx1(_0x7433[21])[_0x7433[8]](),_0x2e2cx6= _0x2e2cx4/ 20,_0x2e2cx6= Math[_0x7433[22]](10,_0x2e2cx6)- 1,_0x2e2cx7= _0x2e2cx5* (1/ _0x2e2cx6),_0x2e2cx6= _0x2e2cx4/ 20,_0x2e2cx6= Math[_0x7433[22]](10,_0x2e2cx6)- 1,_0x2e2cx8= _0x2e2cx5* _0x2e2cx6,_0x2e2cx1(_0x7433[24])[_0x7433[8]](_0x2e2cx7[_0x7433[23]](4)),_0x2e2cx1(_0x7433[25])[_0x7433[8]](_0x2e2cx8[_0x7433[23]](4)),_0x2e2cx3()})}(jQuery)
-    </script>
-</div>
+<section class="infoBox">
+  <h2>Bridged-Tee Attenuator Circuit Diagram</h2>
+  <p>Original custom SVG diagram generated for this page. Layout follows the Bridged-Tee attenuator topology: top bridge resistor R1, two Z0 arms, and center shunt resistor R2.</p>
+
+  <div class="diagramBox">
+    <svg viewBox="0 0 900 420" role="img" aria-label="Original bridged tee attenuator circuit diagram">
+      <defs>
+        <style>
+          .wire{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .res{stroke:#d10000;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .txt{font:22px Arial;font-weight:bold;fill:#111}
+          .small{font:18px Arial;fill:#111}
+          .node{fill:#d10000}
+          .gnd{stroke:#1ea64a;stroke-width:3;stroke-linecap:round}
+        </style>
+      </defs>
+
+      <!-- main input/output wire -->
+      <line x1="70" y1="190" x2="165" y2="190" class="wire"/>
+      <line x1="735" y1="190" x2="830" y2="190" class="wire"/>
+
+      <text x="60" y="150" class="small">INPUT</text>
+      <text x="765" y="150" class="small">OUTPUT</text>
+
+      <!-- left and right bridge verticals -->
+      <line x1="165" y1="190" x2="165" y2="115" class="wire"/>
+      <line x1="735" y1="190" x2="735" y2="115" class="wire"/>
+
+      <!-- top bridge resistor R1 -->
+      <line x1="165" y1="115" x2="315" y2="115" class="wire"/>
+      <path d="M315 115 L335 95 L355 135 L375 95 L395 135 L415 95 L435 135 L455 95 L475 115" class="res"/>
+      <line x1="475" y1="115" x2="735" y2="115" class="wire"/>
+      <text x="382" y="72" class="txt">R1</text>
+
+      <!-- left Z0 resistor -->
+      <path d="M165 190 L190 165 L215 215 L240 165 L265 215 L290 165 L315 215 L340 190" class="res"/>
+      <text x="238" y="250" class="txt">Z0</text>
+
+      <!-- center wire node -->
+      <line x1="340" y1="190" x2="450" y2="190" class="wire"/>
+      <circle cx="450" cy="190" r="6" class="node"/>
+
+      <!-- center shunt R2 -->
+      <line x1="450" y1="190" x2="450" y2="240" class="wire"/>
+      <path d="M450 240 L430 260 L470 280 L430 300 L470 320 L430 340 L450 360" class="res"/>
+      <text x="480" y="305" class="txt">R2</text>
+
+      <!-- ground -->
+      <line x1="450" y1="360" x2="450" y2="375" class="wire"/>
+      <line x1="400" y1="375" x2="500" y2="375" class="wire"/>
+      <line x1="415" y1="390" x2="485" y2="390" class="gnd"/>
+      <line x1="430" y1="405" x2="470" y2="405" class="gnd"/>
+
+      <!-- right Z0 resistor -->
+      <line x1="450" y1="190" x2="560" y2="190" class="wire"/>
+      <path d="M560 190 L585 165 L610 215 L635 165 L660 215 L685 165 L710 215 L735 190" class="res"/>
+      <text x="635" y="250" class="txt">Z0</text>
+
+      <!-- nodes -->
+      <circle cx="165" cy="190" r="5" class="node"/>
+      <circle cx="735" cy="190" r="5" class="node"/>
+    </svg>
+  </div>
+</section>
+
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">K = 10<sup>Attenuation / 20</sup> − 1</div>
+  <div class="formulaLine">R1 = Z0 × K</div>
+  <div class="formulaLine">R2 = Z0 × (1 / K)</div>
+</section>
+
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    A Bridged-Tee attenuator uses a bridge resistor across the signal path and a shunt resistor from the center node to ground.
+    The two Z0 arms represent the matched impedance path between input and output.
+  </p>
+  <p>
+    This network is useful in RF signal attenuation because it can reduce signal level while keeping the input and output impedance matched.
+  </p>
+</section>
+
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>
+        Attenuation: 6 dB<br>
+        Impedance: 50 Ω
+      </p>
+    </div>
+
+    <div class="exampleCard">
+      <p><b>How to Use</b></p>
+      <p>
+        Enter attenuation in dB and impedance in ohms, then click Calculate. The calculator shows R1 and R2 values for the Bridged-Tee attenuator.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function clearResults(){
+  document.getElementById("r1").innerHTML="";
+  document.getElementById("r1Unit").innerHTML="";
+  document.getElementById("r2").innerHTML="";
+  document.getElementById("r2Unit").innerHTML="";
+}
+
+function calc(){
+  var att = Number(document.getElementById("att").value);
+  var imp = Number(document.getElementById("imp").value);
+
+  if(
+    document.getElementById("att").value==="" ||
+    document.getElementById("imp").value==="" ||
+    isNaN(att) ||
+    isNaN(imp)
+  ){
+    document.getElementById("errorBox").style.display="block";
+    clearResults();
+    return;
+  }
+
+  document.getElementById("errorBox").style.display="none";
+
+  /* ORIGINAL FORMULA PRESERVED */
+  var c1 = att / 20;
+  c1 = Math.pow(10,c1) - 1;
+
+  var r2 = imp * (1 / c1);
+  var r1 = imp * c1;
+
+  document.getElementById("r1").innerHTML = r1.toFixed(4);
+  document.getElementById("r1Unit").innerHTML = "Ω";
+
+  document.getElementById("r2").innerHTML = r2.toFixed(4);
+  document.getElementById("r2Unit").innerHTML = "Ω";
+}
+
+clearResults();
+</script>
+
 </body>
 </html>
