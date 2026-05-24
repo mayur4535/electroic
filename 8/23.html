@@ -1,199 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Coax Inductance Calculator</title>
+<meta name="description" content="Calculate coaxial cable inductance using outer diameter, inner diameter, cable length and relative permeability.">
 
-
-
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#f6f8fb;
+  font-family:Arial,sans-serif;
+  color:#1f2937;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.coax-ind-wrap{
+  width:100%;
+  max-width:620px;
+  margin:auto;
+  padding:14px 22px 30px;
 }
 
-body { 
-  background: ; 
+.input-grid{
+  display:grid;
+  gap:14px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
+
+.field label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:6px;
+  padding-left:8px;
+}
+
+.input-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+}
+
+.input-row.single{
+  grid-template-columns:1fr;
+}
+
+input,
+select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 10px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
+}
+
+select{
+  text-align:center;
+  font-weight:700;
+}
+
+.calc-btn{
+  width:100%;
+  height:46px;
+  border:0;
+  border-radius:9px;
+  margin-top:24px;
+  background:linear-gradient(135deg,#ff8a00,#ff5a00);
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.error-box{
+  display:none;
+  margin-top:10px;
+  padding:12px;
+  border-radius:8px;
+  background:#fef2f2;
+  border:1px solid #fecaca;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:700;
+  line-height:1.45;
+}
+
+.section-title{
+  margin:22px 0 10px;
+  font-size:13px;
+  color:#6b7280;
+  letter-spacing:.08em;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.result-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:12px;
+}
+
+.result-card span{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.result-card b{
+  display:block;
+  font-size:16px;
+  margin-top:6px;
+  min-height:22px;
+  word-break:break-word;
+}
+
+.result-card:nth-child(1) span,
+.result-card:nth-child(1) b{color:#2563eb}
+
+.result-card:nth-child(2) span,
+.result-card:nth-child(2) b{color:#16a34a}
+
+.info-box,
+.diagram-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:16px;
+  margin-top:10px;
+  font-size:14px;
+  line-height:1.55;
+}
+
+.diagram-card{
+  overflow-x:auto;
+}
+
+.formula{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  padding:10px;
+  margin-top:8px;
+  font-family:Consolas,monospace;
+  overflow:auto;
+}
+
+svg{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+@media(max-width:480px){
+  .coax-ind-wrap{
+    padding-left:22px;
+    padding-right:22px;
   }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
+
+  .input-row{
+    grid-template-columns:minmax(0,1fr) 72px;
   }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
+  .input-row.single{
+    grid-template-columns:1fr;
   }
+
+  .result-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .result-card b{
+    font-size:14px;
+  }
+
+  svg{
+    min-width:760px;
+  }
+}
 </style>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<script>
+function showCoaxIndError(msg){
+  var box = document.getElementById("coax_ind_error");
+  box.style.display = "block";
+  box.innerHTML = msg;
+}
 
+function clearCoaxIndError(){
+  var box = document.getElementById("coax_ind_error");
+  box.style.display = "none";
+  box.innerHTML = "";
+}
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
+function coaxIndRun(){
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  clearCoaxIndError();
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2"  >OD <font face="Arial" size="6">(Outer Diameter) </font></label><input type="number" id="out_diameter"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 150px;"class="form-control"  />
-<select style="padding: 5px ;  position: absolute;right: 10px;font-size:58px; height:85px; border:3px solid #aaa;border-radius:4px;margin:8px 0; text-align:center;width:127.5px;" class="form-control" name="out_diameter_unit" id="out_diameter_unit">
-<option value="2.54e-5">mil</option>
-<option value="0.01">cm</option>
-<option selected="selected" value="0.001">mm</option>
-<option value="0.000001">um</option>
-<option value="0.0254">in</option>
-</select>
-</div><h1 style="font-size:50;"></h1>
+  var odVal = parseFloat(document.getElementById("coax_ind_od").value);
+  var idVal = parseFloat(document.getElementById("coax_ind_id").value);
+  var lenVal = parseFloat(document.getElementById("coax_ind_len").value);
+  var rpVal = parseFloat(document.getElementById("coax_ind_rp").value);
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  var odUnit = parseFloat(document.getElementById("coax_ind_od_unit").value);
+  var idUnit = parseFloat(document.getElementById("coax_ind_id_unit").value);
+  var lenUnit = parseFloat(document.getElementById("coax_ind_len_unit").value);
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2"  >ID <font face="Arial" size="6">(Inner Diameter) </font></label><input type="number" id="in_diameter"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 150px;"class="form-control"  />
-<select style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;   height:85px; border:3px solid #aaa;border-radius:4px;margin:8px 0; text-align:center;width:127.5px;" class="form-control" name="out_diameter_unit" id="in_diameter_unit">
-<option value="2.54e-5">mil</option>
-<option value="0.01">cm</option>
-<option selected="selected" value="0.001">mm</option>
-<option value="0.000001">um</option>
-<option value="0.0254">in</option>
-</select>
+  if(isNaN(odVal) || isNaN(idVal) || isNaN(lenVal) || isNaN(rpVal)){
+    showCoaxIndError("Please enter all values.");
+    return false;
+  }
 
+  var od = odVal * odUnit;
+  var id = idVal * idUnit;
+  var len = lenVal * lenUnit;
 
-</div><h1 style="font-size:50;"></h1>
+  if(od <= 0 || id <= 0 || len <= 0 || rpVal <= 0){
+    showCoaxIndError("Values must be greater than 0.");
+    return false;
+  }
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  if(od <= id){
+    showCoaxIndError(
+      "❌ Outer Diameter must be larger than Inner Diameter.<br><br>" +
+      "Example:<br>" +
+      "D / Outer Diameter = 10 mm<br>" +
+      "d / Inner Diameter = 5 mm<br>" +
+      "L / Length = 100 mm<br>" +
+      "Relative Permeability = 1"
+    );
+    return false;
+  }
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2"  >Length <font face="Arial" size="6">(Wire ) </font></label><input type="number" id="length"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 150px;"class="form-control"  />
-<select style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;   height:85px; border:3px solid #aaa;border-radius:4px;margin:8px 0; text-align:center;width:127.5px;" class="form-control" name="out_diameter_unit" id="length_unit">
-<option value="2.54e-5">mil</option>
-<option value="0.01">cm</option>
-<option selected="selected" value="0.001">mm</option>
-<option value="0.000001">um</option>
-<option value="0.0254">in</option>
-</select>
+  var mu0 = 4 * Math.PI * 1e-7;
 
+  var inductance =
+    (mu0 * rpVal / (2 * Math.PI)) *
+    Math.log(od / id) *
+    len;
 
+  document.getElementById("coax_ind_output").innerHTML =
+    inductance.toPrecision(3) + " H";
 
-</div><h1 style="font-size:50;"></h1>
+  document.getElementById("coax_ind_output2").innerHTML =
+    (inductance * 1e9).toPrecision(4) + " nH";
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2"  >R.P <font face="Arial" size="6">(Relative Permeability) </font></label><input type="number" id="rel_perm"  class="intro"  style="position: absolute;   text-align
-:center;width:440; right: 10px;"class="form-control"  />
-
-</div>
-
-</div></form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class="col-sm-4">&nbsp;</div>
-<div class="col-sm-4">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="tool_submit" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-
-</div>
-</div>
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2"  >Inductance</label><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 132px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:96px;">H</label>
-
-</div>
-</div><h1 style="font-size:50;"></h1>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-<script type="text/javascript">
-var _0xe5d4=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x6F\x75\x74\x5F\x64\x69\x61\x6D\x65\x74\x65\x72","\x23\x6F\x75\x74\x5F\x64\x69\x61\x6D\x65\x74\x65\x72\x5F\x75\x6E\x69\x74","\x23\x6C\x65\x6E\x67\x74\x68","\x23\x6C\x65\x6E\x67\x74\x68\x5F\x75\x6E\x69\x74","\x23\x69\x6E\x5F\x64\x69\x61\x6D\x65\x74\x65\x72","\x23\x69\x6E\x5F\x64\x69\x61\x6D\x65\x74\x65\x72\x5F\x75\x6E\x69\x74","\x23\x72\x65\x6C\x5F\x70\x65\x72\x6D","\x50\x49","\x6C\x6F\x67","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x73\x71\x72\x74","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];!function(_0xfc1bx1){_0xe5d4[0];var _0xfc1bx2={calculate:function(){var _0xfc1bx2=parseFloat(_0xfc1bx1(_0xe5d4[2])[_0xe5d4[1]]())* parseFloat(_0xfc1bx1(_0xe5d4[3])[_0xe5d4[1]]()),_0xfc1bx3=parseFloat(_0xfc1bx1(_0xe5d4[4])[_0xe5d4[1]]())* parseFloat(_0xfc1bx1(_0xe5d4[5])[_0xe5d4[1]]()),_0xfc1bx4=parseFloat(_0xfc1bx1(_0xe5d4[6])[_0xe5d4[1]]())* parseFloat(_0xfc1bx1(_0xe5d4[7])[_0xe5d4[1]]()),_0xfc1bx5=parseFloat(_0xfc1bx1(_0xe5d4[8])[_0xe5d4[1]]()),_0xfc1bx6=4* Math[_0xe5d4[9]]* 1e-7,_0xfc1bx7=_0xfc1bx6* _0xfc1bx5/ (2* Math[_0xe5d4[9]])* Math[_0xe5d4[10]](_0xfc1bx2/ _0xfc1bx4)* _0xfc1bx3;_0xfc1bx1(_0xe5d4[12])[_0xe5d4[1]](_0xfc1bx7[_0xe5d4[11]](3))},acosh:function(_0xfc1bx1){return Math[_0xe5d4[10]](_0xfc1bx1+ Math[_0xe5d4[13]](_0xfc1bx1* _0xfc1bx1- 1))}};_0xfc1bx1(_0xe5d4[16])[_0xe5d4[21]](function(){var _0xfc1bx2=!1;_0xfc1bx1(_0xe5d4[16])[_0xe5d4[15]](function(){_0xe5d4[14]== _0xfc1bx1(this)[_0xe5d4[1]]()&& (_0xfc1bx2=  !0)}),_0xfc1bx2?_0xfc1bx1(_0xe5d4[19])[_0xe5d4[18]](_0xe5d4[17],_0xe5d4[17]):_0xfc1bx1(_0xe5d4[19])[_0xe5d4[20]](_0xe5d4[17])}),_0xfc1bx1(_0xe5d4[19])[_0xe5d4[25]](_0xe5d4[22],function(_0xfc1bx1){_0xfc1bx1[_0xe5d4[23]](),_0xfc1bx2[_0xe5d4[24]]()})}(jQuery)
+  return false;
+}
 </script>
+</head>
+
+<body>
+
+<div class="coax-ind-wrap">
+
+  <div class="input-grid">
+
+    <div class="field">
+      <label>D / OD (Outer Diameter)</label>
+      <div class="input-row">
+        <input type="number" id="coax_ind_od" step="any" placeholder="Enter D">
+        <select id="coax_ind_od_unit">
+          <option value="2.54e-5">mil</option>
+          <option value="0.01">cm</option>
+          <option selected value="0.001">mm</option>
+          <option value="0.000001">µm</option>
+          <option value="0.0254">in</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>d / ID (Inner Diameter)</label>
+      <div class="input-row">
+        <input type="number" id="coax_ind_id" step="any" placeholder="Enter d">
+        <select id="coax_ind_id_unit">
+          <option value="2.54e-5">mil</option>
+          <option value="0.01">cm</option>
+          <option selected value="0.001">mm</option>
+          <option value="0.000001">µm</option>
+          <option value="0.0254">in</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>L / Length (Wire)</label>
+      <div class="input-row">
+        <input type="number" id="coax_ind_len" step="any" placeholder="Enter L">
+        <select id="coax_ind_len_unit">
+          <option value="2.54e-5">mil</option>
+          <option value="0.01">cm</option>
+          <option selected value="0.001">mm</option>
+          <option value="0.000001">µm</option>
+          <option value="0.0254">in</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>R.P (Relative Permeability)</label>
+      <div class="input-row single">
+        <input type="number" id="coax_ind_rp" step="any" placeholder="Example: 1">
+      </div>
+    </div>
+
+  </div>
+
+  <button type="button" class="calc-btn" onclick="coaxIndRun();return false;">
+    Calculate
+  </button>
+
+  <div id="coax_ind_error" class="error-box"></div>
+
+  <div class="section-title">Results</div>
+
+  <div class="result-grid">
+    <div class="result-card">
+      <span>Inductance</span>
+      <b id="coax_ind_output"></b>
+    </div>
+
+    <div class="result-card">
+      <span>Inductance</span>
+      <b id="coax_ind_output2"></b>
+    </div>
+  </div>
+
+  <div class="section-title">Diagram & Theory</div>
+
+  <div class="diagram-card">
+
+    <svg viewBox="0 0 900 430" aria-label="Coax inductance D d L dimension diagram">
+
+      <rect x="10" y="10" width="880" height="410" rx="18" fill="#fff"/>
+
+      <!-- OUTER BODY -->
+      <rect x="170" y="125" width="520" height="120" rx="60"
+            fill="#e5e7eb" stroke="#111827" stroke-width="4"/>
+
+      <ellipse cx="170" cy="185" rx="50" ry="60"
+               fill="#d1d5db" stroke="#111827" stroke-width="4"/>
+
+      <ellipse cx="690" cy="185" rx="50" ry="60"
+               fill="#e5e7eb" stroke="#111827" stroke-width="4"/>
+
+      <!-- DIELECTRIC -->
+      <rect x="170" y="150" width="520" height="70" rx="35"
+            fill="#fde68a" stroke="#f59e0b" stroke-width="3"/>
+
+      <ellipse cx="170" cy="185" rx="30" ry="35"
+               fill="#fde68a" stroke="#f59e0b" stroke-width="3"/>
+
+      <ellipse cx="690" cy="185" rx="30" ry="35"
+               fill="#fde68a" stroke="#f59e0b" stroke-width="3"/>
+
+      <!-- INNER CONDUCTOR -->
+      <rect x="170" y="174" width="520" height="22" rx="11"
+            fill="#ef4444" stroke="#991b1b" stroke-width="2"/>
+
+      <ellipse cx="170" cy="185" rx="12" ry="12"
+               fill="#ef4444" stroke="#991b1b" stroke-width="2"/>
+
+      <ellipse cx="690" cy="185" rx="12" ry="12"
+               fill="#ef4444" stroke="#991b1b" stroke-width="2"/>
+
+      <!-- D = OUTER DIAMETER DIMENSION -->
+      <line x1="80" y1="125" x2="80" y2="245"
+            stroke="#111827" stroke-width="3"/>
+
+      <path d="M80 125 L70 140 L90 140 Z" fill="#111827"/>
+      <path d="M80 245 L70 230 L90 230 Z" fill="#111827"/>
+
+      <line x1="100" y1="125" x2="170" y2="125"
+            stroke="#111827" stroke-width="2"/>
+
+      <line x1="100" y1="245" x2="170" y2="245"
+            stroke="#111827" stroke-width="2"/>
+
+      <text x="55" y="190"
+            font-size="28"
+            font-weight="700"
+            fill="#111827"
+            transform="rotate(-90 55 190)">D</text>
+
+      <text x="22" y="190"
+            font-size="16"
+            fill="#111827"
+            transform="rotate(-90 22 190)">Outer Diameter</text>
+
+      <!-- d = INNER DIAMETER DIMENSION ARROW -->
+      <line x1="240" y1="174" x2="240" y2="196"
+            stroke="#ef4444" stroke-width="3"/>
+
+      <path d="M240 174 L232 184 L248 184 Z" fill="#ef4444"/>
+      <path d="M240 196 L232 186 L248 186 Z" fill="#ef4444"/>
+
+      <line x1="205" y1="174" x2="240" y2="174"
+            stroke="#ef4444" stroke-width="2"/>
+
+      <line x1="205" y1="196" x2="240" y2="196"
+            stroke="#ef4444" stroke-width="2"/>
+
+      <line x1="360" y1="110" x2="250" y2="183"
+            stroke="#ef4444" stroke-width="3"/>
+
+      <path d="M250 183 L264 177 L258 192 Z" fill="#ef4444"/>
+
+      <text x="370" y="104"
+            font-size="18"
+            font-weight="700"
+            fill="#ef4444">d = Inner Diameter</text>
+
+      <!-- L = LENGTH DIMENSION -->
+      <line x1="170" y1="320" x2="690" y2="320"
+            stroke="#111827" stroke-width="3"/>
+
+      <path d="M170 320 L185 310 L185 330 Z" fill="#111827"/>
+      <path d="M690 320 L675 310 L675 330 Z" fill="#111827"/>
+
+      <line x1="170" y1="255" x2="170" y2="335"
+            stroke="#111827" stroke-width="2"/>
+
+      <line x1="690" y1="255" x2="690" y2="335"
+            stroke="#111827" stroke-width="2"/>
+
+      <text x="430" y="305"
+            text-anchor="middle"
+            font-size="28"
+            font-weight="700"
+            fill="#111827">L</text>
+
+      <text x="430" y="338"
+            text-anchor="middle"
+            font-size="16"
+            fill="#111827">Length</text>
+
+      <!-- TITLE / FORMULA -->
+      <text x="430" y="58"
+            text-anchor="middle"
+            font-size="24"
+            font-weight="700"
+            fill="#111827">Coax Inductance Dimensions</text>
+
+      <rect x="515" y="60" width="280" height="46" rx="10"
+            fill="#f8fafc" stroke="#d1d5db"/>
+
+      <text x="655" y="90"
+            text-anchor="middle"
+            font-size="18"
+            font-weight="700"
+            fill="#2563eb">L = μ0 μr l / 2π × ln(D/d)</text>
+
+      <!-- LEGEND -->
+      <rect x="150" y="370" width="18" height="18" rx="3" fill="#e5e7eb" stroke="#111827"/>
+      <text x="176" y="385" font-size="15" fill="#374151">Outer conductor</text>
+
+      <rect x="360" y="370" width="18" height="18" rx="3" fill="#fde68a" stroke="#f59e0b"/>
+      <text x="386" y="385" font-size="15" fill="#374151">Dielectric</text>
+
+      <rect x="540" y="370" width="18" height="18" rx="3" fill="#ef4444"/>
+      <text x="566" y="385" font-size="15" fill="#374151">Inner conductor</text>
+
+    </svg>
+
+  </div>
+
+  <div class="info-box">
+    Coaxial cable inductance depends on the outer diameter <b>D</b>, inner diameter <b>d</b>, cable length <b>L</b>, and relative permeability of the material.
+  </div>
+
+  <div class="section-title">Formulas</div>
+
+  <div class="info-box">
+    <div class="formula">L = (μ0 × μr / 2π) × ln(D / d) × Length</div>
+    <div class="formula">μ0 = 4π × 10⁻⁷ H/m</div>
+    <div class="formula">D, d and Length are converted to meters before calculation.</div>
+  </div>
+
+  <div class="section-title">Example</div>
+
+  <div class="info-box">
+    D = 10 mm, d = 5 mm, Length = 100 mm, μr = 1<br>
+    Inductance ≈ 1.39e-8 H<br>
+    Inductance ≈ 13.86 nH
+  </div>
+
 </div>
+
 </body>
 </html>
