@@ -1,177 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Noise Figure and Noise Temperature Calculator</title>
+<meta name="description" content="Calculate noise temperature from noise figure, or convert noise temperature back to noise figure using a reference temperature.">
 
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  padding:0;
+  background:#f6f8fb;
+  font-family:Arial,sans-serif;
+  color:#1f2937;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.nf-wrap{
+  width:100%;
+  max-width:620px;
+  margin:0 auto;
+  padding:14px;
+  background:#f6f8fb;
 }
 
-body { 
-  background: ; 
+.calc-section,.info-section{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:12px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+.small-title{
+  font-size:12px;
+  font-weight:800;
+  color:#6b7280;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin:0 0 12px;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+.field{margin-bottom:12px}
+
+.field label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:6px;
+}
+
+.input-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+}
+
+.input-row input,
+.input-row select{
+  width:100%;
+  min-width:0;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 10px;
+  font-size:15px;
+  background:#fff;
+  color:#111827;
+  outline:none;
+}
+
+.input-row select{
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+}
+
+.calc-btn{
+  width:100%;
+  height:46px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg,#ff9800,#ff6a00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:24px;
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.result-card{
+  border-radius:12px;
+  padding:12px;
+  min-height:78px;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+}
+
+.result-card:nth-child(2){
+  background:#ecfdf5;
+  border-color:#bbf7d0;
+}
+
+.result-label{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  color:#2563eb;
+  margin-bottom:7px;
+}
+
+.result-card:nth-child(2) .result-label{color:#16a34a}
+
+.result-value{
+  font-size:16px;
+  font-weight:900;
+  color:#111827;
+}
+
+.error-box{
+  display:none;
+  margin-top:12px;
+  border:1px solid #fecaca;
+  background:#fef2f2;
+  color:#b91c1c;
+  border-radius:10px;
+  padding:10px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.info-section h2{
+  font-size:17px;
+  margin:0 0 10px;
+}
+
+.info-section p{
+  font-size:14px;
+  line-height:1.55;
+  color:#4b5563;
+}
+
+.formula-box{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:12px;
+  font-size:14px;
+  line-height:1.65;
+  color:#374151;
+}
+
+.diagram-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:10px;
+  overflow:hidden;
+}
+
+.noise-diagram svg{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+@media(max-width:480px){
+  .nf-wrap{padding:14px}
+  .input-row{grid-template-columns:minmax(0,1fr) 72px}
+  .input-row select{font-size:12px}
+  .result-grid{grid-template-columns:1fr 1fr}
+  .result-value{font-size:14px}
+}
 </style>
+</head>
 
+<body>
 
+<main class="nf-wrap">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<section class="calc-section">
+<p class="small-title">Inputs</p>
 
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-
-<form id="tool-form">
-
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<select class="form-control" id="nf-unit" style="padding: 5px ;  position: absolute;right: 325px;font-size:60px;margin:8px 0;width:210px;border-radius:4px;height:85px; border:3px solid #aaa;">
-<option value="1">Figure Noise(dB)</option>
-<option value="2">Tempreture 	&nbsp; Noise(K)</option>
-</select><input type="number" id="nf"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 10px;"class="form-control"  />Select<h1 style="font-size:50;"></h1>
-
+<div class="field">
+<label for="nf">Input Type</label>
+<div class="input-row">
+<input type="number" id="nf" placeholder="Example: 1.5" step="any">
+<select id="nf-unit">
+<option value="1">NF dB</option>
+<option value="2">Temp K</option>
+</select>
 </div>
 </div>
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:50;" >Reference </label><font face="Arial" size="6">(Temp.) </font><input  id="rt"  class="intro"  style="position: absolute;   width:382; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">dB</label>
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-</div>
-</div>
-</div>
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
+<div class="field">
+<label for="rt">Reference Temperature</label>
+<div class="input-row">
+<input type="number" id="rt" placeholder="Example: 290" step="any">
+<span class="unit-box" style="height:43px;border:1px solid #cfd6df;border-radius:8px;background:#f9fafb;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#4b5563;">K</span>
 </div>
 </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+<button class="calc-btn" id="calculate" type="button">Calculate</button>
+<div class="error-box" id="errorBox"></div>
+</section>
 
+<section class="calc-section">
+<p class="small-title">Results</p>
 
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div id="ans-nt-container">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+<div class="result-grid">
+<div class="result-card">
+<div class="result-label">Noise Temperature</div>
+<div class="result-value"><span id="ansNt"></span> K</div>
+</div>
 
+<div class="result-card">
+<div class="result-label">Noise Figure</div>
+<div class="result-value"><span id="ansNf"></span> dB</div>
 </div>
 </div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="ansNt" class="control-label">Noise </label><font face="Arial" size="6">(Temperature)  </font><input  id="ansNt"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="text" /><label align="middle"class="form-group" style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">K</label><h1 style="font-size:50;"></h1>
+</section>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
+<section class="info-section">
+<h2>Noise Figure and Noise Temperature Diagram</h2>
 
-</div>
-</div>
-</div>
-<div class="col-sm-12" id="ans-nf-container" style="display: none">
+<div class="diagram-card">
+<div class="noise-diagram">
+<svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Noise figure and noise temperature diagram">
 
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+<rect x="0" y="0" width="760" height="300" fill="#ffffff"/>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="ansNf" class="control-label">Noise Figure</label><font face="Arial" size="7">  </font><input  id="ansNf"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"class="form-group" style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   border:2px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">dB</label><h1 style="font-size:50;"></h1>
+<rect x="70" y="105" width="150" height="90" rx="10" fill="#eff6ff" stroke="#111827" stroke-width="2"/>
+<text x="145" y="140" text-anchor="middle" font-size="18" font-weight="700" fill="#2563eb">Input</text>
+<text x="145" y="168" text-anchor="middle" font-size="14" fill="#111827">Signal + Noise</text>
 
+<line x1="220" y1="150" x2="315" y2="150" stroke="#111827" stroke-width="3"/>
+<polygon points="315,150 300,142 300,158" fill="#111827"/>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
+<rect x="315" y="85" width="160" height="130" rx="12" fill="#fff7ed" stroke="#ef4444" stroke-width="2"/>
+<text x="395" y="124" text-anchor="middle" font-size="18" font-weight="700" fill="#c2410c">RF Device</text>
+<text x="395" y="154" text-anchor="middle" font-size="14" fill="#111827">Adds Internal</text>
+<text x="395" y="176" text-anchor="middle" font-size="14" fill="#111827">Noise</text>
 
+<line x1="475" y1="150" x2="570" y2="150" stroke="#111827" stroke-width="3"/>
+<polygon points="570,150 555,142 555,158" fill="#111827"/>
+
+<rect x="570" y="105" width="150" height="90" rx="10" fill="#ecfdf5" stroke="#16a34a" stroke-width="2"/>
+<text x="645" y="140" text-anchor="middle" font-size="18" font-weight="700" fill="#16a34a">Output</text>
+<text x="645" y="168" text-anchor="middle" font-size="14" fill="#111827">More Noise</text>
+
+<line x1="395" y1="215" x2="395" y2="255" stroke="#111827" stroke-width="2"/>
+<polygon points="395,255 388,241 402,241" fill="#111827"/>
+<text x="395" y="278" text-anchor="middle" font-size="16" font-weight="700" fill="#111827">NF ↔ Noise Temperature</text>
+
+<text x="380" y="45" text-anchor="middle" font-size="20" font-weight="700" fill="#111827">Noise Figure shows how much noise a device adds</text>
+
+</svg>
 </div>
 </div>
+</section>
+
+<section class="info-section">
+<h2>Formulas Used</h2>
+<div class="formula-box">
+Noise Temperature = Reference Temperature × (10^(Noise Figure / 10) - 1)<br>
+Noise Figure = 10 × log10((Noise Temperature / Reference Temperature) + 1)
 </div>
-</div>
-</div>
-<script type="text/javascript">
-var _0x3a86=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x6E\x66","\x23\x72\x74","\x23\x6E\x66\x2D\x75\x6E\x69\x74","\x70\x6F\x77","\x74\x6F\x46\x69\x78\x65\x64","\x23\x61\x6E\x73\x4E\x74","\x6C\x6F\x67\x31\x30","\x23\x61\x6E\x73\x4E\x66","\x6F\x6E","\x63\x68\x61\x6E\x67\x65","\x68\x69\x64\x65","\x23\x61\x6E\x73\x2D\x6E\x66\x2D\x63\x6F\x6E\x74\x61\x69\x6E\x65\x72","\x73\x68\x6F\x77","\x23\x61\x6E\x73\x2D\x6E\x74\x2D\x63\x6F\x6E\x74\x61\x69\x6E\x65\x72"];!function(_0x576fx1){_0x3a86[0];function _0x576fx2(){_0x576fx1(_0x3a86[10])[_0x3a86[9]](function(){_0x576fx1(this)[_0x3a86[4]](_0x3a86[3])[_0x3a86[2]](_0x3a86[1]),_0x576fx1(this)[_0x3a86[4]](_0x3a86[3])[_0x3a86[6]](_0x3a86[5]),_0x576fx1(this)[_0x3a86[8]](_0x3a86[7])})}function _0x576fx3(){_0x576fx1(_0x3a86[10])[_0x3a86[9]](function(){_0x576fx1(this)[_0x3a86[4]](_0x3a86[3])[_0x3a86[2]](_0x3a86[5]),_0x576fx1(this)[_0x3a86[4]](_0x3a86[3])[_0x3a86[6]](_0x3a86[1])})}var _0x576fx4,_0x576fx5=_0x576fx1(_0x3a86[11]);_0x576fx1(_0x3a86[16])[_0x3a86[17]](function(){_0x576fx1(this)[_0x3a86[4]](_0x3a86[3])[_0x3a86[2]](_0x3a86[12]),_0x576fx2(),_0x576fx5[_0x3a86[14]](_0x3a86[13],!1),_0x576fx1[_0x3a86[15]](_0x576fx1(this)[_0x3a86[8]]())=== !1?(_0x576fx1(this)[_0x3a86[4]](_0x3a86[3])[_0x3a86[6]](_0x3a86[12]),_0x576fx5[_0x3a86[14]](_0x3a86[13],!1)):_0x576fx1(this)[_0x3a86[4]](_0x3a86[3])[_0x3a86[2]](_0x3a86[12]),_0x576fx4= 0,_0x576fx1(_0x3a86[16])[_0x3a86[9]](function(){_0x3a86[7]!= _0x576fx1(this)[_0x3a86[8]]()&& _0x576fx1[_0x3a86[15]](_0x576fx1(this)[_0x3a86[8]]())!== !1|| _0x576fx4++}),_0x576fx4> 0&& _0x576fx5[_0x3a86[14]](_0x3a86[13],!0)}),_0x576fx5[_0x3a86[28]](_0x3a86[18],function(_0x576fx2){_0x576fx2[_0x3a86[19]]();var _0x576fx4,_0x576fx5,_0x576fx6;_0x576fx5= _0x576fx1(_0x3a86[20])[_0x3a86[8]](),_0x576fx6= _0x576fx1(_0x3a86[21])[_0x3a86[8]](),1== _0x576fx1(_0x3a86[22])[_0x3a86[8]]()?(_0x576fx4= _0x576fx6* (Math[_0x3a86[23]](10,_0x576fx5/ 10)- 1),_0x576fx1(_0x3a86[25])[_0x3a86[8]](_0x576fx4[_0x3a86[24]](4))):(_0x576fx4= 10* Math[_0x3a86[26]](_0x576fx5/ _0x576fx6+ 1),_0x576fx1(_0x3a86[27])[_0x3a86[8]](_0x576fx4[_0x3a86[24]](4))),_0x576fx3()}),_0x576fx1(_0x3a86[22])[_0x3a86[28]](_0x3a86[29],function(){_0x576fx2(),1== _0x576fx1(this)[_0x3a86[8]]()?(_0x576fx1(_0x3a86[31])[_0x3a86[30]](),_0x576fx1(_0x3a86[33])[_0x3a86[32]]()):(_0x576fx1(_0x3a86[33])[_0x3a86[30]](),_0x576fx1(_0x3a86[31])[_0x3a86[32]]())}),1== _0x576fx1(_0x3a86[22])[_0x3a86[8]]()?(_0x576fx1(_0x3a86[31])[_0x3a86[30]](),_0x576fx1(_0x3a86[33])[_0x3a86[32]]()):(_0x576fx1(_0x3a86[33])[_0x3a86[30]](),_0x576fx1(_0x3a86[31])[_0x3a86[32]]())}(jQuery)
-    </script>
+</section>
+
+<section class="info-section">
+<h2>Example</h2>
+<p>Enter noise figure in dB and reference temperature in Kelvin to calculate equivalent noise temperature. Or select temperature input to convert noise temperature back to noise figure.</p>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("calculate").addEventListener("click",function(e){
+    e.preventDefault();
+    calculateNoise();
+  });
+
+  ["nf","rt"].forEach(function(id){
+    document.getElementById(id).addEventListener("input",clearResults);
+  });
+
+  document.getElementById("nf-unit").addEventListener("change",clearResults);
+
+  clearResults();
+});
+
+function clearResults(){
+  document.getElementById("ansNt").textContent="";
+  document.getElementById("ansNf").textContent="";
+  hideError();
+}
+
+function showError(msg){
+  var box=document.getElementById("errorBox");
+  box.style.display="block";
+  box.textContent=msg;
+}
+
+function hideError(){
+  var box=document.getElementById("errorBox");
+  box.style.display="none";
+  box.textContent="";
+}
+
+function calculateNoise(){
+  var nf=parseFloat(document.getElementById("nf").value);
+  var rt=parseFloat(document.getElementById("rt").value);
+  var type=document.getElementById("nf-unit").value;
+
+  if(!isFinite(nf) || !isFinite(rt) || rt<=0){
+    showError("Please enter valid values. Reference temperature must be greater than 0 K.");
+    return;
+  }
+
+  if(type=="1"){
+    var nt=rt*(Math.pow(10,nf/10)-1);
+    document.getElementById("ansNt").textContent=nt.toFixed(4);
+    document.getElementById("ansNf").textContent=nf.toFixed(4);
+  }else{
+    if(nf<0){
+      showError("Noise temperature cannot be negative.");
+      return;
+    }
+    var nfDb=10*Math.log10(nf/rt+1);
+    document.getElementById("ansNt").textContent=nf.toFixed(4);
+    document.getElementById("ansNf").textContent=nfDb.toFixed(4);
+  }
+}
+</script>
+
+</body>
+</html>
