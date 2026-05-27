@@ -2,170 +2,196 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Microstrip Patch Antenna Calculator</title>
 <meta name="description" content="Calculate rectangular microstrip patch antenna width and length using dielectric constant, substrate height, and operating frequency.">
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
 
 body{
   margin:0;
+  background:#f6f8fb;
   padding:0;
-  background:#f6f8fb;
-  font-family:Arial,sans-serif;
-  color:#1f2937;
 }
 
-.patch-wrap{
-  width:100%;
+.calc{
   max-width:620px;
-  margin:0 auto;
+  margin:auto;
   padding:14px;
-  background:#f6f8fb;
 }
 
-.patch-section,.info-section{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  padding:14px;
-  margin-bottom:12px;
-}
-
-.small-title{
-  font-size:12px;
-  font-weight:800;
-  color:#6b7280;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  margin:0 0 12px;
-}
-
-.field{margin-bottom:12px}
-
-.field label{
+label{
   display:block;
   font-size:15px;
   font-weight:700;
-  color:#4b5563;
+  color:#555;
   margin-bottom:6px;
 }
 
-.input-row{
+.row{
   display:grid;
   grid-template-columns:minmax(0,1fr) 82px;
   gap:8px;
+  margin-bottom:16px;
 }
 
-.input-row input,
-.input-row select{
+.valueBox,
+input,
+select{
   width:100%;
-  min-width:0;
   height:43px;
   border:1px solid #cfd6df;
   border-radius:8px;
-  padding:0 10px;
+  padding:0 12px;
   font-size:15px;
   background:#fff;
-  color:#111827;
   outline:none;
 }
 
-.input-row select{
-  font-size:13px;
-  font-weight:700;
-  text-align:center;
+.valueBox{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#374151;
 }
 
-.calc-btn{
+select{
+  text-align:center;
+  font-weight:800;
+  padding:0 6px;
+}
+
+input:focus,
+select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
   width:100%;
-  height:46px;
+  height:48px;
   border:none;
   border-radius:10px;
-  background:linear-gradient(135deg,#ff9800,#ff6a00);
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
   color:#fff;
   font-size:16px;
   font-weight:800;
   cursor:pointer;
-  margin-top:24px;
 }
 
-.result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.result-card{
-  border-radius:12px;
-  padding:12px;
-  min-height:78px;
-  background:#eff6ff;
-  border:1px solid #bfdbfe;
-}
-
-.result-card:nth-child(2){
-  background:#ecfdf5;
-  border-color:#bbf7d0;
-}
-
-.result-label{
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-  color:#2563eb;
-  margin-bottom:7px;
-}
-
-.result-card:nth-child(2) .result-label{color:#16a34a}
-
-.result-value{
-  font-size:16px;
-  font-weight:900;
-  color:#111827;
-}
-
-.error-box{
+#errorBox{
   display:none;
   margin-top:12px;
-  border:1px solid #fecaca;
-  background:#fef2f2;
-  color:#b91c1c;
-  border-radius:10px;
-  padding:10px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+.resultTitle{
   font-size:13px;
-  font-weight:700;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#7b8794;
+  margin-top:22px;
+  margin-bottom:12px;
 }
 
-.info-section h2{
-  font-size:17px;
-  margin:0 0 10px;
+.resultGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
 }
 
-.info-section p{
-  font-size:14px;
-  line-height:1.55;
-  color:#4b5563;
+.card{
+  padding:16px;
+  border-radius:12px;
+  min-height:82px;
 }
 
-.formula-box{
-  background:#f9fafb;
+.cardLabel{
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.cardLine{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.cardValue,
+.cardUnit{
+  font-size:18px;
+  font-weight:900;
+}
+
+.blue{
+  background:#eef5ff;
+  border:1px solid #bfd3ff;
+}
+
+.blue *{
+  color:#2359e8;
+}
+
+.green{
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+}
+
+.green *{
+  color:#16a34a;
+}
+
+.infoBox{
+  margin-top:16px;
+  padding:14px;
+  background:#fff;
   border:1px solid #e5e7eb;
-  border-radius:10px;
-  padding:12px;
-  font-size:14px;
-  line-height:1.65;
+  border-radius:12px;
+}
+
+.infoBox h2,
+.infoBox h3{
+  margin:0 0 10px;
+  font-size:16px;
   color:#374151;
 }
 
-.diagram-card{
+.infoBox p,
+.infoBox li{
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+.formulaLine{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  padding:10px;
+  margin:8px 0;
+  font-size:13px;
+  color:#475467;
+  font-weight:800;
+  overflow-x:auto;
+}
+
+.diagramBox{
   background:#fff;
   border:1px solid #e5e7eb;
   border-radius:12px;
   padding:10px;
-  overflow:hidden;
+  overflow-x:auto;
 }
 
 .simple-microstrip-diagram{
@@ -177,150 +203,199 @@ body{
 
 .simple-microstrip-diagram svg{
   width:100%;
+  min-width:560px;
   height:auto;
   display:block;
 }
 
-@media(max-width:480px){
-  .patch-wrap{padding:14px}
-  .input-row{grid-template-columns:minmax(0,1fr) 72px}
-  .input-row select{font-size:12px}
-  .result-value{font-size:14px}
+.exampleGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.exampleCard{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:10px;
+}
+
+@media(max-width:600px){
+  .row{
+    grid-template-columns:minmax(0,1fr) 72px;
+  }
+
+  .resultGrid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .card{
+    padding:14px;
+  }
+
+  .cardValue,
+  .cardUnit{
+    font-size:16px;
+  }
+
+  .exampleGrid{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<main class="patch-wrap">
+<main class="calc">
 
-<section class="patch-section">
-<p class="small-title">Inputs</p>
-
-<div class="field">
-<label for="er">Dielectric / Propagation</label>
-<div class="input-row">
-<input type="number" id="er" placeholder="Example: 4.4" step="any">
-<select id="er-unit">
-<option value="1">εr</option>
-<option value="2">Vp %</option>
-</select>
-</div>
+<label>Dielectric / Propagation</label>
+<div class="row">
+  <input type="number" id="er" placeholder="Example: 4.4" step="any">
+  <select id="er-unit">
+    <option value="1">εr</option>
+    <option value="2">Vp %</option>
+  </select>
 </div>
 
-<div class="field">
-<label for="dh">Height / Dielectric Thickness</label>
-<div class="input-row">
-<input type="number" id="dh" placeholder="Example: 1.6" step="any">
-<select id="dh-unit">
-<option value="1">mm</option>
-<option value="25.4">in</option>
-<option value="0.0000254">µin</option>
-<option value="10">cm</option>
-<option value="0.000001">µm</option>
-</select>
-</div>
+<label>Height / Dielectric Thickness</label>
+<div class="row">
+  <input type="number" id="dh" placeholder="Example: 1.6" step="any">
+  <select id="dh-unit">
+    <option value="1">mm</option>
+    <option value="25.4">in</option>
+    <option value="0.0000254">µin</option>
+    <option value="10">cm</option>
+    <option value="0.000001">µm</option>
+  </select>
 </div>
 
-<div class="field">
-<label for="fr">Frequency</label>
-<div class="input-row">
-<input type="number" id="fr" placeholder="Example: 2.45" step="any">
-<select id="fr-unit">
-<option value="1">GHz</option>
-<option value="2">MHz</option>
-</select>
-</div>
+<label>Frequency</label>
+<div class="row">
+  <input type="number" id="fr" placeholder="Example: 2.45" step="any">
+  <select id="fr-unit">
+    <option value="1">GHz</option>
+    <option value="2">MHz</option>
+  </select>
 </div>
 
-<button class="calc-btn" id="calculate" type="button">Calculate</button>
-<div class="error-box" id="errorBox"></div>
+<button class="btn" id="calculate" type="button">CALCULATE</button>
+
+<div id="errorBox">Please enter valid positive values.</div>
+
+<div class="resultTitle">RESULTS</div>
+
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">PATCH WIDTH</div>
+    <div class="cardLine">
+      <span class="cardValue" id="ans1"></span>
+      <span class="cardUnit">mm</span>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="cardLabel">PATCH LENGTH</div>
+    <div class="cardLine">
+      <span class="cardValue" id="ans2"></span>
+      <span class="cardUnit">mm</span>
+    </div>
+  </div>
+</div>
+
+<section class="infoBox">
+  <h2>Microstrip Patch Antenna Diagram</h2>
+
+  <div class="diagramBox">
+    <div class="simple-microstrip-diagram">
+      <svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Basic structure of microstrip patch antenna">
+
+        <rect x="0" y="0" width="760" height="360" fill="#ffffff"/>
+
+        <rect x="150" y="170" width="470" height="85" fill="#8fd3ff" stroke="#111" stroke-width="2"/>
+        <text x="385" y="218" text-anchor="middle" font-size="22" font-weight="700" fill="#063A4D">
+          Dielectric Substrate εr
+        </text>
+
+        <rect x="150" y="255" width="470" height="20" fill="#8b5a2b" stroke="#111" stroke-width="2"/>
+        <text x="385" y="310" text-anchor="middle" font-size="22" font-weight="700" fill="#315369">
+          Ground Plane
+        </text>
+
+        <rect x="270" y="130" width="230" height="45" fill="#22c55e" stroke="#111" stroke-width="2"/>
+        <text x="385" y="160" text-anchor="middle" font-size="22" font-weight="700" fill="#ffffff">
+          Radiating Patch
+        </text>
+
+        <rect x="150" y="151" width="120" height="18" fill="#22c55e" stroke="#111" stroke-width="2"/>
+        <text x="190" y="140" text-anchor="middle" font-size="18" font-weight="700" fill="#111">
+          Feed Line
+        </text>
+
+        <circle cx="270" cy="160" r="7" fill="#ef4444" stroke="#111" stroke-width="2"/>
+
+        <path d="M270 100 C250 65, 300 55, 330 100" fill="none" stroke="#111" stroke-width="2"/>
+        <path d="M500 100 C535 55, 585 65, 500 150" fill="none" stroke="#111" stroke-width="2"/>
+
+        <line x1="650" y1="170" x2="650" y2="255" stroke="#111" stroke-width="2"/>
+        <polygon points="650,170 643,184 657,184" fill="#111"/>
+        <polygon points="650,255 643,241 657,241" fill="#111"/>
+        <text x="668" y="218" font-size="24" font-weight="700" font-style="italic" fill="#111">h</text>
+
+        <line x1="270" y1="82" x2="500" y2="82" stroke="#111" stroke-width="2"/>
+        <polygon points="270,82 284,75 284,89" fill="#111"/>
+        <polygon points="500,82 486,75 486,89" fill="#111"/>
+        <text x="385" y="72" text-anchor="middle" font-size="24" font-weight="700" font-style="italic" fill="#111">W</text>
+
+        <line x1="515" y1="144" x2="515" y2="170" stroke="#111" stroke-width="2"/>
+        <polygon points="515,105 508,119 522,119" fill="#111"/>
+        <polygon points="515,150 508,136 522,136" fill="#111"/>
+        <text x="532" y="155" font-size="24" font-weight="700" font-style="italic" fill="#111">L</text>
+
+      </svg>
+    </div>
+  </div>
 </section>
 
-<section class="patch-section">
-<p class="small-title">Results</p>
-
-<div class="result-grid">
-<div class="result-card">
-<div class="result-label">Patch Width</div>
-<div class="result-value"><span id="ans1"></span> mm</div>
-</div>
-
-<div class="result-card">
-<div class="result-label">Patch Length</div>
-<div class="result-value"><span id="ans2"></span> mm</div>
-</div>
-</div>
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">Width W = 299.792458 / (2 × f × √((εr + 1) / 2))</div>
+  <div class="formulaLine">Effective εr = (εr + 1) / 2 + ((εr - 1) / 2) × 1 / √(1 + 12h / W)</div>
+  <div class="formulaLine">Effective Length = 299.792458 / (2 × f × √εeff)</div>
+  <div class="formulaLine">ΔL = 0.412h × ((εeff + 0.3)(W/h + 0.264)) / ((εeff - 0.258)(W/h + 0.8))</div>
+  <div class="formulaLine">Patch Length L = Effective Length - 2ΔL</div>
 </section>
 
-<section class="info-section">
-<h2>Microstrip Patch Antenna Diagram</h2>
-
-<div class="diagram-card">
-<div class="simple-microstrip-diagram">
-<svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Basic structure of microstrip patch antenna">
-
-<rect x="0" y="0" width="760" height="360" fill="#ffffff"/>
-
-<rect x="150" y="170" width="470" height="85" fill="#8fd3ff" stroke="#111" stroke-width="2"/>
-<text x="385" y="218" text-anchor="middle" font-size="22" font-weight="700" fill="#063A4D">
-Dielectric Substrate εr
-</text>
-
-<rect x="150" y="255" width="470" height="20" fill="#8b5a2b" stroke="#111" stroke-width="2"/>
-<text x="385" y="310" text-anchor="middle" font-size="22" font-weight="700" fill="#315369">
-Ground Plane
-</text>
-
-<rect x="270" y="130" width="230" height="45" fill="#22c55e" stroke="#111" stroke-width="2"/>
-<text x="385" y="160" text-anchor="middle" font-size="22" font-weight="700" fill="#ffffff">
-Radiating Patch
-</text>
-
-<rect x="150" y="151" width="120" height="18" fill="#22c55e" stroke="#111" stroke-width="2"/>
-<text x="190" y="140" text-anchor="middle" font-size="18" font-weight="700" fill="#111">
-Feed Line
-</text>
-
-<circle cx="270" cy="160" r="7" fill="#ef4444" stroke="#111" stroke-width="2"/>
-
-<path d="M270 100 C250 65, 300 55, 330 100" fill="none" stroke="#111" stroke-width="2"/>
-<path d="M500 100 C535 55, 585 65, 500 150" fill="none" stroke="#111" stroke-width="2"/>
-
-<line x1="650" y1="170" x2="650" y2="255" stroke="#111" stroke-width="2"/>
-<polygon points="650,170 643,184 657,184" fill="#111"/>
-<polygon points="650,255 643,241 657,241" fill="#111"/>
-<text x="668" y="218" font-size="24" font-weight="700" font-style="italic" fill="#111">h</text>
-
-<line x1="270" y1="82" x2="500" y2="82" stroke="#111" stroke-width="2"/>
-<polygon points="270,82 284,75 284,89" fill="#111"/>
-<polygon points="500,82 486,75 486,89" fill="#111"/>
-<text x="385" y="72" text-anchor="middle" font-size="24" font-weight="700" font-style="italic" fill="#111">W</text>
-
-<line x1="515" y1="144" x2="515" y2="170" stroke="#111" stroke-width="2"/>
-<polygon points="515,105 508,119 522,119" fill="#111"/>
-<polygon points="515,150 508,136 522,136" fill="#111"/>
-<text x="532" y="155" font-size="24" font-weight="700" font-style="italic" fill="#111">L</text>
-
-</svg>
-</div>
-</div>
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    A microstrip patch antenna uses a radiating metal patch over a dielectric substrate and ground plane. The dielectric constant and substrate height affect the final patch size.
+  </p>
+  <p>
+    Width mainly affects radiation behavior, while length is adjusted using effective dielectric constant and fringing-field length extension.
+  </p>
 </section>
 
-<section class="info-section">
-<h2>Formulas Used</h2>
-<div class="formula-box">
-Width W = 299.792458 / (2 × f × √((εr + 1) / 2))<br>
-Effective εr = (εr + 1) / 2 + ((εr - 1) / 2) × 1 / √(1 + 12h / W)<br>
-Effective Length = 299.792458 / (2 × f × √εeff)<br>
-Length Extension ΔL = 0.412h × ((εeff + 0.3)(W/h + 0.264)) / ((εeff - 0.258)(W/h + 0.8))<br>
-Patch Length L = Effective Length - 2ΔL
-</div>
-</section>
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>
+        Dielectric Constant: 4.4<br>
+        Height: 1.6 mm<br>
+        Frequency: 2.45 GHz
+      </p>
+    </div>
 
-<section class="info-section">
-<h2>Example</h2>
-<p>For FR4 material, enter dielectric constant 4.4, substrate height 1.6 mm, and frequency 2.45 GHz. Click Calculate to get approximate patch width and length in millimeters.</p>
+    <div class="exampleCard">
+      <p><b>How to Use</b></p>
+      <p>
+        Enter dielectric value, substrate height, and frequency. The calculator returns patch width and patch length in millimeters.
+      </p>
+    </div>
+  </div>
 </section>
 
 </main>
@@ -346,19 +421,7 @@ document.addEventListener("DOMContentLoaded",function(){
 function clearResults(){
   document.getElementById("ans1").textContent="";
   document.getElementById("ans2").textContent="";
-  hideError();
-}
-
-function showError(msg){
-  var box=document.getElementById("errorBox");
-  box.style.display="block";
-  box.textContent=msg;
-}
-
-function hideError(){
-  var box=document.getElementById("errorBox");
-  box.style.display="none";
-  box.textContent="";
+  document.getElementById("errorBox").style.display="none";
 }
 
 function calculatePatch(){
@@ -367,9 +430,11 @@ function calculatePatch(){
   var fr=parseFloat(document.getElementById("fr").value);
 
   if(!isFinite(er) || er<=0 || !isFinite(dh) || dh<=0 || !isFinite(fr) || fr<=0){
-    showError("Please enter valid positive values for dielectric/propagation, height and frequency.");
+    document.getElementById("errorBox").style.display="block";
     return;
   }
+
+  document.getElementById("errorBox").style.display="none";
 
   if(document.getElementById("fr-unit").value=="2"){
     fr/=1000;
