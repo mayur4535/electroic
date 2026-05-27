@@ -1,182 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Microstrip Patch Antenna Calculator</title>
+<meta name="description" content="Calculate rectangular microstrip patch antenna width and length using dielectric constant, substrate height, and operating frequency.">
 
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  padding:0;
+  background:#f6f8fb;
+  font-family:Arial,sans-serif;
+  color:#1f2937;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.patch-wrap{
+  width:100%;
+  max-width:620px;
+  margin:0 auto;
+  padding:14px;
+  background:#f6f8fb;
 }
 
-body { 
-  background: ; 
+.patch-section,.info-section{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:12px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+.small-title{
+  font-size:12px;
+  font-weight:800;
+  color:#6b7280;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin:0 0 12px;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+.field{margin-bottom:12px}
+
+.field label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:6px;
+}
+
+.input-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+}
+
+.input-row input,
+.input-row select{
+  width:100%;
+  min-width:0;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 10px;
+  font-size:15px;
+  background:#fff;
+  color:#111827;
+  outline:none;
+}
+
+.input-row select{
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+}
+
+.calc-btn{
+  width:100%;
+  height:46px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg,#ff9800,#ff6a00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:24px;
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.result-card{
+  border-radius:12px;
+  padding:12px;
+  min-height:78px;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+}
+
+.result-card:nth-child(2){
+  background:#ecfdf5;
+  border-color:#bbf7d0;
+}
+
+.result-label{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  color:#2563eb;
+  margin-bottom:7px;
+}
+
+.result-card:nth-child(2) .result-label{color:#16a34a}
+
+.result-value{
+  font-size:16px;
+  font-weight:900;
+  color:#111827;
+}
+
+.error-box{
+  display:none;
+  margin-top:12px;
+  border:1px solid #fecaca;
+  background:#fef2f2;
+  color:#b91c1c;
+  border-radius:10px;
+  padding:10px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.info-section h2{
+  font-size:17px;
+  margin:0 0 10px;
+}
+
+.info-section p{
+  font-size:14px;
+  line-height:1.55;
+  color:#4b5563;
+}
+
+.formula-box{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:12px;
+  font-size:14px;
+  line-height:1.65;
+  color:#374151;
+}
+
+.diagram-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:10px;
+  overflow:hidden;
+}
+
+.simple-microstrip-diagram{
+  width:100%;
+  max-width:760px;
+  margin:auto;
+  background:#fff;
+}
+
+.simple-microstrip-diagram svg{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+@media(max-width:480px){
+  .patch-wrap{padding:14px}
+  .input-row{grid-template-columns:minmax(0,1fr) 72px}
+  .input-row select{font-size:12px}
+  .result-value{font-size:14px}
+}
 </style>
+</head>
 
+<body>
 
+<main class="patch-wrap">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<section class="patch-section">
+<p class="small-title">Inputs</p>
 
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><div class="container-fluid">
-<form id="tool-form">
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-<select class="form-control" id="er-unit" style="padding: 5px ;  position: absolute;right: 322px;font-size:58px;margin:8px 0;width:180px;border-radius:4px;height:85px; border:3px solid #aaa;">
-<option value="1">Dielectric Constant</option>
-<option value="2">Velocity 	&nbsp;	&nbsp;of Propagation (%)</option>
-</select><input type="number" id="er"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 10px;"class="form-control"  />
-
-</div>Select<h1 style="font-size:45;"></h1>
-</div>
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >Height<font face="Arial" size="6"> (Dielectric)</font></label><input type="number" id="dh"  class="intro"  style="position: absolute;   text-align
-:center;width:331; right: 170px;"class="form-control"  />
-<select class="form-control" id="dh-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; height:85px;border:3px solid #aaa;">
-<option value="1">mm Millimeters ()</option>
-<option value="25.4">in	&nbsp;	&nbsp; Inches ()</option>
-<option value="0.0000254">µin	&nbsp; MicroInches ()</option>
-<option value="10">cm	&nbsp; Centimeters ()</option>
-<option value="0.000001">µm	&nbsp; Micrometers ()</option>
+<div class="field">
+<label for="er">Dielectric / Propagation</label>
+<div class="input-row">
+<input type="number" id="er" placeholder="Example: 4.4" step="any">
+<select id="er-unit">
+<option value="1">εr</option>
+<option value="2">Vp %</option>
 </select>
 </div>
 </div>
-<h1 style="font-size:45;"></h1>
 
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >Frequency <font face="Arial" size="3"></font></label><input type="number" id="fr"  class="intro"  style="position: absolute;   text-align
-:center;width:331; right: 170px;"class="form-control"  />
-<select class="form-control" id="fr-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px;height:85px; border:3px solid #aaa;">
-<option value="1">GHz GigaHertz </option>
-<option value="2">MHz MegaHertz </option>
+<div class="field">
+<label for="dh">Height / Dielectric Thickness</label>
+<div class="input-row">
+<input type="number" id="dh" placeholder="Example: 1.6" step="any">
+<select id="dh-unit">
+<option value="1">mm</option>
+<option value="25.4">in</option>
+<option value="0.0000254">µin</option>
+<option value="10">cm</option>
+<option value="0.000001">µm</option>
 </select>
 </div>
 </div>
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
 
+<div class="field">
+<label for="fr">Frequency</label>
+<div class="input-row">
+<input type="number" id="fr" placeholder="Example: 2.45" step="any">
+<select id="fr-unit">
+<option value="1">GHz</option>
+<option value="2">MHz</option>
+</select>
 </div>
 </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+<button class="calc-btn" id="calculate" type="button">Calculate</button>
+<div class="error-box" id="errorBox"></div>
+</section>
 
+<section class="patch-section">
+<p class="small-title">Results</p>
 
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:60;" >Width</label><font face="Arial" size="7">  </font><input  id="ans1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mm</label>
-
-</div>
-</div>
-<h1 style="font-size:45;"></h1>
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:60;" >Length</label><font face="Arial" size="7"> </font><input  id="ans2"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">dB</label>
-
-</div>
+<div class="result-grid">
+<div class="result-card">
+<div class="result-label">Patch Width</div>
+<div class="result-value"><span id="ans1"></span> mm</div>
 </div>
 
-<script type="text/javascript">
-var _0xb7d9=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x65\x72","\x23\x64\x68","\x23\x66\x72","\x32","\x23\x66\x72\x2D\x75\x6E\x69\x74","\x23\x65\x72\x2D\x75\x6E\x69\x74","\x70\x6F\x77","\x23\x64\x68\x2D\x75\x6E\x69\x74","\x73\x71\x72\x74","\x74\x6F\x46\x69\x78\x65\x64","\x23\x61\x6E\x73\x31","\x23\x61\x6E\x73\x32","\x6F\x6E","\x63\x68\x61\x6E\x67\x65"];!function(_0x7f6ax1){_0xb7d9[0];function _0x7f6ax2(){_0x7f6ax1(_0xb7d9[10])[_0xb7d9[9]](function(){_0x7f6ax1(this)[_0xb7d9[4]](_0xb7d9[3])[_0xb7d9[2]](_0xb7d9[1]),_0x7f6ax1(this)[_0xb7d9[4]](_0xb7d9[3])[_0xb7d9[6]](_0xb7d9[5]),_0x7f6ax1(this)[_0xb7d9[8]](_0xb7d9[7])})}function _0x7f6ax3(){_0x7f6ax1(_0xb7d9[10])[_0xb7d9[9]](function(){_0x7f6ax1(this)[_0xb7d9[4]](_0xb7d9[3])[_0xb7d9[2]](_0xb7d9[5]),_0x7f6ax1(this)[_0xb7d9[4]](_0xb7d9[3])[_0xb7d9[6]](_0xb7d9[1])})}var _0x7f6ax4,_0x7f6ax5=_0x7f6ax1(_0xb7d9[11]);_0x7f6ax1(_0xb7d9[16])[_0xb7d9[17]](function(){_0x7f6ax1(this)[_0xb7d9[4]](_0xb7d9[3])[_0xb7d9[2]](_0xb7d9[12]),_0x7f6ax2(),_0x7f6ax5[_0xb7d9[14]](_0xb7d9[13],!1),_0x7f6ax1[_0xb7d9[15]](_0x7f6ax1(this)[_0xb7d9[8]]())=== !1?(_0x7f6ax1(this)[_0xb7d9[4]](_0xb7d9[3])[_0xb7d9[6]](_0xb7d9[12]),_0x7f6ax5[_0xb7d9[14]](_0xb7d9[13],!1)):_0x7f6ax1(this)[_0xb7d9[4]](_0xb7d9[3])[_0xb7d9[2]](_0xb7d9[12]),_0x7f6ax4= 0,_0x7f6ax1(_0xb7d9[16])[_0xb7d9[9]](function(){_0xb7d9[7]!= _0x7f6ax1(this)[_0xb7d9[8]]()&& _0x7f6ax1[_0xb7d9[15]](_0x7f6ax1(this)[_0xb7d9[8]]())!== !1|| _0x7f6ax4++}),_0x7f6ax4> 0&& _0x7f6ax5[_0xb7d9[14]](_0xb7d9[13],!0)}),_0x7f6ax5[_0xb7d9[32]](_0xb7d9[18],function(_0x7f6ax2){_0x7f6ax2[_0xb7d9[19]]();var _0x7f6ax4,_0x7f6ax5,_0x7f6ax6,_0x7f6ax7,_0x7f6ax8;_0x7f6ax6= parseFloat(_0x7f6ax1(_0xb7d9[20])[_0xb7d9[8]]()),_0x7f6ax7= parseFloat(_0x7f6ax1(_0xb7d9[21])[_0xb7d9[8]]()),_0x7f6ax8= parseFloat(_0x7f6ax1(_0xb7d9[22])[_0xb7d9[8]]()),_0xb7d9[23]== _0x7f6ax1(_0xb7d9[24])[_0xb7d9[8]]()&& (_0x7f6ax8/= 1e3),_0xb7d9[23]== _0x7f6ax1(_0xb7d9[25])[_0xb7d9[8]]()&& (_0x7f6ax6/= 100,_0x7f6ax6= 1/ Math[_0xb7d9[26]](_0x7f6ax6,2)),_0x7f6ax7*= parseFloat(_0x7f6ax1(_0xb7d9[27])[_0xb7d9[8]]());var _0x7f6ax9=299.792458/ (2* _0x7f6ax8* Math[_0xb7d9[28]]((_0x7f6ax6+ 1)/ 2)),_0x7f6axa=(_0x7f6ax6+ 1)/ 2+ (_0x7f6ax6- 1)/ 2* (1/ Math[_0xb7d9[28]](1+ 12* (_0x7f6ax7/ _0x7f6ax9))),_0x7f6axb=299.792458/ (2* _0x7f6ax8* Math[_0xb7d9[28]](_0x7f6axa)),_0x7f6axc=0.412* _0x7f6ax7* ((_0x7f6axa+ 0.3)* (_0x7f6ax9/ _0x7f6ax7+ 0.264))/ ((_0x7f6axa- 0.258)* (_0x7f6ax9/ _0x7f6ax7+ 0.8)),_0x7f6axd=_0x7f6axb- 2* _0x7f6axc;_0x7f6ax4= _0x7f6ax9[_0xb7d9[29]](3),_0x7f6ax5= _0x7f6axd[_0xb7d9[29]](3),_0x7f6ax1(_0xb7d9[30])[_0xb7d9[8]](_0x7f6ax4),_0x7f6ax1(_0xb7d9[31])[_0xb7d9[8]](_0x7f6ax5),_0x7f6ax3()}),_0x7f6ax1(_0xb7d9[24])[_0xb7d9[32]](_0xb7d9[33],function(){_0x7f6ax2()}),_0x7f6ax1(_0xb7d9[25])[_0xb7d9[32]](_0xb7d9[33],function(){_0x7f6ax2()}),_0x7f6ax1(_0xb7d9[27])[_0xb7d9[32]](_0xb7d9[33],function(){_0x7f6ax2()})}(jQuery)
-    </script>
+<div class="result-card">
+<div class="result-label">Patch Length</div>
+<div class="result-value"><span id="ans2"></span> mm</div>
 </div>
+</div>
+</section>
+
+<section class="info-section">
+<h2>Microstrip Patch Antenna Diagram</h2>
+
+<div class="diagram-card">
+<div class="simple-microstrip-diagram">
+<svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Basic structure of microstrip patch antenna">
+
+<rect x="0" y="0" width="760" height="360" fill="#ffffff"/>
+
+<rect x="150" y="170" width="470" height="85" fill="#8fd3ff" stroke="#111" stroke-width="2"/>
+<text x="385" y="218" text-anchor="middle" font-size="22" font-weight="700" fill="#063A4D">
+Dielectric Substrate εr
+</text>
+
+<rect x="150" y="255" width="470" height="20" fill="#8b5a2b" stroke="#111" stroke-width="2"/>
+<text x="385" y="310" text-anchor="middle" font-size="22" font-weight="700" fill="#315369">
+Ground Plane
+</text>
+
+<rect x="270" y="130" width="230" height="45" fill="#22c55e" stroke="#111" stroke-width="2"/>
+<text x="385" y="160" text-anchor="middle" font-size="22" font-weight="700" fill="#ffffff">
+Radiating Patch
+</text>
+
+<rect x="150" y="151" width="120" height="18" fill="#22c55e" stroke="#111" stroke-width="2"/>
+<text x="190" y="140" text-anchor="middle" font-size="18" font-weight="700" fill="#111">
+Feed Line
+</text>
+
+<circle cx="270" cy="160" r="7" fill="#ef4444" stroke="#111" stroke-width="2"/>
+
+<path d="M270 100 C250 65, 300 55, 330 100" fill="none" stroke="#111" stroke-width="2"/>
+<path d="M500 100 C535 55, 585 65, 500 150" fill="none" stroke="#111" stroke-width="2"/>
+
+<line x1="650" y1="170" x2="650" y2="255" stroke="#111" stroke-width="2"/>
+<polygon points="650,170 643,184 657,184" fill="#111"/>
+<polygon points="650,255 643,241 657,241" fill="#111"/>
+<text x="668" y="218" font-size="24" font-weight="700" font-style="italic" fill="#111">h</text>
+
+<line x1="270" y1="82" x2="500" y2="82" stroke="#111" stroke-width="2"/>
+<polygon points="270,82 284,75 284,89" fill="#111"/>
+<polygon points="500,82 486,75 486,89" fill="#111"/>
+<text x="385" y="72" text-anchor="middle" font-size="24" font-weight="700" font-style="italic" fill="#111">W</text>
+
+<line x1="515" y1="144" x2="515" y2="170" stroke="#111" stroke-width="2"/>
+<polygon points="515,105 508,119 522,119" fill="#111"/>
+<polygon points="515,150 508,136 522,136" fill="#111"/>
+<text x="532" y="155" font-size="24" font-weight="700" font-style="italic" fill="#111">L</text>
+
+</svg>
+</div>
+</div>
+</section>
+
+<section class="info-section">
+<h2>Formulas Used</h2>
+<div class="formula-box">
+Width W = 299.792458 / (2 × f × √((εr + 1) / 2))<br>
+Effective εr = (εr + 1) / 2 + ((εr - 1) / 2) × 1 / √(1 + 12h / W)<br>
+Effective Length = 299.792458 / (2 × f × √εeff)<br>
+Length Extension ΔL = 0.412h × ((εeff + 0.3)(W/h + 0.264)) / ((εeff - 0.258)(W/h + 0.8))<br>
+Patch Length L = Effective Length - 2ΔL
+</div>
+</section>
+
+<section class="info-section">
+<h2>Example</h2>
+<p>For FR4 material, enter dielectric constant 4.4, substrate height 1.6 mm, and frequency 2.45 GHz. Click Calculate to get approximate patch width and length in millimeters.</p>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("calculate").addEventListener("click",function(e){
+    e.preventDefault();
+    calculatePatch();
+  });
+
+  ["er","dh","fr"].forEach(function(id){
+    document.getElementById(id).addEventListener("input",clearResults);
+  });
+
+  ["er-unit","dh-unit","fr-unit"].forEach(function(id){
+    document.getElementById(id).addEventListener("change",clearResults);
+  });
+
+  clearResults();
+});
+
+function clearResults(){
+  document.getElementById("ans1").textContent="";
+  document.getElementById("ans2").textContent="";
+  hideError();
+}
+
+function showError(msg){
+  var box=document.getElementById("errorBox");
+  box.style.display="block";
+  box.textContent=msg;
+}
+
+function hideError(){
+  var box=document.getElementById("errorBox");
+  box.style.display="none";
+  box.textContent="";
+}
+
+function calculatePatch(){
+  var er=parseFloat(document.getElementById("er").value);
+  var dh=parseFloat(document.getElementById("dh").value);
+  var fr=parseFloat(document.getElementById("fr").value);
+
+  if(!isFinite(er) || er<=0 || !isFinite(dh) || dh<=0 || !isFinite(fr) || fr<=0){
+    showError("Please enter valid positive values for dielectric/propagation, height and frequency.");
+    return;
+  }
+
+  if(document.getElementById("fr-unit").value=="2"){
+    fr/=1000;
+  }
+
+  if(document.getElementById("er-unit").value=="2"){
+    er/=100;
+    er=1/Math.pow(er,2);
+  }
+
+  dh*=parseFloat(document.getElementById("dh-unit").value);
+
+  var w=299.792458/(2*fr*Math.sqrt((er+1)/2));
+  var eeff=(er+1)/2+(er-1)/2*(1/Math.sqrt(1+12*(dh/w)));
+  var leff=299.792458/(2*fr*Math.sqrt(eeff));
+  var deltaL=0.412*dh*((eeff+0.3)*(w/dh+0.264))/((eeff-0.258)*(w/dh+0.8));
+  var length=leff-2*deltaL;
+
+  document.getElementById("ans1").textContent=w.toFixed(3);
+  document.getElementById("ans2").textContent=length.toFixed(3);
+}
+</script>
+
 </body>
 </html>
