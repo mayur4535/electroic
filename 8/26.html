@@ -1,209 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Friis Transmission Calculator - Received Power Calculator</title>
+<meta name="description" content="Free Friis Transmission Calculator to calculate received power from transmitter power, transmitter gain, receiver gain, frequency, and distance with formulas, theory, example, and original RF link diagram.">
 
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+body{
+  margin:0;
+  background:#f6f8fb;
+  padding:0;
 }
 
-body { 
-  background: ; 
+.calc{
+  max-width:620px;
+  margin:auto;
+  padding:14px;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
+
+h1{
+  font-size:20px;
+  color:#374151;
+  margin:0 0 16px;
+}
+
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.valueBox,
+input,
+select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
+}
+
+.valueBox{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#374151;
+}
+
+select{
+  text-align:center;
+  font-weight:800;
+  padding:0 6px;
+}
+
+input:focus,
+select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+.resultTitle{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#7b8794;
+  margin-top:22px;
+  margin-bottom:12px;
+}
+
+.resultGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.card{
+  padding:16px;
+  border-radius:12px;
+  min-height:82px;
+}
+
+.cardLabel{
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.cardLine{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.cardValue,
+.cardUnit{
+  font-size:18px;
+  font-weight:900;
+}
+
+.blue{
+  background:#eef5ff;
+  border:1px solid #bfd3ff;
+}
+
+.blue *{
+  color:#2359e8;
+}
+
+.infoBox{
+  margin-top:16px;
+  padding:14px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+}
+
+.infoBox h2,
+.infoBox h3{
+  margin:0 0 10px;
+  font-size:16px;
+  color:#374151;
+}
+
+.infoBox p,
+.infoBox li{
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+.formulaLine{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  padding:10px;
+  margin:8px 0;
+  font-size:13px;
+  color:#475467;
+  font-weight:800;
+  overflow-x:auto;
+}
+
+.diagramBox{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:10px;
+  overflow-x:auto;
+}
+
+svg{
+  width:100%;
+  min-width:560px;
+  height:auto;
+}
+
+.exampleGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.exampleCard{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:10px;
+}
+
+@media(max-width:600px){
+  .row{
+    grid-template-columns:minmax(0,1fr) 72px;
   }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
+
+  .resultGrid{
+    grid-template-columns:1fr 1fr;
   }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
+  .card{
+    padding:14px;
   }
+
+  .cardValue,
+  .cardUnit{
+    font-size:16px;
+  }
+
+  .exampleGrid{
+    grid-template-columns:1fr;
+  }
+}
 </style>
+</head>
+
+<body>
+
+<main class="calc">
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<form id="tool-form">
-
-
+<label>Power Transmitter</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <input type="number" id="tp" step="any">
+  <select id="tpUnit">
+    <option value="mW" selected>mW</option>
+    <option value="W">W</option>
+    <option value="dBm">dBm</option>
+    <option value="dBW">dBW</option>
+  </select>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2"  >Power</label><font face="Arial" size="7"> (Transmitter) </font></label><input type="number" id="tp"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 175px;"class="form-control"  />
-<select class="form-control" id="tp-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:150px;border-radius:4px;height:85px; border:3px solid #aaa;">
-<option value="mW">mW&nbsp;&nbsp; Milliwatts</option>
-<option value="W">W&nbsp;&nbsp;&nbsp;&nbsp; Watt</option>
-<option value="dBm">dBm </option>
-<option value="dBW">dBW </option>
-</select>
-</div>
-</div>
-<h1 style="font-size:45;"></h1>
-</div>
-</div>
+<label>Gain Transmitter</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <input type="number" id="tg" step="any">
+  <div class="valueBox">dBi</div>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2"  >Gain</label><font face="Arial" size="7"> (Transmitter) </font><input  id="tg"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 175px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">dBi</label>
-
-</div>
-</div>
-</div><h1 style="font-size:45;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2"  >Frequency<font face="Arial" size="6"></font></label><input type="number" id="fr"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 175px;"class="form-control"  />
-<select class="form-control" id="fr-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:150px;border-radius:4px;  height:85px; border:3px solid #aaa;">
-<option value="1">GHz Gigahertz </option>
-<option value="2">MHz Megahertz </option>
-</select>
-</div>
-</div>
-</div><h1 style="font-size:45;"></h1>
+<label>Frequency</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <input type="number" id="fr" step="any">
+  <select id="frUnit">
+    <option value="GHz" selected>GHz</option>
+    <option value="MHz">MHz</option>
+  </select>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2"  >Distance <font face="Arial" size="6"></font></label><input type="number" id="dt"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 175px;"class="form-control"  />
-<select class="form-control" id="dt-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:150px;border-radius:4px;  height:85px; border:3px solid #aaa;">
-<option value="1000">km&nbsp;&nbsp; Kilometers </option>
-<option value="1">m&nbsp;&nbsp; Meter </option>
-<option value="0.01">cm&nbsp;&nbsp; Centimeters </option>
-<option value="1609.344">mi&nbsp;&nbsp; Miles </option>
-<option value="0.9144">yd&nbsp;&nbsp; Yards </option>
-<option value="0.3048">ft&nbsp;&nbsp;&nbsp; Feet </option>
-<option value="0.0254">in&nbsp;&nbsp; Inches </option>
-</select>
-</div>
-</div>
-<h1 style="font-size:45;"></h1>
+<label>Distance</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" >Gain</label><font face="Arial" size="7"> (Receiver) </font><input  id="rg"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 175px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;    height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">dBi</label>
-
-</div>
+  <input type="number" id="dt" step="any">
+  <select id="dtUnit">
+    <option value="1000" selected>km</option>
+    <option value="1">m</option>
+    <option value="0.01">cm</option>
+    <option value="1609.344">mi</option>
+    <option value="0.9144">yd</option>
+    <option value="0.3048">ft</option>
+    <option value="0.0254">in</option>
+  </select>
 </div>
 
-</form></fieldset>
-<h1 style="font-size:100;"></h1>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-</div>
-</div>
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
+<label>Gain Receiver</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <input type="number" id="rg" step="any">
+  <div class="valueBox">dBi</div>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2"  >Power</label><font face="Arial" size="7"> (Received) </font><input  id="answer"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;    height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mW</label>
-<h1 style="font-size:30;"></h1>
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
+<button class="btn" onclick="calc()">CALCULATE</button>
 
+<div id="errorBox">Please enter valid values.</div>
+
+<div class="resultTitle">RESULTS</div>
+
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">RECEIVED POWER</div>
+    <div class="cardLine">
+      <span class="cardValue" id="answer"></span>
+      <span class="cardUnit" id="ansUnit"></span>
+    </div>
+  </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<script type="text/javascript">
-var _0x1b89=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x57","\x73\x69","\x6D\x57","\x64\x42\x57","\x64\x62","\x64\x42\x6D","\x6D\x56","\x76","\x56","\x69\x6E\x6E\x65\x72\x48\x54\x4D\x4C","\x65\x72\x72\x6F\x72","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x73\x42\x79\x43\x6C\x61\x73\x73\x4E\x61\x6D\x65","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x55\x6E\x6B\x6E\x6F\x77\x6E\x20\x45\x72\x72\x6F\x72","\x6C\x6F\x67","\x55\x6E\x6B\x6E\x6F\x77\x6E\x20\x45\x72\x72\x6F\x72\x20\x3A\x28","\x70\x6F\x77","\x73\x71\x72\x74","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x69\x6E\x70\x75\x74","\x69\x73","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x74\x70\x2D\x75\x6E\x69\x74","\x23\x66\x72\x2D\x75\x6E\x69\x74","\x23\x74\x70","\x23\x74\x67","\x23\x66\x72","\x23\x64\x74","\x23\x72\x67","\x23\x64\x74\x2D\x75\x6E\x69\x74","\x32","\x50\x49","\x23\x61\x6E\x73\x77\x65\x72","\x6F\x6E","\x63\x68\x61\x6E\x67\x65","\x74\x65\x78\x74","\x23\x61\x6E\x73\x2D\x75\x6E\x69\x74"];!function(_0xf6a1x1){_0x1b89[0];function _0xf6a1x2(){_0xf6a1x1(_0x1b89[10])[_0x1b89[9]](function(){_0xf6a1x1(this)[_0x1b89[4]](_0x1b89[3])[_0x1b89[2]](_0x1b89[1]),_0xf6a1x1(this)[_0x1b89[4]](_0x1b89[3])[_0x1b89[6]](_0x1b89[5]),_0xf6a1x1(this)[_0x1b89[8]](_0x1b89[7])})}function _0xf6a1x3(){_0xf6a1x1(_0x1b89[10])[_0x1b89[9]](function(){_0xf6a1x1(this)[_0x1b89[4]](_0x1b89[3])[_0x1b89[2]](_0x1b89[5]),_0xf6a1x1(this)[_0x1b89[4]](_0x1b89[3])[_0x1b89[6]](_0x1b89[1])})}function _0xf6a1x4(_0xf6a1x1,_0xf6a1x2,_0xf6a1x3){var _0xf6a1x5=_0x1b89[7];switch(_0xf6a1x1){case _0x1b89[11]:_0xf6a1x3= 1e3* _0xf6a1x3;case _0x1b89[13]:_0xf6a1x5= _0x1b89[12];break;case _0x1b89[14]:_0xf6a1x3+= 30;case _0x1b89[16]:_0xf6a1x5= _0x1b89[15];break;case _0x1b89[17]:_0xf6a1x3/= 1e3;case _0x1b89[19]:_0xf6a1x5= _0x1b89[18];break;default:document[_0x1b89[23]](type)[_0x1b89[22]](_0x1b89[21])[0][_0x1b89[20]]= _0x1b89[24]};if(_0x1b89[12]== _0xf6a1x5){switch(_0xf6a1x2){case _0x1b89[11]:_0xf6a1x3/= 1e3;case _0x1b89[13]:return _0xf6a1x3;case _0x1b89[14]:_0xf6a1x3/= 1e3;case _0x1b89[16]:return 10* Math[_0x1b89[25]](_0xf6a1x3)/ Math[_0x1b89[25]](10);case _0x1b89[19]:return _0xf6a1x4(_0x1b89[16],_0x1b89[19],10* Math[_0x1b89[25]](_0xf6a1x3)/ Math[_0x1b89[25]](10));case _0x1b89[17]:return 1e3* _0xf6a1x4(_0x1b89[16],_0x1b89[19],10* Math[_0x1b89[25]](_0xf6a1x3)/ Math[_0x1b89[25]](10));default:return _0x1b89[26]}};if(_0x1b89[15]== _0xf6a1x5){switch(_0xf6a1x2){case _0x1b89[11]:_0xf6a1x3-= 30;case _0x1b89[13]:return Math[_0x1b89[27]](10,_0xf6a1x3/ 10);case _0x1b89[14]:_0xf6a1x3-= 30;case _0x1b89[16]:return _0xf6a1x3;case _0x1b89[19]:return Math[_0x1b89[28]](50* Math[_0x1b89[27]](10,_0xf6a1x3/ 10)/ 1e3);case _0x1b89[17]:return 1e3* Math[_0x1b89[28]](50* Math[_0x1b89[27]](10,_0xf6a1x3/ 10)/ 1e3);default:return _0x1b89[26]}};if(_0x1b89[18]== _0xf6a1x5){switch(_0xf6a1x2){case _0x1b89[11]:return _0xf6a1x4(_0x1b89[16],_0x1b89[11],10* Math[_0x1b89[25]](1e3* Math[_0x1b89[27]](_0xf6a1x3,2)/ 50)/ Math[_0x1b89[25]](10));case _0x1b89[13]:return _0xf6a1x4(_0x1b89[16],_0x1b89[13],10* Math[_0x1b89[25]](1e3* Math[_0x1b89[27]](_0xf6a1x3,2)/ 50)/ Math[_0x1b89[25]](10));case _0x1b89[16]:return 10* Math[_0x1b89[25]](1e3* Math[_0x1b89[27]](_0xf6a1x3,2)/ 50)/ Math[_0x1b89[25]](10);case _0x1b89[14]:return 10* Math[_0x1b89[25]](1e3* Math[_0x1b89[27]](_0xf6a1x3,2)/ 50)/ Math[_0x1b89[25]](10)- 30;case _0x1b89[19]:return _0xf6a1x3;case _0x1b89[17]:return 1e3* _0xf6a1x3;default:return _0x1b89[26]}}}var _0xf6a1x5,_0xf6a1x6=_0xf6a1x1(_0x1b89[29]);_0xf6a1x1(_0x1b89[36])[_0x1b89[37]](function(){_0xf6a1x1(this)[_0x1b89[4]](_0x1b89[3])[_0x1b89[2]](_0x1b89[30]),_0xf6a1x2(),_0xf6a1x6[_0x1b89[32]](_0x1b89[31],!1),_0xf6a1x1[_0x1b89[33]](_0xf6a1x1(this)[_0x1b89[8]]())=== !1?(_0xf6a1x1(this)[_0x1b89[4]](_0x1b89[3])[_0x1b89[6]](_0x1b89[30]),_0xf6a1x6[_0x1b89[32]](_0x1b89[31],!1)):_0xf6a1x1(this)[_0x1b89[4]](_0x1b89[3])[_0x1b89[2]](_0x1b89[30]),_0xf6a1x5= 0,_0xf6a1x1(_0x1b89[36])[_0x1b89[9]](function(){_0xf6a1x1(this)[_0x1b89[35]](_0x1b89[34])&& (_0x1b89[7]!= _0xf6a1x1(this)[_0x1b89[8]]()&& _0xf6a1x1[_0x1b89[33]](_0xf6a1x1(this)[_0x1b89[8]]())!== !1|| _0xf6a1x5++)}),_0xf6a1x5> 0&& _0xf6a1x6[_0x1b89[32]](_0x1b89[31],!0)}),_0xf6a1x6[_0x1b89[51]](_0x1b89[38],function(_0xf6a1x2){_0xf6a1x2[_0x1b89[39]]();var _0xf6a1x5,_0xf6a1x6,_0xf6a1x7,_0xf6a1x8,_0xf6a1x9,_0xf6a1xa,_0xf6a1xb,_0xf6a1xc=_0xf6a1x1(_0x1b89[40])[_0x1b89[8]](),_0xf6a1xd=_0xf6a1x1(_0x1b89[41])[_0x1b89[8]]();_0xf6a1x7= parseFloat(_0xf6a1x1(_0x1b89[42])[_0x1b89[8]]()),_0xf6a1x8= parseFloat(_0xf6a1x1(_0x1b89[43])[_0x1b89[8]]()),_0xf6a1x9= parseFloat(_0xf6a1x1(_0x1b89[44])[_0x1b89[8]]()),_0xf6a1xa= parseFloat(_0xf6a1x1(_0x1b89[45])[_0x1b89[8]]()),_0xf6a1xb= parseFloat(_0xf6a1x1(_0x1b89[46])[_0x1b89[8]]()),_0xf6a1xa*= parseFloat(_0xf6a1x1(_0x1b89[47])[_0x1b89[8]]()),_0xf6a1x7= _0xf6a1x4(_0xf6a1xc,_0x1b89[11],_0xf6a1x7),_0xf6a1x9*= _0x1b89[48]== _0xf6a1xd?Math[_0x1b89[27]](10,6):Math[_0x1b89[27]](10,9);_0xf6a1x6= 4* Math[_0x1b89[49]]* _0xf6a1xa* _0xf6a1x9,_0xf6a1x5= _0xf6a1x7* _0xf6a1x8* _0xf6a1xb* Math[_0x1b89[27]](3* Math[_0x1b89[27]](10,8),2)/ Math[_0x1b89[27]](_0xf6a1x6,2),_0xf6a1x5= _0xf6a1x4(_0x1b89[11],_0xf6a1xc,_0xf6a1x5),_0xf6a1x1(_0x1b89[50])[_0x1b89[8]](_0xf6a1x5),_0xf6a1x3()}),_0xf6a1x1(_0x1b89[40])[_0x1b89[51]](_0x1b89[52],function(){_0xf6a1x2(),_0xf6a1x1(_0x1b89[54])[_0x1b89[53]](_0xf6a1x1(this)[_0x1b89[8]]())}),_0xf6a1x1(_0x1b89[41])[_0x1b89[51]](_0x1b89[52],function(){_0xf6a1x2()}),_0xf6a1x1(_0x1b89[47])[_0x1b89[51]](_0x1b89[52],function(){_0xf6a1x2()})}(jQuery)
-    </script>
-</div>
+
+<section class="infoBox">
+  <h2>RF Link Circuit Diagram</h2>
+  <p>This is an original custom SVG diagram generated for this calculator page. It is not copied from any external image.</p>
+
+  <div class="diagramBox">
+    <svg viewBox="0 0 900 330" role="img" aria-label="Original Friis transmission RF link diagram">
+      <defs>
+        <style>
+          .wire{stroke:#111;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .red{stroke:#d10000;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .node{fill:#d10000}
+          .txt{font:20px Arial;font-weight:bold;fill:#111}
+          .small{font:15px Arial;fill:#374151}
+          .wave{stroke:#2359e8;stroke-width:3;fill:none;stroke-linecap:round}
+          .green{stroke:#1ea64a;stroke-width:3;fill:none;stroke-linecap:round}
+        </style>
+      </defs>
+
+      <text x="55" y="45" class="txt">Transmitter</text>
+      <text x="690" y="45" class="txt">Receiver</text>
+
+      <rect x="45" y="210" width="160" height="62" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+      <text x="70" y="248" class="small">TX Power + Gain</text>
+
+      <rect x="690" y="210" width="165" height="62" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+      <text x="715" y="248" class="small">RX Gain + Power</text>
+
+      <line x1="125" y1="210" x2="125" y2="150" class="wire"/>
+      <circle cx="125" cy="150" r="6" class="node"/>
+
+      <path d="M125 150 L90 92" class="red"/>
+      <path d="M125 150 L160 92" class="red"/>
+      <path d="M105 120 L145 120" class="red"/>
+      <path d="M95 105 L155 105" class="red"/>
+
+      <line x1="772" y1="210" x2="772" y2="150" class="wire"/>
+      <circle cx="772" cy="150" r="6" class="node"/>
+
+      <path d="M772 150 L737 92" class="red"/>
+      <path d="M772 150 L807 92" class="red"/>
+      <path d="M752 120 L792 120" class="red"/>
+      <path d="M742 105 L802 105" class="red"/>
+
+      <path d="M190 128 C275 65, 355 65, 440 128" class="wave"/>
+      <path d="M460 128 C545 65, 625 65, 710 128" class="wave"/>
+
+      <path d="M215 165 C315 215, 585 215, 685 165" class="green"/>
+      <text x="365" y="236" class="small">Distance / Free Space Path</text>
+
+      <line x1="210" y1="150" x2="690" y2="150" class="wire"/>
+      <text x="390" y="135" class="small">f = Frequency</text>
+
+      <text x="80" y="310" class="small">Pt, Gt</text>
+      <text x="735" y="310" class="small">Gr, Pr</text>
+    </svg>
+  </div>
+</section>
+
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">Pr = Pt × Gt × Gr × (λ / 4πd)²</div>
+  <div class="formulaLine">λ = c / f</div>
+  <div class="formulaLine">Gt linear = 10<sup>Gt(dBi) / 10</sup></div>
+  <div class="formulaLine">Gr linear = 10<sup>Gr(dBi) / 10</sup></div>
+  <div class="formulaLine">d = Distance in meters, f = Frequency in Hz</div>
+</section>
+
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    Friis transmission equation estimates ideal received power in free space. Antenna gains entered in dBi are converted to linear gain before calculation.
+  </p>
+  <p>
+    Higher frequency and longer distance reduce received power. Higher transmitter and receiver gain increase received power.
+  </p>
+</section>
+
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>
+        Transmitter Power: 100 mW<br>
+        Transmitter Gain: 2 dBi<br>
+        Frequency: 2.4 GHz<br>
+        Distance: 10 m<br>
+        Receiver Gain: 2 dBi
+      </p>
+    </div>
+
+    <div class="exampleCard">
+      <p><b>How to Use</b></p>
+      <p>
+        Enter transmitter power, antenna gains in dBi, frequency, and distance. The calculator returns received power in the selected power unit.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function clearResults(){
+  document.getElementById("answer").innerHTML="";
+  document.getElementById("ansUnit").innerHTML="";
+}
+
+function powerToW(value,unit){
+  if(unit==="W") return value;
+  if(unit==="mW") return value/1000;
+  if(unit==="dBW") return Math.pow(10,value/10);
+  if(unit==="dBm") return Math.pow(10,(value-30)/10);
+  return value;
+}
+
+function powerFromW(watt,unit){
+  if(unit==="W") return watt;
+  if(unit==="mW") return watt*1000;
+  if(unit==="dBW") return 10*Math.log10(watt);
+  if(unit==="dBm") return 10*Math.log10(watt*1000);
+  return watt;
+}
+
+function formatValue(v){
+  if(!isFinite(v)) return "";
+  if(Math.abs(v) >= 100000 || (Math.abs(v) > 0 && Math.abs(v) < 0.0001)){
+    return v.toExponential(8);
+  }
+  return Number(v).toPrecision(9);
+}
+
+function calc(){
+  var tpVal=Number(document.getElementById("tp").value);
+  var tgVal=Number(document.getElementById("tg").value);
+  var frVal=Number(document.getElementById("fr").value);
+  var dtVal=Number(document.getElementById("dt").value);
+  var rgVal=Number(document.getElementById("rg").value);
+
+  if(
+    document.getElementById("tp").value==="" ||
+    document.getElementById("tg").value==="" ||
+    document.getElementById("fr").value==="" ||
+    document.getElementById("dt").value==="" ||
+    document.getElementById("rg").value==="" ||
+    isNaN(tpVal) ||
+    isNaN(tgVal) ||
+    isNaN(frVal) ||
+    isNaN(dtVal) ||
+    isNaN(rgVal) ||
+    frVal<=0 ||
+    dtVal<=0
+  ){
+    document.getElementById("errorBox").style.display="block";
+    clearResults();
+    return;
+  }
+
+  document.getElementById("errorBox").style.display="none";
+
+  var tpUnit=document.getElementById("tpUnit").value;
+  var frUnit=document.getElementById("frUnit").value;
+
+  var pt=powerToW(tpVal,tpUnit);
+
+  /* FIX: dBi gains must be converted to linear gains */
+  var gt=Math.pow(10,tgVal/10);
+  var gr=Math.pow(10,rgVal/10);
+
+  var f=frVal;
+  if(frUnit==="MHz"){
+    f=f*Math.pow(10,6);
+  }else{
+    f=f*Math.pow(10,9);
+  }
+
+  var d=dtVal*Number(document.getElementById("dtUnit").value);
+
+  /* Friis Formula */
+  var c=3*Math.pow(10,8);
+  var lambda=c/f;
+  var receivedW=pt*gt*gr*Math.pow(lambda/(4*Math.PI*d),2);
+
+  var answer=powerFromW(receivedW,tpUnit);
+
+  document.getElementById("answer").innerHTML=formatValue(answer);
+  document.getElementById("ansUnit").innerHTML=tpUnit;
+}
+
+clearResults();
+</script>
+
 </body>
 </html>
