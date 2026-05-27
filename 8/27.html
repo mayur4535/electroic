@@ -1,223 +1,759 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RF Link Budget Calculator - Fade Margin, Distance & Tx Power</title>
+<meta name="description" content="Calculate RF link budget, fade margin, free space loss, receiver signal strength, link distance, and required transmit power using frequency, antenna gain, cable loss, and receiver sensitivity.">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  padding:0;
+  background:#f6f8fb;
+  font-family:Arial,sans-serif;
+  color:#1f2937;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.rf-wrap{
+  width:100%;
+  max-width:620px;
+  margin:0 auto;
+  padding:14px;
+  background:#f6f8fb;
 }
 
-body { 
-  background: ; 
+.rf-card{
+  width:100%;
+  background:transparent;
+  border:none;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+.rf-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+.rf-section,.info-section{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:14px;
+}
+
+.rf-small-title{
+  font-size:12px;
+  font-weight:800;
+  color:#6b7280;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin:0 0 12px;
+}
+
+.field{margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+
+.field label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#4b5563;
+  margin-bottom:6px;
+}
+
+.input-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  align-items:center;
+}
+
+.input-row input{
+  width:100%;
+  min-width:0;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 11px;
+  font-size:15px;
+  color:#111827;
+  background:#fff;
+  outline:none;
+}
+
+.input-row input:focus{
+  border-color:#fb923c;
+  box-shadow:0 0 0 3px rgba(251,146,60,.18);
+}
+
+.input-row input:disabled{
+  background:#f3f4f6;
+  color:#9ca3af;
+}
+
+.unit-box{
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#f9fafb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:700;
+  color:#4b5563;
+  white-space:nowrap;
+}
+
+.radio-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.radio-item{position:relative}
+.radio-item input{
+  position:absolute;
+  opacity:0;
+}
+
+.radio-item label{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  background:#fff;
+  color:#374151;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  padding:8px 5px;
+  text-align:center;
+  line-height:1.2;
+}
+
+.radio-item input:checked + label{
+  border-color:#f97316;
+  background:#fff7ed;
+  color:#c2410c;
+}
+
+.calc-btn{
+  width:100%;
+  height:46px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg,#ff9800,#ff6a00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:24px;
+  box-shadow:0 8px 18px rgba(249,115,22,.25);
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.result-card{
+  border-radius:12px;
+  padding:12px;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  min-height:78px;
+}
+
+.result-card:nth-child(2){
+  background:#ecfdf5;
+  border-color:#bbf7d0;
+}
+
+.result-card:nth-child(3){
+  background:#f5f3ff;
+  border-color:#ddd6fe;
+}
+
+.result-card:nth-child(4){
+  background:#fff7ed;
+  border-color:#fed7aa;
+}
+
+.result-label{
+  font-size:12px;
+  font-weight:800;
+  color:#2563eb;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+.result-card:nth-child(2) .result-label{color:#16a34a}
+.result-card:nth-child(3) .result-label{color:#7c3aed}
+.result-card:nth-child(4) .result-label{color:#ea580c}
+
+.result-value{
+  font-size:16px;
+  font-weight:900;
+  color:#111827;
+  word-break:break-word;
+}
+
+.error-box{
+  display:none;
+  margin-top:12px;
+  border:1px solid #fecaca;
+  background:#fef2f2;
+  color:#b91c1c;
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.info-section{
+  margin-top:14px;
+}
+
+.info-section h2{
+  font-size:17px;
+  margin:0 0 10px;
+  color:#111827;
+}
+
+.info-section h3{
+  font-size:15px;
+  margin:14px 0 7px;
+  color:#374151;
+}
+
+.info-section p{
+  font-size:14px;
+  line-height:1.55;
+  color:#4b5563;
+}
+
+.formula-box{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:12px;
+  font-size:14px;
+  line-height:1.65;
+  color:#374151;
+}
+
+.diagram-card{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:10px;
+  overflow:hidden;
+}
+
+.diagram-card svg{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+@media(max-width:480px){
+  .rf-wrap{padding:14px}
+  .input-row{grid-template-columns:minmax(0,1fr) 72px}
+  .unit-box{font-size:13px}
+  .radio-grid{grid-template-columns:repeat(3,1fr)}
+  .result-grid{grid-template-columns:1fr 1fr}
+  .result-value{font-size:14px}
+}
 </style>
+</head>
 
+<body>
 
+<main class="rf-wrap">
+<section class="rf-card" id="rf-link-budget-calculator">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<div class="rf-grid">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<div class="rf-section">
+<p class="rf-small-title">Options</p>
 
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<form id="tool-form">
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
+<div class="field">
+<label>Units</label>
+<div class="radio-grid">
+<div class="radio-item">
+<input name="Units" id="unitMiles" value="miles" type="radio" checked>
+<label for="unitMiles">miles</label>
 </div>
+<div class="radio-item">
+<input name="Units" id="unitKm" value="km" type="radio">
+<label for="unitKm">km</label>
 </div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:60;" >P<sub>TX</sub><font face="Arial" size="5"> (Transmitter Power Output)</font></label><input type="number" id="tp"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 175px;"class="form-control"  />
-<select class="form-control" id="tp-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:150px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="1">mW&nbsp; Milliwatts </option>
-<option value="2">W&nbsp;&nbsp;&nbsp;&nbsp; Watt </option>
-<option value="3">dBm Decibel milliwatt </option>
-<option value="4">dBW Decibel watt </option>
-</select>
-</div>
-</div>
-<h1 style="font-size:30;"></h1>
-
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >G<sub>TX</sub></label><font face="Arial" size="5">(Transmitter Antenna Gain)</font><input  id="tg"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 175px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">dBi</label>
-
-</div>
-</div>
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:30;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >L<sub>TX</sub></label><font face="Arial" size="5"> (Transmitter Loss)</font><input  id="tl"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 175px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">dB</label>
-
-
-</div>
-</div>
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:30;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >L<sub>FS</sub></label><font face="Arial" size="5"> (Free Space path Loss)</font><input  id="fspl"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 175px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">dB</label>
-
-
-</div>
- </div>
-<div class="col-sm-4 col-xs-4">
+<div class="radio-item">
+<input disabled type="radio">
+<label>Auto</label>
 </div>
 </div>
 </div>
-<h1 style="font-size:30;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >L<sub>M</sub></label><font face="Arial" size="5"> (Miscellaneous Loss)</font><input  id="ml"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 175px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">dB</label>
 
+<div class="field">
+<label>Compute</label>
+<div class="radio-grid">
+<div class="radio-item">
+<input name="Compute" id="computeFade" value="Fade Margin" type="radio" checked>
+<label for="computeFade">Fade Margin</label>
+</div>
+<div class="radio-item">
+<input name="Compute" id="computeDistance" value="Distance" type="radio">
+<label for="computeDistance">Distance</label>
+</div>
+<div class="radio-item">
+<input name="Compute" id="computeTx" value="Tx Power" type="radio">
+<label for="computeTx">Tx Power</label>
 </div>
 </div>
-<h1 style="font-size:30;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >G<sub>RX</sub></label><font face="Arial" size="5"> (Receiver Antenna Gain)</font><input  id="rag"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 175px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">dBi</label>
-
-</div>
-</div>
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:30;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >L<sub>RX</sub></label><font face="Arial" size="5"> (Receiver Loss)</font><input  id="rl"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 175px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">dB</label>
-
 </div>
 </div>
 
-</form></fieldset>
+<div class="rf-section">
+<p class="rf-small-title">Inputs</p>
 
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
+<div class="field" id="FrequencyInput">
+<label>Frequency</label>
+<div class="input-row">
+<input type="number" value="2440" min="100" max="99990" step="20">
+<span class="unit-box">MHz</span>
 </div>
 </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
+<div class="field" id="TxPowerInput">
+<label>Tx Power</label>
+<div class="input-row">
+<input type="number" value="23" min="0" max="40" step="any">
+<span class="unit-box">dBm</span>
 </div>
 </div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:70;" >P<sub>RX</sub></label><font face="Arial" size="5"> (Received Power)</font><input  id="answer"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 175px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">dBm</label>
 
+<div class="field" id="TxCablelossInput">
+<label>Tx Cable Loss</label>
+<div class="input-row">
+<input type="number" value="0.9" min="0" max="20" step="0.1">
+<span class="unit-box">dB</span>
+</div>
+</div>
 
+<div class="field" id="TxAntennaGainInput">
+<label>Tx Antenna Gain</label>
+<div class="input-row">
+<input type="number" value="9" min="0" max="50" step="any">
+<span class="unit-box">dB</span>
+</div>
+</div>
+
+<div class="field" id="DistanceInput">
+<label>Distance</label>
+<div class="input-row">
+<input type="number" value="10.0" min="0.5" max="200" step="0.5">
+<span class="unit-box" id="distance-units">miles</span>
+</div>
+</div>
+
+<div class="field" id="RxAntennaGainInput">
+<label>Rx Antenna Gain</label>
+<div class="input-row">
+<input type="number" value="24" min="0" max="50" step="any">
+<span class="unit-box">dB</span>
+</div>
+</div>
+
+<div class="field" id="RxCablelossInput">
+<label>Rx Cable Loss</label>
+<div class="input-row">
+<input type="number" value="0.9" min="0" max="20" step="0.1">
+<span class="unit-box">dB</span>
+</div>
+</div>
+
+<div class="field" id="RxSensitivityInput">
+<label>Rx Sensitivity</label>
+<div class="input-row">
+<input type="number" value="-90" min="-130" max="-50" step="any">
+<span class="unit-box">dBm</span>
+</div>
+</div>
+
+<div class="field" id="FadeMarginInput">
+<label>Fade Margin</label>
+<div class="input-row">
+<input type="number" value="20" min="1" max="40" step="any" disabled>
+<span class="unit-box">dB</span>
+</div>
+</div>
+
+<button class="calc-btn" type="button" onclick="calculateAll()">Calculate</button>
+<div class="error-box" id="errorBox"></div>
+</div>
+
+<div class="rf-section">
+<p class="rf-small-title">Results</p>
+
+<div class="result-grid">
+<div class="result-card">
+<div class="result-label" id="result-title">Fade Margin</div>
+<div class="result-value" id="result"></div>
+</div>
+
+<div class="result-card">
+<div class="result-label">Free Space Loss</div>
+<div class="result-value" id="fsl"></div>
+</div>
+
+<div class="result-card">
+<div class="result-label">Rx Signal Strength</div>
+<div class="result-value" id="RCVSS"></div>
+</div>
+
+<div class="result-card">
+<div class="result-label">Link Status</div>
+<div class="result-value" id="linkStatus"></div>
+</div>
 </div>
 </div>
 
 </div>
+
+<section class="info-section">
+  <h2>RF Link Budget Diagram</h2>
+
+  <div class="diagram-card">
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RF link budget diagram">
+
+      <rect x="20" y="25" width="720" height="210" rx="14" fill="#ffffff" stroke="#e5e7eb"/>
+
+      <!-- transmitter -->
+      <rect x="45" y="160" width="145" height="45" fill="#ef3b2d" stroke="#111827" stroke-width="2"/>
+      <text x="117" y="188" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">Transmitter</text>
+
+      <!-- receiver -->
+      <rect x="570" y="160" width="145" height="45" fill="#ef3b2d" stroke="#111827" stroke-width="2"/>
+      <text x="642" y="188" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">Receiver</text>
+
+      <!-- tx vertical cable -->
+      <polyline points="190,182 230,182 230,72 265,72" fill="none" stroke="#111827" stroke-width="3"/>
+      <polygon points="265,72 251,64 251,80" fill="#111827"/>
+
+      <!-- rx vertical cable -->
+      <polyline points="570,182 530,182 530,72 495,72" fill="none" stroke="#111827" stroke-width="3"/>
+      <polygon points="495,72 509,64 509,80" fill="#111827"/>
+
+      <!-- tx antenna mark -->
+      <line x1="285" y1="55" x2="285" y2="92" stroke="#111827" stroke-width="3"/>
+      <polygon points="285,72 300,64 300,80" fill="#111827"/>
+
+      <!-- rx antenna mark -->
+      <line x1="475" y1="55" x2="475" y2="92" stroke="#111827" stroke-width="3"/>
+      <polygon points="475,72 460,64 460,80" fill="#111827"/>
+
+      <!-- middle top arrow -->
+      <line x1="350" y1="60" x2="410" y2="60" stroke="#111827" stroke-width="2"/>
+      <polygon points="410,60 400,55 400,65" fill="#111827"/>
+
+      <!-- middle bottom arrow -->
+      <line x1="410" y1="78" x2="350" y2="78" stroke="#111827" stroke-width="2"/>
+      <polygon points="350,78 360,73 360,83" fill="#111827"/>
+
+      <!-- middle text -->
+      <text x="380" y="103" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">Free Space</text>
+      <text x="380" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">Losses(dB)</text>
+
+      <!-- labels -->
+      <text x="230" y="48" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Gt</text>
+      <text x="530" y="48" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Gr</text>
+
+      <text x="205" y="130" font-size="17" fill="#111827">Lt</text>
+      <text x="540" y="130" font-size="17" fill="#111827">Lr</text>
+
+      <text x="230" y="208" font-size="17" fill="#111827">Pt</text>
+      <text x="515" y="208" font-size="17" fill="#111827">Pr</text>
+
+    </svg>
+  </div>
+</section>
+
+<section class="info-section">
+<h2>Formulas Used</h2>
+<div class="formula-box">
+Free Space Loss = C + 20 × log10(Distance) + 20 × log10(Frequency)<br>
+C = 36.6 for miles, C = 32.5 for km<br>
+Effective Radiated Power = Tx Power - Tx Cable Loss + Tx Antenna Gain<br>
+Rx Signal Strength = ERP - Free Space Loss + Rx Antenna Gain - Rx Cable Loss<br>
+Fade Margin = Rx Signal Strength - Rx Sensitivity
 </div>
-</div>
-</div>
-<script type="text/javascript">
-var _0x94b3=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x6C\x6F\x67\x31\x30","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x74\x70","\x23\x74\x67","\x23\x74\x6C","\x23\x66\x73\x70\x6C","\x23\x6D\x6C","\x23\x72\x61\x67","\x23\x72\x6C","\x23\x74\x70\x2D\x75\x6E\x69\x74","\x74\x6F\x46\x69\x78\x65\x64","\x23\x61\x6E\x73\x77\x65\x72","\x6F\x6E","\x63\x68\x61\x6E\x67\x65"];!function(_0x2fffx1){_0x94b3[0];function _0x2fffx2(){_0x2fffx1(_0x94b3[10])[_0x94b3[9]](function(){_0x2fffx1(this)[_0x94b3[4]](_0x94b3[3])[_0x94b3[2]](_0x94b3[1]),_0x2fffx1(this)[_0x94b3[4]](_0x94b3[3])[_0x94b3[6]](_0x94b3[5]),_0x2fffx1(this)[_0x94b3[8]](_0x94b3[7])})}function _0x2fffx3(){_0x2fffx1(_0x94b3[10])[_0x94b3[9]](function(){_0x2fffx1(this)[_0x94b3[4]](_0x94b3[3])[_0x94b3[2]](_0x94b3[5]),_0x2fffx1(this)[_0x94b3[4]](_0x94b3[3])[_0x94b3[6]](_0x94b3[1])})}function _0x2fffx4(_0x2fffx1,_0x2fffx2){return 2== _0x2fffx2?10* Math[_0x94b3[11]](_0x2fffx1/ 1)+ 30:1== _0x2fffx2?10* Math[_0x94b3[11]](_0x2fffx1/ 1):4== _0x2fffx2?parseFloat(_0x2fffx1)+ 30:parseFloat(_0x2fffx1)}var _0x2fffx5,_0x2fffx6=_0x2fffx1(_0x94b3[12]);_0x2fffx1(_0x94b3[17])[_0x94b3[18]](function(){_0x2fffx1(this)[_0x94b3[4]](_0x94b3[3])[_0x94b3[2]](_0x94b3[13]),_0x2fffx2(),_0x2fffx6[_0x94b3[15]](_0x94b3[14],!1),_0x2fffx1[_0x94b3[16]](_0x2fffx1(this)[_0x94b3[8]]())=== !1?(_0x2fffx1(this)[_0x94b3[4]](_0x94b3[3])[_0x94b3[6]](_0x94b3[13]),_0x2fffx6[_0x94b3[15]](_0x94b3[14],!1)):_0x2fffx1(this)[_0x94b3[4]](_0x94b3[3])[_0x94b3[2]](_0x94b3[13]),_0x2fffx5= 0,_0x2fffx1(_0x94b3[17])[_0x94b3[9]](function(){_0x94b3[7]!= _0x2fffx1(this)[_0x94b3[8]]()&& _0x2fffx1[_0x94b3[16]](_0x2fffx1(this)[_0x94b3[8]]())!== !1|| _0x2fffx5++}),_0x2fffx5> 0&& _0x2fffx6[_0x94b3[15]](_0x94b3[14],!0)}),_0x2fffx6[_0x94b3[31]](_0x94b3[19],function(_0x2fffx2){_0x2fffx2[_0x94b3[20]]();var _0x2fffx5,_0x2fffx6,_0x2fffx7,_0x2fffx8,_0x2fffx9,_0x2fffxa,_0x2fffxb,_0x2fffxc;_0x2fffx6= _0x2fffx1(_0x94b3[21])[_0x94b3[8]](),_0x2fffx7= _0x2fffx1(_0x94b3[22])[_0x94b3[8]](),_0x2fffx8= _0x2fffx1(_0x94b3[23])[_0x94b3[8]](),_0x2fffx9= _0x2fffx1(_0x94b3[24])[_0x94b3[8]](),_0x2fffxa= _0x2fffx1(_0x94b3[25])[_0x94b3[8]](),_0x2fffxb= _0x2fffx1(_0x94b3[26])[_0x94b3[8]](),_0x2fffxc= _0x2fffx1(_0x94b3[27])[_0x94b3[8]]();var _0x2fffxd=_0x2fffx1(_0x94b3[28])[_0x94b3[8]]();_0x2fffx6= _0x2fffx4(_0x2fffx6,_0x2fffxd),_0x2fffx5= parseFloat(_0x2fffx6)+ parseFloat(_0x2fffx7),_0x2fffx5-= parseFloat(_0x2fffx8),_0x2fffx5-= parseFloat(_0x2fffx9),_0x2fffx5-= parseFloat(_0x2fffxa),_0x2fffx5+= parseFloat(_0x2fffxb),_0x2fffx5-= parseFloat(_0x2fffxc),_0x2fffx1(_0x94b3[30])[_0x94b3[8]](_0x2fffx5[_0x94b3[29]](3)),_0x2fffx3()}),_0x2fffx1(_0x94b3[28])[_0x94b3[31]](_0x94b3[32],function(){_0x2fffx2()})}(jQuery)
-    </script>
-</div>
+</section>
+
+<section class="info-section">
+<h2>Diagrams & Theory</h2>
+<p>This RF link budget calculator estimates whether a wireless link has enough received signal level. Higher transmit power, higher antenna gain, lower cable loss, and shorter distance improve the final link margin.</p>
+
+<h3>Fade Margin</h3>
+<p>Fade margin is the safety difference between receiver signal strength and receiver sensitivity. A larger fade margin gives better tolerance against rain, obstruction, cable loss, antenna alignment error, and RF fading.</p>
+
+<h3>Free Space Loss</h3>
+<p>Free space loss increases when distance or frequency increases. This calculator supports miles and kilometers while using the same constants from the original calculator logic.</p>
+</section>
+
+<section class="info-section">
+<h2>Example</h2>
+<p>For 2440 MHz, 23 dBm transmit power, 9 dB transmit antenna gain, 24 dB receive antenna gain, 0.9 dB cable loss on both sides, 10 miles distance, and -90 dBm receiver sensitivity, click Calculate to find fade margin, free space loss, and receiver signal strength.</p>
+</section>
+
+</section>
+</main>
+
+<script>
+var hasCalculated=false;
+
+document.addEventListener("DOMContentLoaded",function(){
+  document.querySelectorAll("input[name='Units']").forEach(function(el){
+    el.addEventListener("change",function(){
+      unitsChange();
+      clearResults();
+    });
+  });
+
+  document.querySelectorAll("input[name='Compute']").forEach(function(el){
+    el.addEventListener("change",function(){
+      computeChange();
+      clearResults();
+    });
+  });
+
+  computeChange();
+  clearResults();
+});
+
+function clearResults(){
+  hasCalculated=false;
+  document.getElementById("result").textContent="";
+  document.getElementById("fsl").textContent="";
+  document.getElementById("RCVSS").textContent="";
+  document.getElementById("linkStatus").textContent="";
+}
+
+function showError(message){
+  var box=document.getElementById("errorBox");
+  box.style.display="block";
+  box.textContent=message;
+}
+
+function hideError(){
+  var box=document.getElementById("errorBox");
+  box.style.display="none";
+  box.textContent="";
+}
+
+function validateInputs(){
+  var frequency=Number(document.querySelector("#FrequencyInput input").value);
+  var distance=Number(document.querySelector("#DistanceInput input").value);
+
+  if(!isFinite(frequency)||frequency<=0){
+    showError("Please enter valid frequency greater than 0 MHz.");
+    return false;
+  }
+
+  if(!isFinite(distance)||distance<=0){
+    showError("Please enter valid distance greater than 0.");
+    return false;
+  }
+
+  hideError();
+  return true;
+}
+
+function freeSpaceLoss(){
+  var units=document.getElementById("distance-units").textContent;
+  var distance=Number(document.querySelector("#DistanceInput input").value);
+  var frequency=Number(document.querySelector("#FrequencyInput input").value);
+  var c=units=="miles"?36.6:32.5;
+  var lp=c+20*Math.log10(distance)+20*Math.log10(frequency);
+  return lp;
+}
+
+function effectiveRadiatedPower(){
+  var txp=Number(document.querySelector("#TxPowerInput input").value);
+  var gt=Number(document.querySelector("#TxAntennaGainInput input").value);
+  var ct=Number(document.querySelector("#TxCablelossInput input").value);
+  var erp=txp-ct+gt;
+  return erp;
+}
+
+function receiveSignalStrength(){
+  var erp=effectiveRadiatedPower();
+  var lp=freeSpaceLoss();
+  var gr=Number(document.querySelector("#RxAntennaGainInput input").value);
+  var cr=Number(document.querySelector("#RxCablelossInput input").value);
+  var rss=erp-lp+gr-cr;
+  return rss;
+}
+
+function fadeMargin(){
+  var rs=document.querySelector("#RxSensitivityInput input").value;
+  var fm=receiveSignalStrength()-rs;
+  return Number(fm);
+}
+
+function getUnits(getC){
+  var units=document.querySelector("input[name=Units]:checked").value;
+  var result=units;
+  if(getC){
+    if(result=="miles"){
+      result=36.6;
+    }else{
+      result=32.5;
+    }
+  }
+  return result;
+}
+
+function getDistance(){
+  var d5=Number(document.querySelector("#FrequencyInput input").value);
+  var d6=Number(document.querySelector("#FadeMarginInput input").value);
+  var d7=Number(document.querySelector("#RxSensitivityInput input").value);
+  var d8=Number(document.querySelector("#TxPowerInput input").value);
+  var d9=Number(document.querySelector("#TxCablelossInput input").value);
+  var d10=Number(document.querySelector("#TxAntennaGainInput input").value);
+  var d11=Number(document.querySelector("#RxCablelossInput input").value);
+  var d12=Number(document.querySelector("#RxAntennaGainInput input").value);
+  var c=Number(getUnits(true));
+
+  d1=d6+d7;
+  d2=d8-d9+d10;
+  d3=Number(d2-d1+d12-d11);
+
+  var exp=(d3-c-20*Math.log10(d5))/20;
+  var distance=Math.pow(10,exp);
+  return distance;
+}
+
+function getTXP(){
+  var d6=Number(document.querySelector("#FadeMarginInput input").value);
+  var d7=Number(document.querySelector("#RxSensitivityInput input").value);
+  var d9=Number(document.querySelector("#TxCablelossInput input").value);
+  var d10=document.querySelector("#TxAntennaGainInput input").value;
+  var d11=Number(document.querySelector("#RxCablelossInput input").value);
+  var d12=document.querySelector("#RxAntennaGainInput input").value;
+  var d3=Number(freeSpaceLoss());
+
+  var d1=d6+d7;
+  var d2=d1+d3-d12+d11;
+  var txp=d2+d9-d10;
+
+  return txp.toFixed(1);
+}
+
+function unitsChange(){
+  var sourceUnits=document.querySelector("input[name=Units]:checked").value;
+  var destUnits=document.getElementById("distance-units").textContent;
+  var distanceInput=document.querySelector("#DistanceInput input").value;
+
+  if(sourceUnits!=destUnits){
+    if(sourceUnits=="miles"){
+      distanceInput=(distanceInput*0.621).toFixed(1);
+      document.querySelector("#DistanceInput input").value=distanceInput;
+      document.getElementById("distance-units").textContent="miles";
+    }else{
+      distanceInput=(distanceInput*1.61).toFixed(2);
+      document.querySelector("#DistanceInput input").value=distanceInput;
+      document.getElementById("distance-units").textContent="km";
+    }
+  }
+}
+
+function computeChange(){
+  var inputs=document.querySelectorAll("#rf-link-budget-calculator input[type=number]");
+  inputs.forEach(function(input){
+    input.removeAttribute("disabled");
+    input.style.color="#111827";
+  });
+
+  var source=document.querySelector("input[name=Compute]:checked").value;
+
+  switch(source){
+    case "Tx Power":
+      var txpower=document.querySelector("#TxPowerInput input");
+      txpower.setAttribute("disabled",true);
+      txpower.style.color="#9ca3af";
+      document.getElementById("result-title").textContent="Tx Power";
+      break;
+
+    case "Fade Margin":
+      var fademarg=document.querySelector("#FadeMarginInput input");
+      fademarg.setAttribute("disabled",true);
+      fademarg.style.color="#9ca3af";
+      document.getElementById("result-title").textContent="Fade Margin";
+      break;
+
+    case "Distance":
+      var distance=document.querySelector("#DistanceInput input");
+      distance.setAttribute("disabled",true);
+      distance.style.color="#9ca3af";
+      document.getElementById("result-title").textContent="Distance";
+      break;
+  }
+}
+
+function calculateAll(){
+  if(!validateInputs())return;
+
+  hasCalculated=true;
+
+  var compute=document.querySelector("input[name=Compute]:checked").value;
+
+  switch(compute){
+    case "Tx Power":
+      var txp=getTXP();
+      document.getElementById("result").textContent=txp+" dBm";
+      document.querySelector("#TxPowerInput input").value=txp;
+      break;
+
+    case "Fade Margin":
+      var fm=fadeMargin().toFixed(1);
+      document.getElementById("result").textContent=fm+" dB";
+      document.querySelector("#FadeMarginInput input").value=fm;
+      break;
+
+    case "Distance":
+      var distance=getDistance().toFixed(1);
+      document.getElementById("result").textContent=distance+" "+getUnits();
+      document.querySelector("#DistanceInput input").value=distance;
+      break;
+  }
+
+  var fsl=freeSpaceLoss().toFixed(1);
+  var rss=receiveSignalStrength().toFixed(1);
+  var fmCheck=fadeMargin();
+
+  document.getElementById("fsl").textContent=fsl+" dB";
+  document.getElementById("RCVSS").textContent=rss+" dBm";
+
+  if(fmCheck>=20){
+    document.getElementById("linkStatus").textContent="Strong";
+  }else if(fmCheck>=15){
+    document.getElementById("linkStatus").textContent="Good";
+  }else if(fmCheck>=10){
+    document.getElementById("linkStatus").textContent="Weak";
+  }else{
+    document.getElementById("linkStatus").textContent="Poor";
+  }
+}
+</script>
+
 </body>
 </html>
