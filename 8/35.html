@@ -1,220 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Radar Maximum Range Calculator</title>
+<meta name="description" content="Calculate radar maximum range from radar output power, antenna gain, frequency, radar cross section and minimum detectable signal.">
 
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+.valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+.valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:12px;font-weight:900;margin-bottom:10px}
+.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cardValue,.cardUnit{font-size:18px;font-weight:900}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}.green *{color:#16a34a}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe}.purple *{color:#7c3aed}
+.orange{background:#fff7ed;border:1px solid #fed7aa}.orange *{color:#ea580c}
+.infoBox{margin-top:16px;padding:14px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2,.infoBox h3{margin:0 0 10px;font-size:16px;color:#374151}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px;margin:8px 0;font-size:13px;color:#475467;font-weight:800;overflow-x:auto}
+.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;overflow-x:auto}
+.radar-diagram svg{width:100%;min-width:560px;height:auto;display:block}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px}
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .card{padding:14px}
+  .cardValue,.cardUnit{font-size:16px}
+  .exampleGrid{grid-template-columns:1fr}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
 
+<body>
 
+<main class="calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><div class="container-fluid">
-<form id="tool-form">
-
+<label>Output Power</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <input type="number" id="rop" placeholder="Example: 10" step="any">
+  <select id="rop-unit">
+    <option value="1">mW</option>
+    <option value="2">W</option>
+    <option value="3">dBm</option>
+    <option value="4">dBW</option>
+  </select>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Out. Power<font face="Arial" size="5"> (Radar)</font></label><input type="number" id="rop"  class="intro"  style="position: absolute;   text-align
-:center;width:270; right: 180px;"class="form-control"  />
-<select class="form-control" id="rop-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:157px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="1">mW Milliwatts</option>
-<option value="2">W	&nbsp;	&nbsp; Watts </option>
-<option value="3">dBm Decibel-milliwatt </option>
-<option value="4">dBW Decibel-watt </option>
-</select>
-</div>
-</div>
-<h1 style="font-size:55;"></h1>
+<label>Antenna Gain</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:55;" >Antenna Gain</label><font face="Arial" size="7">  </font><input  id="ag"  class="intro"  style="position: absolute;   width:270; text-align
-:center;right: 179px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:68;position: absolute;right: 10px;font-size:45px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:140px;">linear</label>
-
-</div>
+  <input type="number" id="ag" placeholder="Example: 30" step="any">
+  <div class="valueBox">linear</div>
 </div>
 
-</div>
-</div>
+<label>Frequency</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:55;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:55;" >Frequency<font face="Arial" size="6"></font></label><input type="number" id="fr"  class="intro"  style="position: absolute;   text-align
-:center;width:270; right: 179px;"class="form-control"  />
-<select class="form-control" id="fr-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:155px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="1">GHz GigaHertz </option>
-<option value="2">MHz MegaHertz </option>
-</select>
-</div>
+  <input type="number" id="fr" placeholder="Example: 10" step="any">
+  <select id="fr-unit">
+    <option value="1">GHz</option>
+    <option value="2">MHz</option>
+  </select>
 </div>
 
-
+<label>Radar Cross Sectional Area</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:55;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:55;" >Area<font face="Arial" size="5"> (Radar Cross-Sectional)</font></label><input type="number" id="rcsa"  class="intro"  style="position: absolute;   text-align
-:center;width:270; right: 179px;"class="form-control"  />
-<select class="form-control" id="rcsa-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:53px;margin:8px 0;height:83;width:155px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="1">Sq.Meters</option>
-<option value="0.01">Sq.Centimeters</option>
-<option value="0.3048">Sq.Feet</option>
-<option value="0.0254">Sq.Inches</option>
-</select>
-</div>
+  <input type="number" id="rcsa" placeholder="Example: 1" step="any">
+  <select id="rcsa-unit">
+    <option value="1">m²</option>
+    <option value="0.01">cm²</option>
+    <option value="0.3048">ft²</option>
+    <option value="0.0254">in²</option>
+  </select>
 </div>
 
+<label>Minimum Detectable Signal</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:55;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:55;" >Signal<font face="Arial" size="5"> (Minimum Detectable)</font></label><input type="number" id="mds"  class="intro"  style="position: absolute;   text-align
-:center;width:270; right: 179px;"class="form-control"  />
-<select class="form-control" id="mds-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:155px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="1">mW Milliwatts </option>
-<option value="2">W	&nbsp;	&nbsp; Watts </option>
-<option value="3">dBm Decibel-milliwatt </option>
-<option value="4">dBW Decibel-watt </option>
-</select>
-</div>
+  <input type="number" id="mds" placeholder="Example: -90" step="any">
+  <select id="mds-unit">
+    <option value="1">mW</option>
+    <option value="2">W</option>
+    <option value="3">dBm</option>
+    <option value="4">dBW</option>
+  </select>
 </div>
 
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+<button class="btn" id="calculate" type="button">CALCULATE</button>
 
+<div id="errorBox">Please enter valid values. All inputs must be greater than 0 except dBm/dBW values.</div>
 
-</div>
-</div>
-<fieldset><legend><div colspan="2" align="center" height="19">
+<div class="resultTitle">RESULTS</div>
 
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">MAXIMUM RANGE</div>
+    <div class="cardLine">
+      <span class="cardValue" id="answer"></span>
+      <span class="cardUnit">m</span>
+    </div>
+  </div>
 
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <div class="card green">
+    <div class="cardLabel">MAXIMUM RANGE</div>
+    <div class="cardLine">
+      <span class="cardValue" id="answerKm"></span>
+      <span class="cardUnit">km</span>
+    </div>
+  </div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:60;" >Max. Range</label><font face="Arial" size="7">  </font><input  id="answer"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Mtr</label>
+  <div class="card purple">
+    <div class="cardLabel">FREQUENCY</div>
+    <div class="cardLine">
+      <span class="cardValue" id="freqHz"></span>
+      <span class="cardUnit">Hz</span>
+    </div>
+  </div>
 
+  <div class="card orange">
+    <div class="cardLabel">RCS AREA</div>
+    <div class="cardLine">
+      <span class="cardValue" id="areaM2"></span>
+      <span class="cardUnit">m²</span>
+    </div>
+  </div>
 </div>
-</div><h1 style="font-size:30;"></h1>
 
-<script type="text/javascript">
-var _0xe566=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x31","\x34","\x70\x6F\x77","\x33","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x72\x6F\x70","\x23\x61\x67","\x23\x66\x72","\x23\x72\x63\x73\x61","\x23\x6D\x64\x73","\x23\x72\x6F\x70\x2D\x75\x6E\x69\x74","\x23\x6D\x64\x73\x2D\x75\x6E\x69\x74","\x73\x71\x72\x74","\x23\x72\x63\x73\x61\x2D\x75\x6E\x69\x74","\x32","\x23\x66\x72\x2D\x75\x6E\x69\x74","\x50\x49","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x61\x6E\x73\x77\x65\x72","\x6F\x6E","\x63\x68\x61\x6E\x67\x65"];!function(_0x7fafx1){_0xe566[0];function _0x7fafx2(){_0x7fafx1(_0xe566[10])[_0xe566[9]](function(){_0x7fafx1(this)[_0xe566[4]](_0xe566[3])[_0xe566[2]](_0xe566[1]),_0x7fafx1(this)[_0xe566[4]](_0xe566[3])[_0xe566[6]](_0xe566[5]),_0x7fafx1(this)[_0xe566[8]](_0xe566[7])})}function _0x7fafx3(){_0x7fafx1(_0xe566[10])[_0xe566[9]](function(){_0x7fafx1(this)[_0xe566[4]](_0xe566[3])[_0xe566[2]](_0xe566[5]),_0x7fafx1(this)[_0xe566[4]](_0xe566[3])[_0xe566[6]](_0xe566[1])})}function _0x7fafx4(_0x7fafx1,_0x7fafx2){return _0xe566[11]== _0x7fafx2?0.001* _0x7fafx1:_0xe566[12]== _0x7fafx2?1* Math[_0xe566[13]](10,_0x7fafx1/ 10):_0xe566[14]== _0x7fafx2?1* Math[_0xe566[13]](10,(_0x7fafx1- 30)/ 10):_0x7fafx1}var _0x7fafx5,_0x7fafx6=_0x7fafx1(_0xe566[15]);_0x7fafx1(_0xe566[20])[_0xe566[21]](function(){_0x7fafx1(this)[_0xe566[4]](_0xe566[3])[_0xe566[2]](_0xe566[16]),_0x7fafx2(),_0x7fafx6[_0xe566[18]](_0xe566[17],!1),_0x7fafx1[_0xe566[19]](_0x7fafx1(this)[_0xe566[8]]())=== !1?(_0x7fafx1(this)[_0xe566[4]](_0xe566[3])[_0xe566[6]](_0xe566[16]),_0x7fafx6[_0xe566[18]](_0xe566[17],!1)):_0x7fafx1(this)[_0xe566[4]](_0xe566[3])[_0xe566[2]](_0xe566[16]),_0x7fafx5= 0,_0x7fafx1(_0xe566[20])[_0xe566[9]](function(){_0xe566[7]!= _0x7fafx1(this)[_0xe566[8]]()&& _0x7fafx1[_0xe566[19]](_0x7fafx1(this)[_0xe566[8]]())!== !1|| _0x7fafx5++}),_0x7fafx5> 0&& _0x7fafx6[_0xe566[18]](_0xe566[17],!0)}),_0x7fafx6[_0xe566[38]](_0xe566[22],function(_0x7fafx2){_0x7fafx2[_0xe566[23]]();var _0x7fafx5,_0x7fafx6,_0x7fafx7,_0x7fafx8,_0x7fafx9,_0x7fafxa,_0x7fafxb,_0x7fafxc,_0x7fafxd;_0x7fafx6= parseFloat(_0x7fafx1(_0xe566[24])[_0xe566[8]]()),_0x7fafx7= parseFloat(_0x7fafx1(_0xe566[25])[_0xe566[8]]()),_0x7fafx8= parseFloat(_0x7fafx1(_0xe566[26])[_0xe566[8]]()),_0x7fafx9= parseFloat(_0x7fafx1(_0xe566[27])[_0xe566[8]]()),_0x7fafxa= parseFloat(_0x7fafx1(_0xe566[28])[_0xe566[8]]()),_0x7fafx6= _0x7fafx4(parseFloat(_0x7fafx6),_0x7fafx1(_0xe566[29])[_0xe566[8]]()),_0x7fafxa= _0x7fafx4(parseFloat(_0x7fafxa),_0x7fafx1(_0xe566[30])[_0xe566[8]]()),_0x7fafx9= Math[_0xe566[31]](_0x7fafx9),_0x7fafx9*= parseFloat(_0x7fafx1(_0xe566[32])[_0xe566[8]]()),_0x7fafx9= Math[_0xe566[13]](_0x7fafx9,2),_0x7fafx8*= _0xe566[33]== _0x7fafx1(_0xe566[34])[_0xe566[8]]()?Math[_0xe566[13]](10,6):Math[_0xe566[13]](10,9),_0x7fafxb= parseFloat(_0x7fafx1(_0xe566[32])[_0xe566[8]]()),_0x7fafxc= _0x7fafx6* Math[_0xe566[13]](_0x7fafx7,2)* _0x7fafx9* Math[_0xe566[13]](3* Math[_0xe566[13]](10,8),2),_0x7fafxd= _0x7fafxa* Math[_0xe566[13]](4* Math[_0xe566[35]],3)* Math[_0xe566[13]](_0x7fafx8,2),_0x7fafx5= Math[_0xe566[31]](Math[_0xe566[31]](_0x7fafxc/ _0x7fafxd)),_0x7fafx5*= _0x7fafxb,_0x7fafx1(_0xe566[37])[_0xe566[8]](parseFloat(_0x7fafx5)[_0xe566[36]](4)),_0x7fafx3()}),_0x7fafx1(_0xe566[29])[_0xe566[38]](_0xe566[39],function(){_0x7fafx2()}),_0x7fafx1(_0xe566[34])[_0xe566[38]](_0xe566[39],function(){_0x7fafx2()}),_0x7fafx1(_0xe566[32])[_0xe566[38]](_0xe566[39],function(){_0x7fafx2()}),_0x7fafx1(_0xe566[30])[_0xe566[38]](_0xe566[39],function(){_0x7fafx2()})}(jQuery)
-    </script>
-</div>
+<section class="infoBox">
+  <h2>Radar Maximum Range Diagram</h2>
+
+  <div class="diagramBox">
+    <div class="radar-diagram">
+
+      <svg viewBox="0 0 760 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Radar antenna and target maximum range diagram">
+
+        <rect x="155" y="25" width="450" height="380" rx="18" fill="#fff" stroke="#000" stroke-width="6"/>
+
+        <!-- radar dish -->
+        <path d="M245 230 
+                 C185 275,185 145,245 100
+                 C205 150,205 205,245 230 Z"
+              fill="#000"/>
+
+        <path d="M220 260 
+                 C245 260,265 280,275 305 
+                 L185 305 
+                 C195 282,205 268,220 260 Z"
+              fill="#000"/>
+
+        <rect x="248" y="158" width="22" height="18" rx="4"
+              fill="#000"
+              transform="rotate(-23 259 167)"/>
+
+        <circle cx="274" cy="162" r="7" fill="#000"/>
+
+        <!-- radar waves -->
+        <path d="M288 140 C350 90,430 75,515 90" fill="none" stroke="#000" stroke-width="3"/>
+        <path d="M288 162 C360 135,440 130,530 145" fill="none" stroke="#000" stroke-width="3"/>
+        <path d="M288 185 C350 230,430 245,515 230" fill="none" stroke="#000" stroke-width="3"/>
+
+        <path d="M330 115 C375 95,420 92,470 100" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="7 7"/>
+        <path d="M330 210 C375 235,420 238,470 225" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="7 7"/>
+
+        <!-- target -->
+        <circle cx="530" cy="160" r="35" fill="#fff" stroke="#000" stroke-width="5"/>
+        <line x1="505" y1="135" x2="555" y2="185" stroke="#000" stroke-width="5"/>
+        <line x1="555" y1="135" x2="505" y2="185" stroke="#000" stroke-width="5"/>
+
+        <!-- echo waves -->
+        <path d="M500 125 C430 88,355 92,290 130" fill="none" stroke="#000" stroke-width="2"/>
+        <path d="M500 195 C430 238,355 233,290 195" fill="none" stroke="#000" stroke-width="2"/>
+
+        <!-- distance arrow -->
+        <line x1="270" y1="315" x2="530" y2="315" stroke="#000" stroke-width="3"/>
+        <polygon points="270,315 288,306 288,324" fill="#000"/>
+        <polygon points="530,315 512,306 512,324" fill="#000"/>
+
+        <text x="400" y="340" text-anchor="middle" font-size="18" font-weight="800" fill="#000">Maximum Range</text>
+
+        <!-- labels -->
+        <text x="205" y="82" font-size="17" font-weight="900" fill="#000">Radar</text>
+        <text x="486" y="82" font-size="17" font-weight="900" fill="#000">Target</text>
+        <text x="475" y="210" font-size="14" font-weight="800" fill="#000">RCS Area</text>
+        <text x="332" y="75" font-size="14" font-weight="800" fill="#000">Transmit Signal</text>
+        <text x="338" y="255" font-size="14" font-weight="800" fill="#000">Return Echo</text>
+
+        <text x="380" y="390" text-anchor="middle" font-size="17" font-weight="900" fill="#000">
+          Radar Maximum Range
+        </text>
+
+      </svg>
+
+    </div>
+  </div>
+</section>
+
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">R = ⁴√((Pt × G² × σ × c²) / (Smin × (4π)³ × f²))</div>
+  <div class="formulaLine">Pt = Radar output power in watts</div>
+  <div class="formulaLine">G = Antenna gain in linear value</div>
+  <div class="formulaLine">σ = Radar cross sectional area in m²</div>
+  <div class="formulaLine">c = 3 × 10⁸ m/s</div>
+  <div class="formulaLine">f = Frequency in Hz</div>
+  <div class="formulaLine">Smin = Minimum detectable signal in watts</div>
+</section>
+
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    Radar maximum range depends on transmitted power, antenna gain, target radar cross section, frequency and receiver sensitivity.
+  </p>
+  <p>
+    Higher output power, higher antenna gain and larger target area increase range. Higher minimum detectable signal or higher frequency can reduce the calculated range.
+  </p>
+</section>
+
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>
+        Output Power: 10 W<br>
+        Antenna Gain: 30 linear<br>
+        Frequency: 10 GHz<br>
+        RCS Area: 1 m²<br>
+        Minimum Detectable Signal: -90 dBm
+      </p>
+    </div>
+
+    <div class="exampleCard">
+      <p><b>Output</b></p>
+      <p>
+        The calculator converts all values to base units and gives maximum radar range in meters and kilometers.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("calculate").addEventListener("click",function(e){
+    e.preventDefault();
+    calculateRadarRange();
+  });
+
+  ["rop","ag","fr","rcsa","mds"].forEach(function(id){
+    document.getElementById(id).addEventListener("input",clearResults);
+  });
+
+  ["rop-unit","fr-unit","rcsa-unit","mds-unit"].forEach(function(id){
+    document.getElementById(id).addEventListener("change",clearResults);
+  });
+
+  clearResults();
+});
+
+function clearResults(){
+  document.getElementById("answer").textContent="";
+  document.getElementById("answerKm").textContent="";
+  document.getElementById("freqHz").textContent="";
+  document.getElementById("areaM2").textContent="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function powerToWatts(value,unit){
+  if(unit=="1") return 0.001*value;
+  if(unit=="4") return Math.pow(10,value/10);
+  if(unit=="3") return Math.pow(10,(value-30)/10);
+  return value;
+}
+
+function calculateRadarRange(){
+  var rop=parseFloat(document.getElementById("rop").value);
+  var ag=parseFloat(document.getElementById("ag").value);
+  var fr=parseFloat(document.getElementById("fr").value);
+  var rcsa=parseFloat(document.getElementById("rcsa").value);
+  var mds=parseFloat(document.getElementById("mds").value);
+
+  var ropUnit=document.getElementById("rop-unit").value;
+  var frUnit=document.getElementById("fr-unit").value;
+  var rcsaUnit=parseFloat(document.getElementById("rcsa-unit").value);
+  var mdsUnit=document.getElementById("mds-unit").value;
+
+  if(!isFinite(rop) || !isFinite(ag) || !isFinite(fr) || !isFinite(rcsa) || !isFinite(mds) || ag<=0 || fr<=0 || rcsa<=0){
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var pt=powerToWatts(rop,ropUnit);
+  var smin=powerToWatts(mds,mdsUnit);
+
+  if(pt<=0 || smin<=0){
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var areaSide=Math.sqrt(rcsa)*rcsaUnit;
+  var sigma=Math.pow(areaSide,2);
+
+  var frequency=frUnit=="2" ? fr*Math.pow(10,6) : fr*Math.pow(10,9);
+
+  var c=3*Math.pow(10,8);
+
+  var numerator=pt*Math.pow(ag,2)*sigma*Math.pow(c,2);
+  var denominator=smin*Math.pow(4*Math.PI,3)*Math.pow(frequency,2);
+
+  var range=Math.sqrt(Math.sqrt(numerator/denominator));
+
+  document.getElementById("answer").textContent=parseFloat(range).toPrecision(4);
+  document.getElementById("answerKm").textContent=parseFloat(range/1000).toPrecision(4);
+  document.getElementById("freqHz").textContent=parseFloat(frequency).toPrecision(4);
+  document.getElementById("areaM2").textContent=parseFloat(sigma).toPrecision(4);
+
+  document.getElementById("errorBox").style.display="none";
+}
+</script>
+
 </body>
 </html>
