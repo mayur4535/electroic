@@ -1,164 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Reflection Attenuator Calculator</title>
+<meta name="description" content="Calculate reflection attenuator resistor values from attenuation in dB and system impedance.">
 
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+.valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+.valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:12px;font-weight:900;margin-bottom:10px}
+.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cardValue,.cardUnit{font-size:18px;font-weight:900}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}.green *{color:#16a34a}
+.infoBox{margin-top:16px;padding:14px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2,.infoBox h3{margin:0 0 10px;font-size:16px;color:#374151}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px;margin:8px 0;font-size:13px;color:#475467;font-weight:800;overflow-x:auto}
+.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;overflow-x:auto}
+.attenuator-diagram svg{width:100%;min-width:560px;height:auto;display:block}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px}
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .card{padding:14px}
+  .cardValue,.cardUnit{font-size:16px}
+  .exampleGrid{grid-template-columns:1fr}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
 
+<body>
 
+<main class="calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><div class="container-fluid">
-<form id="tool-form">
-
+<label>Attenuation</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:60;" >Attenuation</label><font face="Arial" size="7">  </font><input  id="att"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">dB</label>
-
-</div>
+  <input type="number" id="att" placeholder="Example: 10" step="any">
+  <div class="valueBox">dB</div>
 </div>
 
+<label>Impedance</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:50;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:60;" >Impedance</label><font face="Arial" size="7">  </font><input  id="imp"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;"><b>&Omega;</b></label>
-
-</div>
+  <input type="number" id="imp" placeholder="Example: 50" step="any">
+  <div class="valueBox">Ω</div>
 </div>
 
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+<button class="btn" id="calculate" type="button">CALCULATE</button>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+<div id="errorBox">Please enter valid values greater than 0.</div>
 
+<div class="resultTitle">RESULTS</div>
 
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">R1 &gt; Z0</div>
+    <div class="cardLine">
+      <span class="cardValue" id="r1"></span>
+      <span class="cardUnit">Ω</span>
+    </div>
+  </div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:60;" >R<sub>1</sub> > Z<sub>0</sub></label><font face="Arial" size="7">  </font><input  id="r1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;"><b>&Omega;</b></label>
-
-</div>
-</div>
-<h1 style="font-size:30;"></h1>
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:60;" >R<sub>1</sub> < Z<sub>0</sub></label><font face="Arial" size="7">  </font><input  id="r2"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;"><b>&Omega;</b></label>
-
-</div>
+  <div class="card green">
+    <div class="cardLabel">R1 &lt; Z0</div>
+    <div class="cardLine">
+      <span class="cardValue" id="r2"></span>
+      <span class="cardUnit">Ω</span>
+    </div>
+  </div>
 </div>
 
-<script type="text/javascript">
-var _0x5a2e=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x61\x74\x74","\x23\x69\x6D\x70","\x70\x6F\x77","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x72\x31","\x23\x72\x32","\x6F\x6E","\x63\x68\x61\x6E\x67\x65","\x23\x64\x74\x2D\x75\x6E\x69\x74","\x23\x6F\x70\x2D\x75\x6E\x69\x74"];!function(_0xec98x1){_0x5a2e[0];function _0xec98x2(){_0xec98x1(_0x5a2e[10])[_0x5a2e[9]](function(){_0xec98x1(this)[_0x5a2e[4]](_0x5a2e[3])[_0x5a2e[2]](_0x5a2e[1]),_0xec98x1(this)[_0x5a2e[4]](_0x5a2e[3])[_0x5a2e[6]](_0x5a2e[5]),_0xec98x1(this)[_0x5a2e[8]](_0x5a2e[7])})}function _0xec98x3(){_0xec98x1(_0x5a2e[10])[_0x5a2e[9]](function(){_0xec98x1(this)[_0x5a2e[4]](_0x5a2e[3])[_0x5a2e[2]](_0x5a2e[5]),_0xec98x1(this)[_0x5a2e[4]](_0x5a2e[3])[_0x5a2e[6]](_0x5a2e[1])})}var _0xec98x4,_0xec98x5=_0xec98x1(_0x5a2e[11]);_0xec98x1(_0x5a2e[16])[_0x5a2e[17]](function(){_0xec98x1(this)[_0x5a2e[4]](_0x5a2e[3])[_0x5a2e[2]](_0x5a2e[12]),_0xec98x2(),_0xec98x5[_0x5a2e[14]](_0x5a2e[13],!1),_0xec98x1[_0x5a2e[15]](_0xec98x1(this)[_0x5a2e[8]]())=== !1?(_0xec98x1(this)[_0x5a2e[4]](_0x5a2e[3])[_0x5a2e[6]](_0x5a2e[12]),_0xec98x5[_0x5a2e[14]](_0x5a2e[13],!1)):_0xec98x1(this)[_0x5a2e[4]](_0x5a2e[3])[_0x5a2e[2]](_0x5a2e[12]),_0xec98x4= 0,_0xec98x1(_0x5a2e[16])[_0x5a2e[9]](function(){_0x5a2e[7]!= _0xec98x1(this)[_0x5a2e[8]]()&& _0xec98x1[_0x5a2e[15]](_0xec98x1(this)[_0x5a2e[8]]())!== !1|| _0xec98x4++}),_0xec98x4> 0&& _0xec98x5[_0x5a2e[14]](_0x5a2e[13],!0)}),_0xec98x5[_0x5a2e[26]](_0x5a2e[18],function(_0xec98x2){_0xec98x2[_0x5a2e[19]]();var _0xec98x4,_0xec98x5,_0xec98x6,_0xec98x7,_0xec98x8,_0xec98x9;_0xec98x6= _0xec98x1(_0x5a2e[20])[_0x5a2e[8]](),_0xec98x7= _0xec98x1(_0x5a2e[21])[_0x5a2e[8]](),_0xec98x9= Math[_0x5a2e[22]](10,_0xec98x6/ 20),_0xec98x8= (_0xec98x9+ 1)/ (_0xec98x9- 1),_0xec98x4= _0xec98x7* _0xec98x8,_0xec98x5= _0xec98x7* (1/ _0xec98x8),_0xec98x1(_0x5a2e[24])[_0x5a2e[8]](parseFloat(_0xec98x4)[_0x5a2e[23]](4)),_0xec98x1(_0x5a2e[25])[_0x5a2e[8]](parseFloat(_0xec98x5)[_0x5a2e[23]](4)),_0xec98x3()}),_0xec98x1(_0x5a2e[28])[_0x5a2e[26]](_0x5a2e[27],function(){_0xec98x2()}),_0xec98x1(_0x5a2e[29])[_0x5a2e[26]](_0x5a2e[27],function(){_0xec98x2()})}(jQuery)
-    </script>
-</div>
+<section class="infoBox">
+  <h2>Reflection Attenuator Diagram</h2>
+
+  <div class="diagramBox">
+    <div class="attenuator-diagram">
+      <svg viewBox="0 0 760 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Reflection attenuator circuit diagram">
+        <rect x="120" y="45" width="520" height="350" rx="8" fill="#fff" stroke="#000" stroke-width="5"/>
+
+        <!-- top transmission wires -->
+        <line x1="170" y1="120" x2="290" y2="120" stroke="#000" stroke-width="4"/>
+        <line x1="290" y1="120" x2="475" y2="190" stroke="#000" stroke-width="4"/>
+        <line x1="590" y1="120" x2="470" y2="120" stroke="#000" stroke-width="4"/>
+        <line x1="470" y1="120" x2="285" y2="190" stroke="#000" stroke-width="4"/>
+
+        <!-- down wires -->
+        <line x1="285" y1="190" x2="285" y2="245" stroke="#000" stroke-width="4"/>
+        <line x1="475" y1="190" x2="475" y2="245" stroke="#000" stroke-width="4"/>
+
+        <!-- left red resistor zigzag -->
+        <polyline points="285,245 260,255 310,270 260,285 310,300 260,315 310,330 285,340"
+          fill="none" stroke="#ef4444" stroke-width="7" stroke-linejoin="round"/>
+        <polyline points="285,245 260,255 310,270 260,285 310,300 260,315 310,330 285,340"
+          fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+
+        <!-- right red resistor zigzag -->
+        <polyline points="475,245 450,255 500,270 450,285 500,300 450,315 500,330 475,340"
+          fill="none" stroke="#ef4444" stroke-width="7" stroke-linejoin="round"/>
+        <polyline points="475,245 450,255 500,270 450,285 500,300 450,315 500,330 475,340"
+          fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+
+        <!-- labels -->
+        <text x="325" y="295" font-size="34" font-style="italic" font-weight="700" fill="#000">R1</text>
+        <text x="515" y="295" font-size="34" font-style="italic" font-weight="700" fill="#000">R1</text>
+
+        <!-- ground left -->
+        <line x1="285" y1="340" x2="285" y2="355" stroke="#000" stroke-width="4"/>
+        <line x1="260" y1="355" x2="310" y2="355" stroke="#000" stroke-width="4"/>
+        <line x1="265" y1="364" x2="305" y2="364" stroke="#000" stroke-width="4"/>
+        <line x1="272" y1="373" x2="298" y2="373" stroke="#000" stroke-width="4"/>
+
+        <!-- ground right -->
+        <line x1="475" y1="340" x2="475" y2="355" stroke="#000" stroke-width="4"/>
+        <line x1="450" y1="355" x2="500" y2="355" stroke="#000" stroke-width="4"/>
+        <line x1="455" y1="364" x2="495" y2="364" stroke="#000" stroke-width="4"/>
+        <line x1="462" y1="373" x2="488" y2="373" stroke="#000" stroke-width="4"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">K = 10^(Attenuation / 20)</div>
+  <div class="formulaLine">Ratio = (K + 1) / (K - 1)</div>
+  <div class="formulaLine">R1 &gt; Z0 = Z0 × Ratio</div>
+  <div class="formulaLine">R1 &lt; Z0 = Z0 / Ratio</div>
+</section>
+
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    A reflection attenuator uses resistor values based on attenuation and characteristic impedance.
+  </p>
+  <p>
+    This calculator gives two possible resistor values: one greater than Z0 and one lower than Z0.
+  </p>
+</section>
+
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>
+        Attenuation: 10 dB<br>
+        Impedance: 50 Ω
+      </p>
+    </div>
+
+    <div class="exampleCard">
+      <p><b>Output</b></p>
+      <p>
+        The calculator converts attenuation to voltage ratio and calculates both reflection attenuator resistor values.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("calculate").addEventListener("click",function(e){
+    e.preventDefault();
+    calculateReflectionAttenuator();
+  });
+
+  ["att","imp"].forEach(function(id){
+    document.getElementById(id).addEventListener("input",clearResults);
+  });
+
+  clearResults();
+});
+
+function clearResults(){
+  document.getElementById("r1").textContent="";
+  document.getElementById("r2").textContent="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function calculateReflectionAttenuator(){
+  var attenuation=parseFloat(document.getElementById("att").value);
+  var impedance=parseFloat(document.getElementById("imp").value);
+
+  if(!isFinite(attenuation) || !isFinite(impedance) || attenuation<=0 || impedance<=0){
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var k=Math.pow(10,attenuation/20);
+  var ratio=(k+1)/(k-1);
+
+  var rHigh=impedance*ratio;
+  var rLow=impedance*(1/ratio);
+
+  document.getElementById("r1").textContent=parseFloat(rHigh).toPrecision(4);
+  document.getElementById("r2").textContent=parseFloat(rLow).toPrecision(4);
+
+  document.getElementById("errorBox").style.display="none";
+}
+</script>
+
 </body>
 </html>
