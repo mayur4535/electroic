@@ -1,164 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>RF Power Ratio Conversion Calculator</title>
+<meta name="description" content="Calculate RF power ratio in dB from output power and input power using mW or W units.">
 
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+.valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+.valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:12px;font-weight:900;margin-bottom:10px}
+.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cardValue,.cardUnit{font-size:18px;font-weight:900}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}.green *{color:#16a34a}
+.infoBox{margin-top:16px;padding:14px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2,.infoBox h3{margin:0 0 10px;font-size:16px;color:#374151}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px;margin:8px 0;font-size:13px;color:#475467;font-weight:800;overflow-x:auto}
+.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;overflow-x:auto}
+.rf-ratio-diagram svg{width:100%;min-width:560px;height:auto;display:block}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px}
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .card{padding:14px}
+  .cardValue,.cardUnit{font-size:16px}
+  .exampleGrid{grid-template-columns:1fr}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
 
+<body>
 
+<main class="calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><div class="container-fluid">
-<form id="tool-form">
-
+<label>Power Output</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <input type="number" id="po" placeholder="Example: 10" step="any">
+  <select id="po-unit">
+    <option value="1">mW</option>
+    <option value="2">W</option>
+  </select>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Power Output<font face="Arial" size="6"> </font></label><input type="number" id="po"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 170px;"class="form-control"  />
-<select class="form-control" id="po-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px;height:85px; border:3px solid #aaa;">
-<option value="1">mW	&nbsp; Milliwatts</option>
-<option value="2">W	&nbsp;	&nbsp; Watts </option>
-</select>
-</div>
-</div>
-<h1 style="font-size:55;"></h1>
+<label>Power Input</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:55;" >Power Input<font face="Arial" size="6"> </font></label><input type="number" id="pi"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 170px;"class="form-control"  />
-<select class="form-control" id="pi-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="1">mW	&nbsp; Milliwatts </option>
-<option value="2">W	&nbsp;	&nbsp; Watts </option>
-</select>
-</div>
+  <input type="number" id="pi" placeholder="Example: 1" step="any">
+  <select id="pi-unit">
+    <option value="1">mW</option>
+    <option value="2">W</option>
+  </select>
 </div>
 
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+<button class="btn" id="calculate" type="button">CALCULATE</button>
 
-</div>
-<fieldset><legend><div colspan="2" align="center" height="19">
+<div id="errorBox">Please enter valid values greater than 0.</div>
 
+<div class="resultTitle">RESULTS</div>
 
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">POWER RATIO</div>
+    <div class="cardLine">
+      <span class="cardValue" id="answer"></span>
+      <span class="cardUnit">dB</span>
+    </div>
+  </div>
 
+  <div class="card green">
+    <div class="cardLabel">LINEAR RATIO</div>
+    <div class="cardLine">
+      <span class="cardValue" id="linearRatio"></span>
+      <span class="cardUnit">×</span>
+    </div>
+  </div>
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:55;" >Ratio</label><font face="Arial" size="7"> (Converted )  </font><input  id="answer"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 148px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">dB</label><h1 style="font-size:30;"></h1>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
+<section class="infoBox">
+  <h2>RF Power Ratio Diagram</h2>
 
-</div>
-</div>
-</div>
-</div>
-</div>
-<script type="text/javascript">
-var _0x80d0=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x31","\x34","\x70\x6F\x77","\x33","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x70\x6F","\x23\x70\x69","\x23\x70\x69\x2D\x75\x6E\x69\x74","\x23\x70\x6F\x2D\x75\x6E\x69\x74","\x6C\x6F\x67","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x61\x6E\x73\x77\x65\x72","\x6F\x6E","\x63\x68\x61\x6E\x67\x65"];!function(_0xdebcx1){_0x80d0[0];function _0xdebcx2(){_0xdebcx1(_0x80d0[10])[_0x80d0[9]](function(){_0xdebcx1(this)[_0x80d0[4]](_0x80d0[3])[_0x80d0[2]](_0x80d0[1]),_0xdebcx1(this)[_0x80d0[4]](_0x80d0[3])[_0x80d0[6]](_0x80d0[5]),_0xdebcx1(this)[_0x80d0[8]](_0x80d0[7])})}function _0xdebcx3(){_0xdebcx1(_0x80d0[10])[_0x80d0[9]](function(){_0xdebcx1(this)[_0x80d0[4]](_0x80d0[3])[_0x80d0[2]](_0x80d0[5]),_0xdebcx1(this)[_0x80d0[4]](_0x80d0[3])[_0x80d0[6]](_0x80d0[1])})}function _0xdebcx4(_0xdebcx1,_0xdebcx2){return _0x80d0[11]== _0xdebcx2?0.001* _0xdebcx1:_0x80d0[12]== _0xdebcx2?1* Math[_0x80d0[13]](10,_0xdebcx1/ 10):_0x80d0[14]== _0xdebcx2?1* Math[_0x80d0[13]](10,(_0xdebcx1- 30)/ 10):_0xdebcx1}var _0xdebcx5,_0xdebcx6=_0xdebcx1(_0x80d0[15]);_0xdebcx1(_0x80d0[20])[_0x80d0[21]](function(){_0xdebcx1(this)[_0x80d0[4]](_0x80d0[3])[_0x80d0[2]](_0x80d0[16]),_0xdebcx2(),_0xdebcx6[_0x80d0[18]](_0x80d0[17],!1),_0xdebcx1[_0x80d0[19]](_0xdebcx1(this)[_0x80d0[8]]())=== !1?(_0xdebcx1(this)[_0x80d0[4]](_0x80d0[3])[_0x80d0[6]](_0x80d0[16]),_0xdebcx6[_0x80d0[18]](_0x80d0[17],!1)):_0xdebcx1(this)[_0x80d0[4]](_0x80d0[3])[_0x80d0[2]](_0x80d0[16]),_0xdebcx5= 0,_0xdebcx1(_0x80d0[20])[_0x80d0[9]](function(){_0x80d0[7]!= _0xdebcx1(this)[_0x80d0[8]]()&& _0xdebcx1[_0x80d0[19]](_0xdebcx1(this)[_0x80d0[8]]())!== !1|| _0xdebcx5++}),_0xdebcx5> 0&& _0xdebcx6[_0x80d0[18]](_0x80d0[17],!0)}),_0xdebcx6[_0x80d0[31]](_0x80d0[22],function(_0xdebcx2){_0xdebcx2[_0x80d0[23]]();var _0xdebcx5,_0xdebcx6,_0xdebcx7;_0xdebcx6= parseFloat(_0xdebcx1(_0x80d0[24])[_0x80d0[8]]()),_0xdebcx7= parseFloat(_0xdebcx1(_0x80d0[25])[_0x80d0[8]]()),_0xdebcx7= _0xdebcx4(_0xdebcx7,parseFloat(_0xdebcx1(_0x80d0[26])[_0x80d0[8]]())),_0xdebcx6= _0xdebcx4(_0xdebcx6,parseFloat(_0xdebcx1(_0x80d0[27])[_0x80d0[8]]())),_0xdebcx5= 10* Math[_0x80d0[28]](_0xdebcx6/ _0xdebcx7)/ Math[_0x80d0[28]](10),_0xdebcx1(_0x80d0[30])[_0x80d0[8]](parseFloat(_0xdebcx5)[_0x80d0[29]](4)),_0xdebcx3()}),_0xdebcx1(_0x80d0[27])[_0x80d0[31]](_0x80d0[32],function(){_0xdebcx2()}),_0xdebcx1(_0x80d0[26])[_0x80d0[31]](_0x80d0[32],function(){_0xdebcx2()})}(jQuery)
-    </script>
-</div>
+  <div class="diagramBox">
+    <div class="rf-ratio-diagram">
+      <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RF power ratio conversion diagram">
+
+        <rect x="20" y="20" width="720" height="260" fill="#fff"/>
+
+        <!-- RF IN -->
+        <text x="30" y="145" font-size="22" fill="#000">RF<tspan baseline-shift="sub" font-size="14">IN</tspan></text>
+        <line x1="88" y1="138" x2="128" y2="138" stroke="#000" stroke-width="4"/>
+
+        <!-- PAM triangle -->
+        <polygon points="128,85 128,195 230,138" fill="#fff" stroke="#000" stroke-width="4"/>
+        <text x="150" y="146" font-size="24" fill="#000">PAM</text>
+
+        <!-- output line -->
+        <line x1="230" y1="138" x2="340" y2="138" stroke="#000" stroke-width="4"/>
+
+        <!-- PO / PI labels -->
+        <text x="248" y="105" font-size="20" fill="#000">P<tspan baseline-shift="sub" font-size="13">OUT</tspan></text>
+        <text x="248" y="178" font-size="20" fill="#000">P<tspan baseline-shift="sub" font-size="13">IN</tspan></text>
+
+        <!-- wave arrows -->
+        <path d="M300 100 C325 78,350 122,375 100" fill="none" stroke="#000" stroke-width="4"/>
+        <polygon points="375,100 360,91 362,112" fill="#000"/>
+
+        <path d="M375 175 C350 153,325 197,300 175" fill="none" stroke="#000" stroke-width="4"/>
+        <polygon points="300,175 315,166 313,187" fill="#000"/>
+
+        <!-- isolator circle -->
+        <circle cx="465" cy="138" r="58" fill="#fff" stroke="#000" stroke-width="4"/>
+        <text x="428" y="148" font-size="22" fill="#000">Ratio</text>
+
+        <!-- inner arrow -->
+        <path d="M425 128 C445 82,510 94,515 138" fill="none" stroke="#000" stroke-width="4"/>
+        <polygon points="515,138 500,126 498,147" fill="#000"/>
+
+        <!-- RF out line -->
+        <line x1="523" y1="138" x2="640" y2="138" stroke="#000" stroke-width="4"/>
+        <text x="650" y="145" font-size="22" fill="#000">RF<tspan baseline-shift="sub" font-size="14">OUT</tspan></text>
+
+        <!-- antenna -->
+        <line x1="640" y1="138" x2="640" y2="75" stroke="#000" stroke-width="4"/>
+        <line x1="640" y1="75" x2="610" y2="45" stroke="#000" stroke-width="4"/>
+        <line x1="640" y1="75" x2="670" y2="45" stroke="#000" stroke-width="4"/>
+        <line x1="640" y1="75" x2="640" y2="35" stroke="#000" stroke-width="4"/>
+        <text x="590" y="28" font-size="20" fill="#000">Antenna</text>
+
+        <!-- red load resistor -->
+        <line x1="465" y1="196" x2="465" y2="215" stroke="#000" stroke-width="4"/>
+        <polyline points="465,215 440,225 490,238 440,251 490,264 465,274"
+          fill="none" stroke="#ef4444" stroke-width="8" stroke-linejoin="round"/>
+        <polyline points="465,215 440,225 490,238 440,251 490,264 465,274"
+          fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+
+        <text x="510" y="248" font-size="20" fill="#000">
+          R<tspan baseline-shift="sub" font-size="13">load</tspan>
+        </text>
+
+        <!-- ground -->
+        <line x1="465" y1="274" x2="465" y2="283" stroke="#000" stroke-width="4"/>
+        <line x1="435" y1="283" x2="495" y2="283" stroke="#000" stroke-width="4"/>
+        <line x1="445" y1="292" x2="485" y2="292" stroke="#000" stroke-width="4"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">Power Ratio (dB) = 10 × log10(Power Output / Power Input)</div>
+  <div class="formulaLine">If power is in mW: W = mW × 0.001</div>
+  <div class="formulaLine">Linear Ratio = Power Output / Power Input</div>
+</section>
+
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    RF power ratio conversion compares output power against input power and expresses the ratio in decibels.
+  </p>
+  <p>
+    A positive dB value means output power is higher than input power. A negative dB value means output power is lower than input power.
+  </p>
+</section>
+
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>
+        Power Output: 10 W<br>
+        Power Input: 1 W
+      </p>
+    </div>
+
+    <div class="exampleCard">
+      <p><b>Output</b></p>
+      <p>
+        Power Ratio = 10 × log10(10 / 1) = 10 dB.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("calculate").addEventListener("click",function(e){
+    e.preventDefault();
+    calculatePowerRatio();
+  });
+
+  ["po","pi"].forEach(function(id){
+    document.getElementById(id).addEventListener("input",clearResults);
+  });
+
+  ["po-unit","pi-unit"].forEach(function(id){
+    document.getElementById(id).addEventListener("change",clearResults);
+  });
+
+  clearResults();
+});
+
+function clearResults(){
+  document.getElementById("answer").textContent="";
+  document.getElementById("linearRatio").textContent="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function toWatts(value,unit){
+  if(unit=="1") return value*0.001;
+  return value;
+}
+
+function calculatePowerRatio(){
+  var powerOut=parseFloat(document.getElementById("po").value);
+  var powerIn=parseFloat(document.getElementById("pi").value);
+
+  if(!isFinite(powerOut) || !isFinite(powerIn) || powerOut<=0 || powerIn<=0){
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  powerOut=toWatts(powerOut,document.getElementById("po-unit").value);
+  powerIn=toWatts(powerIn,document.getElementById("pi-unit").value);
+
+  var ratio=powerOut/powerIn;
+  var db=10*Math.log(ratio)/Math.log(10);
+
+  document.getElementById("answer").textContent=parseFloat(db).toPrecision(4);
+  document.getElementById("linearRatio").textContent=parseFloat(ratio).toPrecision(4);
+
+  document.getElementById("errorBox").style.display="none";
+}
+</script>
+
 </body>
 </html>
