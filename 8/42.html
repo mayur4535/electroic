@@ -1,142 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Waveguide Calculator Circular</title>
+<meta name="description" content="Calculate circular waveguide cutoff frequency from waveguide radius.">
 
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+.valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+.valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:12px;font-weight:900;margin-bottom:10px}
+.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cardValue,.cardUnit{font-size:18px;font-weight:900}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}.green *{color:#16a34a}
+.infoBox{margin-top:16px;padding:14px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 10px;font-size:16px;color:#374151}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px;margin:8px 0;font-size:13px;color:#475467;font-weight:800;overflow-x:auto}
+.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;overflow-x:auto}
+.waveguide-diagram svg{width:100%;min-width:560px;height:auto;display:block}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px}
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .card{padding:14px}
+  .cardValue,.cardUnit{font-size:16px}
+  .exampleGrid{grid-template-columns:1fr}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
 
+<body>
 
+<main class="calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><div class="container-fluid">
-
-<form id="tool-form">
+<label>Radius (Waveguide)</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:55;" >Radius<font face="Arial" size="6"> (Waveguide) </font></label><input type="number" id="in"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 165px;"class="form-control"  />
-<select class="form-control" id="in-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:138px;border-radius:4px;height:85px; border:3px solid #aaa;">
-<option value="0.01">cm	&nbsp;	&nbsp; Centimeters </option>
-<option value="1">m		&nbsp;&nbsp; Meters </option>
-<option value="0.3048">ft	&nbsp;	&nbsp; Feet </option>
-<option value="0.0254">in	&nbsp;	&nbsp; Inches </option>
-</select>
-</div>
+  <input type="number" id="in" placeholder="Example: 2" step="any">
+  <select id="in-unit">
+    <option value="0.01">cm</option>
+    <option value="1">m</option>
+    <option value="0.3048">ft</option>
+    <option value="0.0254">in</option>
+  </select>
 </div>
 
+<button class="btn" id="calculate" type="button">CALCULATE</button>
 
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-</div>
-</div>
-<fieldset><legend><div colspan="2" align="center" height="19">
+<div id="errorBox">Please enter a valid radius greater than 0.</div>
 
+<div class="resultTitle">RESULTS</div>
 
-<h3>Outputs</h3></div></legend>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">CUTOFF FREQUENCY</div>
+    <div class="cardLine">
+      <span class="cardValue" id="answer"></span>
+      <span class="cardUnit">Hz</span>
+    </div>
+  </div>
 
+  <div class="card green">
+    <div class="cardLabel">RADIUS</div>
+    <div class="cardLine">
+      <span class="cardValue" id="radiusM"></span>
+      <span class="cardUnit">m</span>
+    </div>
+  </div>
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:55;" > Frequency</label><font face="Arial" size="6"> (Cutoff)  </font><input  id="answer"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Hz</label>
-</div>
-</div><h1 style="font-size:30;"></h1>
 
-<script type="text/javascript">
-var _0xb92a=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x69\x6E","\x23\x69\x6E\x2D\x75\x6E\x69\x74","\x70\x6F\x77","\x50\x49","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x61\x6E\x73\x77\x65\x72","\x6F\x6E","\x63\x68\x61\x6E\x67\x65"];!function(_0x601cx1){_0xb92a[0];function _0x601cx2(){_0x601cx1(_0xb92a[10])[_0xb92a[9]](function(){_0x601cx1(this)[_0xb92a[4]](_0xb92a[3])[_0xb92a[2]](_0xb92a[1]),_0x601cx1(this)[_0xb92a[4]](_0xb92a[3])[_0xb92a[6]](_0xb92a[5]),_0x601cx1(this)[_0xb92a[8]](_0xb92a[7])})}function _0x601cx3(){_0x601cx1(_0xb92a[10])[_0xb92a[9]](function(){_0x601cx1(this)[_0xb92a[4]](_0xb92a[3])[_0xb92a[2]](_0xb92a[5]),_0x601cx1(this)[_0xb92a[4]](_0xb92a[3])[_0xb92a[6]](_0xb92a[1])})}var _0x601cx4,_0x601cx5=_0x601cx1(_0xb92a[11]);_0x601cx1(_0xb92a[16])[_0xb92a[17]](function(){_0x601cx1(this)[_0xb92a[4]](_0xb92a[3])[_0xb92a[2]](_0xb92a[12]),_0x601cx2(),_0x601cx5[_0xb92a[14]](_0xb92a[13],!1),_0x601cx1[_0xb92a[15]](_0x601cx1(this)[_0xb92a[8]]())=== !1?(_0x601cx1(this)[_0xb92a[4]](_0xb92a[3])[_0xb92a[6]](_0xb92a[12]),_0x601cx5[_0xb92a[14]](_0xb92a[13],!1)):_0x601cx1(this)[_0xb92a[4]](_0xb92a[3])[_0xb92a[2]](_0xb92a[12]),_0x601cx4= 0,_0x601cx1(_0xb92a[16])[_0xb92a[9]](function(){_0xb92a[7]!= _0x601cx1(this)[_0xb92a[8]]()&& _0x601cx1[_0xb92a[15]](_0x601cx1(this)[_0xb92a[8]]())!== !1|| _0x601cx4++}),_0x601cx4> 0&& _0x601cx5[_0xb92a[14]](_0xb92a[13],!0)}),_0x601cx5[_0xb92a[26]](_0xb92a[18],function(_0x601cx2){_0x601cx2[_0xb92a[19]]();var _0x601cx4,_0x601cx5,_0x601cx6;_0x601cx5= parseFloat(_0x601cx1(_0xb92a[20])[_0xb92a[8]]()),_0x601cx5*= parseFloat(_0x601cx1(_0xb92a[21])[_0xb92a[8]]()),_0x601cx6= 5.5236* Math[_0xb92a[22]](10,8),_0x601cx4= _0x601cx6/ (2* Math[_0xb92a[23]]* _0x601cx5),_0x601cx1(_0xb92a[25])[_0xb92a[8]](parseFloat(_0x601cx4)[_0xb92a[24]](4)),_0x601cx3()}),_0x601cx1(_0xb92a[21])[_0xb92a[26]](_0xb92a[27],function(){_0x601cx2()})}(jQuery)
-    </script></p>
-<p>
-</div>
+<section class="infoBox">
+  <h2>Circular Waveguide Diagram</h2>
+
+  <div class="diagramBox">
+    <div class="waveguide-diagram">
+
+      <svg class="waveguide-diagram" viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+
+        <defs>
+
+          <linearGradient id="cylinderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#bfc7d1" stop-opacity="0.85"/>
+            <stop offset="25%" stop-color="#e7ebf0" stop-opacity="0.6"/>
+            <stop offset="50%" stop-color="#8d99a8" stop-opacity="0.95"/>
+            <stop offset="75%" stop-color="#d9dee5" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#a7b0bb" stop-opacity="0.85"/>
+          </linearGradient>
+
+          <radialGradient id="innerFace" cx="50%" cy="50%" r="50%">
+            <stop offset="65%" stop-color="#ffffff" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#97a4b5" stop-opacity="0.9"/>
+          </radialGradient>
+
+          <marker id="arrow" viewBox="0 0 10 10"
+                  refX="5"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse">
+
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z"
+                  fill="#3b82f6"/>
+          </marker>
+
+        </defs>
+
+        <!-- top length dimension -->
+        <line x1="220"
+              y1="50"
+              x2="630"
+              y2="50"
+              stroke="#3b82f6"
+              stroke-width="1.5"
+              marker-start="url(#arrow)"
+              marker-end="url(#arrow)" />
+
+        <line x1="220"
+              y1="45"
+              x2="220"
+              y2="95"
+              stroke="#94a3b8"
+              stroke-width="1.2"
+              stroke-dasharray="4,4" />
+
+        <line x1="630"
+              y1="45"
+              x2="630"
+              y2="95"
+              stroke="#94a3b8"
+              stroke-width="1.2"
+              stroke-dasharray="4,4" />
+
+        <text x="425"
+              y="42"
+              fill="#1e293b"
+              font-size="16"
+              font-family="sans-serif"
+              text-anchor="middle"
+              font-weight="600">L</text>
+
+        <!-- left diameter -->
+        <line x1="100"
+              y1="100"
+              x2="100"
+              y2="300"
+              stroke="#3b82f6"
+              stroke-width="1.5"
+              marker-start="url(#arrow)"
+              marker-end="url(#arrow)" />
+
+        <line x1="95"
+              y1="100"
+              x2="210"
+              y2="100"
+              stroke="#94a3b8"
+              stroke-width="1.2"
+              stroke-dasharray="4,4" />
+
+        <line x1="95"
+              y1="300"
+              x2="210"
+              y2="300"
+              stroke="#94a3b8"
+              stroke-width="1.2"
+              stroke-dasharray="4,4" />
+
+        <text x="75"
+              y="206"
+              fill="#1e293b"
+              font-size="18"
+              font-family="sans-serif"
+              text-anchor="middle"
+              font-weight="600">d</text>
+
+        <!-- cylinder body -->
+        <path d="M 220 100
+                 L 630 100
+                 A 65 100 0 0 1 630 300
+                 L 220 300
+                 A 65 100 0 0 1 220 100 Z"
+
+              fill="url(#cylinderGrad)"
+              stroke="#64748b"
+              stroke-width="0.5"/>
+
+        <!-- far end hidden ellipse -->
+        <ellipse cx="630"
+                 cy="200"
+                 rx="55"
+                 ry="95"
+                 fill="none"
+                 stroke="#64748b"
+                 stroke-width="1.2"
+                 stroke-dasharray="5,4"
+                 opacity="0.7"/>
+
+        <!-- field patterns -->
+        <ellipse cx="220"
+                 cy="200"
+                 rx="48"
+                 ry="82"
+                 fill="none"
+                 stroke="#0284c7"
+                 stroke-width="1.5"
+                 stroke-dasharray="4,4"
+                 opacity="0.6"/>
+
+        <ellipse cx="220"
+                 cy="200"
+                 rx="36"
+                 ry="62"
+                 fill="none"
+                 stroke="#38bdf8"
+                 stroke-width="1.5"
+                 stroke-dasharray="4,4"
+                 opacity="0.8"/>
+
+        <ellipse cx="220"
+                 cy="200"
+                 rx="24"
+                 ry="42"
+                 fill="none"
+                 stroke="#7dd3fc"
+                 stroke-width="1.5"
+                 stroke-dasharray="4,4"/>
+
+        <ellipse cx="340"
+                 cy="200"
+                 rx="32"
+                 ry="78"
+                 fill="none"
+                 stroke="#f59e0b"
+                 stroke-width="1.5"
+                 stroke-dasharray="6,4"
+                 opacity="0.6"/>
+
+        <ellipse cx="460"
+                 cy="200"
+                 rx="32"
+                 ry="78"
+                 fill="none"
+                 stroke="#f59e0b"
+                 stroke-width="1.5"
+                 stroke-dasharray="6,4"
+                 opacity="0.5"/>
+
+        <!-- front face -->
+        <ellipse cx="220"
+                 cy="200"
+                 rx="65"
+                 ry="100"
+                 fill="none"
+                 stroke="#64748b"
+                 stroke-width="2.5"/>
+
+        <ellipse cx="220"
+                 cy="200"
+                 rx="56"
+                 ry="96"
+                 fill="url(#innerFace)"
+                 stroke="#cbd5e1"
+                 stroke-width="2"/>
+
+        <!-- right diameter -->
+        <line x1="710"
+              y1="100"
+              x2="710"
+              y2="300"
+              stroke="#3b82f6"
+              stroke-width="1.5"
+              marker-start="url(#arrow)"
+              marker-end="url(#arrow)" />
+
+        <line x1="640"
+              y1="100"
+              x2="715"
+              y2="100"
+              stroke="#94a3b8"
+              stroke-width="1.2"
+              stroke-dasharray="4,4" />
+
+        <line x1="640"
+              y1="300"
+              x2="715"
+              y2="300"
+              stroke="#94a3b8"
+              stroke-width="1.2"
+              stroke-dasharray="4,4" />
+
+        <text x="735"
+              y="206"
+              fill="#1e293b"
+              font-size="16"
+              font-family="sans-serif"
+              text-anchor="start"
+              font-weight="600">d (D)</text>
+
+        <ellipse cx="630"
+                 cy="200"
+                 rx="62"
+                 ry="98"
+                 fill="none"
+                 stroke="#64748b"
+                 stroke-width="1.5"
+                 opacity="0.6"/>
+
+        <!-- radius left -->
+        <line x1="220"
+              y1="200"
+              x2="258"
+              y2="142"
+              stroke="#111827"
+              stroke-width="2"
+              marker-end="url(#arrow)"/>
+
+        <circle cx="220"
+                cy="200"
+                r="3"
+                fill="#111827"/>
+
+        <text x="230"
+              y="170"
+              fill="#111827"
+              font-size="15"
+              font-family="sans-serif"
+              font-weight="bold">a</text>
+
+        <!-- radius right -->
+        <line x1="630"
+              y1="200"
+              x2="678"
+              y2="135"
+              stroke="#3b82f6"
+              stroke-width="2"
+              marker-end="url(#arrow)"/>
+
+        <circle cx="630"
+                cy="200"
+                r="2.5"
+                fill="#3b82f6"/>
+
+        <text x="642"
+              y="165"
+              fill="#111827"
+              font-size="15"
+              font-family="sans-serif"
+              font-weight="bold"
+              transform="rotate(-36 642 165)">a (R)</text>
+
+      </svg>
+
+    </div>
+  </div>
+</section>
+
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">fc = 5.5236 × 10⁸ / (2 × π × radius)</div>
+  <div class="formulaLine">Radius is converted to meters before calculation</div>
+</section>
+
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    A circular waveguide is a hollow conducting tube with a circular cross-section. The cutoff frequency depends mainly on the waveguide radius.
+  </p>
+</section>
+
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>Radius: 2 cm</p>
+    </div>
+    <div class="exampleCard">
+      <p><b>Output</b></p>
+      <p>The calculator converts radius to meters and gives the cutoff frequency in Hz.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("calculate").addEventListener("click",function(e){
+    e.preventDefault();
+    calculateCircularWaveguide();
+  });
+
+  document.getElementById("in").addEventListener("input",clearResults);
+  document.getElementById("in-unit").addEventListener("change",clearResults);
+
+  clearResults();
+});
+
+function clearResults(){
+  document.getElementById("answer").textContent="";
+  document.getElementById("radiusM").textContent="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function calculateCircularWaveguide(){
+  var radius=parseFloat(document.getElementById("in").value);
+  var unit=parseFloat(document.getElementById("in-unit").value);
+
+  if(!isFinite(radius) || radius<=0){
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  radius=radius*unit;
+
+  var constant=5.5236*Math.pow(10,8);
+  var frequency=constant/(2*Math.PI*radius);
+
+  document.getElementById("answer").textContent=parseFloat(frequency).toPrecision(4);
+  document.getElementById("radiusM").textContent=parseFloat(radius).toPrecision(4);
+
+  document.getElementById("errorBox").style.display="none";
+}
+</script>
+
 </body>
 </html>
