@@ -1,199 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Skin Depth Calculator</title>
+<meta name="description" content="Calculate RF skin depth from material resistivity, relative permeability and frequency.">
 
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+.fullRow{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:16px}
+.valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+.valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:12px;font-weight:900;margin-bottom:10px}
+.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cardValue,.cardUnit{font-size:18px;font-weight:900}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}.green *{color:#16a34a}
+.infoBox{margin-top:16px;padding:14px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 10px;font-size:16px;color:#374151}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px;margin:8px 0;font-size:13px;color:#475467;font-weight:800;overflow-x:auto}
+.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;overflow-x:auto}
+.skin-diagram svg{width:100%;min-width:560px;height:auto;display:block}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px}
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .card{padding:14px}
+  .cardValue,.cardUnit{font-size:16px}
+  .exampleGrid{grid-template-columns:1fr}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
 
+<body>
 
+<main class="calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<label>Select Material</label>
+<div class="fullRow">
+  <select id="mat">
+    <option value="1">Custom</option>
+    <option value="2">Copper</option>
+    <option value="3">Aluminum</option>
+    <option value="4">Gold</option>
+    <option value="5">Silver</option>
+    <option value="6">Nickel</option>
+  </select>
+</div>
 
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><div class="container-fluid">
-<form id="tool-form">
-
+<label>Resistivity</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <input type="number" id="res" placeholder="Example: 1.678" step="any">
+  <div class="valueBox">µΩ·cm</div>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Select Material<font face="Arial" size="6"> </font></label>
-<select class="form-control" id="mat" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:440px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="1">Custom</option>
-<option value="2">Copper</option>
-<option value="3">Aluminum</option>
-<option value="4">Gold</option>
-<option value="5">Silver</option>
-<option value="6">Nickel</option>
-</select>
-
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-</div>
-</div>
-</div>
+<label>Relative Permeability μr</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:55;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:55;" >Resistivity</label><font face="Arial" size="7">  </font><input  id="res"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:35px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">µ&Omega; cm</label>
-
-</div>
+  <input type="number" id="rp" placeholder="Example: 1" step="any">
+  <div class="valueBox">μr</div>
 </div>
 
+<label>Frequency</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:55;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:55;" >μ<sub>r<font face="Arial" size="6"> (Relative Permeability)</font></label><input type="number" id="rp"  class="intro"  style="position: absolute;   text-align
-:center;width:440; right: 10px;"class="form-control"  />
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-</div>
-</div>
-</div>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div><h1 style="font-size:35;"></h1>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:55;" >Frequency<font face="Arial" size="6"> </font></label><input type="number" id="fr"  class="intro"  style="position: absolute;   text-align
-:center;width:280; right: 170px;"class="form-control"  />
-<select class="form-control" id="fr-unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; height:85px; border:3px solid #aaa;">
-<option value="1">GHz GigaHertz ()</option>
-<option value="2">MHz MegaHertz ()</option>
-</select>
-</div>
+  <input type="number" id="fr" placeholder="Example: 10" step="any">
+  <select id="fr-unit">
+    <option value="1">GHz</option>
+    <option value="2">MHz</option>
+  </select>
 </div>
 
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+<button class="btn" id="calculate" type="button">CALCULATE</button>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+<div id="errorBox">Please enter valid values greater than 0.</div>
 
+<div class="resultTitle">RESULTS</div>
 
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">SKIN DEPTH</div>
+    <div class="cardLine">
+      <span class="cardValue" id="answer"></span>
+      <span class="cardUnit">µm</span>
+    </div>
+  </div>
 
+  <div class="card green">
+    <div class="cardLabel">FREQUENCY</div>
+    <div class="cardLine">
+      <span class="cardValue" id="freqMHz"></span>
+      <span class="cardUnit">MHz</span>
+    </div>
+  </div>
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:55;" >Skin Depth</label><font face="Arial" size="7">  </font><input  id="answer"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">µm</label>
 
-</div>
-</div><h1 style="font-size:30;"></h1>
-<div class="col-sm-4 col-xs-4">
+<section class="infoBox">
+  <h2>Skin Depth Diagram</h2>
 
-<script type="text/javascript">
-var _0xdbfa=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x72\x65\x73","\x23\x72\x70","\x23\x66\x72","\x31","\x23\x66\x72\x2D\x75\x6E\x69\x74","\x50\x49","\x70\x6F\x77","\x73\x71\x72\x74","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x61\x6E\x73\x77\x65\x72","\x6F\x6E","\x63\x68\x61\x6E\x67\x65","\x32","\x31\x2E\x36\x37\x38","\x30\x2E\x39\x39\x39\x39\x39\x31","\x33","\x32\x2E\x36\x35\x34\x38","\x31\x2E\x30\x30\x30\x30\x32","\x34","\x32\x2E\x32\x34","\x35","\x31\x2E\x35\x38\x36","\x30\x2E\x39\x39\x39\x38","\x36","\x36\x2E\x38\x34","\x36\x30\x30","\x23\x6D\x61\x74"];!function(_0xccc6x1){_0xdbfa[0];function _0xccc6x2(){_0xccc6x1(_0xdbfa[10])[_0xdbfa[9]](function(){_0xccc6x1(this)[_0xdbfa[4]](_0xdbfa[3])[_0xdbfa[2]](_0xdbfa[1]),_0xccc6x1(this)[_0xdbfa[4]](_0xdbfa[3])[_0xdbfa[6]](_0xdbfa[5]),_0xccc6x1(this)[_0xdbfa[8]](_0xdbfa[7])})}function _0xccc6x3(){_0xccc6x1(_0xdbfa[10])[_0xdbfa[9]](function(){_0xccc6x1(this)[_0xdbfa[4]](_0xdbfa[3])[_0xdbfa[2]](_0xdbfa[5]),_0xccc6x1(this)[_0xdbfa[4]](_0xdbfa[3])[_0xdbfa[6]](_0xdbfa[1])})}var _0xccc6x4,_0xccc6x5=_0xccc6x1(_0xdbfa[11]);_0xccc6x1(_0xdbfa[16])[_0xdbfa[17]](function(){_0xccc6x1(this)[_0xdbfa[4]](_0xdbfa[3])[_0xdbfa[2]](_0xdbfa[12]),_0xccc6x2(),_0xccc6x5[_0xdbfa[14]](_0xdbfa[13],!1),_0xccc6x1[_0xdbfa[15]](_0xccc6x1(this)[_0xdbfa[8]]())=== !1?(_0xccc6x1(this)[_0xdbfa[4]](_0xdbfa[3])[_0xdbfa[6]](_0xdbfa[12]),_0xccc6x5[_0xdbfa[14]](_0xdbfa[13],!1)):_0xccc6x1(this)[_0xdbfa[4]](_0xdbfa[3])[_0xdbfa[2]](_0xdbfa[12]),_0xccc6x4= 0,_0xccc6x1(_0xdbfa[16])[_0xdbfa[9]](function(){_0xdbfa[7]!= _0xccc6x1(this)[_0xdbfa[8]]()&& _0xccc6x1[_0xdbfa[15]](_0xccc6x1(this)[_0xdbfa[8]]())!== !1|| _0xccc6x4++}),_0xccc6x4> 0&& _0xccc6x5[_0xdbfa[14]](_0xdbfa[13],!0)}),_0xccc6x5[_0xdbfa[30]](_0xdbfa[18],function(_0xccc6x2){_0xccc6x2[_0xdbfa[19]]();var _0xccc6x4,_0xccc6x5,_0xccc6x6,_0xccc6x7,_0xccc6x8;_0xccc6x5= parseFloat(_0xccc6x1(_0xdbfa[20])[_0xdbfa[8]]()),_0xccc6x6= parseFloat(_0xccc6x1(_0xdbfa[21])[_0xdbfa[8]]()),_0xccc6x7= parseFloat(_0xccc6x1(_0xdbfa[22])[_0xdbfa[8]]()),_0xdbfa[23]== _0xccc6x1(_0xdbfa[24])[_0xdbfa[8]]()&& (_0xccc6x7*= 1e3),_0xccc6x8= 4* Math[_0xdbfa[25]]/ 1e7,_0xccc6x7*= Math[_0xdbfa[26]](10,6),_0xccc6x5*= Math[_0xdbfa[26]](10,-6),_0xccc6x4= Math[_0xdbfa[27]](_0xccc6x5/ (Math[_0xdbfa[25]]* _0xccc6x7* _0xccc6x6* _0xccc6x8)),_0xccc6x4*= Math[_0xdbfa[26]](10,5),_0xccc6x1(_0xdbfa[29])[_0xdbfa[8]](parseFloat(_0xccc6x4)[_0xdbfa[28]](4)),_0xccc6x3()}),_0xccc6x1(_0xdbfa[46])[_0xdbfa[30]](_0xdbfa[31],function(){_0xccc6x2();var _0xccc6x3=_0xccc6x1(this)[_0xdbfa[8]](),_0xccc6x4=_0xccc6x1(_0xdbfa[20]),_0xccc6x5=_0xccc6x1(_0xdbfa[21]);_0xccc6x4[_0xdbfa[14]](_0xdbfa[13],!0),_0xccc6x5[_0xdbfa[14]](_0xdbfa[13],!0),_0xdbfa[32]== _0xccc6x3?(_0xccc6x4[_0xdbfa[8]](_0xdbfa[33]),_0xccc6x5[_0xdbfa[8]](_0xdbfa[34])):_0xdbfa[35]== _0xccc6x3?(_0xccc6x4[_0xdbfa[8]](_0xdbfa[36]),_0xccc6x5[_0xdbfa[8]](_0xdbfa[37])):_0xdbfa[38]== _0xccc6x3?(_0xccc6x4[_0xdbfa[8]](_0xdbfa[39]),_0xccc6x5[_0xdbfa[8]](_0xdbfa[23])):_0xdbfa[40]== _0xccc6x3?(_0xccc6x4[_0xdbfa[8]](_0xdbfa[41]),_0xccc6x5[_0xdbfa[8]](_0xdbfa[42])):_0xdbfa[43]== _0xccc6x3?(_0xccc6x4[_0xdbfa[8]](_0xdbfa[44]),_0xccc6x5[_0xdbfa[8]](_0xdbfa[45])):(_0xccc6x4[_0xdbfa[8]](_0xdbfa[7]),_0xccc6x5[_0xdbfa[8]](_0xdbfa[7]),_0xccc6x4[_0xdbfa[14]](_0xdbfa[13],!1),_0xccc6x5[_0xdbfa[14]](_0xdbfa[13],!1))}),_0xccc6x1(_0xdbfa[24])[_0xdbfa[30]](_0xdbfa[31],function(){_0xccc6x2()})}(jQuery)
-   </script>
-</div>
+  <div class="diagramBox">
+    <div class="skin-diagram">
+
+      <svg viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg">
+
+        <defs>
+          <!-- red outer glow -->
+          <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="45%" stop-color="#ffe5e5"/>
+            <stop offset="72%" stop-color="#ff7b7b"/>
+            <stop offset="100%" stop-color="#ff0000"/>
+          </radialGradient>
+
+          <!-- fade center -->
+          <radialGradient id="centerFade" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#f5f5f5"/>
+          </radialGradient>
+        </defs>
+
+        <!-- background -->
+        <rect width="420" height="320" fill="#efefef"/>
+
+        <!-- outer red conductor -->
+        <circle cx="170" cy="160" r="120"
+          fill="url(#ringGrad)"
+          stroke="#c40000"
+          stroke-width="2"/>
+
+        <!-- hollow center -->
+        <circle cx="170" cy="160" r="72"
+          fill="url(#centerFade)"
+          stroke="none"/>
+
+        <!-- dashed depth circle -->
+        <circle cx="170" cy="160" r="86"
+          fill="none"
+          stroke="#111"
+          stroke-width="2"
+          stroke-dasharray="6 4"/>
+
+        <!-- delta arrows -->
+        <line x1="255" y1="160" x2="290" y2="160"
+          stroke="#111"
+          stroke-width="3"/>
+
+        
+
+        <polygon points="318,160 304,152 304,168"
+          fill="#111"/>
+
+        <!-- delta text -->
+        <text x="266" y="152"
+          font-size="28"
+          font-weight="700"
+          fill="#111">δ</text>
+
+        <!-- label -->
+        <text x="250" y="48"
+          font-size="24"
+          fill="#111">
+          Skin Depth
+        </text>
+
+      </svg>
+
+    </div>
+  </div>
+</section>
+
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">δ = √(ρ / (π × f × μr × μ0))</div>
+  <div class="formulaLine">μ0 = 4π × 10⁻⁷ H/m</div>
+  <div class="formulaLine">Frequency: GHz is converted to MHz, then MHz to Hz</div>
+  <div class="formulaLine">Resistivity: µΩ·cm is converted using ρ × 10⁻⁸ Ω·m</div>
+</section>
+
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    Skin depth is the distance from the conductor surface where AC current density falls significantly.
+  </p>
+  <p>
+    As frequency increases, current flows closer to the surface, so skin depth becomes smaller.
+  </p>
+</section>
+
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>
+        Material: Copper<br>
+        Resistivity: 1.678 µΩ·cm<br>
+        μr: 1<br>
+        Frequency: 10 GHz
+      </p>
+    </div>
+
+    <div class="exampleCard">
+      <p><b>Output</b></p>
+      <p>
+        The calculator converts material and frequency values, then gives skin depth in micrometers.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("calculate").addEventListener("click",function(e){
+    e.preventDefault();
+    calculateSkinDepth();
+  });
+
+  ["res","rp","fr"].forEach(function(id){
+    document.getElementById(id).addEventListener("input",clearResults);
+  });
+
+  document.getElementById("fr-unit").addEventListener("change",clearResults);
+  document.getElementById("mat").addEventListener("change",setMaterial);
+
+  clearResults();
+});
+
+function clearResults(){
+  document.getElementById("answer").textContent="";
+  document.getElementById("freqMHz").textContent="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function setMaterial(){
+  var mat=document.getElementById("mat").value;
+  var res=document.getElementById("res");
+  var rp=document.getElementById("rp");
+
+  if(mat=="2"){res.value="1.678";rp.value="0.999991";res.disabled=true;rp.disabled=true;}
+  else if(mat=="3"){res.value="2.6548";rp.value="1.00002";res.disabled=true;rp.disabled=true;}
+  else if(mat=="4"){res.value="2.24";rp.value="1";res.disabled=true;rp.disabled=true;}
+  else if(mat=="5"){res.value="1.586";rp.value="0.9998";res.disabled=true;rp.disabled=true;}
+  else if(mat=="6"){res.value="6.84";rp.value="600";res.disabled=true;rp.disabled=true;}
+  else{res.value="";rp.value="";res.disabled=false;rp.disabled=false;}
+
+  clearResults();
+}
+
+function calculateSkinDepth(){
+  var resistivity=parseFloat(document.getElementById("res").value);
+  var relativePermeability=parseFloat(document.getElementById("rp").value);
+  var frequency=parseFloat(document.getElementById("fr").value);
+
+  if(!isFinite(resistivity) || !isFinite(relativePermeability) || !isFinite(frequency) || resistivity<=0 || relativePermeability<=0 || frequency<=0){
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  if(document.getElementById("fr-unit").value=="1"){
+    frequency *= 1000;
+  }
+
+  var frequencyMHz=frequency;
+  frequency *= Math.pow(10,6);
+
+  var mu0 = 4*Math.PI/Math.pow(10,7);
+  var rho = resistivity*Math.pow(10,-8);
+
+  var skinDepth = Math.sqrt(rho/(Math.PI*frequency*relativePermeability*mu0));
+  skinDepth *= Math.pow(10,6);
+
+  document.getElementById("answer").textContent=parseFloat(skinDepth).toPrecision(4);
+  document.getElementById("freqMHz").textContent=parseFloat(frequencyMHz).toPrecision(4);
+
+  document.getElementById("errorBox").style.display="none";
+}
+</script>
+
 </body>
 </html>
