@@ -1,166 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Pi Attenuator Calculator</title>
+<meta name="description" content="Calculate Pi attenuator resistor values R1 and R2 from attenuation in dB and system impedance.">
 
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0}
+.calc{max-width:620px;margin:auto;padding:14px}
+
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
 }
 
-body { 
-  background: ; 
+.valueBox,input,select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+.valueBox{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#374151;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+input:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+.resultTitle{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#7b8794;
+  margin-top:22px;
+  margin-bottom:12px;
+}
+
+.resultGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.card{
+  padding:16px;
+  border-radius:12px;
+  min-height:82px;
+}
+
+.cardLabel{
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.cardLine{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.cardValue,.cardUnit{
+  font-size:18px;
+  font-weight:900;
+}
+
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.green *{color:#16a34a}
+
+.infoBox{
+  margin-top:16px;
+  padding:14px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+}
+
+.infoBox h2,.infoBox h3{
+  margin:0 0 10px;
+  font-size:16px;
+  color:#374151;
+}
+
+.infoBox p,.infoBox li{
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+.formulaLine{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  padding:10px;
+  margin:8px 0;
+  font-size:13px;
+  color:#475467;
+  font-weight:800;
+  overflow-x:auto;
+}
+
+.diagramBox{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:10px;
+  overflow-x:auto;
+}
+
+.pi-diagram svg{
+  width:100%;
+  min-width:560px;
+  height:auto;
+  display:block;
+}
+
+.exampleGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.exampleCard{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:10px;
+}
+
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .card{padding:14px}
+  .cardValue,.cardUnit{font-size:16px}
+  .exampleGrid{grid-template-columns:1fr}
+}
 </style>
+</head>
 
+<body>
 
+<main class="calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<form id="tool-form">
-
+<label>Attenuation</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <input type="number" id="att" placeholder="Example: 10" step="any">
+  <div class="valueBox">dB</div>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:60;" >Attenuation</label><font face="Arial" size="7">  </font><input  id="att"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">dB</label>
-
-</div>
-</div>
-<h1 style="font-size:45;"></h1>
+<label>Impedance</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >Impedance</label><font face="Arial" size="7">  </font><input  id="imp"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;"><b>&Omega;</b></label>
-
-</div>
+  <input type="number" id="imp" placeholder="Example: 50" step="any">
+  <div class="valueBox">Ω</div>
 </div>
 
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+<button class="btn" id="calculate" type="button">CALCULATE</button>
 
+<div id="errorBox">Please enter valid positive values.</div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+<div class="resultTitle">RESULTS</div>
 
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">R1</div>
+    <div class="cardLine">
+      <span class="cardValue" id="r1"></span>
+      <span class="cardUnit">Ω</span>
+    </div>
+  </div>
 
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:60;" >R<sub>1</sub></label><font face="Arial" size="7">  </font><input  id="r1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;"><b>&Omega;</b></label>
-
-</div>
-</div>
-<h1 style="font-size:30;"></h1>
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:60;" >R<sub>2</sub></label><font face="Arial" size="7">  </font><input  id="r2"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 150px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;"><b>&Omega;</b></label>
-
-
- </div>
+  <div class="card green">
+    <div class="cardLabel">R2</div>
+    <div class="cardLine">
+      <span class="cardValue" id="r2"></span>
+      <span class="cardUnit">Ω</span>
+    </div>
+  </div>
 </div>
 
-<script type="text/javascript">
-var _0xc5c6=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x61\x74\x74","\x23\x69\x6D\x70","\x70\x6F\x77","\x74\x6F\x46\x69\x78\x65\x64","\x23\x72\x31","\x23\x72\x32","\x6F\x6E","\x63\x68\x61\x6E\x67\x65","\x23\x70\x6F\x72\x74"];!function(_0x2d26x1){_0xc5c6[0];function _0x2d26x2(){_0x2d26x1(_0xc5c6[10])[_0xc5c6[9]](function(){_0x2d26x1(this)[_0xc5c6[4]](_0xc5c6[3])[_0xc5c6[2]](_0xc5c6[1]),_0x2d26x1(this)[_0xc5c6[4]](_0xc5c6[3])[_0xc5c6[6]](_0xc5c6[5]),_0x2d26x1(this)[_0xc5c6[8]](_0xc5c6[7])})}function _0x2d26x3(){_0x2d26x1(_0xc5c6[10])[_0xc5c6[9]](function(){_0x2d26x1(this)[_0xc5c6[4]](_0xc5c6[3])[_0xc5c6[2]](_0xc5c6[5]),_0x2d26x1(this)[_0xc5c6[4]](_0xc5c6[3])[_0xc5c6[6]](_0xc5c6[1])})}var _0x2d26x4,_0x2d26x5=_0x2d26x1(_0xc5c6[11]);_0x2d26x1(_0xc5c6[16])[_0xc5c6[17]](function(){_0x2d26x1(this)[_0xc5c6[4]](_0xc5c6[3])[_0xc5c6[2]](_0xc5c6[12]),_0x2d26x2(),_0x2d26x5[_0xc5c6[14]](_0xc5c6[13],!1),_0x2d26x1[_0xc5c6[15]](_0x2d26x1(this)[_0xc5c6[8]]())=== !1?(_0x2d26x1(this)[_0xc5c6[4]](_0xc5c6[3])[_0xc5c6[6]](_0xc5c6[12]),_0x2d26x5[_0xc5c6[14]](_0xc5c6[13],!1)):_0x2d26x1(this)[_0xc5c6[4]](_0xc5c6[3])[_0xc5c6[2]](_0xc5c6[12]),_0x2d26x4= 0,_0x2d26x1(_0xc5c6[16])[_0xc5c6[9]](function(){_0xc5c6[7]!= _0x2d26x1(this)[_0xc5c6[8]]()&& _0x2d26x1[_0xc5c6[15]](_0x2d26x1(this)[_0xc5c6[8]]())!== !1|| _0x2d26x4++}),_0x2d26x4> 0&& _0x2d26x5[_0xc5c6[14]](_0xc5c6[13],!0)}),_0x2d26x5[_0xc5c6[26]](_0xc5c6[18],function(_0x2d26x2){_0x2d26x2[_0xc5c6[19]]();var _0x2d26x4,_0x2d26x5,_0x2d26x6,_0x2d26x7,_0x2d26x8,_0x2d26x9;_0x2d26x6= _0x2d26x1(_0xc5c6[20])[_0xc5c6[8]](),_0x2d26x7= _0x2d26x1(_0xc5c6[21])[_0xc5c6[8]](),_0x2d26x8= Math[_0xc5c6[22]](10,parseFloat(_0x2d26x6)/ 20),_0x2d26x9= (_0x2d26x8+ 1)/ (_0x2d26x8- 1),_0x2d26x4= _0x2d26x7* _0x2d26x9,_0x2d26x5= _0x2d26x7/ 2* ((Math[_0xc5c6[22]](10,_0x2d26x6/ 10)- 1)/ _0x2d26x8),_0x2d26x1(_0xc5c6[24])[_0xc5c6[8]](parseFloat(_0x2d26x4)[_0xc5c6[23]](4)),_0x2d26x1(_0xc5c6[25])[_0xc5c6[8]](parseFloat(_0x2d26x5)[_0xc5c6[23]](4)),_0x2d26x3()}),_0x2d26x1(_0xc5c6[28])[_0xc5c6[26]](_0xc5c6[27],function(){_0x2d26x2()})}(jQuery)
-    </script>
-</div>
+<section class="infoBox">
+  <h2>Pi Attenuator Diagram</h2>
+
+  <div class="diagramBox">
+    <div class="pi-diagram">
+      <svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pi attenuator circuit diagram">
+
+        <rect x="0" y="0" width="760" height="330" fill="#ffffff"/>
+
+        <!-- main wire -->
+        <line x1="80" y1="150" x2="680" y2="150" stroke="#111827" stroke-width="4"/>
+
+        <!-- input/output labels -->
+        <text x="70" y="125" font-size="18" font-weight="700" fill="#111827">Input</text>
+        <text x="640" y="125" font-size="18" font-weight="700" fill="#111827">Output</text>
+
+        <!-- left shunt R1 -->
+        <circle cx="220" cy="150" r="6" fill="#ef4444"/>
+        <line x1="220" y1="150" x2="220" y2="185" stroke="#111827" stroke-width="3"/>
+        <rect x="200" y="185" width="40" height="72" rx="5" fill="#fff7ed" stroke="#ef4444" stroke-width="3"/>
+        <text x="220" y="228" text-anchor="middle" font-size="18" font-weight="700" fill="#c2410c">R1</text>
+        <line x1="220" y1="257" x2="220" y2="285" stroke="#111827" stroke-width="3"/>
+
+        <!-- ground left -->
+        <line x1="195" y1="285" x2="245" y2="285" stroke="#16a34a" stroke-width="3"/>
+        <line x1="203" y1="294" x2="237" y2="294" stroke="#16a34a" stroke-width="3"/>
+        <line x1="211" y1="303" x2="229" y2="303" stroke="#16a34a" stroke-width="3"/>
+
+        <!-- series R2 -->
+        <rect x="330" y="125" width="100" height="50" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="3"/>
+        <text x="380" y="156" text-anchor="middle" font-size="20" font-weight="700" fill="#2359e8">R2</text>
+
+        <!-- hide inner line behind resistor -->
+        <line x1="330" y1="150" x2="430" y2="150" stroke="#eef5ff" stroke-width="8"/>
+
+        <!-- right shunt R1 -->
+        <circle cx="540" cy="150" r="6" fill="#ef4444"/>
+        <line x1="540" y1="150" x2="540" y2="185" stroke="#111827" stroke-width="3"/>
+        <rect x="520" y="185" width="40" height="72" rx="5" fill="#fff7ed" stroke="#ef4444" stroke-width="3"/>
+        <text x="540" y="228" text-anchor="middle" font-size="18" font-weight="700" fill="#c2410c">R1</text>
+        <line x1="540" y1="257" x2="540" y2="285" stroke="#111827" stroke-width="3"/>
+
+        <!-- ground right -->
+        <line x1="515" y1="285" x2="565" y2="285" stroke="#16a34a" stroke-width="3"/>
+        <line x1="523" y1="294" x2="557" y2="294" stroke="#16a34a" stroke-width="3"/>
+        <line x1="531" y1="303" x2="549" y2="303" stroke="#16a34a" stroke-width="3"/>
+
+        <!-- arrows -->
+        <line x1="90" y1="95" x2="190" y2="95" stroke="#111827" stroke-width="3"/>
+        <polygon points="190,95 174,87 174,103" fill="#111827"/>
+
+        <line x1="570" y1="95" x2="670" y2="95" stroke="#111827" stroke-width="3"/>
+        <polygon points="670,95 654,87 654,103" fill="#111827"/>
+
+        <text x="380" y="55" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">Pi Attenuator Network</text>
+        <text x="380" y="85" text-anchor="middle" font-size="15" font-weight="700" fill="#667085">Two shunt resistors and one series resistor</text>
+
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">K = 10^(Attenuation / 20)</div>
+  <div class="formulaLine">R1 = Z × ((K + 1) / (K - 1))</div>
+  <div class="formulaLine">R2 = (Z / 2) × ((10^(Attenuation / 10) - 1) / K)</div>
+</section>
+
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    A Pi attenuator uses two shunt resistors and one series resistor to reduce RF signal level while maintaining the desired system impedance.
+  </p>
+  <p>
+    Enter the attenuation in dB and the system impedance. For most RF systems, impedance is commonly 50 Ω.
+  </p>
+</section>
+
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>
+        Attenuation: 10 dB<br>
+        Impedance: 50 Ω
+      </p>
+    </div>
+
+    <div class="exampleCard">
+      <p><b>How to Use</b></p>
+      <p>
+        Enter the required attenuation and impedance, then click calculate to get R1 and R2 resistor values.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("calculate").addEventListener("click",function(e){
+    e.preventDefault();
+    calculatePi();
+  });
+
+  ["att","imp"].forEach(function(id){
+    document.getElementById(id).addEventListener("input",clearResults);
+  });
+
+  clearResults();
+});
+
+function clearResults(){
+  document.getElementById("r1").textContent="";
+  document.getElementById("r2").textContent="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function calculatePi(){
+  var att=parseFloat(document.getElementById("att").value);
+  var imp=parseFloat(document.getElementById("imp").value);
+
+  if(!isFinite(att) || !isFinite(imp) || att<=0 || imp<=0){
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var k=Math.pow(10,att/20);
+  var r1=imp*((k+1)/(k-1));
+  var r2=imp/2*((Math.pow(10,att/10)-1)/k);
+
+  document.getElementById("r1").textContent=r1.toFixed(4);
+  document.getElementById("r2").textContent=r2.toFixed(4);
+  document.getElementById("errorBox").style.display="none";
+}
+</script>
+
 </body>
 </html>
