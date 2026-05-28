@@ -1,169 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>N-Way Power Divider Loss Calculator</title>
+<meta name="description" content="Calculate total loss for an N-way RF power divider using number of output ports and additional insertion loss.">
 
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+
+body{margin:0;background:#f6f8fb;padding:0}
+
+.calc{max-width:620px;margin:auto;padding:14px}
+
+label{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  color:#555;
+  margin-bottom:6px;
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px;
+  gap:8px;
+  margin-bottom:16px;
 }
 
-body { 
-  background: ; 
+.valueBox,input,select{
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+.valueBox{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#374151;
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+select{text-align:center;font-weight:800;padding:0 6px}
+
+input:focus,select:focus{
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+#errorBox{
+  display:none;
+  margin-top:12px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:800;
+}
+
+.resultTitle{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#7b8794;
+  margin-top:22px;
+  margin-bottom:12px;
+}
+
+.resultGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.card{
+  padding:16px;
+  border-radius:12px;
+  min-height:82px;
+}
+
+.cardLabel{
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.cardLine{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.cardValue,.cardUnit{
+  font-size:18px;
+  font-weight:900;
+}
+
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.green *{color:#16a34a}
+
+.infoBox{
+  margin-top:16px;
+  padding:14px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+}
+
+.infoBox h2,.infoBox h3{
+  margin:0 0 10px;
+  font-size:16px;
+  color:#374151;
+}
+
+.infoBox p,.infoBox li{
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+  font-weight:700;
+}
+
+.formulaLine{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  padding:10px;
+  margin:8px 0;
+  font-size:13px;
+  color:#475467;
+  font-weight:800;
+  overflow-x:auto;
+}
+
+.diagramBox{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:10px;
+  overflow-x:auto;
+}
+
+.power-divider-diagram svg{
+  width:100%;
+  min-width:560px;
+  height:auto;
+  display:block;
+}
+
+.exampleGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.exampleCard{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:10px;
+}
+
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr 1fr}
+  .card{padding:14px}
+  .cardValue,.cardUnit{font-size:16px}
+  .exampleGrid{grid-template-columns:1fr}
+}
 </style>
+</head>
 
+<body>
 
+<main class="calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<form id="tool-form">
-
+<label>No. of Ports</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <select id="port">
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+    <option value="11">11</option>
+    <option value="12">12</option>
+    <option value="13">13</option>
+    <option value="14">14</option>
+    <option value="15">15</option>
+    <option value="16">16</option>
+  </select>
+  <div class="valueBox">Way</div>
+</div>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<select class="form-control" id="port" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:430px;border-radius:4px; height:85px; border:3px solid #aaa;">
-
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4">4</option>
-<option value="5">5</option>
-<option value="6">6</option>
-<option value="7">7</option>
-<option value="8">8</option>
-<option value="9">9</option>
-<option value="10">10</option>
-<option value="11">11</option>
-<option value="12">12</option>
-<option value="13">13</option>
-<option value="14">14</option>
-<option value="15">15</option>
-<option value="16">16</option>
-</select>No. of Ports
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-</div>
-</div>
-</div><h1 style="font-size:45;"></h1>
+<label>Insertion Loss / Extra Loss</label>
 <div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="r2" style="font-size:60;" >Width</label><font face="Arial" size="7">  </font><input  id="pl"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">dB</label>
-
-</div>
+  <input type="number" id="pl" placeholder="Example: 0.5" step="any">
+  <div class="valueBox">dB</div>
 </div>
 
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="calculate" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+<button class="btn" id="calculate" type="button">CALCULATE</button>
 
+<div id="errorBox">Please enter valid values.</div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+<div class="resultTitle">RESULTS</div>
 
+<div class="resultGrid">
+  <div class="card blue">
+    <div class="cardLabel">TOTAL LOSS</div>
+    <div class="cardLine">
+      <span class="cardValue" id="answer"></span>
+      <span class="cardUnit">dB</span>
+    </div>
+  </div>
 
-<h3>Outputs</h3></div></legend>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
- </div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
-<label for="r2" style="font-size:60;" >Total Loss</label><font face="Arial" size="7">  </font><input  id="answer"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">dB</label>
-
-</div>
+  <div class="card green">
+    <div class="cardLabel">SPLIT LOSS</div>
+    <div class="cardLine">
+      <span class="cardValue" id="splitLoss"></span>
+      <span class="cardUnit">dB</span>
+    </div>
+  </div>
 </div>
 
-<script type="text/javascript">
-var _0xa0d8=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x64\x69\x76","\x63\x6C\x6F\x73\x65\x73\x74","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x61\x64\x64\x43\x6C\x61\x73\x73","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x61\x6E\x73\x77\x65\x72\x2D\x66\x69\x65\x6C\x64\x73\x20\x3A\x69\x6E\x70\x75\x74","\x23\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x68\x61\x73\x2D\x65\x72\x72\x6F\x72","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x69\x73\x4E\x75\x6D\x65\x72\x69\x63","\x23\x74\x6F\x6F\x6C\x2D\x66\x6F\x72\x6D\x20\x3A\x69\x6E\x70\x75\x74","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x70\x6F\x72\x74","\x23\x70\x6C","\x6C\x6F\x67\x31\x30","\x74\x6F\x46\x69\x78\x65\x64","\x23\x61\x6E\x73\x77\x65\x72","\x6F\x6E","\x63\x68\x61\x6E\x67\x65"];!function(_0x3290x1){_0xa0d8[0];function _0x3290x2(){_0x3290x1(_0xa0d8[10])[_0xa0d8[9]](function(){_0x3290x1(this)[_0xa0d8[4]](_0xa0d8[3])[_0xa0d8[2]](_0xa0d8[1]),_0x3290x1(this)[_0xa0d8[4]](_0xa0d8[3])[_0xa0d8[6]](_0xa0d8[5]),_0x3290x1(this)[_0xa0d8[8]](_0xa0d8[7])})}function _0x3290x3(){_0x3290x1(_0xa0d8[10])[_0xa0d8[9]](function(){_0x3290x1(this)[_0xa0d8[4]](_0xa0d8[3])[_0xa0d8[2]](_0xa0d8[5]),_0x3290x1(this)[_0xa0d8[4]](_0xa0d8[3])[_0xa0d8[6]](_0xa0d8[1])})}var _0x3290x4,_0x3290x5=_0x3290x1(_0xa0d8[11]);_0x3290x1(_0xa0d8[16])[_0xa0d8[17]](function(){_0x3290x1(this)[_0xa0d8[4]](_0xa0d8[3])[_0xa0d8[2]](_0xa0d8[12]),_0x3290x2(),_0x3290x5[_0xa0d8[14]](_0xa0d8[13],!1),_0x3290x1[_0xa0d8[15]](_0x3290x1(this)[_0xa0d8[8]]())=== !1?(_0x3290x1(this)[_0xa0d8[4]](_0xa0d8[3])[_0xa0d8[6]](_0xa0d8[12]),_0x3290x5[_0xa0d8[14]](_0xa0d8[13],!1)):_0x3290x1(this)[_0xa0d8[4]](_0xa0d8[3])[_0xa0d8[2]](_0xa0d8[12]),_0x3290x4= 0,_0x3290x1(_0xa0d8[16])[_0xa0d8[9]](function(){_0xa0d8[7]!= _0x3290x1(this)[_0xa0d8[8]]()&& _0x3290x1[_0xa0d8[15]](_0x3290x1(this)[_0xa0d8[8]]())!== !1|| _0x3290x4++}),_0x3290x4> 0&& _0x3290x5[_0xa0d8[14]](_0xa0d8[13],!0)}),_0x3290x5[_0xa0d8[25]](_0xa0d8[18],function(_0x3290x2){_0x3290x2[_0xa0d8[19]]();var _0x3290x4,_0x3290x5,_0x3290x6;_0x3290x5= _0x3290x1(_0xa0d8[20])[_0xa0d8[8]](),_0x3290x6= _0x3290x1(_0xa0d8[21])[_0xa0d8[8]](),_0x3290x4= -10* Math[_0xa0d8[22]](1/ Number(_0x3290x5)),_0x3290x4+= parseFloat(_0x3290x6),_0x3290x1(_0xa0d8[24])[_0xa0d8[8]](parseFloat(_0x3290x4)[_0xa0d8[23]](4)),_0x3290x3()}),_0x3290x1(_0xa0d8[20])[_0xa0d8[25]](_0xa0d8[26],function(){_0x3290x2()})}(jQuery)
-    </script>
-</div>
+<section class="infoBox">
+  <h2>N-Way Power Divider Diagram</h2>
+
+  <div class="diagramBox">
+    <div class="power-divider-diagram">
+      <svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="N-way RF power divider diagram">
+
+        <rect x="0" y="0" width="760" height="360" fill="#ffffff"/>
+
+        <rect x="295" y="120" width="170" height="110" rx="18" fill="#fff7ed" stroke="#ef4444" stroke-width="3"/>
+        <text x="380" y="160" text-anchor="middle" font-size="20" font-weight="700" fill="#c2410c">N-Way</text>
+        <text x="380" y="188" text-anchor="middle" font-size="20" font-weight="700" fill="#c2410c">Power Divider</text>
+
+        <line x1="80" y1="175" x2="295" y2="175" stroke="#111827" stroke-width="4"/>
+        <polygon points="295,175 277,166 277,184" fill="#111827"/>
+        <text x="150" y="150" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Input Power</text>
+
+        <line x1="465" y1="145" x2="650" y2="75" stroke="#111827" stroke-width="4"/>
+        <polygon points="650,75 630,74 641,91" fill="#111827"/>
+        <text x="675" y="78" font-size="16" font-weight="700" fill="#111827">Port 1</text>
+
+        <line x1="465" y1="165" x2="650" y2="135" stroke="#111827" stroke-width="4"/>
+        <polygon points="650,135 632,128 635,146" fill="#111827"/>
+        <text x="675" y="140" font-size="16" font-weight="700" fill="#111827">Port 2</text>
+
+        <line x1="465" y1="185" x2="650" y2="205" stroke="#111827" stroke-width="4"/>
+        <polygon points="650,205 634,195 632,213" fill="#111827"/>
+        <text x="675" y="210" font-size="16" font-weight="700" fill="#111827">Port 3</text>
+
+        <line x1="465" y1="205" x2="650" y2="285" stroke="#111827" stroke-width="4"/>
+        <polygon points="650,285 640,268 630,285" fill="#111827"/>
+        <text x="675" y="290" font-size="16" font-weight="700" fill="#111827">Port N</text>
+
+        <circle cx="295" cy="175" r="7" fill="#ef4444"/>
+        <circle cx="465" cy="145" r="6" fill="#ef4444"/>
+        <circle cx="465" cy="165" r="6" fill="#ef4444"/>
+        <circle cx="465" cy="185" r="6" fill="#ef4444"/>
+        <circle cx="465" cy="205" r="6" fill="#ef4444"/>
+
+        <text x="380" y="270" text-anchor="middle" font-size="16" font-weight="700" fill="#111827">
+          Total Loss = Split Loss + Extra Loss
+        </text>
+
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="infoBox">
+  <h2>Formulas</h2>
+  <div class="formulaLine">Split Loss = -10 × log10(1 / N)</div>
+  <div class="formulaLine">Split Loss = 10 × log10(N)</div>
+  <div class="formulaLine">Total Loss = Split Loss + Insertion Loss</div>
+</section>
+
+<section class="infoBox">
+  <h2>Diagrams & Theory</h2>
+  <p>
+    An N-way power divider splits one RF input signal into multiple output ports. The ideal split loss increases as the number of output ports increases.
+  </p>
+  <p>
+    Real power dividers also include extra insertion loss, connector loss, PCB loss, and frequency-dependent loss. Add that value as extra loss in dB.
+  </p>
+</section>
+
+<section class="infoBox">
+  <h2>Example</h2>
+  <div class="exampleGrid">
+    <div class="exampleCard">
+      <p><b>Input Example</b></p>
+      <p>
+        No. of Ports: 4<br>
+        Insertion Loss: 0.5 dB
+      </p>
+    </div>
+
+    <div class="exampleCard">
+      <p><b>Output</b></p>
+      <p>
+        Ideal split loss is 6.0206 dB. Total loss becomes 6.5206 dB after adding 0.5 dB insertion loss.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("calculate").addEventListener("click",function(e){
+    e.preventDefault();
+    calculateDivider();
+  });
+
+  document.getElementById("port").addEventListener("change",clearResults);
+  document.getElementById("pl").addEventListener("input",clearResults);
+
+  clearResults();
+});
+
+function clearResults(){
+  document.getElementById("answer").textContent="";
+  document.getElementById("splitLoss").textContent="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function calculateDivider(){
+  var port=Number(document.getElementById("port").value);
+  var pl=parseFloat(document.getElementById("pl").value);
+
+  if(!isFinite(port) || port<=0 || !isFinite(pl)){
+    document.getElementById("errorBox").style.display="block";
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var splitLoss=-10*Math.log10(1/port);
+  var totalLoss=splitLoss+pl;
+
+  document.getElementById("splitLoss").textContent=splitLoss.toFixed(4);
+  document.getElementById("answer").textContent=totalLoss.toFixed(4);
+  document.getElementById("errorBox").style.display="none";
+}
+</script>
+
 </body>
 </html>
