@@ -1,190 +1,168 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ACPR Calculator | Adjacent Channel Power Ratio Solver & Formula</title>
+<meta name="description" content="Calculate Adjacent Channel Power Ratio (ACPR) using peak power, average power, input power, and third-order intercept point (IP3) for RF power amplifiers.">
+<meta name="keywords" content="ACPR calculator, adjacent channel power ratio calculator, adjacent channel power ratio formula, adjacent channel power ratio measurement, acpr dbm calculator, rf acpr solver, third order intercept point calculator, crest factor calculator, IP3 calculator, RF linearity solver, spectral regrowth calculator, power amplifier distortion tool, wireless engineering calculator, rf amplifier linearity test, adjacent channel leakage ratio, aclr calculator, adjacent channel power dbe, adjacent channel interference calculator, radio frequency linearity tools, power amplifier power calculator, crest factor optimization rf, spectrum analyzer distortion calculation">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:0;
-}
-
-.calc{
-  max-width:620px;
-  margin:auto;
-  padding:14px;
-}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-input{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  outline:none;
-}
-
-input:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.unit{
-  height:43px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  font-weight:700;
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-  margin-top:8px;
-}
-
-.resultTitle{
-  margin-top:26px;
-  font-size:13px;
-  font-weight:800;
-  color:#8b95a7;
-  letter-spacing:1px;
-}
-
-.result{
-  margin-top:12px;
-}
-
-.card{
-  background:#eef5ff;
-  border-radius:10px;
-  padding:16px;
-  border:1px solid #c8dbff;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:800;
-  color:#2563eb;
-  text-transform:uppercase;
-}
-
-.cardValue{
-  margin-top:6px;
-  font-size:20px;
-  font-weight:800;
-  color:#2563eb;
-  word-break:break-word;
-  min-height:24px;
-}
-
-.formula{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit{height:43px;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #cfd6df;border-radius:8px;font-weight:700;font-size:14px;color:#555}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:13px;font-weight:700}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
+.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
+.cardLine input{background:transparent !important;font-weight:800;color:inherit;border:none !important;padding:0;height:auto;font-size:18px;width:100%;outline:none;box-shadow:none !important}
+.cardLine span{font-weight:800;font-size:14px}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:16px;color:#2d3748;border-bottom:1px solid #edf2f7;padding-bottom:6px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#475467;font-weight:700;overflow-x:auto;line-height:1.6}
+.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;min-width:450px;height:auto;display:block;margin:auto}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
+.exampleCard p{margin:4px 0;font-size:13px;color:#4a5568}
 @media(max-width:600px){
-  .row{
-    grid-template-columns:minmax(0,1fr) 72px;
-  }
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .exampleGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="number1">Peak Power</label>
+    <div class="row">
+      <input id="number1" type="number" placeholder="Example: 15">
+      <div class="unit">dBm</div>
+    </div>
 
-<div class="calc">
+    <label for="number2">Ave. PWR (Average Power)</label>
+    <div class="row">
+      <input id="number2" type="number" placeholder="Example: 10">
+      <div class="unit">dBm</div>
+    </div>
 
-  <label>Peak Power</label>
-  <div class="row">
-    <input id="number1" type="number">
-    <div class="unit">dBm</div>
-  </div>
+    <label for="number3">Input Power</label>
+    <div class="row">
+      <input id="number3" type="number" placeholder="Example: -5">
+      <div class="unit">dBm</div>
+    </div>
 
-  <label>Ave. PWR (Average Power)</label>
-  <div class="row">
-    <input id="number2" type="number">
-    <div class="unit">dBm</div>
-  </div>
+    <label for="number4">Third Order Intercept Point (IP3)</label>
+    <div class="row">
+      <input id="number4" type="number" placeholder="Example: 30">
+      <div class="unit">dBm</div>
+    </div>
 
-  <label>Input Power</label>
-  <div class="row">
-    <input id="number3" type="number">
-    <div class="unit">dBm</div>
-  </div>
-
-  <label>Third Order Intercept Point (IP3)</label>
-  <div class="row">
-    <input id="number4" type="number">
-    <div class="unit">dBm</div>
-  </div>
-
-  <button class="btn" onclick="calc()">CALCULATE</button>
-
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
   <div id="errorBox">Please enter valid values.</div>
 
   <div class="resultTitle">RESULT</div>
-
-  <div class="result">
-    <div class="card">
-      <div class="cardLabel">ACPR</div>
-      <div class="cardValue" id="acprValue"></div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">ACPR VALUE</div>
+      <div class="cardLine">
+        <input id="acprValue" type="text" readonly placeholder="-">
+        <span>dBc</span>
+      </div>
     </div>
   </div>
 
-  <div class="formula">
-    Original formula preserved:<br><br>
-    Crestfactor = Pmax / Pavg<br>
-    ACPR = -20.75 + (1.6 × Crestfactor) + (2 × (Pin − IP3))
-  </div>
+  <section class="infoBox">
+    <h2>Adjacent Channel Power Ratio Graph</h2>
+    <p>This professional dynamic Adjacent Channel Power Ratio Calculator helps wireless communication engineers analyze intermodulation distortion. ACPR quantifies nonlinear distortion thresholds inside power amplifiers by tracking spectral regrowth leaking directly into localized adjacent transmission sidebands relative against the primary transmission channel matrix block flows. Accurate adjacent channel power ratio measurement is vital for cellular standards like LTE, 5G, and RF transmitter design.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 250" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="250" fill="#ffffff" stroke="none"/>
+          
+          <line x1="50" y1="210" x2="490" y2="210" stroke="#000000" stroke-width="2"/>
+          <line x1="50" y1="30" x2="50" y2="210" stroke="#000000" stroke-width="2"/>
+          
+          <line x1="50" y1="60" x2="490" y2="60" stroke="#cbd5e1" stroke-width="0.8"/>
+          <line x1="50" y1="110" x2="490" y2="110" stroke="#cbd5e1" stroke-width="0.8"/>
+          <line x1="50" y1="160" x2="490" y2="160" stroke="#cbd5e1" stroke-width="0.8"/>
+          
+          <path d="M 50 200 L 90 200 L 120 180 L 140 180 L 160 150 L 180 150 L 210 60 L 330 60 L 360 150 L 380 150 L 400 180 L 420 180 L 450 200 L 490 200" fill="none" stroke="#000000" stroke-width="2.5"/>
+          
+          <rect x="210" y="50" width="120" height="160" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="4,2"/>
+          <text x="270" y="45" fill="#16a34a" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Main Channel</text>
+          
+          <rect x="120" y="130" width="60" height="80" fill="none" stroke="#ff3b30" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="150" y="123" fill="#ff3b30" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Lower Channel</text>
+          
+          <rect x="360" y="130" width="60" height="80" fill="none" stroke="#ff3b30" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="390" y="123" fill="#ff3b30" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Upper Channel</text>
+          
+          <line x1="270" y1="60" x2="270" y2="150" stroke="#2359e8" stroke-width="1.5"/>
+          <path d="M 270 60 L 266 68 L 274 68 Z" fill="#2359e8"/>
+          <path d="M 270 150 L 266 142 L 274 142 Z" fill="#2359e8"/>
+          <text x="282" y="105" fill="#2359e8" font-size="12" font-family="sans-serif" font-weight="bold">ACPR (dB)</text>
+          
+          <text x="490" y="230" fill="#333333" font-size="11" font-family="sans-serif" font-style="italic" text-anchor="end">Frequency</text>
+          <text x="40" y="30" fill="#333333" font-size="11" font-family="sans-serif" font-style="italic" transform="rotate(-90 40 30)" text-anchor="end">Power Level (dBm)</text>
+        </svg>
+      </div>
+    </div>
+  </section>
 
-</div>
+  <section class="infoBox">
+    <h2>Adjacent Channel Power Ratio Formula & Calculation Logic</h2>
+    <p>Understanding the mathematical theory behind adjacent channel power calculation model helps determine the linearity behavior of wireless transmitters. The core computational system evaluates signal regrowth distortion performance thresholds using basic linearity ratios:</p>
+    <div class="formulaLine">
+      <strong>Crest Factor Computation:</strong><br>
+      Crestfactor = Pmax / Pavg
+    </div>
+    <div class="formulaLine">
+      <strong>Adjacent Channel Power Ratio Evaluation (ACPR Formula):</strong><br>
+      ACPR = -20.75 + (1.6 * Crestfactor) + (2 * (Pin - IP3))
+    </div>
+    <p>Where Pmax is peak power in dBm, Pavg is average power in dBm, Pin is input power in dBm, and IP3 is the third order intercept point parameter specifying nonlinear distortion bounds.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical ACPR Calculation Example</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><b>Input Parameters</b></p>
+        <p>Peak Power (Pmax): 16.00 dBm</p>
+        <p>Average Power (Pavg): 10.00 dBm</p>
+        <p>Input Power (Pin): -4.00 dBm</p>
+        <p>Intercept Point (IP3): 35.00 dBm</p>
+      </div>
+      <div class="exampleCard">
+        <p><b>Determined Output Data</b></p>
+        <p>Calculated ACPR Ratio: -96.19 dBc</p>
+        <p>Status: Complete Linear Processing</p>
+      </div>
+    </div>
+  </section>
+</main>
 
 <script>
-function calc(){
+function clearResults(){
+  document.getElementById("acprValue").value = "";
+  document.getElementById("errorBox").style.display = "none";
+}
 
+document.getElementById("number1").addEventListener("input", clearResults);
+document.getElementById("number2").addEventListener("input", clearResults);
+document.getElementById("number3").addEventListener("input", clearResults);
+document.getElementById("number4").addEventListener("input", clearResults);
+
+function calc(){
   var Pmax = Number(document.getElementById("number1").value);
   var Pavg = Number(document.getElementById("number2").value);
   var Pin  = Number(document.getElementById("number3").value);
@@ -202,7 +180,7 @@ function calc(){
     document.getElementById("number4").value === ""
   ){
     errorBox.style.display = "block";
-    resultValue.innerHTML = "";
+    resultValue.value = "";
     return;
   }
 
@@ -216,9 +194,7 @@ function calc(){
     (1.6 * Crestfactor) +
     (2 * (Pin - IP3));
 
-  resultValue.innerHTML = c1.toFixed(4);
+  resultValue.value = c1.toFixed(4);
 }
 </script>
-
-</body>
-</html>
+</body></html>
