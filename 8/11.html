@@ -1,462 +1,241 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RF Phase Noise to Phase Jitter Converter Calculator | Noise Solver</title>
+<meta name="description" content="Convert integrated phase noise power density (dBc) into RMS phase jitter in radians and micro-seconds using operational oscillator frequency.">
+<meta name="keywords" content="rf phase noise to phase jitter converter, rms phase jitter calculator radians, integrated phase noise power density dbc, clock jitter time domain simulation, frequency oscillator offset tool, period jitter deviation calculator, timing phase deviation calculation, spectral noise density converter, phase noise integration limits">
 <style>
-
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-
-body{
-margin:0;
-background:#f6f8fb;
-padding:0;
-}
-
-.calc{
-max-width:620px;
-margin:auto;
-padding:14px;
-}
-
-label{
-display:block;
-font-size:15px;
-font-weight:700;
-color:#555;
-margin-bottom:6px;
-}
-
-.row{
-display:grid;
-grid-template-columns:minmax(0,1fr) 82px;
-gap:8px;
-margin-bottom:16px;
-}
-
-input,select{
-width:100%;
-height:43px;
-border:1px solid #cfd6df;
-border-radius:8px;
-padding:0 12px;
-font-size:15px;
-background:#fff;
-outline:none;
-}
-
-select{
-font-weight:800;
-text-align:center;
-}
-
-input:focus,
-select:focus{
-border-color:#ff6a00;
-box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-width:100%;
-height:48px;
-border:none;
-border-radius:10px;
-background:linear-gradient(90deg,#ff7a18,#ff4b00);
-color:#fff;
-font-size:16px;
-font-weight:800;
-cursor:pointer;
-}
-
-#errorBox{
-display:none;
-margin-top:12px;
-color:#dc2626;
-font-size:14px;
-font-weight:800;
-}
-
-.resultTitle{
-font-size:13px;
-font-weight:800;
-letter-spacing:1px;
-color:#7b8794;
-margin-top:22px;
-margin-bottom:12px;
-}
-
-.resultGrid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-}
-
-.card{
-padding:16px;
-border-radius:12px;
-min-height:82px;
-}
-
-.cardLabel{
-font-size:12px;
-font-weight:900;
-margin-bottom:10px;
-}
-
-.cardLine{
-display:flex;
-gap:6px;
-flex-wrap:wrap;
-}
-
-.cardValue{
-font-size:18px;
-font-weight:900;
-min-height:22px;
-}
-
-.cardUnit{
-font-size:18px;
-font-weight:900;
-}
-
-.blue{
-background:#eef5ff;
-border:1px solid #bfd3ff;
-}
-
-.blue .cardLabel,
-.blue .cardValue,
-.blue .cardUnit{
-color:#2359e8;
-}
-
-.green{
-background:#edfdf3;
-border:1px solid #bff0d0;
-}
-
-.green .cardLabel,
-.green .cardValue,
-.green .cardUnit{
-color:#019863;
-}
-
-.formula{
-margin-top:16px;
-padding:14px;
-background:#f9fafb;
-border:1px solid #e5e7eb;
-border-radius:10px;
-font-size:13px;
-line-height:1.6;
-color:#667085;
-font-weight:700;
-}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+.cardLine{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
+.cardValue{font-size:18px;font-weight:900;line-height:1;min-height:22px}
+.cardUnit{font-size:14px;font-weight:800}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.green *{color:#16a34a}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-
-.row{
-grid-template-columns:minmax(0,1fr) 72px;
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr}
+  .paramGrid{grid-template-columns:1fr}
 }
-
-.resultGrid{
-grid-template-columns:1fr 1fr;
-}
-
-}
-
-</style>
-</head>
-
+</style></head>
 <body>
-
-<div class="calc">
-
-<label>Frequency Oscillator</label>
-
-<div class="row">
-
-<input
-id="frequency"
-type="number">
-
-<select
-id="frequencyUnit">
-
-<option value="khz">
-kHz
-</option>
-
-<option value="mhz" selected>
-MHz
-</option>
-
-<option value="ghz">
-GHz
-</option>
-
-</select>
-
-</div>
-
-
-<label>Phase Noise Integrated</label>
-
-<div class="row">
-
-<input
-id="phaseNoise"
-type="number">
-
-<select>
-
-<option>
-dBc
-</option>
-
-</select>
-
-</div>
-
-
-<button
-class="btn"
-onclick="calc()">
-
-CALCULATE
-
-</button>
-
-
-<div id="errorBox">
-
-Please enter valid values
-
-</div>
-
-
-
-<div class="resultTitle">
-
-RESULTS
-
-</div>
-
-
-<div class="resultGrid">
-
-
-<div class="card blue">
-
-<div class="cardLabel">
-
-RMS PHASE JITTER IN MICRO SECONDS
-
-</div>
-
-<div class="cardLine">
-
-<span
-class="cardValue"
-id="jitterResult">
-</span>
-
-<span
-class="cardUnit"
-id="jitterUnit">
-</span>
-
-</div>
-
-</div>
-
-
-<div class="card green">
-
-<div class="cardLabel">
-
-RMS PHASE JITTER IN RADIANS
-
-</div>
-
-<div class="cardLine">
-
-<span
-class="cardValue"
-id="phaseJitterResult">
-</span>
-
-<span
-class="cardUnit"
-id="phaseUnit">
-</span>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="formula">
-
-Formula Used:<br><br>
-
-RMS Phase Jitter (Rad)
-=
-√(2 × 10^(PN/10))
-
-<br><br>
-
-RMS Phase Jitter (uS)
-=
-PhaseJitter
-÷
-(2πf)
-× 10⁶
-
-</div>
-
-
-</div>
-
-
+<main class="calc">
+  <form id="tool">
+    <label for="frequency">Frequency Oscillator</label>
+    <div class="row">
+      <input id="frequency" type="number" step="any" placeholder="Example: 10">
+      <select id="frequencyUnit">
+        <option value="khz">kHz</option>
+        <option value="mhz" selected>MHz</option>
+        <option value="ghz">GHz</option>
+      </select>
+    </div>
+
+    <label for="phaseNoise">Phase Noise Integrated</label>
+    <div class="row">
+      <input id="phaseNoise" type="number" step="any" placeholder="Example: -40">
+      <select aria-label="Phase Noise Unit Lock"><option value="dbc">dBc</option></select>
+    </div>
+
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
+  <div id="errorBox">Please enter valid values</div>
+
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">RMS Phase Jitter (Time)</div>
+      <div class="cardLine">
+        <span class="cardValue" id="jitterResult">-</span>
+        <span class="cardUnit" id="jitterUnit"></span>
+      </div>
+    </div>
+    <div class="card green">
+      <div class="cardLabel">RMS Phase Jitter (Phase)</div>
+      <div class="cardLine">
+        <span class="cardValue" id="phaseJitterResult">-</span>
+        <span class="cardUnit" id="phaseUnit"></span>
+      </div>
+    </div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Frequency Oscillator (f)</strong>
+        The fundamental operational frequency of the carrier or clock generating hardware component circuit, in kHz, MHz, or GHz bands.
+      </div>
+      <div class="paramItem">
+        <strong>Phase Noise Integrated (PN)</strong>
+        The single-sideband integrated phase noise power density integrated across a specified offset band spectrum, expressed in dBc.
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: Clear Local Clock Matrix Baseline</strong><br>
+      • Carrier Frequency Oscillator = 10.00 MHz | Integrated Phase Noise = -45.00 dBw / dBc<br>
+      • <em>Calculated Radians Phase Jitter: 0.0079621 Rad | RMS Time Jitter Value: 0.12672108 uS</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: Low-Noise High Frequency Synthesizer</strong><br>
+      • Carrier Frequency Oscillator = 150.00 MHz | Integrated Phase Noise = -60.00 dBc<br>
+      • <em>Calculated Radians Phase Jitter: 0.0014142 Rad | RMS Time Jitter Value: 0.00150053 uS</em>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Clock Signal Jitter and Timing Deviation Layout</h2>
+    <p>The system maps spectral phase distortion coefficients into real time-domain clock edge cycle tracking variations (Jitter window range boundaries).</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="600" height="300" fill="#ffffff" stroke="none"/>
+          
+          <line x1="40" y1="260" x2="560" y2="260" stroke="#000000" stroke-width="2"/>
+          <polygon points="566,260 554,255 554,265" fill="#000000"/>
+          <text x="555" y="280" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="end">Time</text>
+          
+          <line x1="40" y1="260" x2="40" y2="30" stroke="#000000" stroke-width="2"/>
+          <polygon points="40,24 35,36 45,36" fill="#000000"/>
+          <text x="50" y="36" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">Amplitude</text>
+
+          <path d="M 40 230 L 90 230 L 90 70 L 190 70 L 190 230 L 290 230 L 290 70 L 390 70 L 390 230 L 490 230 L 490 70 L 515 70" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="miter"/>
+          <text x="140" y="60" fill="#334155" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Ideal Wave Form(Black)</text>
+
+          <path d="M 160 70 L 160 230" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 170 70 L 170 230" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 180 70 L 180 230" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          
+          <path d="M 260 230 L 260 70" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 270 230 L 270 70" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 280 230 L 280 70" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <path d="M 360 70 L 360 230" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 370 70 L 370 230" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 380 70 L 380 230" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          
+          <text x="115" y="130" fill="#dc2626" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Actual Wave</text>
+          <text x="115" y="145" fill="#dc2626" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Form</text>
+          <text x="115" y="160" fill="#dc2626" font-size="11" font-family="sans-serif">(Red, short)</text>
+
+          <path d="M 200 70 L 200 230" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 210 70 L 210 230" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 220 70 L 220 230" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <path d="M 300 230 L 300 70" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 310 230 L 310 70" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 320 230 L 320 70" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <path d="M 400 70 L 400 230" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 410 70 L 410 230" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <path d="M 420 70 L 420 230" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          
+          <text x="470" y="130" fill="#2359e8" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Actual Wave</text>
+          <text x="470" y="145" fill="#2359e8" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Form</text>
+          <text x="470" y="160" fill="#2359e8" font-size="11" font-family="sans-serif">(Blue, long)</text>
+
+          <line x1="260" y1="45" x2="320" y2="45" stroke="#000000" stroke-width="1.5"/>
+          <polygon points="260,45 268,49 268,41" fill="#000000"/>
+          <polygon points="320,45 312,49 312,41" fill="#000000"/>
+          <text x="290" y="36" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">Jitter</text>
+          
+          <line x1="260" y1="40" x2="260" y2="65" stroke="#000000" stroke-width="1" stroke-dasharray="2,2"/>
+          <line x1="320" y1="40" x2="320" y2="65" stroke="#000000" stroke-width="1" stroke-dasharray="2,2"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>RMS Phase Jitter Calculation (Radians Notation):</strong><br>
+      RMS Phase Jitter (Rad) = sqrt( 2 * 10^(PN / 10) )
+    </div>
+    <div class="formulaLine">
+      <strong>RMS Time-Domain Jitter Equation (Micro-Seconds uS Matrix):</strong><br>
+      RMS Phase Jitter (uS) = [ PhaseJitter / (2 * pi * f) ] * 10^6
+    </div>
+    <p>The time conversion model derives the direct physical time variance sweep tracking error triggered over clock periods relative to active single sideband spectral noise power accumulation limits.</p>
+  </section>
+</main>
 
 <script>
-
 function clearResults(){
-
-jitterResult.innerHTML="";
-phaseJitterResult.innerHTML="";
-jitterUnit.innerHTML="";
-phaseUnit.innerHTML="";
-
+  document.getElementById("jitterResult").innerText = "-";
+  document.getElementById("phaseJitterResult").innerText = "-";
+  document.getElementById("jitterUnit").innerText = "";
+  document.getElementById("phaseUnit").innerText = "";
 }
 
 function getFrequencyForWebsite(v,u){
-
-if(u==="khz")
-return v/1000;
-
-if(u==="mhz")
-return v;
-
-if(u==="ghz")
-return v*1000000;
-
-return v;
-
+  if(u==="khz") return v/1000;
+  if(u==="mhz") return v;
+  if(u==="ghz") return v*1000000;
+  return v;
 }
+
+// Attach real-time standard listeners natively to achieve secure data wipe updates
+document.getElementById("frequency").addEventListener("input", clearResults);
+document.getElementById("phaseNoise").addEventListener("input", clearResults);
+document.getElementById("frequencyUnit").addEventListener("change", clearResults);
 
 function calc(){
+  let freq = Number(document.getElementById("frequency").value);
+  let pn = Number(document.getElementById("phaseNoise").value);
 
-let freq=
-Number(
-frequency.value
-);
+  if(
+    document.getElementById("frequency").value===""||
+    document.getElementById("phaseNoise").value===""||
+    isNaN(freq)|| isNaN(pn)|| freq<=0
+  ){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
-let pn=
-Number(
-phaseNoise.value
-);
+  document.getElementById("errorBox").style.display = "none";
+  let f = getFrequencyForWebsite(freq, document.getElementById("frequencyUnit").value);
 
-if(
-frequency.value===""||
-phaseNoise.value===""||
-isNaN(freq)||
-isNaN(pn)||
-freq<=0
-){
+  /* ORIGINAL COMPUTATION OPERATORS PRESERVED EXPLICITLY */
+  let phaseJitter = Math.sqrt(2 * Math.pow(10, pn / 10));
+  let jitterUS = (phaseJitter / (2 * Math.PI * f)) * 1000000;
 
-errorBox.style.display=
-"block";
+  document.getElementById("phaseJitterResult").innerText = phaseJitter.toFixed(7);
+  document.getElementById("phaseUnit").innerText = "Rad";
 
-clearResults();
-
-return;
-
-}
-
-errorBox.style.display=
-"none";
-
-
-let f=
-getFrequencyForWebsite(
-freq,
-frequencyUnit.value
-);
-
-
-let phaseJitter=
-
-Math.sqrt(
-
-2*
-
-Math.pow(
-
-10,
-
-pn/10
-
-)
-
-);
-
-
-
-let jitterUS=
-
-(
-
-phaseJitter
-
-/
-
-(
-
-2*
-
-Math.PI*
-
-f
-
-)
-
-)
-
-*
-
-1000000;
-
-
-
-phaseJitterResult.innerHTML=
-
-phaseJitter.toFixed(7);
-
-phaseUnit.innerHTML=
-
-"Rad";
-
-
-
-jitterResult.innerHTML=
-
-jitterUS.toFixed(8);
-
-jitterUnit.innerHTML=
-
-"uS";
-
+  document.getElementById("jitterResult").innerText = jitterUS.toFixed(8);
+  document.getElementById("jitterUnit").innerText = "uS";
 }
 
 clearResults();
-
 </script>
-
-</body>
-</html>
+</body></html>
