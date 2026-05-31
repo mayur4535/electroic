@@ -1,218 +1,239 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reflection Coefficient Calculator | Transmission Line Solver</title>
+<meta name="description" content="Calculate the reflection coefficient (Gamma) and reflected voltage of a transmission line system using load impedance, source impedance, and incident voltage parameters.">
+<meta name="keywords" content="reflection coefficient calculator, wave reflection coefficient formula, transmission line mismatch solver, impedance matching calculator, voltage reflection coefficient equation, reflected voltage power tracking, s-parameter return loss tool, load source impedance network, rf characteristic impedance mismatch">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-input,select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-select{
-  text-align:center;
-  font-weight:700;
-  padding:0 6px;
-}
-
-input:focus,select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  margin-top:8px;
-}
-
-.resultTitle{
-  margin-top:26px;
-  font-size:13px;
-  font-weight:800;
-  color:#8b95a7;
-  letter-spacing:1px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:12px;
-}
-
-.card{
-  border-radius:10px;
-  padding:16px;
-  min-height:76px;
-}
-
-.card:nth-child(1){
-  background:#eef5ff;
-  border:1px solid #c8dbff;
-}
-
-.card:nth-child(2){
-  background:#ecfdf5;
-  border:1px solid #bbf7d0;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-}
-
-.card:nth-child(1) .cardLabel,
-.card:nth-child(1) .cardValue{
-  color:#2563eb;
-}
-
-.card:nth-child(2) .cardLabel,
-.card:nth-child(2) .cardValue{
-  color:#059669;
-}
-
-.cardValue{
-  margin-top:6px;
-  font-size:18px;
-  font-weight:800;
-  min-height:24px;
-  word-break:break-word;
-}
-
-.formula{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
+.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
+.cardLine span{font-weight:800;font-size:18px;color:inherit}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.green *{color:#16a34a}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-  .calc{padding:14px}
   .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr 1fr}
-  .cardValue{font-size:14px}
+  .resultGrid{grid-template-columns:1fr}
+  .paramGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="zl">ZL (Load Impedance)</label>
+    <div class="row">
+      <input id="zl" type="number" step="any" placeholder="Example: 75">
+      <select id="zlUnit">
+        <option value="1">Ω</option>
+        <option value="1000">kΩ</option>
+        <option value="1000000">MΩ</option>
+      </select>
+    </div>
 
-<div class="calc">
+    <label for="zs">ZS (Source Impedance)</label>
+    <div class="row">
+      <input id="zs" type="number" step="any" placeholder="Example: 50">
+      <select id="zsUnit">
+        <option value="1">Ω</option>
+        <option value="1000">kΩ</option>
+        <option value="1000000">MΩ</option>
+      </select>
+    </div>
 
-  <label>Z<sub>L</sub> (Load Impedance)</label>
-  <div class="row">
-    <input id="zl" type="number" step="any">
-    <select id="zlUnit">
-      <option value="1">Ω</option>
-      <option value="1000">kΩ</option>
-      <option value="1000000">MΩ</option>
-    </select>
-  </div>
+    <label for="vi">Vrms (Incident Voltage)</label>
+    <div class="row">
+      <input id="vi" type="number" step="any" placeholder="Example: 10">
+      <select id="viUnit">
+        <option value="1">V</option>
+        <option value="0.001">mV</option>
+        <option value="1000">kV</option>
+      </select>
+    </div>
 
-  <label>Z<sub>S</sub> (Source Impedance)</label>
-  <div class="row">
-    <input id="zs" type="number" step="any">
-    <select id="zsUnit">
-      <option value="1">Ω</option>
-      <option value="1000">kΩ</option>
-      <option value="1000000">MΩ</option>
-    </select>
-  </div>
-
-  <label>V<sub>rms</sub> (Incident Voltage)</label>
-  <div class="row">
-    <input id="vi" type="number" step="any">
-    <select id="viUnit">
-      <option value="1">V</option>
-      <option value="0.001">mV</option>
-      <option value="1000">kV</option>
-    </select>
-  </div>
-
-  <button class="btn" onclick="calc()">CALCULATE</button>
-
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
   <div id="errorBox">Please enter valid values.</div>
 
   <div class="resultTitle">RESULTS</div>
-
   <div class="resultGrid">
-
-    <div class="card">
+    <div class="card blue">
       <div class="cardLabel">Γ Reflection Coefficient</div>
-      <div class="cardValue" id="reflectionResult"></div>
+      <div class="cardLine"><span id="reflectionResult">-</span></div>
     </div>
-
-    <div class="card">
+    <div class="card green">
       <div class="cardLabel">Vref Reflected Voltage</div>
-      <div class="cardValue" id="voltageResult"></div>
+      <div class="cardLine"><span id="voltageResult">-</span></div>
     </div>
-
   </div>
 
-  <div class="formula">
-    Original formula preserved:<br><br>
-    Γ = (Z<sub>L</sub> − Z<sub>S</sub>) / (Z<sub>L</sub> + Z<sub>S</sub>)<br>
-    V<sub>ref</sub> = Γ × V<sub>incident</sub>
-  </div>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Load Impedance (ZL)</strong>
+        The electrical impedance terminating the endpoint boundary of the transmission line wire network, measured in Ohms (Ω).
+      </div>
+      <div class="paramItem">
+        <strong>Source Impedance (ZS / Zg)</strong>
+        The characteristic or structural source driver internal matching path impedance threshold feeding the transmission system inputs.
+      </div>
+      <div class="paramItem">
+        <strong>Incident Voltage (Vincident)</strong>
+        The root-mean-square amplitude (Vrms) of the forward propagation waveform traveling down toward the mismatched termination interface.
+      </div>
+    </div>
+  </section>
 
-</div>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: Standard RF Cable Mismatch Configuration</strong><br>
+      • Load Impedance (ZL) = 75.00 Ω | Source Impedance (ZS) = 50.00 Ω<br>
+      • Forward Incident Voltage (Vincident) = 12.00 Volts (V)<br>
+      • <em>Calculated Coefficient: 0.200000 | Reflected Voltage Component: 2.400000 V</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: Perfect Impedance Matched Network</strong><br>
+      • Load Impedance (ZL) = 50.00 Ω | Source Impedance (ZS) = 50.00 Ω<br>
+      • Forward Incident Voltage (Vincident) = 5.00 Volts (V)<br>
+      • <em>Calculated Coefficient: 0.000000 (Zero Wave Reflections) | Reflected Voltage: 0.00 V</em>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Transmission Line Wave Reflection Schema</h2>
+    <p>The vector model details forward Vincident wave propagation encountering an immediate boundary step change down the line path width.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="620" height="280" fill="#ffffff" stroke="none"/>
+          
+          <circle cx="50" cy="130" r="16" fill="none" stroke="#000000" stroke-width="1.5"/>
+          <path d="M 42 130 C 42 122, 50 122, 50 130 C 50 138, 58 138, 58 130" fill="none" stroke="#000000" stroke-width="1.5"/>
+          <text x="26" y="136" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">Vg</text>
+          
+          <rect x="110" y="38" width="50" height="28" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+          <text x="135" y="57" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">Zg</text>
+          
+          <line x1="50" y1="114" x2="50" y2="52" stroke="#000000" stroke-width="1.2"/>
+          <line x1="50" y1="52" x2="110" y2="52" stroke="#000000" stroke-width="1.2"/>
+          <line x1="160" y1="52" x2="240" y2="52" stroke="#000000" stroke-width="1.2"/>
+          <line x1="50" y1="146" x2="50" y2="228" stroke="#000000" stroke-width="1.2"/>
+          <line x1="50" y1="228" x2="240" y2="228" stroke="#000000" stroke-width="1.2"/>
+          
+          <circle cx="200" cy="52" r="3" fill="#000000"/>
+          <circle cx="200" cy="228" r="3" fill="#000000"/>
+          
+          <line x1="185" y1="65" x2="185" y2="215" stroke="#2359e8" stroke-width="1.2"/>
+          <polygon points="185,58 181,68 189,68" fill="#2359e8"/>
+          <polygon points="185,222 181,212 189,212" fill="#2359e8"/>
+          <text x="172" y="55" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">+</text>
+          <text x="172" y="228" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">-</text>
+          <text x="145" y="142" fill="#000000" font-size="15" font-family="sans-serif" font-weight="bold">Vin</text>
+          
+          <text x="215" y="38" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">Iin</text>
+          <path d="M 210 46 L 225 54 L 210 56" fill="none" stroke="#000000" stroke-width="1.2"/>
+          
+          <rect x="240" y="44" width="220" height="15" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+          <ellipse cx="240" cy="51.5" rx="3" ry="7.5" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+          <ellipse cx="460" cy="51.5" rx="3" ry="7.5" fill="#ffffff" stroke="#000000" stroke-width="1.5" stroke-dasharray="2,1"/>
+          
+          <rect x="240" y="220" width="220" height="15" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+          <ellipse cx="240" cy="227.5" rx="3" ry="7.5" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+          <ellipse cx="460" cy="227.5" rx="3" ry="7.5" fill="#ffffff" stroke="#000000" stroke-width="1.5" stroke-dasharray="2,1"/>
+          
+          <line x1="260" y1="18" x2="440" y2="18" stroke="#2359e8" stroke-width="1.2"/>
+          <polygon points="245,18 257,22 257,14" fill="#2359e8"/>
+          <polygon points="455,18 443,22 443,14" fill="#2359e8"/>
+          <line x1="245" y1="14" x2="245" y2="40" stroke="#2359e8" stroke-width="1" stroke-dasharray="2,2"/>
+          <line x1="455" y1="14" x2="455" y2="40" stroke="#2359e8" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="350" y="16" fill="#000000" font-size="16" font-family="sans-serif" font-style="italic" text-anchor="middle">l</text>
+          
+          <text x="245" y="258" fill="#000000" font-size="13" font-family="sans-serif" font-style="italic" text-anchor="middle">Z = -l</text>
+          <text x="455" y="258" fill="#000000" font-size="13" font-family="sans-serif" font-style="italic" text-anchor="middle">Z = 0</text>
+          
+          <rect x="525" y="100" width="28" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+          <text x="539" y="136" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">ZL</text>
+          
+          <line x1="460" y1="52" x2="539" y2="52" stroke="#000000" stroke-width="1.2"/>
+          <line x1="539" y1="52" x2="539" y2="100" stroke="#000000" stroke-width="1.2"/>
+          <line x1="460" y1="228" x2="539" y2="228" stroke="#000000" stroke-width="1.2"/>
+          <line x1="539" y1="228" x2="539" y2="160" stroke="#000000" stroke-width="1.2"/>
+          
+          <text x="495" y="38" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">IL</text>
+          <path d="M 490 46 L 505 54 L 490 56" fill="none" stroke="#000000" stroke-width="1.2"/>
+          
+          <path d="M 558 58 C 575 100, 575 180, 558 222" fill="none" stroke="#2359e8" stroke-width="1.2"/>
+          <polygon points="556,52 563,62 554,64" fill="#2359e8"/>
+          <polygon points="556,228 554,216 563,218" fill="#2359e8"/>
+          <text x="548" y="55" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">+</text>
+          <text x="548" y="234" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">-</text>
+          <text x="585" y="144" fill="#000000" font-size="15" font-family="sans-serif" font-weight="bold">VL</text>
+          
+          <path d="M 285 92 C 262 105, 262 175, 285 188" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+          <polygon points="285,188 283,178 276,183" fill="#dc2626"/>
+          <text x="294" y="144" fill="#dc2626" font-size="14" font-family="sans-serif" font-weight="bold">Γin, Zin</text>
+          
+          <path d="M 445 92 C 422 105, 422 175, 445 188" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+          <polygon points="445,188 443,178 436,183" fill="#dc2626"/>
+          <text x="454" y="144" fill="#dc2626" font-size="14" font-family="sans-serif" font-weight="bold">ΓL, ZL</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>Voltage Reflection Coefficient (Gamma Formula):</strong><br>
+      Γ = (ZL - ZS) / (ZL + ZS)
+    </div>
+    <div class="formulaLine">
+      <strong>Reflected Backward Voltage Wave Amplitude (Vreflected):</strong><br>
+      Vref = Γ * Vincident
+    </div>
+    <p>The voltage reflection coefficient tracks the specific complex amplitude boundary step ratio between incoming incident waves and resulting backward reflected echo energy waves triggered directly by network impedance mismatches.</p>
+  </section>
+</main>
 
 <script>
 function clearResults(){
-  document.getElementById("reflectionResult").innerHTML = "";
-  document.getElementById("voltageResult").innerHTML = "";
+  document.getElementById("reflectionResult").innerText = "-";
+  document.getElementById("voltageResult").innerText = "-";
 }
 
-function calc(){
+document.getElementById("zl").addEventListener("input", clearResults);
+document.getElementById("zs").addEventListener("input", clearResults);
+document.getElementById("vi").addEventListener("input", clearResults);
+document.getElementById("zlUnit").addEventListener("change", clearResults);
+document.getElementById("zsUnit").addEventListener("change", clearResults);
+document.getElementById("viUnit").addEventListener("change", clearResults);
 
+function calc(){
   var ZL = Number(document.getElementById("zl").value) * Number(document.getElementById("zlUnit").value);
   var ZS = Number(document.getElementById("zs").value) * Number(document.getElementById("zsUnit").value);
   var VI = Number(document.getElementById("vi").value) * Number(document.getElementById("viUnit").value);
@@ -231,14 +252,12 @@ function calc(){
 
   document.getElementById("errorBox").style.display = "none";
 
-  /* ORIGINAL FORMULA */
+  /* ORIGINAL COMPUTATION ALGORITHM PRESERVED EXPLICITLY */
   var c1 = ((ZL - ZS) / (ZL + ZS));
   var c2 = (c1 * VI);
 
-  document.getElementById("reflectionResult").innerHTML = c1.toFixed(6);
-  document.getElementById("voltageResult").innerHTML = c2.toFixed(6) + " V";
+  document.getElementById("reflectionResult").innerText = c1.toFixed(6);
+  document.getElementById("voltageResult").innerText = c2.toFixed(6) + " V";
 }
 </script>
-
-</body>
-</html>
+</body></html>
