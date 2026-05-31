@@ -1,201 +1,181 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Coax Impedance Calculator</title>
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Coax Impedance Calculator | RF Transmission Designer</title>
+<meta name="description" content="Calculate coaxial cable characteristic impedance, propagation delay, parasitic inductance, and capacitance parameters.">
+<meta name="keywords" content="coax impedance calculator, coaxial cable transmission line solver, characteristics impedance zo equation, shield inner id d2 substrate, center conductor outer id d1, dielectric substrate constant er, propagation delay time nanoseconds, parasitic inductance capacitance per inch, rf coaxial structural wire routing">
 <style>
 *{box-sizing:border-box}
+body{margin:0;background:#f6f8fb;font-family:Arial,sans-serif;color:#1f2937}
+.coax-wrap{width:100%;max-width:620px;margin:auto;padding:14px 22px 30px;padding-top:24px}
+.input-grid{display:grid;gap:14px}
+.field label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px;padding-left:4px}
+.input-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px}
+.input-row.single{grid-template-columns:1fr}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.calc-btn{width:100%;height:48px;border:0;border-radius:10px;margin-top:20px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
 
-body{
-  margin:0;
-  background:#f6f8fb;
-  font-family:Arial,sans-serif;
-  color:#1f2937;
-}
+/* Small red bold error text custom positioned strictly above results section */
+.error-box{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;line-height:1.45}
 
-.coax-wrap{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding:14px 22px 30px;
-}
+.section-title{margin:22px 0 12px;font-size:13px;color:#7b8794;letter-spacing:.05em;font-weight:800;text-transform:uppercase}
 
-.input-grid{
-  display:grid;
-  gap:14px;
-}
+/* TWO COLUMNS RESULTS GRID - LOCKED STABLE SPECIFICATION */
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;min-height:82px}
+.result-card span{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.result-card b{display:block;font-size:18px;font-weight:900;word-break:break-all;line-height:1}
+.result-card:nth-child(1) span,.result-card:nth-child(1) b{color:#2563eb;background:#eef5ff;border-color:#bfd3ff}
+.result-card:nth-child(2) span,.result-card:nth-child(2) b{color:#16a34a;background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(3) span,.result-child:nth-child(3) b{color:#7c3aed;background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4) span,.result-card:nth-child(4) b{color:#ea580c;background:#fff7ed;border-color:#fed7aa}
+/* Inject standard localized colored borders for standalone cards look matching UI */
+.result-card{border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bfd3ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4){background:#fff7ed;border-color:#fed7aa}
 
-.field label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:6px;
-  padding-left:8px;
-}
+.info-box,.diagram-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-top:10px;font-size:13px;line-height:1.6;color:#4a5568;font-weight:500}
+.info-box h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-top:8px;font-size:13px;color:#334155;font-weight:700;overflow-x:auto}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
 
-.input-row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-}
-
-.input-row.single{
-  grid-template-columns:1fr;
-}
-
-input,
-select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 10px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-select{
-  text-align:center;
-  font-weight:700;
-}
-
-.calc-btn{
-  width:100%;
-  height:46px;
-  border:0;
-  border-radius:9px;
-  margin-top:24px;
-  background:linear-gradient(135deg,#ff8a00,#ff5a00);
-  color:#fff;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.error-box{
-  display:none;
-  margin-top:10px;
-  padding:12px;
-  border-radius:8px;
-  background:#fef2f2;
-  border:1px solid #fecaca;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:700;
-  line-height:1.45;
-}
-
-.section-title{
-  margin:22px 0 10px;
-  font-size:13px;
-  color:#6b7280;
-  letter-spacing:.08em;
-  font-weight:800;
-  text-transform:uppercase;
-}
-
-.result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.result-card{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  padding:12px;
-}
-
-.result-card span{
-  display:block;
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-}
-
-.result-card b{
-  display:block;
-  font-size:16px;
-  margin-top:6px;
-  min-height:22px;
-  word-break:break-word;
-}
-
-.result-card:nth-child(1) span,
-.result-card:nth-child(1) b{color:#2563eb}
-
-.result-card:nth-child(2) span,
-.result-card:nth-child(2) b{color:#16a34a}
-
-.result-card:nth-child(3) span,
-.result-card:nth-child(3) b{color:#9333ea}
-
-.result-card:nth-child(4) span,
-.result-card:nth-child(4) b{color:#ea580c}
-
-.info-box,
-.diagram-card{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  padding:16px;
-  margin-top:10px;
-  font-size:14px;
-  line-height:1.55;
-}
-
-.diagram-card{
-  overflow-x:auto;
-}
-
-.formula{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:8px;
-  padding:10px;
-  margin-top:8px;
-  font-family:Consolas,monospace;
-  overflow:auto;
-}
-
-svg{
-  width:100%;
-  height:auto;
-  display:block;
-}
-
-@media(max-width:480px){
-  .coax-wrap{
-    padding-left:22px;
-    padding-right:22px;
-  }
-
-  .input-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-  }
-
-  .input-row.single{
-    grid-template-columns:1fr;
-  }
-
-  .result-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .result-card b{
-    font-size:14px;
-  }
-
-  svg{
-    min-width:680px;
-  }
+@media(max-width:600px){
+  .input-row{grid-template-columns:minmax(0,1fr) 72px}
+  .result-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .result-card{padding:12px;min-height:76px}
+  .result-card b{font-size:15px}
+  .exampleGrid{grid-template-columns:1fr}
 }
 </style>
+</head>
+<body>
+<div class="coax-wrap">
+  <form id="tool" onsubmit="event.preventDefault();">
+    <div class="input-grid">
+      <div class="field">
+        <label for="aac_coax_d1">In Dia (Conductor ID)</label>
+        <div class="input-row">
+          <input type="number" id="aac_coax_d1" step="any" placeholder="Enter conductor core value">
+          <select id="aac_coax_d1_unit">
+            <option selected value="0.001">mil</option>
+            <option value="0.3937008">cm</option>
+            <option value="0.03937008">mm</option>
+            <option value="0.00003937008">µm</option>
+            <option value="1">in</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="aac_coax_d2">In Dia (Surface Shield ID)</label>
+        <div class="input-row">
+          <input type="number" id="aac_coax_d2" step="any" placeholder="Enter shield inner value">
+          <select id="aac_coax_d2_unit">
+            <option selected value="0.001">mil</option>
+            <option value="0.3937008">cm</option>
+            <option value="0.03937008">mm</option>
+            <option value="0.00003937008">µm</option>
+            <option value="1">inch</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="aac_coax_er">Dielectric (Substrate Constant)</label>
+        <div class="input-row single">
+          <input type="number" id="aac_coax_er" step="any" placeholder="Example: 2.25">
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="calc-btn" onclick="coaxAACRun();">CALCULATE</button>
+  </form>
+
+  <div id="coax_error" class="error-box"></div>
+
+  <div class="section-title">Results</div>
+  <div class="result-grid">
+    <div class="result-card"><span>Impedance (Zo)</span><b id="aac_coax_zo">-</b></div>
+    <div class="result-card"><span>Propagation Delay</span><b id="aac_coax_delay">-</b></div>
+    <div class="result-card"><span>Inductance</span><b id="aac_coax_ind">-</b></div>
+    <div class="result-card"><span>Capacitance</span><b id="aac_coax_cap">-</b></div>
+  </div>
+
+  <section class="info-box">
+    <h2>Input Parameters Specification</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <strong>Conductor ID (d1)</strong>
+        The baseline external mechanical boundary diameter profile thickness of the interior active signal wire core pin component.
+      </div>
+      <div class="exampleCard">
+        <strong>Surface Shield ID (d2)</strong>
+        The internal opening clearance diameter scale measured across the interior boundary face of the outer metal grounding jacket layer.
+      </div>
+    </div>
+  </section>
+
+  <section class="info-box">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Example 1: Standard RG-58 Test Setup</strong></p>
+        <p>
+          • Conductor ID = 35.0 mil | Surface Shield ID = 116.0 mil<br>• Dielectric Constant = 2.30 (Solid Polyethylene)<br>
+          • <em>Output Impedance: ~47.4 Ω | Delay Parameter: ~0.129 ns/in</em>
+        </p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Example 2: Semirigid Foam Substrate Matrix</strong></p>
+        <p>
+          • Conductor ID = 20.0 mil | Surface Shield ID = 67.0 mil<br>• Dielectric Constant = 1.44 (Expanded Teflon)<br>
+          • <em>Output Inductance: ~6.14 nH/in | Capacitance Profile: ~1.17 pF/in</em>
+        </p>
+      </div>
+    </div>
+  </section>
+
+ 
+
+  <div class="section-title">Coax Cross Section Theory</div>
+  <div class="diagram-card">
+    <div class="waveguide-diagram">
+      <svg viewBox="-35 0 830 330" aria-label="Coax impedance cross section diagram">
+        <rect x="10" y="10" width="740" height="310" rx="18" fill="#fff" stroke="none"/>
+        <circle cx="235" cy="165" r="110" fill="#f1f5f9" stroke="#111827" stroke-width="4"/>
+        <circle cx="235" cy="165" r="75" fill="#fef08a" stroke="#eab308" stroke-width="2"/>
+        <circle cx="235" cy="165" r="30" fill="#f87171" stroke="#991b1b" stroke-width="2.5"/>
+        <text x="235" y="165" text-anchor="middle" dominant-baseline="middle" font-size="15" font-weight="700" fill="#fff">d1</text>
+        <line x1="205" y1="210" x2="265" y2="210" stroke="#ef4444" stroke-width="2.5"/>
+        <text x="235" y="230" text-anchor="middle" font-size="14" font-weight="700" fill="#991b1b">Conductor ID</text>
+        <line x1="155" y1="290" x2="315" y2="290" stroke="#111827" stroke-width="2.5"/>
+        <text x="235" y="312" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">Shield Inner ID (d2)</text>
+        <text x="235" y="45" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Coax Radial Cross Section</text>
+        <text x="235" y="95" text-anchor="middle" font-size="13" fill="#92400e" font-weight="700">Dielectric Substrate (er)</text>
+
+        <rect x="430" y="60" width="260" height="210" rx="14" fill="#f8fafc" stroke="#d1d5db"/>
+        <text x="560" y="92" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Characteristic Impedance</text>
+        <text x="560" y="140" text-anchor="middle" font-size="20" font-weight="700" fill="#2563eb">Zo = 60 / sqrt(er) * ln(d2/d1)</text>
+        <text x="560" y="185" text-anchor="middle" font-size="15" font-weight="700" fill="#16a34a">d2 = Shield Inner ID</text>
+        <text x="560" y="210" text-anchor="middle" font-size="15" font-weight="700" fill="#ef4444">d1 = Conductor ID</text>
+        <text x="560" y="240" text-anchor="middle" font-size="13" fill="#4b5563" font-weight="600">Bigger d2/d1 ratio increases impedance</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="section-title">Formulas</div>
+  <div class="info-box">
+    <div class="formula">Zo = 60 / sqrt(er) * ln(d2 / d1)</div>
+    <div class="formula">Delay = 84.72 * 10^-3 * sqrt(er)</div>
+    <div class="formulaLine">Inductance = 5.08 * ln(d2 / d1) &nbsp;&nbsp;(expressed in nH/in)</div>
+    <div class="formulaLine">Capacitance = 1.41 / ln(d2 / d1) &nbsp;&nbsp;(expressed in pF/in)</div>
+  </div>
+</div>
 
 <script>
 function showCoaxError(msg){
@@ -211,7 +191,6 @@ function clearCoaxError(){
 }
 
 function coaxAACRun(){
-
   clearCoaxError();
 
   var d1v = parseFloat(document.getElementById("aac_coax_d1").value);
@@ -221,8 +200,13 @@ function coaxAACRun(){
   var d1u = parseFloat(document.getElementById("aac_coax_d1_unit").value);
   var d2u = parseFloat(document.getElementById("aac_coax_d2_unit").value);
 
-  if(isNaN(d1v) || isNaN(d2v) || isNaN(erv)){
-    showCoaxError("Please enter all values.");
+  if(
+    document.getElementById("aac_coax_d1").value === "" ||
+    document.getElementById("aac_coax_d2").value === "" ||
+    document.getElementById("aac_coax_er").value === "" ||
+    isNaN(d1v) || isNaN(d2v) || isNaN(erv)
+  ){
+    showCoaxError("Please enter all operational parameters fields.");
     return false;
   }
 
@@ -230,165 +214,34 @@ function coaxAACRun(){
   var d2 = d2v * d2u;
 
   if(d1 <= 0 || d2 <= 0 || erv <= 0){
-    showCoaxError("Values must be greater than 0.");
+    showCoaxError("Values must be strictly greater than 0 configuration boundaries.");
     return false;
   }
 
   if(d2 <= d1){
     showCoaxError(
       "❌ Surface Shield ID must be larger than Conductor ID.<br><br>" +
-      "Example:<br>" +
+      "Example setup reference:<br>" +
       "Conductor ID = 20 mil<br>" +
       "Surface Shield ID = 67 mil<br>" +
-      "Dielectric = 2.25"
+      "Dielectric Substrate Constant = 2.25"
     );
     return false;
   }
 
+  /* ORIGINAL COMPUTATION ALGORITHMS PROTECTED CONCURRENTLY */
   var lnRatio = Math.log(d2 / d1);
-
   var zo = (60 / Math.sqrt(erv)) * lnRatio;
   var delay = 84.72e-3 * Math.sqrt(erv);
   var ind = 5.08 * lnRatio;
   var cap = 1.41 / lnRatio;
 
-  document.getElementById("aac_coax_zo").innerHTML = zo.toPrecision(3) + " Ω";
-  document.getElementById("aac_coax_delay").innerHTML = delay.toPrecision(3) + " ns/in";
-  document.getElementById("aac_coax_ind").innerHTML = ind.toPrecision(3) + " nH/in";
-  document.getElementById("aac_coax_cap").innerHTML = cap.toPrecision(3) + " pF/in";
+  document.getElementById("aac_coax_zo").innerText = zo.toPrecision(4) + " Ω";
+  document.getElementById("aac_coax_delay").innerText = delay.toPrecision(4) + " ns/in";
+  document.getElementById("aac_coax_ind").innerText = ind.toPrecision(4) + " nH/in";
+  document.getElementById("aac_coax_cap").innerText = cap.toPrecision(4) + " pF/in";
 
   return false;
 }
 </script>
-</head>
-
-<body>
-
-<div class="coax-wrap">
-
-  <div class="input-grid">
-
-    <div class="field">
-      <label>In Dia (Conductor ID)</label>
-      <div class="input-row">
-        <input type="number" id="aac_coax_d1" step="any" placeholder="Enter value">
-        <select id="aac_coax_d1_unit">
-          <option selected value="0.001">mil</option>
-          <option value="0.3937008">cm</option>
-          <option value="0.03937008">mm</option>
-          <option value="0.00003937008">µm</option>
-          <option value="1">in</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>In Dia (Surface Shield ID)</label>
-      <div class="input-row">
-        <input type="number" id="aac_coax_d2" step="any" placeholder="Enter value">
-        <select id="aac_coax_d2_unit">
-          <option selected value="0.001">mil</option>
-          <option value="0.3937008">cm</option>
-          <option value="0.03937008">mm</option>
-          <option value="0.00003937008">µm</option>
-          <option value="1">inch</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Dielectric (Substrate)</label>
-      <div class="input-row single">
-        <input type="number" id="aac_coax_er" step="any" placeholder="Example: 2.25">
-      </div>
-    </div>
-
-  </div>
-
-  <button type="button" class="calc-btn" onclick="coaxAACRun();return false;">
-    Calculate
-  </button>
-
-  <div id="coax_error" class="error-box"></div>
-
-  <div class="section-title">Results</div>
-
-  <div class="result-grid">
-    <div class="result-card">
-      <span>Impedance</span>
-      <b id="aac_coax_zo"></b>
-    </div>
-
-    <div class="result-card">
-      <span>Delay</span>
-      <b id="aac_coax_delay"></b>
-    </div>
-
-    <div class="result-card">
-      <span>Inductance</span>
-      <b id="aac_coax_ind"></b>
-    </div>
-
-    <div class="result-card">
-      <span>Capacitance</span>
-      <b id="aac_coax_cap"></b>
-    </div>
-  </div>
-
-  <div class="section-title">Diagram & Theory</div>
-
-  <div class="diagram-card">
-    <svg viewBox="-35 0 830 360" aria-label="Coax impedance diagram">
-      <rect x="10" y="10" width="740" height="340" rx="18" fill="#fff"/>
-
-      <circle cx="235" cy="180" r="120" fill="#e5e7eb" stroke="#111827" stroke-width="5"/>
-      <circle cx="235" cy="180" r="82" fill="#fde68a" stroke="#f59e0b" stroke-width="3"/>
-      <circle cx="235" cy="180" r="34" fill="#ef4444" stroke="#991b1b" stroke-width="3"/>
-
-      <text x="235" y="180" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="700" fill="#fff">d1</text>
-
-      <line x1="201" y1="226" x2="269" y2="226" stroke="#ef4444" stroke-width="3"/>
-      <text x="235" y="250" text-anchor="middle" font-size="15" font-weight="700" fill="#991b1b">Conductor ID</text>
-
-      <line x1="153" y1="315" x2="317" y2="315" stroke="#111827" stroke-width="3"/>
-      <text x="235" y="338" text-anchor="middle" font-size="15" font-weight="700" fill="#111827">Shield Inner ID</text>
-
-      <text x="235" y="55" text-anchor="middle" font-size="18" font-weight="700" fill="#111827">Coax Cross Section</text>
-      <text x="235" y="105" text-anchor="middle" font-size="14" fill="#92400e">Dielectric εr</text>
-
-      <rect x="430" y="75" width="260" height="210" rx="14" fill="#f8fafc" stroke="#d1d5db"/>
-      <text x="560" y="108" text-anchor="middle" font-size="19" font-weight="700" fill="#111827">Characteristic Impedance</text>
-      <text x="560" y="155" text-anchor="middle" font-size="22" font-weight="700" fill="#2563eb">Zo = 60 / √εr × ln(d2/d1)</text>
-      <text x="560" y="200" text-anchor="middle" font-size="17" font-weight="700" fill="#16a34a">d2 = Shield Inner ID</text>
-      <text x="560" y="228" text-anchor="middle" font-size="17" font-weight="700" fill="#ef4444">d1 = Conductor ID</text>
-      <text x="560" y="258" text-anchor="middle" font-size="14" fill="#4b5563">Bigger d2/d1 ratio increases impedance</text>
-    </svg>
-  </div>
-
-  <div class="info-box">
-    Coax impedance depends on conductor diameter, shield inner diameter and dielectric constant.
-  </div>
-
-  <div class="section-title">Formulas</div>
-
-  <div class="info-box">
-    <div class="formula">Zo = 60 / √εr × ln(d2 / d1)</div>
-    <div class="formula">Delay = 84.72 × 10⁻³ × √εr</div>
-    <div class="formula">Inductance = 5.08 × ln(d2 / d1)</div>
-    <div class="formula">Capacitance = 1.41 / ln(d2 / d1)</div>
-  </div>
-
-  <div class="section-title">Example</div>
-
-  <div class="info-box">
-    d1 = 20 mil, d2 = 67 mil, εr = 2.25<br>
-    Impedance ≈ 48.3 Ω<br>
-    Delay ≈ 0.127 ns/in<br>
-    Inductance ≈ 6.14 nH/in<br>
-    Capacitance ≈ 1.17 pF/in
-  </div>
-
-</div>
-
-</body>
-</html>
+</body></html>
