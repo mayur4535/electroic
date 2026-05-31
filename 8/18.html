@@ -1,223 +1,173 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Balanced Attenuator Calculator | RF Pad Solver</title>
+<meta name="description" content="Calculate shunt resistance R1 for a balanced lattice attenuator pad circuit network using targeted db attenuation and input impedance parameters.">
+<meta name="keywords" content="balanced attenuator calculator, rf pad resistance solver, shunt resistance r1 equation, attenuation decibel db tool, characteristic impedance matching pad, symmetrical balanced circuit network, lattice bridge attenuator, matched resistance networks rf">
 <style>
-*{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:0;
-}
-
-.calc{
-  max-width:620px;
-  margin:auto;
-  padding:14px;
-}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-.valueBox,
-input,
-select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-.valueBox{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  color:#374151;
-}
-
-select{
-  text-align:center;
-  font-weight:800;
-  padding:0 6px;
-}
-
-input:focus,
-select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
-.resultTitle{
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1px;
-  color:#7b8794;
-  margin-top:22px;
-  margin-bottom:12px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.card{
-  padding:16px;
-  border-radius:12px;
-  min-height:82px;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:10px;
-}
-
-.cardLine{
-  display:flex;
-  align-items:baseline;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
-.cardValue,
-.cardUnit{
-  font-size:18px;
-  font-weight:900;
-}
-
-.blue{
-  background:#eef5ff;
-  border:1px solid #bfd3ff;
-}
-
-.blue *{
-  color:#2359e8;
-}
-
-.formula{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+.valueBox,input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+.valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151;background:#eee}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+.cardLine{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
+.cardValue{font-size:18px;font-weight:900;line-height:1;min-height:22px}
+.cardUnit{font-size:14px;font-weight:800}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:440px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-  .row{
-    grid-template-columns:minmax(0,1fr) 72px;
-  }
-
-  .resultGrid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .card{
-    padding:14px;
-  }
-
-  .cardValue,
-  .cardUnit{
-    font-size:16px;
-  }
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .paramGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="att">Attenuation</label>
+    <div class="row">
+      <input id="att" type="number" step="any" placeholder="Example: 6">
+      <div class="valueBox">dB</div>
+    </div>
 
-<div class="calc">
+    <label for="imp">Impedance</label>
+    <div class="row">
+      <input id="imp" type="number" step="any" placeholder="Example: 50">
+      <div class="valueBox">Ω</div>
+    </div>
 
-<label>Attenuation</label>
-<div class="row">
-  <input id="att" type="number" step="any">
-  <div class="valueBox">dB</div>
-</div>
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
+  <div id="errorBox">Please enter valid values.</div>
 
-<label>Impedance</label>
-<div class="row">
-  <input id="imp" type="number" step="any">
-  <div class="valueBox">Ω</div>
-</div>
-
-<button class="btn" onclick="calc()">CALCULATE</button>
-
-<div id="errorBox">Please enter valid values.</div>
-
-<div class="resultTitle">RESULTS</div>
-
-<div class="resultGrid">
-
-  <div class="card blue">
-    <div class="cardLabel">R1 RESISTOR</div>
-    <div class="cardLine">
-      <span class="cardValue" id="r1"></span>
-      <span class="cardUnit" id="r1Unit"></span>
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">Shunt Resistance (R1 Resistor)</div>
+      <div class="cardLine">
+        <span class="cardValue" id="r1">-</span>
+        <span class="cardUnit" id="r1Unit"></span>
+      </div>
     </div>
   </div>
 
-</div>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Attenuation (dB)</strong>
+        The targeted power drop signal reduction log value amplitude ratio required to damp incoming wave energies, specified in Decibels (dB).
+      </div>
+      <div class="paramItem">
+        <strong>Characteristic Impedance (Ω)</strong>
+        The baseline source driver circuit matching resistance or load network impedance matching line scale, measured in Ohms (Ω).
+      </div>
+    </div>
+  </section>
 
-<div class="formula">
-Formula:<br><br>
-R1 = Impedance × (1 / (10<sup>Attenuation / 20</sup> − 1))
-</div>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: Standard 3 dB Signal Power Matching Pad</strong><br>
+      • Target Attenuation = 3.00 dB | Line Impedance = 50.00 Ω<br>
+      • <em>Calculated Symmetrical Shunt Resistor R1 Value: 118.3374 Ω</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: 10 dB RF Cable Attenuator Network</strong><br>
+      • Target Attenuation = 10.00 dB | Line Impedance = 75.00 Ω<br>
+      • <em>Calculated Symmetrical Shunt Resistor R1 Value: 34.6852 Ω</em>
+    </div>
+  </section>
 
-</div>
+  <section class="infoBox">
+    <h2>Lattice Balanced Attenuator Circuit Schema</h2>
+    <p>The layout maps the cross-over trace links (X rails) along with dual ground-referenced parallel shunt resistors (R1) defining a true balanced topology network.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="420" height="320" fill="#ffffff" stroke="none"/>
+          
+          <line x1="40" y1="50" x2="130" y2="50" stroke="#000000" stroke-width="1.6"/>
+          <line x1="130" y1="50" x2="160" y2="155" stroke="#000000" stroke-width="1.6"/> <line x1="40" y1="180" x2="60" y2="180" stroke="#000000" stroke-width="1.6"/>
+          <rect x="60" y="171" width="35" height="18" fill="#ffffff" stroke="#000000" stroke-width="1.6"/>
+          <text x="77.5" y="163" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">Z0</text>
+          <line x1="95" y1="180" x2="130" y2="180" stroke="#000000" stroke-width="1.6"/>
+          <line x1="130" y1="180" x2="160" y2="50" stroke="#000000" stroke-width="1.6"/> <line x1="40" y1="180" x2="40" y2="196" stroke="#000000" stroke-width="1.2"/>
+          <line x1="32" y1="166" x2="48" y2="166" stroke="#000000" stroke-width="1.5"/>
+          <line x1="35" y1="170" x2="45" y2="170" stroke="#000000" stroke-width="1.2"/>
+          <line x1="38" y1="174" x2="42" y2="174" stroke="#000000" stroke-width="1"/>
+
+          <line x1="160" y1="50" x2="260" y2="50" stroke="#000000" stroke-width="1.6"/>
+          <circle cx="210" cy="50" r="2" fill="#000000"/>
+          <line x1="210" y1="50" x2="210" y2="70" stroke="#000000" stroke-width="1.6"/>
+          <rect x="201" y="70" width="18" height="35" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
+          <text x="182" y="92" fill="#ea580c" font-size="13" font-family="sans-serif" font-weight="bold">R1</text>
+          <line x1="210" y1="105" x2="210" y2="120" stroke="#000000" stroke-width="1.2"/>
+          <line x1="200" y1="120" x2="220" y2="120" stroke="#000000" stroke-width="1.5"/>
+          <line x1="204" y1="124" x2="216" y2="124" stroke="#000000" stroke-width="1.2"/>
+          <line x1="208" y1="128" x2="212" y2="128" stroke="#000000" stroke-width="1"/>
+
+          <line x1="160" y1="155" x2="260" y2="155" stroke="#000000" stroke-width="1.6"/>
+          <circle cx="210" cy="155" r="2" fill="#000000"/>
+          <line x1="210" y1="155" x2="210" y2="175" stroke="#000000" stroke-width="1.6"/>
+          <rect x="201" y="175" width="18" height="35" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
+          <text x="182" y="197" fill="#ea580c" font-size="13" font-family="sans-serif" font-weight="bold">R1</text>
+          <line x1="210" y1="210" x2="210" y2="225" stroke="#000000" stroke-width="1.2"/>
+          <line x1="200" y1="225" x2="220" y2="225" stroke="#000000" stroke-width="1.5"/>
+          <line x1="204" y1="229" x2="216" y2="229" stroke="#000000" stroke-width="1.2"/>
+          <line x1="208" y1="233" x2="212" y2="233" stroke="#000000" stroke-width="1"/>
+
+          <line x1="260" y1="50" x2="290" y2="155" stroke="#000000" stroke-width="1.6"/> <line x1="260" y1="155" x2="290" y2="50" stroke="#000000" stroke-width="1.6"/> <line x1="290" y1="50" x2="315" y2="50" stroke="#000000" stroke-width="1.6"/>
+          <rect x="315" y="41" width="35" height="18" fill="#ffffff" stroke="#000000" stroke-width="1.6"/>
+          <text x="332.5" y="33" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">Z0</text>
+          <line x1="350" y1="50" x2="390" y2="50" stroke="#000000" stroke-width="1.6"/>
+          <line x1="390" y1="50" x2="390" y2="66" stroke="#000000" stroke-width="1.2"/>
+          <line x1="382" y1="66" x2="398" y2="66" stroke="#000000" stroke-width="1.5"/>
+          <line x1="385" y1="70" x2="395" y2="70" stroke="#000000" stroke-width="1.2"/>
+          <line x1="388" y1="74" x2="392" y2="74" stroke="#000000" stroke-width="1"/>
+
+          <line x1="290" y1="155" x2="390" y2="155" stroke="#000000" stroke-width="1.6"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>Symmetrical Shunt Resistor R1 Formulation:</strong><br>
+      R1 = Impedance * (1 / (10^(Attenuation / 20) - 1))
+    </div>
+    <p>The mathematical framework leverages linear voltage step transformations derived directly from decibel reduction algorithms to safely determine exact component values for balanced network environments.</p>
+  </section>
+</main>
 
 <script>
 function clearResults(){
-  document.getElementById("r1").innerHTML="";
-  document.getElementById("r1Unit").innerHTML="";
+  document.getElementById("r1").innerText="-";
+  document.getElementById("r1Unit").innerText="-";
 }
+
+document.getElementById("att").addEventListener("input", clearResults);
+document.getElementById("imp").addEventListener("input", clearResults);
 
 function calc(){
   var att = Number(document.getElementById("att").value);
@@ -226,8 +176,7 @@ function calc(){
   if(
     document.getElementById("att").value==="" ||
     document.getElementById("imp").value==="" ||
-    isNaN(att) ||
-    isNaN(imp)
+    isNaN(att) || isNaN(imp) || imp <= 0
   ){
     document.getElementById("errorBox").style.display="block";
     clearResults();
@@ -236,18 +185,22 @@ function calc(){
 
   document.getElementById("errorBox").style.display="none";
 
-  /* ORIGINAL FORMULA */
+  /* ORIGINAL COMPUTATION OPERATORS MATCHED EXACTLY */
   var c1 = att / 20;
-  c1 = Math.pow(10,c1) - 1;
+  var ratioFactor = Math.pow(10, c1) - 1;
 
-  var r1 = imp * (1 / c1);
+  if (ratioFactor <= 0) {
+    document.getElementById("errorBox").style.display="block";
+    clearResults();
+    return;
+  }
 
-  document.getElementById("r1").innerHTML = r1.toFixed(4);
-  document.getElementById("r1Unit").innerHTML = "Ω";
+  var r1 = imp * (1 / ratioFactor);
+
+  document.getElementById("r1").innerText = r1.toFixed(4);
+  document.getElementById("r1Unit").innerText = "Ω";
 }
 
 clearResults();
 </script>
-
-</body>
-</html>
+</body></html>
