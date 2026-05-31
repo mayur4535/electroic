@@ -1,236 +1,194 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Antenna Azimuth and Elevation Calculator | Satellite Alignment Tool</title>
+<meta name="description" content="Calculate the look angles (Azimuth and Elevation) for an antenna toward a geostationary satellite based on receiver and satellite coordinates.">
+<meta name="keywords" content="antenna azimuth and elevation calculator, satellite look angles calculator, antenna pointing calculator, azimuth elevation angle formula, dish alignment calculator, dish pointer tool, geostationary satellite coordinates calculation, ground station alignment tool, rx longitude latitude solver, satellite look angle math, tracking dish alignment, true north azimuth calculation">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:0;
-}
-
-.calc{
-  max-width:620px;
-  margin:auto;
-  padding:14px;
-}
-
-.section-title{
-  margin:16px 0 12px;
-  font-size:14px;
-  font-weight:800;
-  color:#8b95a7;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 72px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-input{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  outline:none;
-  background:#fff;
-}
-
-input:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.unit{
-  height:43px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  font-weight:700;
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-  margin-top:8px;
-}
-
-.error{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
-.resultTitle{
-  margin-top:26px;
-  font-size:13px;
-  font-weight:800;
-  color:#8b95a7;
-  letter-spacing:1px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:12px;
-}
-
-.card{
-  border-radius:10px;
-  padding:16px;
-  min-height:75px;
-}
-
-.card:nth-child(1){
-  background:#eef5ff;
-  border:1px solid #c8dbff;
-}
-
-.card:nth-child(2){
-  background:#ecfdf5;
-  border:1px solid #bbf7d0;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-}
-
-.card:nth-child(1) .cardLabel,
-.card:nth-child(1) .cardValue{
-  color:#2563eb;
-}
-
-.card:nth-child(2) .cardLabel,
-.card:nth-child(2) .cardValue{
-  color:#059669;
-}
-
-.cardValue{
-  margin-top:6px;
-  font-size:20px;
-  font-weight:800;
-  min-height:24px;
-}
-
-.formula{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+.section-title{margin:16px 0 12px;font-size:14px;font-weight:800;color:#8b95a7;letter-spacing:.5px;text-transform:uppercase}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit{height:43px;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #cfd6df;border-radius:8px;font-weight:700;font-size:14px;color:#555}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:13px;font-weight:700}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
+.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
+.cardLine span{font-weight:800;font-size:18px;color:inherit}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.green *{color:#16a34a}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:16px;color:#2d3748;border-bottom:1px solid #edf2f7;padding-bottom:6px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#475467;font-weight:700;overflow-x:auto;line-height:1.6}
+.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;min-width:400px;height:auto;display:block;margin:auto}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
+.exampleCard p{margin:4px 0;font-size:13px;color:#4a5568}
 @media(max-width:600px){
-  .resultGrid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .cardValue{
-    font-size:14px;
-  }
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr}
+  .exampleGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <div class="section-title">Receiver Location</div>
+    
+    <label for="rx_lon">Longitude (+ = E)</label>
+    <div class="row">
+      <input id="rx_lon" type="number" placeholder="Receiver longitude" step="any">
+      <div class="unit">°</div>
+    </div>
 
-<div class="calc">
+    <label for="rx_lat">Latitude (+ = N)</label>
+    <div class="row">
+      <input id="rx_lat" type="number" placeholder="Receiver latitude" step="any">
+      <div class="unit">°</div>
+    </div>
 
-  <div class="section-title">Receiver Location</div>
+    <div class="section-title">Satellite Location</div>
 
-  <label>Longitude (+ = E)</label>
-  <div class="row">
-    <input id="rx_lon" type="number" placeholder="Receiver longitude">
-    <div class="unit">°</div>
-  </div>
+    <label for="sat_lon">Satellite Longitude (+ = E)</label>
+    <div class="row">
+      <input id="sat_lon" type="number" placeholder="Satellite longitude" step="any">
+      <div class="unit">°</div>
+    </div>
 
-  <label>Latitude (+ = N)</label>
-  <div class="row">
-    <input id="rx_lat" type="number" placeholder="Receiver latitude">
-    <div class="unit">°</div>
-  </div>
-
-  <div class="section-title">Satellite Location</div>
-
-  <label>Satellite Longitude (+ = E)</label>
-  <div class="row">
-    <input id="sat_lon" type="number" placeholder="Satellite longitude">
-    <div class="unit">°</div>
-  </div>
-
-  <button class="btn" onclick="cmd_calculate()">CALCULATE</button>
-
-  <div id="errorBox" class="error">Please enter valid values.</div>
+    <button class="btn" type="button" onclick="cmd_calculate()">CALCULATE</button>
+  </form>
+  
+  <div id="errorBox">Please enter valid values.</div>
 
   <div class="resultTitle">RESULTS</div>
-
   <div class="resultGrid">
-    <div class="card">
-      <div class="cardLabel">Azimuth</div>
-      <div class="cardValue"><span id="rx_az"></span></div>
+    <div class="card blue">
+      <div class="cardLabel">AZIMUTH</div>
+      <div class="cardLine">
+        <span id="rx_az">-</span>
+      </div>
     </div>
-
-    <div class="card">
-      <div class="cardLabel">Elevation</div>
-      <div class="cardValue"><span id="rx_el"></span></div>
+    <div class="card green">
+      <div class="cardLabel">ELEVATION</div>
+      <div class="cardLine">
+        <span id="rx_el">-</span>
+      </div>
     </div>
   </div>
 
-  <div class="formula">
-    Original formula preserved:<br>
-    Earth radius R0 = 6370 km<br>
-    Satellite height h = 35800 km
-  </div>
+  <section class="infoBox">
+    <h2>Antenna Azimuth and Elevation Graph</h2>
+    <p>Azimuth tracks the horizontal steering vector angle relative clockwise from true North across the horizontal ground layout. Elevation maps the vertical pitch scaling boundaries rising immediately from the horizontal surface up towards the targeted geostationary orbit endpoint.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg">
+          <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#ffffff"/>
+          </linearGradient>
+          <rect x="0" y="0" width="400" height="420" fill="url(#skyGrad)"/>
 
-</div>
+          <line x1="40" y1="380" x2="360" y2="280" stroke="#4a5568" stroke-width="1.5"/>
+          <path d="M 40 380 L 48 373 M 40 380 L 52 381" stroke="#4a5568" stroke-width="1.5"/>
+          <path d="M 360 280 L 352 287 M 360 280 L 348 279" stroke="#4a5568" stroke-width="1.5"/>
+          
+          <text x="35" y="405" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">North</text>
+          <text x="365" y="275" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">South</text>
+
+          <line x1="150" y1="315" x2="150" y2="245" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="150" cy="315" r="4" fill="#334155"/>
+
+          <path d="M 75 368 C 110 325 210 295 264 300" fill="none" stroke="#475467" stroke-width="1.2"/>
+          <path d="M 264 300 L 255 296 M 264 300 L 258 305" stroke="#475467" stroke-width="1.2"/>
+          <text x="235" y="335" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">Azimuth</text>
+
+          <g transform="translate(160, 230) rotate(-15)">
+            <ellipse cx="0" cy="0" rx="45" ry="60" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5"/>
+            <ellipse cx="0" cy="0" rx="20" ry="30" fill="none" stroke="#fdba74" stroke-width="1"/>
+            <path d="M 0 10 L 30 40 L 40 35" fill="none" stroke="#475467" stroke-width="2"/>
+            <circle cx="40" cy="35" r="6" fill="#94a3b8" stroke="#475467"/>
+          </g>
+          
+          <circle cx="150" cy="245" r="6" fill="#64748b"/>
+          <path d="M 144 245 L 160 230" stroke="#475467" stroke-width="2"/>
+
+          <line x1="165" y1="225" x2="290" y2="75" stroke="#475467" stroke-width="1"/>
+          <path d="M 290 75 L 282 80 M 290 75 L 286 84" stroke="#475467" stroke-width="1"/>
+
+          <path d="M 264 300 C 285 240 280 150 215 170" fill="none" stroke="#475467" stroke-width="1"/>
+          <path d="M 215 170 L 223 166 M 215 170 L 221 176" stroke="#475467" stroke-width="1"/>
+          
+          <text x="290" y="175" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">elevation</text>
+          <text x="290" y="198" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">angle</text>
+
+          <g transform="translate(295, 55) rotate(-20)">
+            <rect x="-12" y="-12" width="24" height="24" rx="3" fill="#334155" stroke="#1e293b" stroke-width="1.5"/>
+            <ellipse cx="0" cy="-16" rx="10" ry="5" fill="#94a3b8" stroke="#334155"/>
+            <ellipse cx="0" cy="16" rx="10" ry="5" fill="#94a3b8" stroke="#334155"/>
+            <line x1="0" y1="-12" x2="0" y2="-16" stroke="#334155" stroke-width="2"/>
+            <line x1="0" y1="12" x2="0" y2="16" stroke="#334155" stroke-width="2"/>
+            <rect x="-55" y="-5" width="43" height="10" fill="#0284c7" stroke="#0369a1" stroke-width="1"/>
+            <rect x="12" y="-5" width="43" height="10" fill="#0284c7" stroke="#0369a1" stroke-width="1"/>
+            <line x1="-34" y1="-5" x2="-34" y2="5" stroke="#0369a1" stroke-width="0.8"/>
+            <line x1="33" y1="-5" x2="33" y2="5" stroke="#0369a1" stroke-width="0.8"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Geometrical Space Logic</h2>
+    <p>Pointing properties map real-time structural lookup metrics across vector orientations relative directly to spherical tracking rules:</p>
+    <div class="formulaLine">
+      <strong>Geocentric Constant System baselines:</strong><br>
+      Mean Planetary Base Radius (R0) = 6370 km<br>
+      Geostationary Synchronization Height (h) = 35800 km
+    </div>
+    <div class="formulaLine">
+      <strong>Azimuth Angular Tracking:</strong><br>
+      Azimuth = atan(tan(delta_lon) / sin(rx_lat)) + 180
+    </div>
+    <div class="formulaLine">
+      <strong>Elevation Vertical Pitch:</strong><br>
+      Elevation = atan([cos(rx_lat) * cos(delta_lon) - (R0 / (R0 + h))] / sqrt(1 - [cos(rx_lat) * cos(delta_lon)]^2))
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Alignment Example</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><b>Receiver Position Values</b></p>
+        <p>Receiver Longitude: 72.50° E</p>
+        <p>Receiver Latitude: 23.00° N</p>
+      </div>
+      <div class="exampleCard">
+        <p><b>Target Satellite Values</b></p>
+        <p>Satellite Orbiter Longitude: 83.00° E</p>
+        <p>Calculated Orientation: Complete</p>
+      </div>
+    </div>
+  </section>
+</main>
 
 <script>
 function cmd_calculate(){
-
   var rx_lon, rx_lat, sat_lon, rx_az, rx_el;
   var delta_lon, num, den;
   var R0 = 6370;
   var h = 35800;
 
   rx_lon = parseFloat(document.getElementById('rx_lon').value);
-
   if(isNaN(rx_lon) || (rx_lon < -180) || (rx_lon > 180)){
     document.getElementById('rx_lon').value = "";
     showError();
@@ -238,7 +196,6 @@ function cmd_calculate(){
   }
 
   rx_lat = parseFloat(document.getElementById('rx_lat').value);
-
   if(isNaN(rx_lat) || (rx_lat < -90) || (rx_lat > 90)){
     document.getElementById('rx_lat').value = "";
     showError();
@@ -246,7 +203,6 @@ function cmd_calculate(){
   }
 
   sat_lon = parseFloat(document.getElementById('sat_lon').value);
-
   if(isNaN(sat_lon) || (sat_lon < -180) || (sat_lon > 180)){
     document.getElementById('sat_lon').value = "";
     showError();
@@ -280,25 +236,24 @@ function cmd_calculate(){
 
   rx_el = (180 / Math.PI) * Math.atan(num / den);
 
-  document.getElementById('rx_az').innerText =
-    rx_az.toPrecision(4) + "°";
-
-  document.getElementById('rx_el').innerText =
-    rx_el.toPrecision(3) + "°";
+  document.getElementById('rx_az').innerText = rx_az.toPrecision(4) + "°";
+  document.getElementById('rx_el').innerText = rx_el.toPrecision(3) + "°";
 
   return 0;
 }
 
 function showError(){
   document.getElementById("errorBox").style.display = "block";
-  document.getElementById("rx_az").innerText = "";
-  document.getElementById("rx_el").innerText = "";
+  document.getElementById("rx_az").innerText = "-";
+  document.getElementById("rx_el").innerText = "-";
 }
 
 function hideError(){
   document.getElementById("errorBox").style.display = "none";
 }
-</script>
 
-</body>
-</html>
+document.getElementById("rx_lon").addEventListener("input", hideError);
+document.getElementById("rx_lat").addEventListener("input", hideError);
+document.getElementById("sat_lon").addEventListener("input", hideError);
+</script>
+</body></html>
