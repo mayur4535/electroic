@@ -1,92 +1,183 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Directional Coupler Calculator | Coupling & Insertion Loss Tool</title>
+<meta name="description" content="Calculate directional coupler parameters including coupling, coupling loss, insertion loss, and directivity from power ports in dBm or Watts.">
+<meta name="keywords" content="directional coupler calculator, coupling loss calculator, insertion loss solver, directivity calculator rf, multi port power divider, 4 port directional coupler tool, rf power coupling measurement, dbm to watts power calculation, isolated port power calculator, coupled line simulator, waveguide coupler formula">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
 label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
-.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:8px;margin-bottom:16px}
 input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
-select{text-align:center;font-weight:700;padding:0 6px}
-.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-.resultTitle{margin-top:26px;font-size:13px;font-weight:800;color:#8b95a7;letter-spacing:1px}
-.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.card{border-radius:10px;padding:16px;min-height:76px}
-.card:nth-child(1){background:#eef5ff;border:1px solid #c8dbff}
-.card:nth-child(2){background:#ecfdf5;border:1px solid #bbf7d0}
-.card:nth-child(3){background:#f5f3ff;border:1px solid #ddd6fe}
-.card:nth-child(4){background:#fff7ed;border:1px solid #fed7aa}
-.cardLabel{font-size:12px;font-weight:800;text-transform:uppercase}
-.card:nth-child(1) .cardLabel,.card:nth-child(1) .cardValue{color:#2563eb}
-.card:nth-child(2) .cardLabel,.card:nth-child(2) .cardValue{color:#059669}
-.card:nth-child(3) .cardLabel,.card:nth-child(3) .cardValue{color:#7c3aed}
-.card:nth-child(4) .cardLabel,.card:nth-child(4) .cardValue{color:#ea580c}
-.cardValue{margin-top:6px;font-size:18px;font-weight:800;min-height:24px}
-.formula{margin-top:16px;padding:14px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
-@media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.cardValue{font-size:14px}}
-</style>
-</head>
-
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:13px;font-weight:700}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
+.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
+.cardLine input{background:transparent !important;font-weight:800;color:inherit;border:none !important;padding:0;height:auto;font-size:18px;width:100%;outline:none;box-shadow:none !important}
+.cardLine span{font-weight:800;font-size:14px}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.green *{color:#16a34a}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe}
+.purple *{color:#7c3aed}
+.orange{background:#fff7ed;border:1px solid #fed7aa}
+.orange *{color:#ea580c}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:16px;color:#2d3748;border-bottom:1px solid #edf2f7;padding-bottom:6px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#475467;font-weight:700;overflow-x:auto;line-height:1.6}
+.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;min-width:400px;height:auto;display:block;margin:auto}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
+.exampleCard p{margin:4px 0;font-size:13px;color:#4a5568}
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr}
+  .exampleGrid{grid-template-columns:1fr}
+}
+</style></head>
 <body>
-<div class="calc">
+<main class="calc">
+  <form id="tool">
+    <label for="txt0">Input Power P1</label>
+    <div class="row">
+      <input id="txt0" type="number" step="any" placeholder="Example: 10">
+      <select id="p1unit"><option value="dbm">dBm</option><option value="watts">Watts</option></select>
+    </div>
 
-<label>Input Power P1</label>
-<div class="row">
-<input id="txt0" type="number" step="any">
-<select id="p1unit"><option value="dbm">dBm</option><option value="watts">Watts</option></select>
-</div>
+    <label for="txt1">Output Power P2</label>
+    <div class="row">
+      <input id="txt1" type="number" step="any" placeholder="Example: 9.5">
+      <select id="p2unit"><option value="dbm">dBm</option><option value="watts">Watts</option></select>
+    </div>
 
-<label>Output Power P2</label>
-<div class="row">
-<input id="txt1" type="number" step="any">
-<select id="p2unit"><option value="dbm">dBm</option><option value="watts">Watts</option></select>
-</div>
+    <label for="txt2">Output Power at Isolated Port P3</label>
+    <div class="row">
+      <input id="txt2" type="number" step="any" placeholder="Example: -20">
+      <select id="p3unit"><option value="dbm">dBm</option><option value="watts">Watts</option></select>
+    </div>
 
-<label>Output Power at Isolated Port P3</label>
-<div class="row">
-<input id="txt2" type="number" step="any">
-<select id="p3unit"><option value="dbm">dBm</option><option value="watts">Watts</option></select>
-</div>
+    <label for="txt3">Coupled Power P4</label>
+    <div class="row">
+      <input id="txt3" type="number" step="any" placeholder="Example: 0">
+      <select id="p4unit"><option value="dbm">dBm</option><option value="watts">Watts</option></select>
+    </div>
 
-<label>Coupled Power P4</label>
-<div class="row">
-<input id="txt3" type="number" step="any">
-<select id="p4unit"><option value="dbm">dBm</option><option value="watts">Watts</option></select>
-</div>
+    <button class="btn" type="button" onclick="Calculate()">CALCULATE</button>
+  </form>
+  
+  <div id="errorBox">Please enter valid values.</div>
 
-<button class="btn" onclick="Calculate()">CALCULATE</button>
-<div id="errorBox">Please enter valid values.</div>
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">Coupling</div>
+      <div class="cardLine"><span id="result1">-</span><span class="unitText"></span></div>
+    </div>
+    <div class="card green">
+      <div class="cardLabel">Coupling Loss</div>
+      <div class="cardLine"><span id="result2">-</span><span class="unitText"></span></div>
+    </div>
+    <div class="card purple">
+      <div class="cardLabel">Insertion Loss</div>
+      <div class="cardLine"><span id="result3">-</span><span class="unitText"></span></div>
+    </div>
+    <div class="card orange">
+      <div class="cardLabel">Directivity</div>
+      <div class="cardLine"><span id="result4">-</span><span class="unitText"></span></div>
+    </div>
+  </div>
 
-<div class="resultTitle">RESULTS</div>
+  <section class="infoBox">
+    <h2>Directional Coupler Port Schema</h2>
+    <p>A 4-port directional coupler samples high-frequency signals directionally. Power entering the main Input line routes fundamentally straight to Output nodes while a designated fractional decibel component tracks onto the secondary Coupled path block structure.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 500 360" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="500" height="360" fill="#ffffff" stroke="none"/>
+          
+          <rect x="110" y="270" width="280" height="22" fill="#eef5ff" stroke="#2359e8" stroke-width="2.5"/>
+          
+          <line x1="65" y1="281" x2="95" y2="281" stroke="#2359e8" stroke-width="2.5"/>
+          <polygon points="101,281 91,276 91,286" fill="#2359e8"/>
+          <text x="80" y="265" fill="#2359e8" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle">In</text>
+          <text x="80" y="305" fill="#2359e8" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle">P1</text>
+          
+          <line x1="400" y1="281" x2="430" y2="281" stroke="#2359e8" stroke-width="2.5"/>
+          <polygon points="436,281 426,276 426,286" fill="#2359e8"/>
+          <text x="420" y="265" fill="#2359e8" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle">Out</text>
+          <text x="420" y="305" fill="#2359e8" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle">P2</text>
+          
+          <path d="M 110 80 L 132 80 L 132 230 L 152 245 L 348 245 L 368 230 L 368 80 L 390 80 L 390 235 L 364 257 L 136 257 L 110 235 Z" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/>
+          
+          <line x1="121" y1="70" x2="121" y2="35" stroke="#ff3b30" stroke-width="2.5"/>
+          <polygon points="121,29 116,39 126,39" fill="#ff3b30"/>
+          <text x="142" y="42" fill="#ff3b30" font-size="14" font-family="sans-serif" font-weight="bold">Coupled</text>
+          <text x="142" y="60" fill="#ff3b30" font-size="14" font-family="sans-serif" font-weight="bold">Port</text>
+          <text x="96" y="55" fill="#ff3b30" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="end">P4</text>
+          
+          <line x1="379" y1="70" x2="379" y2="35" stroke="#16a34a" stroke-width="2.5"/>
+          <polygon points="379,29 374,39 384,39" fill="#16a34a"/>
+          <text x="358" y="42" fill="#16a34a" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="end">Isolated</text>
+          <text x="358" y="60" fill="#16a34a" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="end">Port</text>
+          <text x="404" y="55" fill="#16a34a" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="start">P3</text>
+          
+          <text x="250" y="340" fill="#4a5568" font-size="16" font-family="sans-serif" font-weight="bold" text-anchor="middle">Directional coupler</text>
+        </svg>
+      </div>
+    </div>
+  </section>
 
-<div class="resultGrid">
-<div class="card"><div class="cardLabel">Coupling</div><div class="cardValue" id="result1"></div></div>
-<div class="card"><div class="cardLabel">Coupling Loss</div><div class="cardValue" id="result2"></div></div>
-<div class="card"><div class="cardLabel">Insertion Loss</div><div class="cardValue" id="result3"></div></div>
-<div class="card"><div class="cardLabel">Directivity</div><div class="cardValue" id="result4"></div></div>
-</div>
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <p>The matrix processes numerical inputs relative to standard logarithmic boundary rules exactly:</p>
+    <div class="formulaLine">
+      <strong>Power Translation Scalings:</strong><br>
+      If Watts: dBm = 10 * log10(W) + 30
+    </div>
+    <div class="formulaLine">
+      <strong>Coupled Signal Attenuation Logics:</strong><br>
+      Coupling = -10 * log10(P4 / P1)<br>
+      Coupling Loss = -10 * log10(1 - P4 / P1)
+    </div>
+    <div class="formulaLine">
+      <strong>System Network Leakage Evaluations:</strong><br>
+      Insertion Loss = -10 * log10((P2/P1) + (P3/P1) + (P4/P1))<br>
+      Directivity = -10 * log10(P3 / P4)
+    </div>
+  </section>
 
-<div class="formula">
-Website formula logic preserved:<br><br>
-If Watts: dBm = 10 × log10(W) + 30<br>
-Coupling = -10 × log10(P4 / P1)<br>
-Coupling Loss = -10 × log10(1 − P4 / P1)<br>
-Insertion Loss = -10 × log10((P2/P1) + (P3/P1) + (P4/P1))<br>
-Directivity = -10 × log10(P3 / P4)
-</div>
-
-</div>
+  <section class="infoBox">
+    <h2>Practical RF Coupler Example</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><b>Input Port Parameters</b></p>
+        <p>Input Power P1: 10.00 dBm</p>
+        <p>Output Power P2: 9.50 dBm</p>
+      </div>
+      <div class="exampleCard">
+        <p><b>Secondary Path Elements</b></p>
+        <p>Isolated Port P3: -20.00 dBm</p>
+        <p>Coupled Power P4: 0.00 dBm</p>
+      </div>
+    </div>
+  </section>
+</main>
 
 <script>
 function clearResults(){
-  document.getElementById("result1").innerHTML="";
-  document.getElementById("result2").innerHTML="";
-  document.getElementById("result3").innerHTML="";
-  document.getElementById("result4").innerHTML="";
+  document.getElementById("result1").innerText="-";
+  document.getElementById("result2").innerText="-";
+  document.getElementById("result3").innerText="-";
+  document.getElementById("result4").innerText="-";
 }
 
 function GetTextBoxValue(id){
@@ -100,6 +191,15 @@ function checknan(v){
   if(isNaN(v) || !isFinite(v))return NaN;
   return v;
 }
+
+document.getElementById("txt0").addEventListener("input", clearResults);
+document.getElementById("txt1").addEventListener("input", clearResults);
+document.getElementById("txt2").addEventListener("input", clearResults);
+document.getElementById("txt3").addEventListener("input", clearResults);
+document.getElementById("p1unit").addEventListener("change", clearResults);
+document.getElementById("p2unit").addEventListener("change", clearResults);
+document.getElementById("p3unit").addEventListener("change", clearResults);
+document.getElementById("p4unit").addEventListener("change", clearResults);
 
 function Calculate(){
   var v0=GetTextBoxValue("txt0");
@@ -136,12 +236,10 @@ function Calculate(){
 
   document.getElementById("errorBox").style.display="none";
 
-  document.getElementById("result1").innerHTML=checknan(a).toFixed(6)+" dB";
-  document.getElementById("result2").innerHTML=checknan(r).toFixed(6)+" dB";
-  document.getElementById("result3").innerHTML=checknan(l).toFixed(6)+" dB";
-  document.getElementById("result4").innerHTML=checknan(u).toFixed(6)+" dB";
+  document.getElementById("result1").innerText=checknan(a).toFixed(6)+" dB";
+  document.getElementById("result2").innerText=checknan(r).toFixed(6)+" dB";
+  document.getElementById("result3").innerText=checknan(l).toFixed(6)+" dB";
+  document.getElementById("result4").innerText=checknan(u).toFixed(6)+" dB";
 }
 </script>
-
-</body>
-</html>
+</body></html>
