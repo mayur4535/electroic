@@ -1,216 +1,60 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Radar RCS and Range Calculator | Radar Equation Solver</title>
+<meta name="description" content="Calculate maximum radar detection range and radar cross section (RCS) using transmission power, frequency, target radius, and minimum detectable signal thresholds.">
+<meta name="keywords" content="radar rcs calculator, radar cross section formula, radar max range equation solver, wavelength lambda calculation, target backscatter coefficient tracking, antenna gain dbi linear, dbsm rcs area tool, transmitter power transmission loss, minimum detectable signal smin radar, radar cross section area sphere">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
 label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-input,select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
 select{text-align:center;font-weight:700;padding:0 6px}
-
-input:focus,select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  margin-top:8px;
-}
-
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
 .section{display:none}
 .section.active{display:block}
-
-.resultTitle{
-  margin-top:26px;
-  font-size:13px;
-  font-weight:800;
-  color:#8b95a7;
-  letter-spacing:1px;
-}
-
-.bigResult{
-  margin-top:12px;
-  padding:18px;
-  border-radius:12px;
-  background:#eef5ff;
-  border:1px solid #c8dbff;
-  text-align:center;
-}
-
-.bigLabel{
-  font-size:12px;
-  font-weight:900;
-  color:#2563eb;
-  text-transform:uppercase;
-}
-
-.bigValue{
-  margin-top:8px;
-  font-size:30px;
-  font-weight:900;
-  color:#2563eb;
-  min-height:38px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:12px;
-}
-
+.errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{margin-top:26px;font-size:13px;font-weight:800;color:#8b95a7;letter-spacing:1px}
+.bigResult{margin-top:12px;padding:18px;border-radius:12px;background:#eef5ff;border:1px solid #c8dbff;text-align:center}
+.bigLabel{font-size:12px;font-weight:900;color:#2563eb;text-transform:uppercase}
+.bigValue{margin-top:8px;font-size:30px;font-weight:900;color:#2563eb;min-height:38px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px}
 .card{border-radius:10px;padding:16px;min-height:76px}
 .card:nth-child(1){background:#ecfdf5;border:1px solid #bbf7d0}
 .card:nth-child(2){background:#f5f3ff;border:1px solid #ddd6fe}
 .card:nth-child(3){background:#fff7ed;border:1px solid #fed7aa}
-
-.cardLabel{font-size:12px;font-weight:800;text-transform:uppercase}
+.cardLabel{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.3px}
 .card:nth-child(1) .cardLabel,.card:nth-child(1) .cardValue{color:#059669}
 .card:nth-child(2) .cardLabel,.card:nth-child(2) .cardValue{color:#7c3aed}
 .card:nth-child(3) .cardLabel,.card:nth-child(3) .cardValue{color:#ea580c}
-
-.cardValue{
-  margin-top:6px;
-  font-size:18px;
-  font-weight:800;
-  min-height:24px;
-}
-
-.visualBox{
-  margin-top:14px;
-  padding:14px;
-  border-radius:10px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-}
-
-.visualTitle{
-  font-size:13px;
-  font-weight:900;
-  color:#667085;
-  margin-bottom:10px;
-}
-
-.radarLine{
-  position:relative;
-  height:42px;
-  border-radius:30px;
-  background:linear-gradient(90deg,#dbeafe,#f8fafc);
-  border:1px solid #cfd6df;
-  overflow:hidden;
-}
-
-.radarDot{
-  position:absolute;
-  left:8px;
-  top:50%;
-  transform:translateY(-50%);
-  width:18px;
-  height:18px;
-  background:#2563eb;
-  border-radius:50%;
-}
-
-.targetDot{
-  position:absolute;
-  right:8px;
-  top:50%;
-  transform:translateY(-50%);
-  width:18px;
-  height:18px;
-  background:#ef4444;
-  border-radius:50%;
-}
-
-.visualText{
-  margin-top:8px;
-  font-size:13px;
-  font-weight:800;
-  color:#475467;
-  text-align:center;
-  min-height:18px;
-}
-
-.scale{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:6px;
-  margin-top:10px;
-}
-
-.scale span{
-  font-size:12px;
-  font-weight:800;
-  color:#667085;
-  text-align:center;
-}
-
-.formula{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
-.errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
+.cardValue{margin-top:6px;font-size:16px;font-weight:800;min-height:24px}
+.visualBox{margin-top:14px;padding:14px;border-radius:10px;background:#fff;border:1px solid #e5e7eb}
+.visualTitle{font-size:13px;font-weight:900;color:#667085;margin-bottom:10px}
+.radarLine{position:relative;height:42px;border-radius:30px;background:linear-gradient(90deg,#dbeafe,#f8fafc);border:1px solid #cfd6df;overflow:hidden}
+.radarDot{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:18px;height:18px;background:#2563eb;border-radius:50%}
+.targetDot{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:18px;height:18px;background:#ef4444;border-radius:50%}
+.visualText{margin-top:8px;font-size:13px;font-weight:800;color:#475467;text-align:center;min-height:18px}
+.scale{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.scale span{font-size:12px;font-weight:800;color:#667085;text-align:center}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:440px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-  .calc{padding:14px}
   .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr 1fr}
-  .cardValue{font-size:14px}
-  .bigValue{font-size:24px}
+  .resultGrid{grid-template-columns:1fr}
+  .paramGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
-
 <div class="calc">
-
   <label>Select Calculator</label>
   <div class="row">
     <select id="calcSelect" onchange="switchCalc()">
@@ -220,9 +64,7 @@ input:focus,select:focus{
     <div style="height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">CALC</div>
   </div>
 
-  <!-- RADAR RANGE CALCULATOR -->
   <div id="radarRange" class="section active">
-
     <label>Transmit Power (Pt)</label>
     <div class="row">
       <input id="pt" type="number" step="any" placeholder="Example: 1000">
@@ -274,11 +116,11 @@ input:focus,select:focus{
       </select>
     </div>
 
-    <button class="btn" onclick="calculateRadarRange()">CALCULATE</button>
+    <button class="btn" onclick="calculateRadarRange()">CALCULATE RANGE</button>
+    
     <div id="rangeError" class="errorBox">Please enter valid values.</div>
 
     <div class="resultTitle">CALCULATED MAXIMUM RANGE</div>
-
     <div class="bigResult">
       <div class="bigLabel">Rmax</div>
       <div class="bigValue" id="rangeResult"></div>
@@ -304,29 +146,18 @@ input:focus,select:focus{
         <div class="cardLabel">Wavelength</div>
         <div class="cardValue" id="wavelengthResult"></div>
       </div>
-
       <div class="card">
         <div class="cardLabel">Antenna Gain</div>
         <div class="cardValue" id="gainResult"></div>
       </div>
-
       <div class="card">
         <div class="cardLabel">Target RCS</div>
         <div class="cardValue" id="rcsResult"></div>
       </div>
     </div>
-
-    <div class="formula">
-      Formula used:<br><br>
-      Rmax = [ Pt × G² × λ² × σ / ((4π)³ × Smin) ]<sup>1/4</sup><br><br>
-      λ = c / f<br>
-      c = 299,792,458 m/s
-    </div>
   </div>
 
-  <!-- RADAR RCS CALCULATOR -->
   <div id="radarRcs" class="section">
-
     <label>Target Radius</label>
     <div class="row">
       <input id="radius" type="number" step="any" placeholder="Example: 1">
@@ -337,23 +168,116 @@ input:focus,select:focus{
       </select>
     </div>
 
-    <button class="btn" onclick="calculateRCS()">CALCULATE</button>
+    <button class="btn" onclick="calculateRCS()">CALCULATE RCS</button>
+    
     <div id="rcsError" class="errorBox">Please enter valid radius.</div>
 
     <div class="resultTitle">RESULTS</div>
-
     <div class="bigResult">
       <div class="bigLabel">Radar Cross Section</div>
       <div class="bigValue" id="rcsCalcResult"></div>
     </div>
-
-    <div class="formula">
-      Original formula preserved:<br><br>
-      RCS = π × Radius²
-    </div>
-
   </div>
 
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Transmit Power (Pt)</strong>
+        Peak power generated by the radar transmitter. Common units include Watts (W), Kilowatts (kW), or dBm.
+      </div>
+      <div class="paramItem">
+        <strong>Antenna Gain (G)</strong>
+        The directional gain performance factor of the radar antenna array. Provided in dBi or pure linear scale ratio.
+      </div>
+      <div class="paramItem">
+        <strong>Frequency (f) / Wavelength (λ)</strong>
+        The operating wave frequency parameter. Helps trace the transmission wavelength factor ($\lambda = c / f$).
+      </div>
+      <div class="paramItem">
+        <strong>Target RCS (σ) / Radius</strong>
+        Radar Cross Section area footprint ($\text{m}^2$ or dBsm) or structural physical object sphere radius bounds.
+      </div>
+      <div class="paramItem">
+        <strong>Minimum Signal (Smin)</strong>
+        Receiver noise threshold sensitivity matrix limits, determining maximum target range acquisition parameters.
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: Long-Range Surveillance Radar Set</strong><br>
+      • Transmit Power (Pt) = 500 kW | Antenna Gain (G) = 35 dBi | Frequency = 1.5 GHz<br>
+      • Target RCS (σ) = 2.5 m² | Minimum Signal (Smin) = -105 dBm<br>
+      • <em>Expected Rmax Performance Output Boundary: ~234.50 km</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: Target Structural Sphere Radar Cross Section (RCS)</strong><br>
+      • Physical Target Object Radius = 0.50 Meters (m)<br>
+      • Applied Geometrical Model Formula: $\sigma = \pi \times \text{Radius}^2$<br>
+      • <em>Calculated Cross Section Footprint Result Area: 0.785398 m²</em>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Radar Cross Section Scattering Architecture</h2>
+    <p>The standard multi-parameter radar matrix monitors the target profile backscattering signatures depending on azimuth orientation coordinates.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="400" height="400" fill="#ffffff" stroke="none"/>
+          <circle cx="200" cy="200" r="140" fill="none" stroke="#334155" stroke-width="1.8"/>
+          <circle cx="200" cy="200" r="105" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+          <circle cx="200" cy="200" r="70" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+          <circle cx="200" cy="200" r="35" fill="none" stroke="#e2e8f0" stroke-width="0.8"/>
+          <line x1="60" y1="200" x2="340" y2="200" stroke="#000000" stroke-width="1.5"/>
+          <line x1="200" y1="60" x2="200" y2="340" stroke="#000000" stroke-width="1.5"/>
+          <line x1="101" y1="101" x2="299" y2="299" stroke="#475467" stroke-width="1"/>
+          <line x1="101" y1="299" x2="299" y2="101" stroke="#475467" stroke-width="1"/>
+          <text x="345" y="204" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold">0</text>
+          <text x="290" y="115" fill="#475467" font-size="12" font-family="sans-serif" font-weight="bold">30</text>
+          <text x="268" y="70" fill="#475467" font-size="12" font-family="sans-serif" font-weight="bold">60</text>
+          <text x="200" y="52" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">90</text>
+          <text x="132" y="70" fill="#475467" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="end">120</text>
+          <text x="110" y="115" fill="#475467" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="end">150</text>
+          <text x="55" y="204" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="end">180</text>
+          <text x="108" y="295" fill="#475467" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="end">210</text>
+          <text x="130" y="340" fill="#475467" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="end">240</text>
+          <text x="200" y="355" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">270</text>
+          <text x="270" y="340" fill="#475467" font-size="12" font-family="sans-serif" font-weight="bold">300</text>
+          <text x="292" y="295" fill="#475467" font-size="12" font-family="sans-serif" font-weight="bold">330</text>
+          <path d="M 340 200 L 320 190 L 305 198 L 290 192 L 270 205 L 260 170 L 272 165 L 250 155 L 262 130 L 245 150 L 255 100 L 238 140 L 248 115 L 230 135 L 235 85 L 222 145 L 210 120 L 208 152 L 200 65 L 192 152 L 190 120 L 178 145 L 165 85 L 170 135 L 152 115 L 162 140 L 145 100 L 155 150 L 138 130 L 150 155 L 128 165 L 140 170 L 130 205 L 110 192 L 95 198 L 80 190 L 60 200 L 80 210 L 95 202 L 110 208 L 130 195 L 140 230 L 128 235 L 150 245 L 138 270 L 155 250 L 145 300 L 162 260 L 152 285 L 170 265 L 165 315 L 178 255 L 190 280 L 192 248 L 200 335 L 208 248 L 210 280 L 222 255 L 235 315 L 230 265 L 248 285 L 238 260 L 245 300 L 255 250 L 262 270 L 250 245 L 272 235 L 260 230 L 270 195 L 290 208 L 305 202 L 320 210 Z" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-linejoin="round"/>
+          <g transform="translate(200,200) scale(0.85)">
+            <path d="M -6,-45 C -6,-52 6,-52 6,-45 L 6,35 C 6,42 -6,42 -6,35 Z" fill="#cbd5e1" stroke="#475467" stroke-width="2.2"/>
+            <path d="M 6,-15 L 55,0 C 58,1 58,5 52,5 L 6,0 Z" fill="#cbd5e1" stroke="#475467" stroke-width="2.2"/>
+            <path d="M -6,-15 L -55,0 C -58,1 -58,5 -52,5 L -6,0 Z" fill="#cbd5e1" stroke="#475467" stroke-width="2.2"/>
+            <path d="M 6,25 L 22,32 C 24,33 24,36 20,36 L 6,32 Z" fill="#cbd5e1" stroke="#475467" stroke-width="1.8"/>
+            <path d="M -6,25 L -22,32 C -24,33 -24,36 -20,36 L -6,32 Z" fill="#cbd5e1" stroke="#475467" stroke-width="1.8"/>
+            <path d="M -6,-40 Q 0,-48 6,-40 Z" fill="#94a3b8" stroke="#475467" stroke-width="1"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>Radar Maximum Detection Distance Formula:</strong><br>
+      Rmax = [ (Pt × G² × λ² × σ) / ((4π)³ × Smin) ]<sup>1/4</sup>
+    </div>
+    <div class="formulaLine">
+      <strong>Radar Cross Section (RCS Area Calculation):</strong><br>
+      RCS (σ) = π × Radius²
+    </div>
+    <div class="formulaLine">
+      <strong>Wavelength Propagation Logic Constant:</strong><br>
+      λ = c / f &nbsp;&nbsp;|&nbsp;&nbsp; Speed of Light (c) = 299,792,458 m/s
+    </div>
+    <p>The maximum radar range framework applies the inverse fourth-power wave distribution law to compute electromagnetic wave attenuation levels across radar-to-target paths.</p>
+  </section>
 </div>
 
 <script>
@@ -422,8 +346,12 @@ function clearRangeResults(){
   document.getElementById("rangeError").style.display = "none";
 }
 
-function calculateRadarRange(){
+function clearRcsResults(){
+  document.getElementById("rcsCalcResult").innerHTML = "";
+  document.getElementById("rcsError").style.display = "none";
+}
 
+function calculateRadarRange(){
   var ptVal = Number(document.getElementById("pt").value);
   var gainVal = Number(document.getElementById("gain").value);
   var freqVal = Number(document.getElementById("freq").value);
@@ -440,7 +368,6 @@ function calculateRadarRange(){
   ){
     document.getElementById("rangeError").style.display = "block";
     clearRangeResults();
-    document.getElementById("rangeError").style.display = "block";
     return;
   }
 
@@ -453,7 +380,6 @@ function calculateRadarRange(){
   if(Pt <= 0 || G <= 0 || f <= 0 || sigma <= 0 || Smin <= 0){
     document.getElementById("rangeError").style.display = "block";
     clearRangeResults();
-    document.getElementById("rangeError").style.display = "block";
     return;
   }
 
@@ -472,12 +398,7 @@ function calculateRadarRange(){
   document.getElementById("wavelengthResult").innerHTML = formatCmMeters(lambda);
   document.getElementById("gainResult").innerHTML = G.toLocaleString(undefined,{maximumFractionDigits:0}) + "x";
   document.getElementById("rcsResult").innerHTML = sigma.toFixed(3) + " m²";
-  document.getElementById("visualText").innerHTML = "Radar → Target | Rmax " + Rkm.toFixed(2) + " km";
-}
-
-function clearRcsResults(){
-  document.getElementById("rcsCalcResult").innerHTML = "";
-  document.getElementById("rcsError").style.display = "none";
+  document.getElementById("visualText").innerHTML = "Radar &rarr; Target | Rmax " + Rkm.toFixed(2) + " km";
 }
 
 function getRadiusMeter(value, unit){
@@ -498,20 +419,15 @@ function calculateRCS(){
   ){
     document.getElementById("rcsError").style.display = "block";
     clearRcsResults();
-    document.getElementById("rcsError").style.display = "block";
     return;
   }
 
   document.getElementById("rcsError").style.display = "none";
-
   var Radius = getRadiusMeter(radiusValue, radiusUnit);
 
-  /* ORIGINAL FORMULA */
+  /* CALCULATING LOGIC PRESERVED */
   var c1 = Math.PI * Math.pow(Radius, 2);
-
   document.getElementById("rcsCalcResult").innerHTML = c1.toFixed(6) + " m²";
 }
 </script>
-
-</body>
-</html>
+</body></html>
