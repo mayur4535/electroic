@@ -1,166 +1,136 @@
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wavelength (TEM) Calculator | Guided Electromagnetic Waves</title>
+<meta name="description" content="Calculate TEM transmission wave wavelength from frequency, dielectric constant, and velocity of propagation properties.">
+<meta name="keywords" content="TEM wavelength calculator, transverse electromagnetic wave, dielectric constant wavelength, propagation velocity calculator, microwave wavelength calculation, transmission line wave solver, RF engineering tool, GHz wavelength calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+.full-row{display:block;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+.btn:disabled{background:#cccccc;cursor:not-allowed;opacity:0.6}
+#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
+.cardLine{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+/* FIXED: Output text background issue fixed to match locked UI guidelines */
+.cardLine input{background:transparent !important;font-weight:800;color:inherit;border:none !important;padding:0;height:auto;font-size:18px;width:100%;outline:none;box-shadow:none !important}
+.cardLine label{margin-bottom:0;background:#fff;height:43px;display:flex;align-items:center;justify-content:center;border:1px solid #cfd6df;border-radius:8px;font-weight:800;font-size:14px;color:#333}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:16px;color:#2d3748;border-bottom:1px solid #edf2f7;padding-bottom:6px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#475467;font-weight:700;overflow-x:auto;line-height:1.6}
+.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;min-width:450px;height:auto;display:block;margin:auto}
+.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
+.exampleCard p{margin:4px 0;font-size:13px;color:#4a5568}
+@media(max-width:600px){
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .cardLine{grid-template-columns:minmax(0,1fr) 72px}
+  .exampleGrid{grid-template-columns:1fr}
 }
+</style></head>
+<body>
+<main class="calc">
+  <form id="tool">
+    <label for="freq">Frequency</label>
+    <div class="row">
+      <input type="number" name="freq" id="freq" placeholder="Example: 2.4">
+      <select id="freq_unit">
+        <option selected="selected" value="1">GHz</option>
+        <option value="1000">MHz</option>
+      </select>
+    </div>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+    <div class="full-row">
+      <label for="dc">Constant (Dielectric)</label>
+      <input type="number" id="dc" placeholder="Example: 4.4">
+    </div>
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
+    <div class="full-row">
+      <label for="vop">Velocity (Propagation)</label>
+      <input type="number" id="vop" placeholder="Example: 70">
+    </div>
+
+    <button class="btn" id="tool_submit" type="button">CALCULATE</button>
+  </form>
   
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+  <div id="errorBox">Please fill all fields with valid numbers greater than 0.</div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">WAVELENGTH</div>
+      <div class="cardLine">
+        <input id="tool_output1" class="intro" type="text" readonly placeholder="-">
+        <label>mm</label>
+      </div>
+    </div>
+  </div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
+  <section class="infoBox">
+    <h2>Transverse Electromagnetic (TEM) Waves</h2>
+    <p>In a Transverse Electromagnetic (TEM) mode propagation configuration, both the electric field vector lines and magnetic field tracks are completely perpendicular relative directly against the direction of target system axial signal velocity travel path flows.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="5" width="490" height="190" rx="6" fill="#ffffff" stroke="none"/>
+          <line x1="40" y1="100" x2="450" y2="100" stroke="#000000" stroke-width="2"/>
+          <path d="M 450 100 L 442 94 L 442 106 Z" fill="#000000"/>
+          <path d="M 50 100 Q 100 20 150 100 Q 200 180 250 100 Q 300 20 350 100 Q 400 180 450 100" fill="none" stroke="#ff3b30" stroke-width="2.5"/>
+          <line x1="100" y1="100" x2="100" y2="22" stroke="#ff3b30" stroke-width="1" stroke-dasharray="2,2"/>
+          <line x1="300" y1="100" x2="300" y2="22" stroke="#ff3b30" stroke-width="1" stroke-dasharray="2,2"/>
+          <line x1="100" y1="15" x2="300" y2="15" stroke="#000000" stroke-width="1.5"/>
+          <circle cx="100" cy="15" r="3" fill="#ff3b30"/>
+          <circle cx="300" cy="15" r="3" fill="#ff3b30"/>
+          <path d="M 40 140 L 440 140" stroke="#000000" stroke-width="1" stroke-dasharray="4,4"/>
+          <path d="M 220 140 L 225 146 M 223 140 L 228 146 M 226 140 L 231 146" stroke="#16a34a" stroke-width="1.5"/>
+          <text x="200" y="32" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">Wavelength (λ)</text>
+          <text x="70" y="60" fill="#ff3b30" font-size="11" font-family="sans-serif" font-weight="bold">Electric Field</text>
+          <text x="380" y="118" fill="#000000" font-size="11" font-family="sans-serif" font-style="italic">Axis Direction</text>
+        </svg>
+      </div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Formulas & Calculation Logic</h2>
+    <p>The calculation resolves TEM mode signal parameters inside localized mediums via matching operational frequency boundaries directly:</p>
+    <div class="formulaLine">
+      <strong>Effective Medium Wavelength Formulation:</strong><br>
+      Wavelength = v / f<br><br>
+      Where 'v' represents actual phase speed boundary conversions inside tracking dielectrics. When the dielectric constant is specified greater than zero, it scales phase thresholds as inversely proportional against the square root of the medium density parameter. Alternatively, Velocity percentage directly defines absolute system performance.
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Practical Calculation Example</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><b>Input Parameters</b></p>
+        <p>Frequency Specified: 2.40 GHz</p>
+        <p>Dielectric Constant (Er): 4.00</p>
+      </div>
+      <div class="exampleCard">
+        <p><b>Determined Output Data</b></p>
+        <p>TEM Mode Wavelength: 62.46 mm</p>
+      </div>
+    </div>
+  </section>
+</main>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
-
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:60;" >Frequency <font face="Arial" size="3"></font></label><input type="number"name="freq"  id="freq"  class="intro"  style="position: absolute;   text-align
-:center;width:250; right: 165px;"class="form-control"  />
-<select class="form-control" id="freq_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:52px;margin:8px 0;width:142px;border-radius:4px;height:85px; border:3px solid #aaa;">
-<option selected="selected" value="1">GHz</option>
-<option value="1000">MHz</option>
-</select></div>
-
-</div>
-</div>
-<h1 style="font-size:45;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:60;" > Constant <font face="Arial" size="6">(Dielectric)</font></label><input type="number" id="dc"  class="intro"  style="position: absolute;   text-align
-:center;width:405; right: 10px;"class="form-control"  />
-</div>
-</div>
-</div>
-</div>
-</div><h1 style="font-size:45;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Velocity<font face="Arial" size="6"> (Propagation)</font></label><input type="number" id="vop"  class="intro"  style="position: absolute;   text-align
-:center;width:405; right: 10px;"class="form-control"  />
-</div>
-</div>
-</div>
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="tool_submit" class="btn btn-theme" type="button" value="Calculate" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Wavelength</label><font face="Arial" size="7">  </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:54px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">mm</label>
-
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-<h1 style="font-size:30;"></h1>
-</div>
-</div>
-</div>
-<script type="text/javascript">
-var _0x7c67=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x66\x72\x65\x71","\x23\x66\x72\x65\x71\x5F\x75\x6E\x69\x74","\x23\x64\x63","\x23\x76\x6F\x70","\x70\x6F\x77","\x73\x71\x72\x74","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x6B\x65\x79\x70\x72\x65\x73\x73","\x6F\x6E","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65"];!function(_0x59cax1){_0x7c67[0];var _0x59cax2={calculate:function(){var _0x59cax2=parseFloat(_0x59cax1(_0x7c67[2])[_0x7c67[1]]()),_0x59cax3=_0x59cax1(_0x7c67[3])[_0x7c67[1]](),_0x59cax4=parseFloat(_0x59cax1(_0x7c67[4])[_0x7c67[1]]()),_0x59cax5=parseFloat(_0x59cax1(_0x7c67[5])[_0x7c67[1]]()),_0x59cax6=_0x59cax2/ _0x59cax3,_0x59cax7=_0x59cax4> 0?_0x59cax4:1/ Math[_0x7c67[6]](_0x59cax5/ 100,2),_0x59cax8=300/ (_0x59cax6* Math[_0x7c67[7]](_0x59cax7));_0x59cax1(_0x7c67[9])[_0x7c67[1]](_0x59cax8[_0x7c67[8]](4))}};_0x59cax1(_0x7c67[12])[_0x7c67[17]](function(){var _0x59cax2=!1;_0x59cax1(_0x7c67[12])[_0x7c67[11]](function(){_0x7c67[10]== _0x59cax1(this)[_0x7c67[1]]()&& (_0x59cax2=  !0)}),_0x59cax2?_0x59cax1(_0x7c67[15])[_0x7c67[14]](_0x7c67[13],_0x7c67[13]):_0x59cax1(_0x7c67[15])[_0x7c67[16]](_0x7c67[13])}),_0x59cax1(_0x7c67[4])[_0x7c67[19]](_0x7c67[18],function(){_0x59cax1(_0x7c67[5])[_0x7c67[1]](0)}),_0x59cax1(_0x7c67[5])[_0x7c67[19]](_0x7c67[18],function(){_0x59cax1(_0x7c67[4])[_0x7c67[1]](0)}),_0x59cax1(_0x7c67[15])[_0x7c67[19]](_0x7c67[20],function(_0x59cax1){_0x59cax1[_0x7c67[21]](),_0x59cax2[_0x7c67[22]]()})}(jQuery)
+<script>
+var _0x7c67=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x66\x72\x65\x71","\x23\x66\x72\x65\x71\x5F\x75\x6E\x69\x74","\x23\x64\x63","\x23\x76\x6F\x70","\x70\x6F\x77","\x73\x71\x72\x74","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x10","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x6B\x65\x79\x70\x72\x65\x73\x73","\x6F\x6E","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65"];!function(_0x59cax1){_0x7c67[0];var _0x59cax2={calculate:function(){var _0x59cax2=parseFloat(_0x59cax1(_0x7c67[2])[_0x7c67[1]]()),_0x59cax3=_0x59cax1(_0x7c67[3])[_0x7c67[1]](),_0x59cax4=parseFloat(_0x59cax1(_0x7c67[4])[_0x7c67[1]]()),_0x59cax5=parseFloat(_0x59cax1(_0x7c67[5])[_0x7c67[1]]()),_0x59cax6=_0x59cax2/ _0x59cax3,_0x59cax7=_0x59cax4> 0?_0x59cax4:1/ Math[_0x7c67[6]](_0x59cax5/ 100,2),_0x59cax8=300/ (_0x59cax6* Math[_0x7c67[7]](_0x59cax7));_0x59cax1(_0x7c67[9])[_0x7c67[1]](_0x59cax8[_0x7c67[8]](4))}};_0x59cax1(_0x7c67[12])[_0x7c67[17]](function(){var _0x59cax2=!1;_0x59cax1(_0x7c67[12])[_0x7c67[11]](function(){_0x7c67[10]== _0x59cax1(this)[_0x7c67[1]]()&& (_0x59cax2=  !0)}),_0x59cax2?_0x59cax1(_0x7c67[15])[_0x7c67[14]](_0x7c67[13],_0x7c67[13]):_0x59cax1(_0x7c67[15])[_0x7c67[16]](_0x7c67[13])}),_0x59cax1(_0x7c67[4])[_0x7c67[19]](_0x7c67[18],function(){_0x59cax1(_0x7c67[5])[_0x7c67[1]](0);}),_0x59cax1(_0x7c67[5])[_0x7c67[19]](_0x7c67[18],function(){_0x59cax1(_0x7c67[4])[_0x7c67[1]](0);}),_0x59cax1(_0x7c67[15])[_0x7c67[19]](_0x7c67[20],function(_0x59cax1){_0x59cax1[_0x7c67[21]](),_0x59cax2[_0x7c67[22]]()})}(jQuery)
 </script>
-</div>
-</body>
-</html>
+</body></html>
