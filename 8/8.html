@@ -1,178 +1,230 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RF AM to PM Conversion Calculator | Distortion Analyzer</title>
+<meta name="description" content="Calculate the RF AM to PM conversion coefficient (deg/dB) of a Device Under Test using TOI, input power level, and device gain.">
+<meta name="keywords" content="rf am to pm conversion calculator, am pm distortion coefficient solver, third order intercept point toi, input power level pin, device gain gtd distortion, nonlinear power dependent phase shift, degrees per db calculator, non-linear amplifier phase deviation, rf power sweep stimulus response">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-input,select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-select{
-  text-align:center;
-  font-weight:700;
-  padding:0 6px;
-}
-
-input:focus,select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  margin-top:8px;
-}
-
-.resultTitle{
-  margin-top:26px;
-  font-size:13px;
-  font-weight:800;
-  color:#8b95a7;
-  letter-spacing:1px;
-}
-
-.bigResult{
-  margin-top:12px;
-  padding:18px;
-  border-radius:12px;
-  background:#eef5ff;
-  border:1px solid #c8dbff;
-  text-align:center;
-}
-
-.bigLabel{
-  font-size:12px;
-  font-weight:900;
-  color:#2563eb;
-  text-transform:uppercase;
-}
-
-.bigValue{
-  margin-top:8px;
-  font-size:30px;
-  font-weight:900;
-  color:#2563eb;
-  min-height:38px;
-}
-
-.formula{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.bigResult{margin-top:4px;padding:18px;border-radius:12px;background:#eef5ff;border:1px solid #bfd3ff;text-align:center}
+.bigLabel{font-size:12px;font-weight:900;color:#2359e8;text-transform:uppercase;letter-spacing:0.5px}
+.bigValue{margin-top:8px;font-size:28px;font-weight:900;color:#2359e8;min-height:34px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-  .calc{padding:14px}
   .row{grid-template-columns:minmax(0,1fr) 72px}
-  .bigValue{font-size:24px}
+  .paramGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="toi">TOI (Third Order Intercept Point)</label>
+    <div class="row">
+      <input id="toi" type="number" step="any" placeholder="Example: 40">
+      <select id="toiUnit"><option value="dbm">dBm</option></select>
+    </div>
 
-<div class="calc">
+    <label for="pin">IPL (Input Power Level)</label>
+    <div class="row">
+      <input id="pin" type="number" step="any" placeholder="Example: 10">
+      <select id="pinUnit"><option value="dbm">dBm</option></select>
+    </div>
 
-  <label>TOI (Third Order Intercept Point)</label>
-  <div class="row">
-    <input id="toi" type="number" step="any">
-    <select id="toiUnit">
-      <option value="dbm">dBm</option>
-    </select>
-  </div>
+    <label for="gain">GTD (Gain of the DUT)</label>
+    <div class="row">
+      <input id="gain" type="number" step="any" placeholder="Example: 12">
+      <select id="gainUnit"><option value="db">dB</option></select>
+    </div>
 
-  <label>IPL (Input Power Level)</label>
-  <div class="row">
-    <input id="pin" type="number" step="any">
-    <select id="pinUnit">
-      <option value="dbm">dBm</option>
-    </select>
-  </div>
-
-  <label>GTD (Gain of the DUT)</label>
-  <div class="row">
-    <input id="gain" type="number" step="any">
-    <select id="gainUnit">
-      <option value="db">dB</option>
-    </select>
-  </div>
-
-  <button class="btn" onclick="calc()">CALCULATE</button>
-
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
   <div id="errorBox">Please enter valid values.</div>
 
   <div class="resultTitle">RESULTS</div>
-
   <div class="bigResult">
-    <div class="bigLabel">AM to PM Conversion</div>
-    <div class="bigValue" id="result"></div>
+    <div class="bigLabel">AM to PM Conversion Coefficient</div>
+    <div class="bigValue" id="result">-</div>
   </div>
 
-  <div class="formula">
-    Original formula preserved:<br><br>
-    m = −((TOI − PIN − G) / 10)<br>
-    Result = 13.2 × 10<sup>m</sup>
-  </div>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Third Order Intercept (TOI)</strong>
+        The theoretical point where the power of third-order intermodulation products equals the fundamental output power, measured in dBm.
+      </div>
+      <div class="paramItem">
+        <strong>Input Power Level (PIN)</strong>
+        The baseline operational RF signal excitation amplitude level injected at the input port terminal boundary of the device under test.
+      </div>
+      <div class="paramItem">
+        <strong>Gain of the DUT (G)</strong>
+        The characteristic absolute linear power amplification transmission gain coefficient of the active component framework, measured in dB.
+      </div>
+    </div>
+  </section>
 
-</div>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: High Linearity RF Amplifier Test</strong><br>
+      • Third Order Intercept (TOI) = 45.00 dBm | Input Power Level = 10.00 dBm<br>
+      • Device Amplification Gain = 15.00 dB<br>
+      • <em>Calculated Non-linear Conversion Output Coefficient: 1.320000 deg/dB</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: Deep Compression Mismatch Channel</strong><br>
+      • Third Order Intercept (TOI) = 30.00 dBm | Input Power Level = 15.00 dBm<br>
+      • Device Amplification Gain = 12.00 dB<br>
+      • <em>Calculated Non-linear Conversion Output Coefficient: 20.916870 deg/dB</em>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>AM to PM Conversion Transformation Matrix</h2>
+    <p>The signal flow schema illustrates how an active device's non-linear compression profiles cleanly convert input amplitude variations (AM) into severe phase shifts (PM) downstream.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 480" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="480" fill="#ffffff" stroke="none"/>
+          
+          <g transform="translate(10, 10)">
+            <line x1="50" y1="180" x2="240" y2="180" stroke="#000000" stroke-width="1.5"/>
+            <line x1="50" y1="30" x2="50" y2="180" stroke="#000000" stroke-width="1.5"/>
+            <text x="240" y="195" fill="#4a5568" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="end">Time</text>
+            <text x="50" y="20" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">Amplitude</text>
+            
+            <path d="M 50 70 Q 72.5 15, 95 70 T 140 70 T 185 70 T 230 70" fill="none" stroke="#2359e8" stroke-width="2.5" stroke-linejoin="round"/>
+            <text x="24" y="65" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">AM</text>
+            <text x="24" y="80" fill="#4a5568" font-size="11" font-family="sans-serif">(dB)</text>
+            
+            <ellipse cx="95" cy="70" rx="14" ry="25" fill="none" stroke="#2359e8" stroke-width="2" transform="rotate(-15 95 70)"/>
+            <text x="115" y="40" fill="#2359e8" font-size="12" font-family="sans-serif" font-weight="bold">Power sweep</text>
+            <path d="M 112 44 L 102 54 M 102 54 L 108 54 M 102 54 L 102 48" fill="none" stroke="#2359e8" stroke-width="1"/>
+
+            <line x1="185" y1="35" x2="245" y2="35" stroke="#000000" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="185" y1="105" x2="245" y2="105" stroke="#000000" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="230" y1="35" x2="230" y2="105" stroke="#000000" stroke-width="1"/>
+            <polygon points="230,35 227,43 233,43" fill="#000000"/>
+            <polygon points="230,105 227,97 233,97" fill="#000000"/>
+            <text x="236" y="74" fill="#000000" font-size="11" font-family="sans-serif" font-weight="bold">Mag(Amin)</text>
+
+            <line x1="50" y1="115" x2="230" y2="115" stroke="#16a34a" stroke-width="1" stroke-dasharray="4,2,1,2"/>
+            <line x1="50" y1="140" x2="230" y2="140" stroke="#16a34a" stroke-width="2.5"/>
+            <text x="24" y="135" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">PM</text>
+            <text x="24" y="150" fill="#4a5568" font-size="11" font-family="sans-serif">(deg)</text>
+            <text x="110" y="210" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">Input Stimulus</text>
+          </g>
+
+          <g transform="translate(265, 110)">
+            <rect x="0" y="10" width="22" height="15" fill="#a78bfa" stroke="#7c3aed" stroke-width="1"/>
+            <polygon points="22,17 22,5 32,17 22,30 22,17" fill="#a78bfa" stroke="#7c3aed" stroke-width="1"/>
+            <text x="12" y="42" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">Input</text>
+          </g>
+          
+          <g transform="translate(355, 90)">
+            <polygon points="0,5 0,85 65,45" fill="#38bdf8" stroke="#0369a1" stroke-width="2"/>
+            <text x="20" y="51" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">DUT</text>
+          </g>
+
+          <g transform="translate(370, 195)">
+            <rect x="5" y="0" width="15" height="22" fill="#a78bfa" stroke="#7c3aed" stroke-width="1"/>
+            <polygon points="12,22 0,22 12,32 25,22 12,22" fill="#a78bfa" stroke="#7c3aed" stroke-width="1"/>
+            <text x="50" y="20" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold">Output</text>
+          </g>
+
+          <g transform="translate(240, 240)">
+            <line x1="50" y1="180" x2="240" y2="180" stroke="#000000" stroke-width="1.5"/>
+            <line x1="50" y1="30" x2="50" y2="180" stroke="#000000" stroke-width="1.5"/>
+            <text x="240" y="195" fill="#4a5568" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="end">Time</text>
+            <text x="50" y="20" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">Amplitude</text>
+            
+            <path d="M 50 70 Q 72.5 25, 95 70 T 140 70 T 185 70 T 230 70" fill="none" stroke="#2359e8" stroke-width="2" stroke-linejoin="round"/>
+            <text x="24" y="65" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">AM</text>
+            <text x="24" y="80" fill="#4a5568" font-size="11" font-family="sans-serif">(dB)</text>
+
+            <line x1="185" y1="38" x2="250" y2="38" stroke="#000000" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="185" y1="102" x2="250" y2="102" stroke="#000000" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="238" y1="38" x2="238" y2="102" stroke="#000000" stroke-width="1"/>
+            <polygon points="238,38 235,46 241,46" fill="#000000"/>
+            <polygon points="238,102 235,94 241,94" fill="#000000"/>
+            <text x="244" y="74" fill="#000000" font-size="11" font-family="sans-serif" font-weight="bold">Mag(AMout)</text>
+
+            <line x1="50" y1="112" x2="230" y2="112" stroke="#4a5568" stroke-width="1" stroke-dasharray="4,2,1,2"/>
+
+            <path d="M 50 150 Q 72.5 105, 95 150 T 140 150 T 185 150 T 230 150" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-linejoin="round"/>
+            <text x="24" y="145" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">PM</text>
+            <text x="24" y="160" fill="#4a5568" font-size="11" font-family="sans-serif">(deg)</text>
+
+            <ellipse cx="95" cy="150" rx="14" ry="25" fill="none" stroke="#2359e8" stroke-width="2" transform="rotate(-15 95 150)"/>
+
+            <line x1="185" y1="118" x2="250" y2="118" stroke="#000000" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="185" y1="182" x2="250" y2="182" stroke="#000000" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="238" y1="118" x2="238" y2="182" stroke="#000000" stroke-width="1"/>
+            <polygon points="238,118 235,126 241,126" fill="#000000"/>
+            <polygon points="238,182 235,174 241,174" fill="#000000"/>
+            <text x="244" y="154" fill="#000000" font-size="11" font-family="sans-serif" font-weight="bold">Mag(Pmout)</text>
+
+            <text x="110" y="210" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">Output Response</text>
+          </g>
+
+          <g transform="translate(10, 310)">
+            <rect x="0" y="0" width="215" height="100" fill="#eef5ff" stroke="#bfd3ff" stroke-width="2"/>
+            <text x="15" y="30" fill="#0f172a" font-size="14" font-family="sans-serif" font-weight="bold">AM-PM Conversion =</text>
+            <line x1="15" y1="52" x2="115" y2="52" stroke="#000000" stroke-width="1.8"/>
+            <text x="15" y="46" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">Mag(Pmout)</text>
+            <text x="15" y="68" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">Mag(Amin)</text>
+            <text x="122" y="57" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold">(deg/dB)</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>Intermodulation Conversion Factor (m Power Formulation):</strong><br>
+      m = -((TOI - PIN - G) / 10)
+    </div>
+    <div class="formulaLine">
+      <strong>AM-to-PM Conversion Output Result Equation:</strong><br>
+      Result = 13.2 * 10^m &nbsp;&nbsp;(expressed in deg/dB)
+    </div>
+    <p>The calculation predicts structural phase shift deviations (degrees/dB) under non-linear operational behaviors where power tracking variance sweeps trigger severe amplitude-to-phase intermodulation distortions inside RF components.</p>
+  </section>
+</main>
 
 <script>
 function clearResults(){
-  document.getElementById("result").innerHTML = "";
+  document.getElementById("result").innerText = "-";
 }
 
-function calc(){
+// Attach input variance trackers natively to clear calculations safely
+document.getElementById("toi").addEventListener("input", clearResults);
+document.getElementById("pin").addEventListener("input", clearResults);
+document.getElementById("gain").addEventListener("input", clearResults);
 
+function calc(){
   var TOI = Number(document.getElementById("toi").value);
   var PIN = Number(document.getElementById("pin").value);
   var G = Number(document.getElementById("gain").value);
@@ -181,9 +233,7 @@ function calc(){
     document.getElementById("toi").value === "" ||
     document.getElementById("pin").value === "" ||
     document.getElementById("gain").value === "" ||
-    isNaN(TOI) ||
-    isNaN(PIN) ||
-    isNaN(G)
+    isNaN(TOI) || isNaN(PIN) || isNaN(G)
   ){
     document.getElementById("errorBox").style.display = "block";
     clearResults();
@@ -192,13 +242,11 @@ function calc(){
 
   document.getElementById("errorBox").style.display = "none";
 
-  /* ORIGINAL FORMULA */
+  /* ORIGINAL COMPUTATION ALGORITHM PRESERVED EXPLICITLY */
   var m1 = (-((TOI - PIN - G) / 10));
   var c1 = (13.2 * (Math.pow(10, m1)));
 
-  document.getElementById("result").innerHTML = c1.toFixed(6);
+  document.getElementById("result").innerText = c1.toFixed(6) + " deg/dB";
 }
 </script>
-
-</body>
-</html>
+</body></html>
