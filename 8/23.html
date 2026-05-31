@@ -1,278 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Coax Inductance Calculator</title>
+<title>Coax Inductance Calculator | RF Transmission Designer</title>
 <meta name="description" content="Calculate coaxial cable inductance using outer diameter, inner diameter, length, and relative permeability.">
-
+<meta name="keywords" content="coax inductance calculator, coaxial cable transmission line solver, magnetic flux linkage equation, characteristic inductance formula, coax cable D d L dimensions, RF transmission line analysis">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:0;
-}
-
-.calc{
-  max-width:620px;
-  margin:auto;
-  padding:14px;
-}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-.row.single{
-  grid-template-columns:1fr;
-}
-
-input,
-select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  outline:none;
-  background:#fff;
-}
-
-input:focus,
-select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.unit,
-select.unit{
-  height:43px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  font-weight:700;
-  text-align:center;
-  padding:0 6px;
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-  margin-top:8px;
-}
-
-.resultTitle{
-  margin-top:26px;
-  font-size:13px;
-  font-weight:800;
-  color:#8b95a7;
-  letter-spacing:1px;
-}
-
-.result{
-  margin-top:12px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.card{
-  background:#eef5ff;
-  border-radius:10px;
-  padding:16px;
-  border:1px solid #c8dbff;
-}
-
-.card:nth-child(2){
-  background:#ecfdf5;
-  border-color:#bbf7d0;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:800;
-  color:#2563eb;
-  text-transform:uppercase;
-}
-
-.card:nth-child(2) .cardLabel{
-  color:#16a34a;
-}
-
-.cardValue{
-  margin-top:6px;
-  font-size:20px;
-  font-weight:800;
-  color:#2563eb;
-  word-break:break-word;
-  min-height:24px;
-}
-
-.card:nth-child(2) .cardValue{
-  color:#16a34a;
-}
-
-.formula,
-.diagramBox,
-.theoryBox,
-.exampleBox{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.55;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  padding:10px 12px;
-  background:#fef2f2;
-  border:1px solid #fecaca;
-  border-radius:8px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-  line-height:1.45;
-}
-
-svg{
-  width:100%;
-  height:auto;
-  display:block;
-}
-
-.diagramScroll{
-  width:100%;
-  overflow-x:auto;
-}
-
-@media(max-width:600px){
-  .calc{
-    padding:14px;
-  }
-
-  .row{
-    grid-template-columns:minmax(0,1fr) 72px;
-  }
-
-  .row.single{
-    grid-template-columns:1fr;
-  }
-
-  .result{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .card{
-    padding:12px;
-  }
-
-  .cardValue{
-    font-size:16px;
-  }
-
-  .diagramScroll svg{
-    min-width:760px;
-  }
-}
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;background:#f6f8fb;padding:0;color:#333}
+    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+    .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+    .valueBox,input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+    .valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151;background:#eee}
+    input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+    .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+    .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
+    .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+    .cardValue{font-size:18px;font-weight:900;line-height:1}
+    .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
+    .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto}
+    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
+    .diagramBox{text-align:center;margin-top:10px}
 </style>
 </head>
-
 <body>
-
-<div class="calc">
-
-  <label>D / Outer Diameter</label>
-  <div class="row">
-    <input id="out_diameter" type="number" step="any" placeholder="Enter D">
-    <select class="unit" id="out_diameter_unit">
-      <option value="2.54e-5">mil</option>
-      <option value="0.01">cm</option>
-      <option selected value="0.001">mm</option>
-      <option value="0.000001">µm</option>
-      <option value="0.0254">in</option>
-    </select>
-  </div>
-
-  <label>d / Inner Diameter</label>
-  <div class="row">
-    <input id="in_diameter" type="number" step="any" placeholder="Enter d">
-    <select class="unit" id="in_diameter_unit">
-      <option value="2.54e-5">mil</option>
-      <option value="0.01">cm</option>
-      <option selected value="0.001">mm</option>
-      <option value="0.000001">µm</option>
-      <option value="0.0254">in</option>
-    </select>
-  </div>
-
-  <label>L / Length</label>
-  <div class="row">
-    <input id="length" type="number" step="any" placeholder="Enter L">
-    <select class="unit" id="length_unit">
-      <option value="2.54e-5">mil</option>
-      <option value="0.01">cm</option>
-      <option selected value="0.001">mm</option>
-      <option value="0.000001">µm</option>
-      <option value="0.0254">in</option>
-    </select>
-  </div>
-
-  <label>Relative Permeability (μr)</label>
-  <div class="row single">
-    <input id="rel_perm" type="number" step="any" placeholder="Example: 1">
-  </div>
-
-  <button class="btn" onclick="calc()">CALCULATE</button>
-
-  <div id="errorBox"></div>
-
-  <div class="resultTitle">RESULT</div>
-
-  <div class="result">
-    <div class="card">
-      <div class="cardLabel">Inductance</div>
-      <div class="cardValue" id="inductanceH"></div>
+<main class="calc">
+  <form id="tool" onsubmit="event.preventDefault();">
+    <label for="out_diameter">D / Outer Diameter</label>
+    <div class="row">
+      <input id="out_diameter" type="number" step="any" placeholder="Enter D">
+      <div class="valueBox">mm</div>
     </div>
-
-    <div class="card">
-      <div class="cardLabel">Inductance</div>
-      <div class="cardValue" id="inductanceNH"></div>
+    <label for="in_diameter">d / Inner Diameter</label>
+    <div class="row">
+      <input id="in_diameter" type="number" step="any" placeholder="Enter d">
+      <div class="valueBox">mm</div>
     </div>
+    <label for="length">L / Length</label>
+    <div class="row">
+      <input id="length" type="number" step="any" placeholder="Enter L">
+      <div class="valueBox">mm</div>
+    </div>
+    <label for="rel_perm">Relative Permeability (μr)</label>
+    <div class="row"><input id="rel_perm" type="number" step="any" value="1"><div class="valueBox">μr</div></div>
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+
+  <div id="errorBox">Please enter valid positive values.</div>
+
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue"><div class="cardLabel">Inductance (H)</div><b class="cardValue" id="inductanceH">-</b></div>
+    <div class="card green"><div class="cardLabel">Inductance (nH)</div><b class="cardValue" id="inductanceNH">-</b></div>
   </div>
 
-  <div class="diagramBox">
-    <b>Diagrams & Theory</b><br><br>
-
-    <div class="diagramScroll">
+  <div class="diagramScroll">
+ <h2>Diagrams & Theory</h2>
+    <p></p>
       <svg viewBox="0 0 900 430" aria-label="Coax inductance D d L dimension diagram">
 
         <rect x="10" y="10" width="880" height="410" rx="18" fill="#fff"/>
@@ -393,84 +188,22 @@ svg{
       </svg>
     </div>
 
-    Coaxial cable inductance depends on the outer diameter <b>D</b>, inner diameter <b>d</b>, cable length <b>L</b>, and relative permeability.
-  </div>
-
-  <div class="formula">
-    <b>Formulas</b><br><br>
-    Original formula preserved:<br><br>
-    μ0 = 4π × 10⁻⁷ H/m<br>
-    L = (μ0 × μr / 2π) × ln(D / d) × Length<br><br>
-    D, d and Length are converted to meters before calculation.
-  </div>
-
-  <div class="exampleBox">
-    <b>Example</b><br><br>
-    D = 10 mm, d = 5 mm, Length = 100 mm, μr = 1<br>
-    Inductance ≈ 1.39e-8 H<br>
-    Inductance ≈ 13.86 nH
-  </div>
-
-</div>
+  <section class="infoBox">
+    <h2>5. Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">L = (μ0 × μr / 2π) × ln(D / d) × Length</div>
+  </section>
+</main>
 
 <script>
 function calc(){
-
-  var Dval = Number(document.getElementById("out_diameter").value);
-  var dval = Number(document.getElementById("in_diameter").value);
-  var Lval = Number(document.getElementById("length").value);
-  var ur   = Number(document.getElementById("rel_perm").value);
-
-  var Dunit = Number(document.getElementById("out_diameter_unit").value);
-  var dunit = Number(document.getElementById("in_diameter_unit").value);
-  var Lunit = Number(document.getElementById("length_unit").value);
-
-  var errorBox = document.getElementById("errorBox");
-  var outH = document.getElementById("inductanceH");
-  var outNH = document.getElementById("inductanceNH");
-
-  outH.innerHTML = "";
-  outNH.innerHTML = "";
-
-  if(
-    document.getElementById("out_diameter").value === "" ||
-    document.getElementById("in_diameter").value === "" ||
-    document.getElementById("length").value === "" ||
-    document.getElementById("rel_perm").value === "" ||
-    isNaN(Dval) || isNaN(dval) || isNaN(Lval) || isNaN(ur) ||
-    Dval <= 0 || dval <= 0 || Lval <= 0 || ur <= 0
-  ){
-    errorBox.style.display = "block";
-    errorBox.innerHTML = "Please enter valid positive values.";
-    return;
-  }
-
-  var D = Dval * Dunit;
-  var d = dval * dunit;
-  var L = Lval * Lunit;
-
-  if(D <= d){
-    errorBox.style.display = "block";
-    errorBox.innerHTML =
-      "❌ D / Outer Diameter must be larger than d / Inner Diameter.<br><br>" +
-      "Example:<br>D = 10 mm<br>d = 5 mm<br>L = 100 mm<br>μr = 1";
-    return;
-  }
-
-  errorBox.style.display = "none";
-
-  /* ORIGINAL FORMULA PRESERVED */
-  var mu0 = 4 * Math.PI * 1e-7;
-
-  var inductance =
-    (mu0 * ur / (2 * Math.PI)) *
-    Math.log(D / d) *
-    L;
-
-  outH.innerHTML = inductance.toPrecision(3) + " H";
-  outNH.innerHTML = (inductance * 1e9).toPrecision(4) + " nH";
+  var Dval=Number(document.getElementById("out_diameter").value)/1000, dval=Number(document.getElementById("in_diameter").value)/1000, Lval=Number(document.getElementById("length").value)/1000, ur=Number(document.getElementById("rel_perm").value);
+  var e=document.getElementById("errorBox");
+  if(Dval<=dval || Dval<=0 || dval<=0 || Lval<=0 || ur<=0){ e.style.display="block"; e.innerHTML="Invalid values: D must be > d."; return; }
+  e.style.display="none";
+  var ind=(4 * Math.PI * 1e-7 * ur / (2 * Math.PI)) * Math.log(Dval/dval) * Lval;
+  document.getElementById("inductanceH").innerText=ind.toExponential(2)+" H";
+  document.getElementById("inductanceNH").innerText=(ind*1e9).toFixed(2)+" nH";
 }
 </script>
-
 </body>
 </html>
