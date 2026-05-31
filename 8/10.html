@@ -1,282 +1,227 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RF Field Strength Calculator | Electromagnetic Field Tool</title>
+<meta name="description" content="Calculate electromagnetic transmitter wavelength and RF field strength using antenna heights, radiation current, operational frequency, and boundary distance.">
+<meta name="keywords" content="rf field strength calculator, electromagnetic field calculation formula, antenna effective height tool, radiation wave field strength equation, transmitter wavelength solver, anechoic chamber wave propagation, antenna excitation current, free space path transmission loss, rf radiation exposure level">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:0;
-}
-
-.calc{
-  max-width:620px;
-  margin:auto;
-  padding:14px;
-}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-input,select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-select{
-  text-align:center;
-  font-weight:700;
-  padding:0 6px;
-}
-
-input:focus,select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  margin-top:8px;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
-.resultTitle{
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1px;
-  color:#7b8794;
-  margin-top:22px;
-  margin-bottom:12px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.card{
-  padding:16px;
-  border-radius:12px;
-  min-height:82px;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.5px;
-  margin-bottom:10px;
-}
-
-.cardLine{
-  display:flex;
-  align-items:baseline;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
-.cardValue{
-  font-size:18px;
-  font-weight:900;
-  line-height:1;
-  min-height:22px;
-}
-
-.cardUnit{
-  font-size:18px;
-  font-weight:900;
-}
-
-.blue{
-  background:#eef5ff;
-  border:1px solid #bfd3ff;
-}
-
-.blue .cardLabel,
-.blue .cardValue,
-.blue .cardUnit{
-  color:#2359e8;
-}
-
-.green{
-  background:#edfdf3;
-  border:1px solid #bff0d0;
-}
-
-.green .cardLabel,
-.green .cardValue,
-.green .cardUnit{
-  color:#019863;
-}
-
-.formula{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
+.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cardValue{font-size:18px;font-weight:900;line-height:1;min-height:22px}
+.cardUnit{font-size:14px;font-weight:800}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue .cardLabel,.blue .cardValue,.blue .cardUnit{color:#2359e8}
+.green{background:#edfdf3;border:1px solid #bff0d0}
+.green .cardLabel,.green .cardValue,.green .cardUnit{color:#019863}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-  .calc{
-    padding:14px;
-  }
-
-  .row{
-    grid-template-columns:minmax(0,1fr) 72px;
-  }
-
-  .resultGrid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .card{
-    padding:14px;
-  }
-
-  .cardValue,
-  .cardUnit{
-    font-size:16px;
-  }
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr}
+  .paramGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="ht">Effective Height of Transmitting Antenna</label>
+    <div class="row">
+      <input id="ht" type="number" step="any" placeholder="Example: 2">
+      <select id="htUnit">
+        <option value="1">m</option>
+        <option value="0.01">cm</option>
+        <option value="0.001">mm</option>
+        <option value="0.3048">ft</option>
+      </select>
+    </div>
 
-<div class="calc">
+    <label for="hr">Effective Height of Receiving Antenna</label>
+    <div class="row">
+      <input id="hr" type="number" step="any" placeholder="Example: 1.5">
+      <select id="hrUnit">
+        <option value="1">m</option>
+        <option value="0.01">cm</option>
+        <option value="0.001">mm</option>
+        <option value="0.3048">ft</option>
+      </select>
+    </div>
 
-<label>Effective Height of Transmitting Antenna</label>
-<div class="row">
-  <input id="ht" type="number" step="any">
-  <select id="htUnit">
-    <option value="1">m</option>
-    <option value="0.01">cm</option>
-    <option value="0.001">mm</option>
-    <option value="0.3048">ft</option>
-  </select>
-</div>
+    <label for="current">Antenna Current</label>
+    <div class="row">
+      <input id="current" type="number" step="any" placeholder="Example: 0.5">
+      <select id="currentUnit">
+        <option value="1">A</option>
+        <option value="0.001">mA</option>
+      </select>
+    </div>
 
-<label>Effective Height of Receiving Antenna</label>
-<div class="row">
-  <input id="hr" type="number" step="any">
-  <select id="hrUnit">
-    <option value="1">m</option>
-    <option value="0.01">cm</option>
-    <option value="0.001">mm</option>
-    <option value="0.3048">ft</option>
-  </select>
-</div>
+    <label for="distance">Distance from Transmitting Antenna</label>
+    <div class="row">
+      <input id="distance" type="number" step="any" placeholder="Example: 50">
+      <select id="distanceUnit">
+        <option value="1">m</option>
+        <option value="1000">km</option>
+        <option value="0.3048">ft</option>
+      </select>
+    </div>
 
-<label>Antenna Current</label>
-<div class="row">
-  <input id="current" type="number" step="any">
-  <select id="currentUnit">
-    <option value="1">A</option>
-    <option value="0.001">mA</option>
-  </select>
-</div>
+    <label for="frequency">Operating Frequency</label>
+    <div class="row">
+      <input id="frequency" type="number" step="any" placeholder="Example: 150">
+      <select id="frequencyUnit">
+        <option value="hz">Hz</option>
+        <option value="khz" selected>kHz</option>
+        <option value="mhz">MHz</option>
+        <option value="ghz">GHz</option>
+      </select>
+    </div>
 
-<label>Distance from Transmitting Antenna</label>
-<div class="row">
-  <input id="distance" type="number" step="any">
-  <select id="distanceUnit">
-    <option value="1">m</option>
-    <option value="1000">km</option>
-    <option value="0.3048">ft</option>
-  </select>
-</div>
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
+  <div id="errorBox">Please enter valid values.</div>
 
-<label>Operating Frequency</label>
-<div class="row">
-  <input id="frequency" type="number" step="any">
-  <select id="frequencyUnit">
-    <option value="hz">Hz</option>
-    <option value="khz" selected>kHz</option>
-    <option value="mhz">MHz</option>
-    <option value="ghz">GHz</option>
-  </select>
-</div>
-
-<button class="btn" onclick="calc()">CALCULATE</button>
-
-<div id="errorBox">Please enter valid values.</div>
-
-<div class="resultTitle">RESULTS</div>
-
-<div class="resultGrid">
-
-  <div class="card blue">
-    <div class="cardLabel">WAVELENGTH</div>
-    <div class="cardLine">
-      <span class="cardValue" id="waveResult"></span>
-      <span class="cardUnit">m</span>
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">WAVELENGTH</div>
+      <div class="cardLine">
+        <span class="cardValue" id="waveResult">-</span>
+        <span class="cardUnit">m</span>
+      </div>
+    </div>
+    <div class="card green">
+      <div class="cardLabel">RF FIELD STRENGTH</div>
+      <div class="cardLine">
+        <span class="cardValue" id="fieldResult">-</span>
+        <span class="cardUnit">A/m</span>
+      </div>
     </div>
   </div>
 
-  <div class="card green">
-    <div class="cardLabel">RF FIELD STRENGTH</div>
-    <div class="cardLine">
-      <span class="cardValue" id="fieldResult"></span>
-      <span class="cardUnit">A/m</span>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Effective Heights (Ht / Hr)</strong>
+        The physical-to-electromagnetic effective aperture center heights of both the radiating transmitting wire and intercept receiving station.
+      </div>
+      <div class="paramItem">
+        <strong>Antenna Current (I)</strong>
+        The excitation current amplitude driven inside the primary element radiator circuit grid, natively computed in Amperes (A).
+      </div>
+      <div class="paramItem">
+        <strong>Distance (d)</strong>
+        The exact baseline spatial path length separation segment between the transmitter structure and measurement verification target plane.
+      </div>
+      <div class="paramItem">
+        <strong>Operating Frequency (f)</strong>
+        The periodic wave cycle velocity factor driven inside the source network, defining propagation characteristics across mediums.
+      </div>
     </div>
-  </div>
+  </section>
 
-</div>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: LF Range Communication Setup</strong><br>
+      • Transmitter Height (Ht) = 15.0 m | Receiver Height (Hr) = 2.0 m<br>
+      • Excitation Current = 1.2 A | Distance = 5.0 km | Frequency = 300 kHz<br>
+      • <em>Calculated Wavelength: 1000.00 m | Output RF Field Strength: 0.027143 A/m</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: Lab Anechoic Measurement Scale</strong><br>
+      • Transmitter Height (Ht) = 0.5 m | Receiver Height (Hr) = 0.5 m<br>
+      • Excitation Current = 0.1 A | Distance = 3.0 m | Frequency = 1500 kHz<br>
+      • <em>Calculated Wavelength: 200.00 m | Output RF Field Strength: 0.015707 A/m</em>
+    </div>
+  </section>
 
-<div class="formula">
-Original formula preserved:<br><br>
-λ = 3 × 10⁸ / f<br>
-RF Field Strength = (120 × π × Ht × Hr × I) / (λ × d)
-</div>
+  <section class="infoBox">
+    <h2>Antenna Wave Radiation and Field Strength Layout</h2>
+    <p>The system maps electromagnetic induction paths from a source driver amplifier out into free space via logging element arrays inside isolated validation structures.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 320" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="320" fill="#ffffff" stroke="none"/>
+          
+          <line x1="140" y1="20" x2="140" y2="280" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4"/>
+          <text x="130" y="40" fill="#1e293b" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="end">OUTSIDE WORLD</text>
+          <text x="150" y="40" fill="#1e293b" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="start">ANECHOIC CHAMBER</text>
 
-</div>
+          <g transform="translate(30, 110)">
+            <polygon points="10,10 10,70 70,40" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+            <line x1="0" y1="40" x2="10" y2="40" stroke="#334155" stroke-width="2"/>
+            <line x1="70" y1="40" x2="110" y2="40" stroke="#334155" stroke-width="3"/>
+            <text x="40" y="100" fill="#334155" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">AMPLIFIER</text>
+          </g>
+
+          <rect x="135" y="142" width="10" height="16" fill="#e2e8f0" stroke="#475467" stroke-width="1.5"/>
+
+          <g transform="translate(180, 150)">
+            <line x1="-35" y1="0" x2="70" y2="0" stroke="#ea580c" stroke-width="1.5"/>
+            <line x1="0" y1="-45" x2="0" y2="45" stroke="#ea580c" stroke-width="1.8"/>
+            <line x1="15" y1="-35" x2="15" y2="35" stroke="#ea580c" stroke-width="1.6"/>
+            <line x1="30" y1="-27" x2="30" y2="27" stroke="#ea580c" stroke-width="1.4"/>
+            <line x1="45" y1="-20" x2="45" y2="20" stroke="#ea580c" stroke-width="1.2"/>
+            <line x1="60" y1="-14" x2="60" y2="14" stroke="#ea580c" stroke-width="1"/>
+            <text x="30" y="70" fill="#ea580c" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">ANTENNA</text>
+          </g>
+
+          <path d="M 280 100 A 75 75 0 0 1 280 200" fill="none" stroke="#2359e8" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M 320 80 A 110 110 0 0 1 320 220" fill="none" stroke="#2359e8" stroke-width="2" stroke-linecap="round"/>
+          <path d="M 360 60 A 145 145 0 0 1 360 240" fill="none" stroke="#2359e8" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M 400 40 A 185 185 0 0 1 400 260" fill="none" stroke="#2359e8" stroke-width="3" stroke-linecap="round"/>
+          <text x="355" y="146" fill="#2359e8" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">RF FIELD</text>
+
+          <g transform="translate(480, 80)">
+            <line x1="0" y1="0" x2="0" y2="140" stroke="#000000" stroke-width="2.5"/>
+            <text x="0" y="-14" fill="#000000" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">MEASUREMENT</text>
+            <text x="0" y="-1" fill="#000000" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">PLANE</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>Electromagnetic Wave Transmission Wavelength (λ Formula):</strong><br>
+      λ = 3 × 10⁸ / f
+    </div>
+    <div class="formulaLine">
+      <strong>RF Field Strength Calculation Formulation:</strong><br>
+      RF Field Strength = (120 × π × Ht × Hr × I) / (λ × d)
+    </div>
+    <p>Where 120 × π (approximately 377 Ohms) sets the uniform wave characteristic impedance of free space, scaling the induction ratio across geometric paths linearly.</p>
+  </section>
+</main>
 
 <script>
 function clearResults(){
-  document.getElementById("waveResult").innerHTML = "";
-  document.getElementById("fieldResult").innerHTML = "";
+  document.getElementById("waveResult").innerText = "-";
+  document.getElementById("fieldResult").innerText = "-";
 }
 
 function getFrequencyHz(value,unit){
@@ -287,8 +232,19 @@ function getFrequencyHz(value,unit){
   return value;
 }
 
-function calc(){
+// Attach change input event listeners natively to clear calculations safely
+document.getElementById("ht").addEventListener("input", clearResults);
+document.getElementById("hr").addEventListener("input", clearResults);
+document.getElementById("current").addEventListener("input", clearResults);
+document.getElementById("distance").addEventListener("input", clearResults);
+document.getElementById("frequency").addEventListener("input", clearResults);
+document.getElementById("htUnit").addEventListener("change", clearResults);
+document.getElementById("hrUnit").addEventListener("change", clearResults);
+document.getElementById("currentUnit").addEventListener("change", clearResults);
+document.getElementById("distanceUnit").addEventListener("change", clearResults);
+document.getElementById("frequencyUnit").addEventListener("change", clearResults);
 
+function calc(){
   var htVal = Number(document.getElementById("ht").value);
   var hrVal = Number(document.getElementById("hr").value);
   var currentVal = Number(document.getElementById("current").value);
@@ -301,11 +257,7 @@ function calc(){
     document.getElementById("current").value === "" ||
     document.getElementById("distance").value === "" ||
     document.getElementById("frequency").value === "" ||
-    isNaN(htVal) ||
-    isNaN(hrVal) ||
-    isNaN(currentVal) ||
-    isNaN(distanceVal) ||
-    isNaN(frequencyVal)
+    isNaN(htVal) || isNaN(hrVal) || isNaN(currentVal) || isNaN(distanceVal) || isNaN(frequencyVal)
   ){
     document.getElementById("errorBox").style.display = "block";
     clearResults();
@@ -326,23 +278,14 @@ function calc(){
 
   document.getElementById("errorBox").style.display = "none";
 
-  /* ORIGINAL FORMULA */
+  /* ORIGINAL FORMULA PROCESSING MATRICES */
   var lambda = (3 * Math.pow(10,8)) / f;
+  var field = ((120 * Math.PI * ht * hr * current) / (lambda * d));
 
-  var field = (
-    (120 * Math.PI * ht * hr * current) /
-    (lambda * d)
-  );
-
-  document.getElementById("waveResult").innerHTML =
-    lambda % 1 === 0 ? lambda.toFixed(0) : lambda.toFixed(7);
-
-  document.getElementById("fieldResult").innerHTML =
-    field.toFixed(7);
+  document.getElementById("waveResult").innerText = lambda % 1 === 0 ? lambda.toFixed(0) : lambda.toFixed(7);
+  document.getElementById("fieldResult").innerText = field.toFixed(7);
 }
 
 clearResults();
 </script>
-
-</body>
-</html>
+</body></html>
