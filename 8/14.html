@@ -1,391 +1,210 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Time Domain Reflectometry (TDR) Length Calculator | Cable Fault Solver</title>
+<meta name="description" content="Calculate the physical transmission line or cable path length using velocity factor and round-trip propagation time via Time Domain Reflectometry.">
+<meta name="keywords" content="time domain reflectometry calculator, tdr length calculation formula, velocity factor transmission line, round trip propagation time td, cable fault distance solver, pulse reflection impedance step, tdr waveform simulation tool, velocity of propagation fraction, relative voltage impedance mismatch step">
 <style>
-
-*{
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-body{
-margin:0;
-background:#f6f8fb;
-padding:0;
-}
-
-.calc{
-max-width:620px;
-margin:auto;
-padding:14px;
-}
-
-label{
-display:block;
-font-size:15px;
-font-weight:700;
-color:#555;
-margin-bottom:6px;
-}
-
-.row{
-display:grid;
-grid-template-columns:minmax(0,1fr) 82px;
-gap:8px;
-margin-bottom:16px;
-}
-
-input,select{
-width:100%;
-height:43px;
-border:1px solid #cfd6df;
-border-radius:8px;
-padding:0 12px;
-font-size:15px;
-background:#fff;
-outline:none;
-}
-
-select{
-text-align:center;
-font-weight:800;
-}
-
-input:focus,
-select:focus{
-border-color:#ff6a00;
-box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-width:100%;
-height:48px;
-border:none;
-border-radius:10px;
-background:linear-gradient(90deg,#ff7a18,#ff4b00);
-color:#fff;
-font-size:16px;
-font-weight:800;
-cursor:pointer;
-margin-top:8px;
-}
-
-#errorBox{
-display:none;
-margin-top:12px;
-color:#dc2626;
-font-size:14px;
-font-weight:800;
-}
-
-.resultTitle{
-font-size:13px;
-font-weight:800;
-letter-spacing:1px;
-color:#7b8794;
-margin-top:22px;
-margin-bottom:12px;
-}
-
-.resultGrid{
-display:grid;
-grid-template-columns:1fr;
-gap:12px;
-}
-
-.card{
-padding:16px;
-border-radius:12px;
-min-height:82px;
-}
-
-.cardLabel{
-font-size:12px;
-font-weight:900;
-letter-spacing:.5px;
-margin-bottom:10px;
-}
-
-.cardLine{
-display:flex;
-gap:6px;
-flex-wrap:wrap;
-}
-
-.cardValue{
-font-size:18px;
-font-weight:900;
-min-height:22px;
-word-break:break-word;
-}
-
-.cardUnit{
-font-size:18px;
-font-weight:900;
-}
-
-.blue{
-background:#eef5ff;
-border:1px solid #bfd3ff;
-}
-
-.blue .cardLabel,
-.blue .cardValue,
-.blue .cardUnit{
-color:#2359e8;
-}
-
-.formula{
-margin-top:16px;
-padding:14px;
-background:#f9fafb;
-border:1px solid #e5e7eb;
-border-radius:10px;
-font-size:13px;
-line-height:1.6;
-color:#667085;
-font-weight:700;
-}
-
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+.cardLine{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
+.cardValue{font-size:18px;font-weight:900;line-height:1;min-height:22px}
+.cardUnit{font-size:14px;font-weight:800}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-
-.row{
-grid-template-columns:minmax(0,1fr) 72px;
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .paramGrid{grid-template-columns:1fr}
 }
-
-.cardValue,
-.cardUnit{
-font-size:16px;
-}
-
-}
-
-</style>
-
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="velocityFactor">U (Velocity Factor of Transmission Line)</label>
+    <div class="row">
+      <input id="velocityFactor" type="number" step="any" placeholder="Example: 0.66">
+      <select aria-label="Velocity Factor Variable Fixed Pin"><option value="u">U</option></select>
+    </div>
 
-<div class="calc">
+    <label for="roundTripTime">Td (Round Trip Time)</label>
+    <div class="row">
+      <input id="roundTripTime" type="number" step="any" placeholder="Example: 0.00000005">
+      <select aria-label="Round Trip Time Variable Fixed Pin"><option value="td">Td</option></select>
+    </div>
 
-<label>
-U (Velocity Factor of Transmission Line)
-</label>
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
+  <div id="errorBox">Please enter valid values.</div>
 
-<div class="row">
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">TDR Physical Length</div>
+      <div class="cardLine">
+        <span class="cardValue" id="tdrLengthResult">-</span>
+        <span class="cardUnit" id="tdrLengthUnit"></span>
+      </div>
+    </div>
+  </div>
 
-<input
-id="velocityFactor"
-type="number"
-step="any">
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Velocity Factor (U)</strong>
+        The fraction parameter representing transmission propagation speed inside the cable medium relative to light velocity constants in pure vacuum.
+      </div>
+      <div class="paramItem">
+        <strong>Round Trip Time (Td)</strong>
+        The full temporal timeframe step gap (seconds) required for the incident voltage step edge to travel down the path length and reflect back to the source.
+      </div>
+    </div>
+  </section>
 
-<select>
-<option>U</option>
-</select>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: Coaxial Cable Fault Isolation Tracing</strong><br>
+      • Velocity Factor (U) = 0.660000 | Round Trip Delay Time (Td) = 0.00000012 Seconds<br>
+      • <em>Expected Signed 32-bit Integer TDR Length Output: 11 m</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: Short Circuit Lab Bench Validation</strong><br>
+      • Velocity Factor (U) = 0.700000 | Round Trip Delay Time (Td) = 0.00000003 Seconds<br>
+      • <em>Expected Signed 32-bit Integer TDR Length Output: 3 m</em>
+    </div>
+  </section>
 
-</div>
+  <section class="infoBox">
+    <h2>Time Domain Reflectometer Waveform Layout</h2>
+    <p>The system charts the relative incident voltage step propagation paths along with its corresponding first derivative curve spike parameters over operational line distances.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 380" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="380" fill="#ffffff" stroke="none"/>
+          
+          <line x1="60" y1="300" x2="480" y2="300" stroke="#475467" stroke-width="1.5"/>
+          <text x="270" y="325" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">Distance (m)</text>
+          
+          <text x="60" y="315" fill="#475467" font-size="11" font-family="sans-serif" text-anchor="middle">-0.5</text>
+          <text x="110" y="315" fill="#475467" font-size="11" font-family="sans-serif" text-anchor="middle">0</text>
+          <text x="160" y="315" fill="#475467" font-size="11" font-family="sans-serif" text-anchor="middle">0.5</text>
+          <text x="210" y="315" fill="#475467" font-size="11" font-family="sans-serif" text-anchor="middle">1</text>
+          <text x="260" y="315" fill="#475467" font-size="11" font-family="sans-serif" text-anchor="middle">1.5</text>
+          <text x="310" y="315" fill="#475467" font-size="11" font-family="sans-serif" text-anchor="middle">2</text>
+          <text x="360" y="315" fill="#475467" font-size="11" font-family="sans-serif" text-anchor="middle">2.5</text>
+          <text x="410" y="315" fill="#475467" font-size="11" font-family="sans-serif" text-anchor="middle">3</text>
+          <text x="460" y="315" fill="#475467" font-size="11" font-family="sans-serif" text-anchor="middle">3.5</text>
 
+          <text x="25" y="170" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" transform="rotate(-90 25 170)" text-anchor="middle">Relative Voltage or Impedance</text>
 
+          <path d="M 60 100 L 80 100 Q 85 40 90 40 Q 95 100 100 100 L 350 100 Q 355 95, 360 105 Q 365 100, 370 100 L 400 100 Q 410 80, 420 80 Q 430 100, 460 100" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-linejoin="round"/>
+          <text x="200" y="70" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">1st Derivative</text>
+          <text x="515" y="170" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" transform="rotate(90 515 170)" text-anchor="middle">1st Derivative</text>
 
-<label>
-Td (Round Trip Time)
-</label>
+          <path d="M 60 280 L 90 280 C 100 280, 102 200, 115 200 L 350 200 C 355 200, 358 190, 362 205 C 366 215, 385 215, 400 215 C 415 215, 422 170, 440 170 L 460 170" fill="none" stroke="#2359e8" stroke-width="2.5" stroke-linejoin="round"/>
+          
+          <line x1="68" y1="180" x2="68" y2="275" stroke="#000000" stroke-width="1.2"/>
+          <polygon points="68,280 65,270 71,270" fill="#000000"/>
+          <text x="68" y="170" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">Vi</text>
 
-<div class="row">
+          <line x1="120" y1="150" x2="120" y2="190" stroke="#000000" stroke-width="1.2"/>
+          <polygon points="120,195 117,185 123,185" fill="#000000"/>
+          <text x="120" y="140" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">VR</text>
+          
+          <path d="M 132 202 C 145 202, 140 220, 140 235 C 140 250, 145 268, 132 268" fill="none" stroke="#000000" stroke-width="2.5"/>
+          <text x="150" y="226" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">Injected</text>
+          <text x="150" y="242" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">Voltage Step</text>
 
-<input
-id="roundTripTime"
-type="number"
-step="any">
+          <line x1="362" y1="150" x2="362" y2="195" stroke="#000000" stroke-width="1.2"/>
+          <polygon points="362,200 359,190 365,190" fill="#000000"/>
+          <text x="362" y="140" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">Vo</text>
 
-<select>
-<option>Td</option>
-</select>
+          <line x1="400" y1="150" x2="400" y2="208" stroke="#000000" stroke-width="1.2"/>
+          <polygon points="400,213 397,203 403,203" fill="#000000"/>
+          <text x="400" y="140" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">VMIN</text>
 
-</div>
+          <path d="M 355 224 C 355 240, 385 245, 410 245 C 435 245, 445 240, 445 224" fill="none" stroke="#000000" stroke-width="2.5"/>
+          <text x="400" y="262" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">Probe Waveform</text>
 
+          <line x1="458" y1="135" x2="458" y2="162" stroke="#000000" stroke-width="1.2"/>
+          <polygon points="458,167 455,157 461,157" fill="#000000"/>
+          <text x="458" y="125" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">VF</text>
+        </svg>
+      </div>
+    </div>
+  </section>
 
-
-<button
-class="btn"
-onclick="calc()">
-
-CALCULATE
-
-</button>
-
-
-
-<div id="errorBox">
-
-Please enter valid values.
-
-</div>
-
-
-
-<div class="resultTitle">
-
-RESULTS
-
-</div>
-
-
-
-<div class="resultGrid">
-
-<div class="card blue">
-
-<div class="cardLabel">
-
-TDR LENGTH
-
-</div>
-
-<div class="cardLine">
-
-<span
-class="cardValue"
-id="tdrLengthResult">
-</span>
-
-<span
-class="cardUnit"
-id="tdrLengthUnit">
-</span>
-
-</div>
-
-</div>
-
-</div>
-
-
-
-<div class="formula">
-
-Website matched formula:<br><br>
-
-TDR Length =
-
-(3 × 10⁸ × U × Td ÷ 2)
-
-<br><br>
-
-Result stored as signed 32-bit integer
-(to match website)
-
-</div>
-
-</div>
-
-
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>Time Domain Reflectometry Length Formulation (Raw Value):</strong><br>
+      TDR Length (Raw) = (3 &times; 10^8 &times; U &times; Td) / 2
+    </div>
+    <div class="formulaLine">
+      <strong>Website Matrix Overflow Logic (Signed 32-bit Integer Match):</strong><br>
+      TDR Length = Raw Value | 0
+    </div>
+    <p>The time domain processing algorithm uses velocity multipliers to translate round-trip wave bounce propagation delays into structural cable footprint distance limits, forcing bitwise integer constraints to match specific telemetry web tools exactly.</p>
+  </section>
+</main>
 
 <script>
-
 function clearResults(){
-
-tdrLengthResult.innerHTML="";
-
-tdrLengthUnit.innerHTML="";
-
+  document.getElementById("tdrLengthResult").innerText = "-";
+  document.getElementById("tdrLengthUnit").innerText = "";
 }
 
-
+// Attach change input event listeners natively to clear calculations safely
+document.getElementById("velocityFactor").addEventListener("input", clearResults);
+document.getElementById("roundTripTime").addEventListener("input", clearResults);
 
 function calc(){
+  let U = Number(document.getElementById("velocityFactor").value);
+  let Td = Number(document.getElementById("roundTripTime").value);
 
-let U=
+  if(
+    document.getElementById("velocityFactor").value === "" ||
+    document.getElementById("roundTripTime").value === "" ||
+    isNaN(U) || isNaN(Td)
+  ){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
-Number(
-velocityFactor.value
-);
+  document.getElementById("errorBox").style.display = "none";
 
-let Td=
+  /* ORIGINAL COMPUTATION OPERATORS MATCHED EXPLICITLY WITH BITWISE OVERFLOW */
+  let raw = (3 * Math.pow(10, 8) * U * Td) / 2;
+  let length = raw | 0;
 
-Number(
-roundTripTime.value
-);
-
-
-if(
-
-velocityFactor.value===""
-
-||
-
-roundTripTime.value===""
-
-||
-
-isNaN(U)
-
-||
-
-isNaN(Td)
-
-){
-
-errorBox.style.display=
-"block";
-
-clearResults();
-
-return;
-
-}
-
-
-errorBox.style.display=
-"none";
-
-
-/* WEBSITE MATCH */
-
-let raw =
-
-(
-3
-*
-Math.pow(
-10,
-8
-)
-*
-U
-*
-Td
-)
-
-/
-
-2;
-
-
-/* OVERFLOW MATCH */
-
-let length = raw | 0;
-
-
-
-tdrLengthResult.innerHTML=
-
-length;
-
-
-
-tdrLengthUnit.innerHTML=
-
-"m";
-
+  document.getElementById("tdrLengthResult").innerText = length;
+  document.getElementById("tdrLengthUnit").innerText = "m";
 }
 
 clearResults();
-
 </script>
-
-</body>
-</html>
+</body></html>
