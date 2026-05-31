@@ -1,301 +1,285 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Antenna Downtilt and Coverage Calculator | RF Link Solver</title>
+<meta name="description" content="Calculate antenna downtilt angles, receiver distances, and inner/outer footprint coverage boundary limits based on cell tower and station node heights.">
+<meta name="keywords" content="antenna downtilt calculator, cell tower coverage radius solver, vertical beamwidth angle matching, transmission path loss footprint tool, inner radius coverage equation, outer edge boundary limits, rf link budget optimization, base station elevation geometry, receiver distance calculation tracking">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:0;
-}
-
-.calc{
-  max-width:620px;
-  margin:auto;
-  padding:14px;
-}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-.typeRow{
-  display:grid;
-  grid-template-columns:120px minmax(0,1fr);
-  gap:8px;
-  margin-bottom:16px;
-}
-
-input,select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-select{
-  text-align:center;
-  font-weight:800;
-  padding:0 6px;
-}
-
-input:focus,
-select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
-.resultTitle{
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1px;
-  color:#7b8794;
-  margin-top:22px;
-  margin-bottom:12px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.card{
-  padding:16px;
-  border-radius:12px;
-  min-height:82px;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:10px;
-}
-
-.cardLine{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-  align-items:baseline;
-}
-
-.cardValue,
-.cardUnit{
-  font-size:18px;
-  font-weight:900;
-}
-
-.blue{
-  background:#eef5ff;
-  border:1px solid #bfd3ff;
-}
-
-.green{
-  background:#edfdf3;
-  border:1px solid #bff0d0;
-}
-
-.purple{
-  background:#f5f3ff;
-  border:1px solid #ddd6fe;
-}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+.typeRow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+.cardLine{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
+.cardValue{font-size:18px;font-weight:900;line-height:1;min-height:22px}
+.cardUnit{font-size:14px;font-weight:800}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
 .blue *{color:#2359e8}
-.green *{color:#019863}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.green *{color:#16a34a}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe}
 .purple *{color:#7c3aed}
-
-.formula{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-  .row{
-    grid-template-columns:minmax(0,1fr) 72px;
-  }
-
-  .typeRow{
-    grid-template-columns:105px minmax(0,1fr);
-  }
-
-  .resultGrid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .card{
-    padding:14px;
-  }
-
-  .cardValue,
-  .cardUnit{
-    font-size:16px;
-  }
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .typeRow{grid-template-columns:105px minmax(0,1fr)}
+  .paramGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="ht">Transmitter Height</label>
+    <div class="row">
+      <input id="ht" type="number" step="any" placeholder="Example: 150">
+      <select id="htUnit">
+        <option value="1" selected>ft</option>
+        <option value="3280.839895">km</option>
+        <option value="5280">mi</option>
+        <option value="3.280839895">m</option>
+        <option value="3">yd</option>
+        <option value="0.0833333333">in</option>
+        <option value="0.0328084">cm</option>
+      </select>
+    </div>
 
-<div class="calc">
+    <label for="hr">Receiver Height</label>
+    <div class="row">
+      <input id="hr" type="number" step="any" placeholder="Example: 30">
+      <select id="hrUnit">
+        <option value="1" selected>ft</option>
+        <option value="3280.839895">km</option>
+        <option value="5280">mi</option>
+        <option value="3.280839895">m</option>
+        <option value="3">yd</option>
+        <option value="0.0833333333">in</option>
+        <option value="0.0328084">cm</option>
+      </select>
+    </div>
 
-<label>Transmitter Height</label>
-<div class="row">
-  <input id="ht" type="number" step="any">
-  <select id="htUnit">
-    <option value="1" selected>ft</option>
-    <option value="3280.839895">km</option>
-    <option value="5280">mi</option>
-    <option value="3.280839895">m</option>
-    <option value="3">yd</option>
-    <option value="0.0833333333">in</option>
-    <option value="0.0328084">cm</option>
-  </select>
-</div>
+    <label for="calcType">Calculator Type</label>
+    <div class="typeRow">
+      <select id="calcType" onchange="updateMode()">
+        <option value="distance" selected>Distance</option>
+        <option value="downtilt">Downtilt</option>
+      </select>
+      <input id="mainInput" type="number" step="any" placeholder="Enter distance or angle">
+    </div>
 
-<label>Receiver Height</label>
-<div class="row">
-  <input id="hr" type="number" step="any">
-  <select id="hrUnit">
-    <option value="1" selected>ft</option>
-    <option value="3280.839895">km</option>
-    <option value="5280">mi</option>
-    <option value="3.280839895">m</option>
-    <option value="3">yd</option>
-    <option value="0.0833333333">in</option>
-    <option value="0.0328084">cm</option>
-  </select>
-</div>
+    <div class="row" id="distanceUnitRow">
+      <div></div>
+      <select id="distanceUnit">
+        <option value="1" selected>ft</option>
+        <option value="3280.839895">km</option>
+        <option value="5280">mi</option>
+        <option value="3.280839895">m</option>
+        <option value="3">yd</option>
+        <option value="0.0833333333">in</option>
+        <option value="0.0328084">cm</option>
+      </select>
+    </div>
 
-<label>Calculator Type</label>
-<div class="typeRow">
-  <select id="calcType" onchange="updateMode()">
-    <option value="distance" selected>Distance</option>
-    <option value="downtilt">Downtilt</option>
-  </select>
+    <label for="bw">Beamwidth Angle</label>
+    <div class="row">
+      <input id="bw" type="number" step="any" placeholder="Example: 10">
+      <select aria-label="Degrees Angle Fixed Icon"><option value="deg">°</option></select>
+    </div>
 
-  <input id="mainInput" type="number" step="any">
-</div>
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
+  <div id="errorBox">Please enter valid values.</div>
 
-<div class="row" id="distanceUnitRow">
-  <div></div>
-  <select id="distanceUnit">
-    <option value="1" selected>ft</option>
-    <option value="3280.839895">km</option>
-    <option value="5280">mi</option>
-    <option value="3.280839895">m</option>
-    <option value="3">yd</option>
-    <option value="0.0833333333">in</option>
-    <option value="0.0328084">cm</option>
-  </select>
-</div>
-
-<label>Beamwidth Angle</label>
-<div class="row">
-  <input id="bw" type="number" step="any">
-  <select>
-    <option>°</option>
-  </select>
-</div>
-
-<button class="btn" onclick="calc()">CALCULATE</button>
-
-<div id="errorBox">Please enter valid values.</div>
-
-<div class="resultTitle">RESULTS</div>
-
-<div class="resultGrid">
-
-  <div class="card blue">
-    <div class="cardLabel" id="mainResultLabel">DOWNTILT ANGLE</div>
-    <div class="cardLine">
-      <span class="cardValue" id="mainResult"></span>
-      <span class="cardUnit" id="mainUnit">°</span>
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel" id="mainResultLabel">DOWNTILT ANGLE</div>
+      <div class="cardLine">
+        <span class="cardValue" id="mainResult">-</span>
+        <span class="cardUnit" id="mainUnit">°</span>
+      </div>
+    </div>
+    <div class="card green">
+      <div class="cardLabel">INNER COVERAGE RADIUS</div>
+      <div class="cardLine">
+        <span class="cardValue" id="icr">-</span>
+        <span class="cardUnit">ft</span>
+      </div>
+    </div>
+    <div class="card purple">
+      <div class="cardLabel">OUTER COVERAGE RADIUS</div>
+      <div class="cardLine">
+        <span class="cardValue" id="ocr">-</span>
+        <span class="cardUnit">ft</span>
+      </div>
     </div>
   </div>
 
-  <div class="card green">
-    <div class="cardLabel">INNER COVERAGE RADIUS</div>
-    <div class="cardLine">
-      <span class="cardValue" id="icr"></span>
-      <span class="cardUnit">ft</span>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Transmitter Height (Ht)</strong>
+        The physical elevation height of the transmission sectoral antenna radiator array measured relative to ground levels.
+      </div>
+      <div class="paramItem">
+        <strong>Receiver Height (Hr)</strong>
+        The exact target endpoint receiver antenna station elevation level, critical for relative height offsets calculation.
+      </div>
+      <div class="paramItem">
+        <strong>Target Distance / Downtilt</strong>
+        Dynamic parameters defining either spatial link separation range length or primary mechanical beam axis angle tilts.
+      </div>
+      <div class="paramItem">
+        <strong>Vertical Beamwidth Angle</strong>
+        The beam divergence spread width aperture slice tracking bounds down to half-power (-3 dB) limits.
+      </div>
     </div>
-  </div>
+  </section>
 
-  <div class="card purple">
-    <div class="cardLabel">OUTER COVERAGE RADIUS</div>
-    <div class="cardLine">
-      <span class="cardValue" id="ocr"></span>
-      <span class="cardUnit">ft</span>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: Long Range Sector Site (Distance Mode)</strong><br>
+      • Transmitter Height = 120 ft | Receiver Height = 20 ft | Main Target Distance = 2500 ft<br>
+      • Beamwidth Angle = 8.0°<br>
+      • <em>Expected Downtilt Angle: 2.2906° | Inner Footprint: 928.32 ft | Outer Footprint: -5859.34 ft</em>
     </div>
-  </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: Macro Site Downtilt Optimization (Downtilt Mode)</strong><br>
+      • Transmitter Height = 150 ft | Receiver Height = 30 ft | Specified Downtilt = 5.0°<br>
+      • Beamwidth Angle = 6.0°<br>
+      • <em>Expected Receiver Range Distance: 1371.62 ft | Inner Footprint: 854.37 ft | Outer Footprint: 3433.80 ft</em>
+    </div>
+  </section>
 
-</div>
+  <section class="infoBox">
+    <h2>Antenna Downtilt and Radiation Coverage Footprint</h2>
+    <p>The vector schematic scales mechanical link properties matching beam boundaries relative to structural horizon references down onto targeted footprint coverage ranges.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 340" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="340" fill="#ffffff" stroke="none"/>
+          
+          <line x1="20" y1="280" x2="520" y2="280" stroke="#78350f" stroke-width="4"/>
+          <line x1="60" y1="295" x2="480" y2="295" stroke="#000000" stroke-width="1.5"/>
+          <polygon points="60,295 72,291 72,299" fill="#000000"/>
+          <polygon points="480,295 468,291 468,299" fill="#000000"/>
+          <text x="270" y="314" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">Distance</text>
 
-<div class="formula">
-Formula:<br><br>
-Distance mode:<br>
-Downtilt = atan((Ht - Hr) / Distance)<br>
-Inner = (Ht - Hr) / tan(Downtilt + Beamwidth / 2)<br>
-Outer = (Ht - Hr) / tan(Downtilt - Beamwidth / 2)<br><br>
-Downtilt mode:<br>
-Distance = (Ht - Hr) / tan(Downtilt)<br>
-Inner = (Ht - Hr) / tan(Downtilt - Beamwidth / 2)<br>
-Outer = (Ht - Hr) / tan(Downtilt + Beamwidth / 2)
-</div>
+          <g transform="translate(40, 60)">
+            <line x1="30" y1="0" x2="10" y2="220" stroke="#475467" stroke-width="2"/>
+            <line x1="30" y1="0" x2="50" y2="220" stroke="#475467" stroke-width="2"/>
+            <line x1="20" y1="110" x2="40" y2="110" stroke="#475467" stroke-width="1.2"/>
+            <line x1="15" y1="165" x2="45" y2="165" stroke="#475467" stroke-width="1.2"/>
+            <line x1="10" y1="220" x2="50" y2="220" stroke="#475467" stroke-width="2"/>
+            <line x1="10" y1="220" x2="40" y2="110" stroke="#475467" stroke-width="1"/>
+            <line x1="50" y1="220" x2="20" y2="110" stroke="#475467" stroke-width="1"/>
+            <line x1="20" y1="110" x2="30" y2="0" stroke="#475467" stroke-width="1"/>
+            <line x1="40" y1="110" x2="30" y2="0" stroke="#475467" stroke-width="1"/>
+            
+            <line x1="-15" y1="0" x2="-15" y2="220" stroke="#000000" stroke-width="1"/>
+            <polygon points="-15,0 -19,10 -11,10" fill="#000000"/>
+            <polygon points="-15,220 -19,210 -11,210" fill="#000000"/>
+            <text x="-25" y="115" fill="#000000" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="end">Ht</text>
 
-</div>
+            <rect x="25" y="-12" width="12" height="24" fill="#eaebab" stroke="#475467" stroke-width="1.5" transform="rotate(8 31 0)"/>
+            <circle cx="30" cy="0" r="3.5" fill="#000000"/>
+            <text x="30" y="-22" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">Transmitter</text>
+          </g>
+
+          <line x1="72" y1="60" x2="440" y2="60" stroke="#334155" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="446" y="64" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">0° Horizon</text>
+
+          <line x1="72" y1="60" x2="400" y2="175" stroke="#334155" stroke-width="1.8" stroke-dasharray="4,2"/>
+          
+          <path d="M 230 60 A 160 160 0 0 1 224 114" fill="none" stroke="#000000" stroke-width="1.2"/>
+          <polygon points="224,114 231,107 222,104" fill="#000000"/>
+          <text x="236" y="92" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">Downtilt Angle</text>
+
+          <line x1="72" y1="60" x2="470" y2="135" stroke="#dc2626" stroke-width="1.8"/>
+          <line x1="72" y1="60" x2="290" y2="280" stroke="#dc2626" stroke-width="1.8"/>
+          
+          <path d="M 310 144 A 240 240 0 0 1 254 195" fill="none" stroke="#dc2626" stroke-width="1.2"/>
+          <polygon points="310,144 301,148 305,139" fill="#dc2626"/>
+          <polygon points="254,195 259,186 264,191" fill="#dc2626"/>
+          <text x="295" y="180" fill="#dc2626" font-size="12" font-family="sans-serif" font-weight="bold">Beam Width</text>
+
+          <line x1="110" y1="145" x2="290" y2="145" stroke="#ea580c" stroke-width="1.5"/>
+          <line x1="110" y1="138" x2="110" y2="152" stroke="#ea580c" stroke-width="2"/>
+          <line x1="290" y1="138" x2="290" y2="152" stroke="#ea580c" stroke-width="2"/>
+          <text x="120" y="136" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">Inner Radius</text>
+          
+          <line x1="110" y1="190" x2="470" y2="190" stroke="#ea580c" stroke-width="1.5"/>
+          <line x1="110" y1="183" x2="110" y2="197" stroke="#ea580c" stroke-width="2"/>
+          <line x1="470" y1="183" x2="470" y2="197" stroke="#ea580c" stroke-width="2"/>
+          <text x="120" y="182" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold">Outer Radius</text>
+
+          <g transform="translate(390, 160)">
+            <rect x="0" y="45" width="80" height="75" fill="#f1f5f9" stroke="#475467" stroke-width="1.5"/>
+            <rect x="15" y="15" width="55" height="30" fill="#f1f5f9" stroke="#475467" stroke-width="1.5"/>
+            <rect x="12" y="55" width="12" height="15" fill="#ffffff" stroke="#475467" stroke-width="1"/>
+            <rect x="34" y="55" width="12" height="15" fill="#ffffff" stroke="#475467" stroke-width="1"/>
+            <rect x="56" y="55" width="12" height="15" fill="#ffffff" stroke="#475467" stroke-width="1"/>
+            <rect x="12" y="85" width="12" height="15" fill="#ffffff" stroke="#475467" stroke-width="1"/>
+            <rect x="34" y="85" width="12" height="15" fill="#ffffff" stroke="#475467" stroke-width="1"/>
+            <rect x="56" y="85" width="12" height="15" fill="#ffffff" stroke="#475467" stroke-width="1"/>
+            
+            <line x1="25" y1="15" x2="25" y2="0" stroke="#000000" stroke-width="2"/>
+            <circle cx="25" cy="0" r="2" fill="#000000"/>
+            <text x="32" y="12" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold">Receiver</text>
+
+            <line x1="95" y1="15" x2="95" y2="120" stroke="#000000" stroke-width="1"/>
+            <polygon points="95,15 91,25 99,25" fill="#000000"/>
+            <polygon points="95,120 91,110 99,110" fill="#000000"/>
+            <text x="105" y="74" fill="#000000" font-size="15" font-family="sans-serif" font-weight="bold">Hr</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>Distance Link Computation Mode (Calculates Angle & Radius Spans):</strong><br>
+      • Downtilt Angle = atan((Ht - Hr) / Distance)<br>
+      • Inner Radius Footprint = (Ht - Hr) / tan(Downtilt + Beamwidth / 2)<br>
+      • Outer Radius Footprint = (Ht - Hr) / tan(Downtilt - Beamwidth / 2)
+    </div>
+    <div class="formulaLine">
+      <strong>Downtilt Optimization Mode (Calculates Linear Separation Range):</strong><br>
+      • Receiver Range Distance = (Ht - Hr) / tan(Downtilt)<br>
+      • Inner Radius Footprint = (Ht - Hr) / tan(Downtilt - Beamwidth / 2)<br>
+      • Outer Radius Footprint = (Ht - Hr) / tan(Downtilt + Beamwidth / 2)
+    </div>
+    <p>The system leverages basic trigonometric angular relationships to map signal dispersion boundaries down onto targeted terrestrial geographic matrices safely.</p>
+  </section>
+</main>
 
 <script>
 function clearResults(){
-  document.getElementById("mainResult").innerHTML="";
-  document.getElementById("icr").innerHTML="";
-  document.getElementById("ocr").innerHTML="";
+  document.getElementById("mainResult").innerText="-";
+  document.getElementById("icr").innerText="-";
+  document.getElementById("ocr").innerText="-";
 }
 
 function toFeet(v,u){
@@ -308,27 +292,30 @@ function toFeet(v,u){
   return v;
 }
 
-function toRad(deg){
-  return deg*Math.PI/180;
-}
-
-function toDeg(rad){
-  return rad*180/Math.PI;
-}
+function toRad(deg){ return deg*Math.PI/180; }
+function toDeg(rad){ return rad*180/Math.PI; }
 
 function updateMode(){
   if(document.getElementById("calcType").value==="distance"){
     document.getElementById("distanceUnitRow").style.display="grid";
-    document.getElementById("mainResultLabel").innerHTML="DOWNTILT ANGLE";
-    document.getElementById("mainUnit").innerHTML="°";
+    document.getElementById("mainResultLabel").innerText="DOWNTILT ANGLE";
+    document.getElementById("mainUnit").innerText="°";
   }else{
     document.getElementById("distanceUnitRow").style.display="none";
-    document.getElementById("mainResultLabel").innerHTML="RECEIVER DISTANCE";
-    document.getElementById("mainUnit").innerHTML="ft";
+    document.getElementById("mainResultLabel").innerText="RECEIVER DISTANCE";
+    document.getElementById("mainUnit").innerText="ft";
   }
-
   clearResults();
 }
+
+// Attach native clear handlers on modifications tracking
+document.getElementById("ht").addEventListener("input", clearResults);
+document.getElementById("hr").addEventListener("input", clearResults);
+document.getElementById("mainInput").addEventListener("input", clearResults);
+document.getElementById("bw").addEventListener("input", clearResults);
+document.getElementById("htUnit").addEventListener("change", clearResults);
+document.getElementById("hrUnit").addEventListener("change", clearResults);
+document.getElementById("distanceUnit").addEventListener("change", clearResults);
 
 function calc(){
   var htVal=Number(document.getElementById("ht").value);
@@ -341,10 +328,7 @@ function calc(){
     document.getElementById("hr").value==="" ||
     document.getElementById("mainInput").value==="" ||
     document.getElementById("bw").value==="" ||
-    isNaN(htVal) ||
-    isNaN(hrVal) ||
-    isNaN(inputVal) ||
-    isNaN(bwVal)
+    isNaN(htVal) || isNaN(hrVal) || isNaN(inputVal) || isNaN(bwVal)
   ){
     document.getElementById("errorBox").style.display="block";
     clearResults();
@@ -358,7 +342,6 @@ function calc(){
   var H=Ht-Hr;
 
   var mode=document.getElementById("calcType").value;
-
   var angleDeg;
   var angleRad;
   var distance;
@@ -367,40 +350,30 @@ function calc(){
 
   if(mode==="distance"){
     distance=toFeet(inputVal,document.getElementById("distanceUnit").value);
-
     angleRad=Math.atan(H/distance);
     angleDeg=toDeg(angleRad);
-
     inner=H/Math.tan(toRad(angleDeg+bwVal/2));
     outer=H/Math.tan(toRad(angleDeg-bwVal/2));
 
-    document.getElementById("mainResult").innerHTML=angleDeg.toFixed(4);
-    document.getElementById("mainUnit").innerHTML="°";
+    document.getElementById("mainResult").innerText=angleDeg.toFixed(4);
+    document.getElementById("mainUnit").innerText="°";
   }else{
     angleDeg=inputVal;
-
-    if(angleDeg>90){
-      angleDeg=180-angleDeg;
-    }
-
+    if(angleDeg>90){ angleDeg=180-angleDeg; }
     angleRad=toRad(angleDeg);
-
     distance=H/Math.tan(angleRad);
-
     inner=H/Math.tan(toRad(angleDeg-bwVal/2));
     outer=H/Math.tan(toRad(angleDeg+bwVal/2));
 
-    document.getElementById("mainResult").innerHTML=distance.toFixed(4);
-    document.getElementById("mainUnit").innerHTML="ft";
+    document.getElementById("mainResult").innerText=distance.toFixed(4);
+    document.getElementById("mainUnit").innerText="ft";
   }
 
-  document.getElementById("icr").innerHTML=Math.abs(inner).toFixed(2);
-  document.getElementById("ocr").innerHTML=Math.abs(outer).toFixed(2);
+  document.getElementById("icr").innerText=Math.abs(inner).toFixed(2);
+  document.getElementById("ocr").innerText=Math.abs(outer).toFixed(2);
 }
 
 updateMode();
 clearResults();
 </script>
-
-</body>
-</html>
+</body></html>
