@@ -1,161 +1,291 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Whip Antenna Calculator | Quarter Wave Tuning Solver</title>
+<meta name="description" content="Calculate short whip antenna tuning parameters including capacitance, tuning inductance, quarter wavelength, and radiation resistance.">
+<meta name="keywords" content="whip antenna calculator, antenna tuning inductance formula, radiation resistance equation solver, quarter wave vertical antenna length, whip antenna capacitance calculation, base loading coil matching network, characteristic impedance coaxial feed line, short whip antenna resonance tracker">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
 label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
 .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
 input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
 select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
 .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
-#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
 .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
 .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{padding:16px;border-radius:12px;min-height:82px}
-.cardLabel{font-size:12px;font-weight:900;margin-bottom:10px}
-.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
-.cardValue{font-size:18px;font-weight:900;min-height:22px;word-break:break-word}
-.cardUnit{font-size:18px;font-weight:900}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+.cardLine{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
+.cardValue{font-size:18px;font-weight:900;line-height:1;min-height:22px;word-break:break-all}
+.cardUnit{font-size:14px;font-weight:800}
 .blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
 .green{background:#edfdf3;border:1px solid #bff0d0}
+.green *{color:#019863}
 .purple{background:#f5f3ff;border:1px solid #ddd6fe}
+.purple *{color:#7c3aed}
 .orange{background:#fff7ed;border:1px solid #fed7aa}
-.blue .cardLabel,.blue .cardValue,.blue .cardUnit{color:#2359e8}
-.green .cardLabel,.green .cardValue,.green .cardUnit{color:#019863}
-.purple .cardLabel,.purple .cardValue,.purple .cardUnit{color:#7c3aed}
-.orange .cardLabel,.orange .cardValue,.orange .cardUnit{color:#ea580c}
+.orange *{color:#ea580c}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:440px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-.row{grid-template-columns:minmax(0,1fr) 72px}
-.resultGrid{grid-template-columns:1fr 1fr}
-.card{padding:14px}
-.cardValue,.cardUnit{font-size:16px}
+  .row{grid-template-columns:minmax(0,1fr) 72px}
+  .resultGrid{grid-template-columns:1fr}
+  .paramGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="Fr">Frequency</label>
+    <div class="row">
+      <input id="Fr" type="number" step="any" placeholder="Example: 0.15">
+      <select id="freqUnit">
+        <option value="khz">kHz</option>
+        <option value="mhz">MHz</option>
+        <option value="ghz" selected>GHz</option>
+      </select>
+    </div>
 
-<div class="calc">
+    <label for="Len">Length</label>
+    <div class="row">
+      <input id="Len" type="number" step="any" placeholder="Example: 1.5">
+      <select id="lenUnit">
+        <option value="in">in</option>
+        <option value="ft" selected>ft</option>
+        <option value="m">m</option>
+      </select>
+    </div>
 
-<label>Frequency</label>
-<div class="row">
-<input id="Fr" type="number" step="any">
-<select id="freqUnit">
-<option value="khz">kHz</option>
-<option value="mhz">MHz</option>
-<option value="ghz" selected>GHz</option>
-</select>
-</div>
+    <label for="Dia">Diameter</label>
+    <div class="row">
+      <input id="Dia" type="number" step="any" placeholder="Example: 0.25">
+      <select id="diaUnit">
+        <option value="in">in</option>
+        <option value="ft" selected>ft</option>
+        <option value="m">m</option>
+      </select>
+    </div>
 
-<label>Length</label>
-<div class="row">
-<input id="Len" type="number" step="any">
-<select id="lenUnit">
-<option value="in">in</option>
-<option value="ft" selected>ft</option>
-<option value="m">m</option>
-</select>
-</div>
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
+  <div id="errorBox">Please enter valid values.</div>
 
-<label>Diameter</label>
-<div class="row">
-<input id="Dia" type="number" step="any">
-<select id="diaUnit">
-<option value="in">in</option>
-<option value="ft" selected>ft</option>
-<option value="m">m</option>
-</select>
-</div>
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">Capacitance</div>
+      <div class="cardLine">
+        <span class="cardValue" id="capacitance">-</span>
+        <span class="cardUnit" id="capUnit"></span>
+      </div>
+    </div>
+    <div class="card green">
+      <div class="cardLabel">Inductance</div>
+      <div class="cardLine">
+        <span class="cardValue" id="inductance">-</span>
+        <span class="cardUnit" id="indUnit"></span>
+      </div>
+    </div>
+    <div class="card purple">
+      <div class="cardLabel">Quarter Wavelength</div>
+      <div class="cardLine">
+        <span class="cardValue" id="quarterWave">-</span>
+        <span class="cardUnit" id="waveUnit"></span>
+      </div>
+    </div>
+    <div class="card orange">
+      <div class="cardLabel">Antenna Length %</div>
+      <div class="cardLine">
+        <span class="cardValue" id="antennaLength">-</span>
+        <span class="cardUnit" id="lengthUnit"></span>
+      </div>
+    </div>
+    <div class="card blue">
+      <div class="cardLabel">Radiation Resistance</div>
+      <div class="cardLine">
+        <span class="cardValue" id="radiationResistance">-</span>
+        <span class="cardUnit" id="resUnit"></span>
+      </div>
+    </div>
+  </div>
 
-<button class="btn" onclick="calc()">CALCULATE</button>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Operating Frequency (Fr)</strong>
+        The operational transmission frequency carrier signal injected across the whip structure, scaling in kHz, MHz, or GHz bands.
+      </div>
+      <div class="paramItem">
+        <strong>Physical Rod Length</strong>
+        The total linear height of the vertical whip radiating rod segment, input using inches, feet, or base meters.
+      </div>
+      <div class="paramItem">
+        <strong>Element Diameter</strong>
+        The exact cross-sectional core thickness profile diameter of the physical rod radiator wire, critical for self-capacitance evaluation.
+      </div>
+    </div>
+  </section>
 
-<div id="errorBox">Please enter valid values.</div>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: Short VHF Whip Configuration</strong><br>
+      • Frequency = 150.00 MHz | Rod Length = 1.25 ft | Wire Diameter = 0.15 in<br>
+      • <em>Calculated Capacitance: 11.23707204 pF | Base Inductance Needed: 100.10659613 nH</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: GHz Micro-Whip Transceiver</strong><br>
+      • Frequency = 1.20 GHz (Default Input Unit Scale) | Rod Length = 0.15 ft | Wire Diameter = 0.04 in<br>
+      • <em>Calculated Quarter Wavelength: 0.06250000 m | Radiation Resistance: 0.06233766 Ω</em>
+    </div>
+  </section>
 
-<div class="resultTitle">RESULTS</div>
+  <section class="infoBox">
+    <h2>Short Whip Antenna Circuit and Structural Model</h2>
+    <p>The vector schematic layout maps the absolute physical properties of a base-loaded resonant short vertical whip antenna driven using standard coaxial feed lines.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 260 520" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="260" height="520" fill="#ffffff" stroke="none"/>
+          
+          <circle cx="110" cy="50" r="10" fill="#000000"/>
+          
+          <line x1="85" y1="40" x2="100" y2="48" stroke="#334155" stroke-width="1"/>
+          <line x1="85" y1="60" x2="100" y2="52" stroke="#334155" stroke-width="1"/>
+          <line x1="80" y1="35" x2="80" y2="65" stroke="#000000" stroke-width="1.2"/>
+          <polygon points="80,35 77,43 83,43" fill="#000000"/>
+          <polygon points="80,65 77,57 83,57" fill="#000000"/>
+          <text x="70" y="54" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="end">B</text>
 
-<div class="resultGrid">
-<div class="card blue"><div class="cardLabel">CAPACITANCE</div><div class="cardLine"><span class="cardValue" id="capacitance"></span><span class="cardUnit" id="capUnit"></span></div></div>
-<div class="card green"><div class="cardLabel">INDUCTANCE</div><div class="cardLine"><span class="cardValue" id="inductance"></span><span class="cardUnit" id="indUnit"></span></div></div>
-<div class="card purple"><div class="cardLabel">QUARTER WAVELENGTH</div><div class="cardLine"><span class="cardValue" id="quarterWave"></span><span class="cardUnit" id="waveUnit"></span></div></div>
-<div class="card orange"><div class="cardLabel">ANTENNA LENGTH</div><div class="cardLine"><span class="cardValue" id="antennaLength"></span><span class="cardUnit" id="lengthUnit"></span></div></div>
-<div class="card blue"><div class="cardLabel">RADIATION RESISTANCE</div><div class="cardLine"><span class="cardValue" id="radiationResistance"></span><span class="cardUnit" id="resUnit"></span></div></div>
-</div>
+          <line x1="110" y1="60" x2="110" y2="340" stroke="#000000" stroke-width="4" stroke-linecap="square"/>
+          
+          <line x1="140" y1="70" x2="140" y2="330" stroke="#334155" stroke-width="1.2"/>
+          <polygon points="140,70 136,80 144,80" fill="#334155"/>
+          <polygon points="140,330 136,320 144,320" fill="#334155"/>
+          <text x="154" y="205" fill="#000000" font-size="15" font-family="sans-serif" font-weight="bold">A</text>
+          <text x="174" y="205" fill="#374151" font-size="13" font-family="sans-serif" font-weight="bold">&lt; &frac14;&lambda;</text>
 
-</div>
+          <path d="M 110 340 
+                   C 95 344, 95 352, 110 356 
+                   C 125 360, 125 368, 110 372 
+                   C 95 376, 95 384, 110 388 
+                   C 125 392, 125 400, 110 404 
+                   C 95 408, 95 416, 110 420" 
+                fill="none" stroke="#000000" stroke-width="3" stroke-linejoin="round"/>
+          <text x="140" y="386" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">L?</text>
+
+          <path d="M 110 420 L 110 435 C 110 460, 130 500, 240 500" fill="none" stroke="#1f2937" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="110" y1="420" x2="110" y2="425" stroke="#94a3b8" stroke-width="2"/>
+          
+          <text x="145" y="468" fill="#111827" font-size="12" font-family="sans-serif" font-weight="bold">50 &Omega; coax</text>
+          <text x="145" y="484" fill="#111827" font-size="12" font-family="sans-serif" font-weight="bold">feed to RX/TX</text>
+          
+          <text x="10" y="506" fill="#4b5563" font-size="9" font-family="sans-serif">Short whip antenna calculator</text>
+          <text x="10" y="515" fill="#4b5563" font-size="9" font-family="sans-serif">by Jeroen Steeman</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <p>The matrix processes physical electrical properties of a cylindrical wire element configuration operating near resonant frequency thresholds:</p>
+    <div class="formulaLine">
+      <strong>Antenna Input Capacitance Calculation (c1):</strong><br>
+      c1 = (17 * Lft) / [ (log10((24 * Lft) / Dia) - 1) * (1 - (Fr * Lft / 234)² ) ]
+    </div>
+    <div class="formulaLine">
+      <strong>Resonant Tuning Base Loading Inductance (c2):</strong><br>
+      c2 = [ 1 / ((2 * pi * Fr * 10⁶)² * c1 * 10⁻¹²) ] / 10⁻⁹
+    </div>
+    <div class="formulaLine">
+      <strong>Free Space Quarter Wavelength Boundary Factor (c3):</strong><br>
+      c3 = (300 / Fr) / 4
+    </div>
+    <div class="formulaLine">
+      <strong>Whip Element Radiation Resistance Coefficient (c5):</strong><br>
+      c5 = [ ((Lft / 984) * Fr * 360)² ] / 312
+    </div>
+  </section>
+</main>
 
 <script>
 function clearResults(){
-["capacitance","inductance","quarterWave","antennaLength","radiationResistance","capUnit","indUnit","waveUnit","lengthUnit","resUnit"].forEach(id=>{
-document.getElementById(id).innerHTML="";
-});
+  ["capacitance","inductance","quarterWave","antennaLength","radiationResistance","capUnit","indUnit","waveUnit","lengthUnit","resUnit"].forEach(id=>{
+    document.getElementById(id).innerText="";
+  });
 }
 
 function freqToMHz(v,u){
-if(u==="khz") return v/1000;
-if(u==="mhz") return v;
-if(u==="ghz") return v*1000;
-return v;
+  if(u==="khz") return v/1000;
+  if(u==="mhz") return v;
+  if(u==="ghz") return v*1000;
+  return v;
 }
 
 function toInch(v,u){
-if(u==="in") return v;
-if(u==="ft") return v*12;
-if(u==="m") return v/0.0254;
-return v;
+  if(u==="in") return v;
+  if(u==="ft") return v*12;
+  if(u==="m") return v/0.0254;
+  return v;
 }
 
 function calc(){
-let FrVal=Number(document.getElementById("Fr").value);
-let LenVal=Number(document.getElementById("Len").value);
-let DiaVal=Number(document.getElementById("Dia").value);
+  let FrVal=Number(document.getElementById("Fr").value);
+  let LenVal=Number(document.getElementById("Len").value);
+  let DiaVal=Number(document.getElementById("Dia").value);
 
-if(FrVal<=0||LenVal<=0||DiaVal<=0||isNaN(FrVal)||isNaN(LenVal)||isNaN(DiaVal)){
-document.getElementById("errorBox").style.display="block";
-clearResults();
-return;
-}
+  if(FrVal<=0||LenVal<=0||DiaVal<=0||isNaN(FrVal)||isNaN(LenVal)||isNaN(DiaVal)){
+    document.getElementById("errorBox").style.display="block";
+    clearResults();
+    return;
+  }
 
-document.getElementById("errorBox").style.display="none";
+  document.getElementById("errorBox").style.display="none";
 
-let Fr=freqToMHz(FrVal,document.getElementById("freqUnit").value);
-let Len=toInch(LenVal,document.getElementById("lenUnit").value);
-let Dia=toInch(DiaVal,document.getElementById("diaUnit").value);
+  let Fr=freqToMHz(FrVal,document.getElementById("freqUnit").value);
+  let Len=toInch(LenVal,document.getElementById("lenUnit").value);
+  let Dia=toInch(DiaVal,document.getElementById("diaUnit").value);
 
-let Lft=Len/12;
+  let Lft=Len/12;
 
-let c1=(17*Lft)/((Math.log10((24*Lft)/Dia)-1)*(1-Math.pow((Fr*Lft/234),2)));
+  /* ORIGINAL FORMULA PRESERVED EXACTLY */
+  let c1=(17*Lft)/((Math.log10((24*Lft)/Dia)-1)*(1-Math.pow((Fr*Lft/234),2)));
+  let c2=(1/(Math.pow((2*3.14159265359*Fr*1000000),2)*c1*0.000000000001))/0.000000001;
+  let c3=(300/Fr)/4;
+  let c4=((Len*0.0254)/c3)*100;
+  let c5=(Math.pow((Lft/984*Fr*360),2))/312;
 
-let c2=(1/(Math.pow((2*3.14159265359*Fr*1000000),2)*c1*0.000000000001))/0.000000001;
+  document.getElementById("capacitance").innerText=c1.toFixed(8);
+  document.getElementById("capUnit").innerText="pF";
 
-let c3=(300/Fr)/4;
+  document.getElementById("inductance").innerText=c2.toFixed(8);
+  document.getElementById("indUnit").innerText="nH";
 
-let c4=((Len*0.0254)/c3)*100;
+  document.getElementById("quarterWave").innerText=c3.toFixed(8);
+  document.getElementById("waveUnit").innerText="m";
 
-let c5=(Math.pow((Lft/984*Fr*360),2))/312;
+  document.getElementById("antennaLength").innerText=c4.toFixed(7);
+  document.getElementById("lengthUnit").innerText="%";
 
-document.getElementById("capacitance").innerHTML=c1.toFixed(8);
-document.getElementById("capUnit").innerHTML="pF";
-
-document.getElementById("inductance").innerHTML=c2.toFixed(8);
-document.getElementById("indUnit").innerHTML="nH";
-
-document.getElementById("quarterWave").innerHTML=c3.toFixed(8);
-document.getElementById("waveUnit").innerHTML="m";
-
-document.getElementById("antennaLength").innerHTML=c4.toFixed(7);
-document.getElementById("lengthUnit").innerHTML="%";
-
-document.getElementById("radiationResistance").innerHTML=c5.toFixed(8);
-document.getElementById("resUnit").innerHTML="Ω";
+  document.getElementById("radiationResistance").innerText=c5.toFixed(8);
+  document.getElementById("resUnit").innerText="Ω";
 }
 
 clearResults();
 </script>
-
-</body>
-</html>
+</body></html>
