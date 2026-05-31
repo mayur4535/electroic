@@ -1,217 +1,203 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Specific Absorption Rate (SAR) Calculator | RF Safety Tool</title>
+<meta name="description" content="Calculate Specific Absorption Rate (SAR) and Incident Power Density (IPD) using electric field RMS, material conductivity, and mass density.">
+<meta name="keywords" content="specific absorption rate calculator, sar calculator rf, incident power density tool, ipd calculation equation, electric field rms solver, material conductivity s/m, mass density kg/m3, tissue rf absorption model, electromagnetic radiation exposure calculator">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-input,select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-select{
-  text-align:center;
-  font-weight:700;
-  padding:0 6px;
-}
-
-input:focus,select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  margin-top:8px;
-}
-
-.resultTitle{
-  margin-top:26px;
-  font-size:13px;
-  font-weight:800;
-  color:#8b95a7;
-  letter-spacing:1px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:12px;
-}
-
-.card{
-  border-radius:10px;
-  padding:16px;
-  min-height:76px;
-}
-
-.card:nth-child(1){
-  background:#eef5ff;
-  border:1px solid #c8dbff;
-}
-
-.card:nth-child(2){
-  background:#ecfdf5;
-  border:1px solid #bbf7d0;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-}
-
-.card:nth-child(1) .cardLabel,
-.card:nth-child(1) .cardValue{
-  color:#2563eb;
-}
-
-.card:nth-child(2) .cardLabel,
-.card:nth-child(2) .cardValue{
-  color:#059669;
-}
-
-.cardValue{
-  margin-top:6px;
-  font-size:18px;
-  font-weight:800;
-  min-height:24px;
-  word-break:break-word;
-}
-
-.formula{
-  margin-top:16px;
-  padding:14px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:800;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:16px;border-radius:12px;min-height:82px}
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
+.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
+.cardLine span{font-weight:800;font-size:18px;color:inherit}
+.blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.green *{color:#16a34a}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:440px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
-  .calc{padding:14px}
   .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr 1fr}
-  .cardValue{font-size:14px}
+  .resultGrid{grid-template-columns:1fr}
+  .paramGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="electricField">Electric Field RMS</label>
+    <div class="row">
+      <input id="electricField" type="number" step="any" placeholder="Example: 5">
+      <select id="electricUnit">
+        <option value="1">V/m</option>
+        <option value="0.001">mV/m</option>
+        <option value="1000">kV/m</option>
+      </select>
+    </div>
 
-<div class="calc">
+    <label for="conductivity">Material Conductivity</label>
+    <div class="row">
+      <input id="conductivity" type="number" step="any" placeholder="Example: 0.5">
+      <select id="conductivityUnit">
+        <option value="1">S/m</option>
+        <option value="0.001">mS/m</option>
+      </select>
+    </div>
 
-  <label>Electric Field RMS</label>
-  <div class="row">
-    <input id="electricField" type="number" step="any">
-    <select id="electricUnit">
-      <option value="1">V/m</option>
-      <option value="0.001">mV/m</option>
-      <option value="1000">kV/m</option>
-    </select>
-  </div>
+    <label for="massDensity">Mass Density</label>
+    <div class="row">
+      <input id="massDensity" type="number" step="any" placeholder="Example: 1050">
+      <select id="densityUnit">
+        <option value="1">kg/m³</option>
+        <option value="1000">g/cm³</option>
+      </select>
+    </div>
 
-  <label>Material Conductivity</label>
-  <div class="row">
-    <input id="conductivity" type="number" step="any">
-    <select id="conductivityUnit">
-      <option value="1">S/m</option>
-      <option value="0.001">mS/m</option>
-    </select>
-  </div>
-
-  <label>Mass Density</label>
-  <div class="row">
-    <input id="massDensity" type="number" step="any">
-    <select id="densityUnit">
-      <option value="1">kg/m³</option>
-      <option value="1000">g/cm³</option>
-    </select>
-  </div>
-
-  <button class="btn" onclick="calc()">CALCULATE</button>
-
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
   <div id="errorBox">Please enter valid values.</div>
 
   <div class="resultTitle">RESULTS</div>
-
   <div class="resultGrid">
-
-    <div class="card">
-      <div class="cardLabel">SAR</div>
-      <div class="cardValue" id="sarResult"></div>
+    <div class="card blue">
+      <div class="cardLabel">SAR Specific Absorption Rate</div>
+      <div class="cardLine"><span id="sarResult">-</span></div>
     </div>
-
-    <div class="card">
-      <div class="cardLabel">IPD</div>
-      <div class="cardValue" id="ipdResult"></div>
+    <div class="card green">
+      <div class="cardLabel">IPD Incident Power Density</div>
+      <div class="cardLine"><span id="ipdResult">-</span></div>
     </div>
-
   </div>
 
-  <div class="formula">
-    Original formula preserved:<br><br>
-    SAR = σ × E² / ρ<br>
-    IPD = E² / 377<br><br>
-    E = Electric field RMS, σ = Conductivity, ρ = Mass density
-  </div>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Electric Field RMS (E)</strong>
+        Root-mean-square magnitude strength parameter of the active electromagnetic field wave, measured in Volts per meter (V/m).
+      </div>
+      <div class="paramItem">
+        <strong>Material Conductivity (σ)</strong>
+        The electrical induction conductivity index coefficient of the targeted biological material or tissue layer, in Siemens per meter (S/m).
+      </div>
+      <div class="paramItem">
+        <strong>Mass Density (ρ)</strong>
+        The physical mass density profile distribution index of the structural target medium layer, natively scaling in kg/m³.
+      </div>
+    </div>
+  </section>
 
-</div>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: Standard Low-Exposure Tissue Model</strong><br>
+      • Electric Field RMS (E) = 10.00 V/m | Material Conductivity = 0.65 S/m<br>
+      • Tissue Mass Density = 1020.00 kg/m³<br>
+      • <em>Calculated SAR Result: 0.063725 W/kg | Incident Power Density: 0.265252 W/m²</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: High RF Field Exposure Scenario</strong><br>
+      • Electric Field RMS (E) = 60.00 V/m | Material Conductivity = 1.20 S/m<br>
+      • Tissue Mass Density = 1050.00 kg/m³<br>
+      • <em>Calculated SAR Result: 4.114286 W/kg | Incident Power Density: 9.549072 W/m²</em>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Electromagnetic Field Induction Matrix</h2>
+    <p>The layout illustrates how an uniform time-varying magnetic field induction vector inside biological tissues establishes circular induced current paths and peripheral electric fields (E).</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="440" height="440" fill="#ffffff" stroke="none"/>
+          
+          <path d="M 260 40 L 190 40" stroke="#ff0000" stroke-width="3"/>
+          <polygon points="182,40 194,35 194,45" fill="#ff0000"/>
+          <path d="M 125 65 L 85 105" stroke="#ff0000" stroke-width="3"/>
+          <polygon points="79,111 84,99 92,107" fill="#ff0000"/>
+          <path d="M 50 170 L 50 230" stroke="#ff0000" stroke-width="3"/>
+          <polygon points="50,238 45,226 55,226" fill="#ff0000"/>
+          <path d="M 70 310 L 110 350" stroke="#ff0000" stroke-width="3"/>
+          <polygon points="116,356 103,351 111,343" fill="#ff0000"/>
+          <path d="M 180 400 L 250 400" stroke="#ff0000" stroke-width="3"/>
+          <polygon points="258,400 246,395 246,405" fill="#ff0000"/>
+          <path d="M 325 350 L 365 310" stroke="#ff0000" stroke-width="3"/>
+          <polygon points="371,304 366,316 358,308" fill="#ff0000"/>
+          <path d="M 390 230 L 390 170" stroke="#ff0000" stroke-width="3"/>
+          <polygon points="390,162 395,174 385,174" fill="#ff0000"/>
+          <path d="M 370 105 L 330 65" stroke="#ff0000" stroke-width="3"/>
+          <polygon points="324,59 337,64 329,72" fill="#ff0000"/>
+
+          <text x="220" y="24" fill="#ff0000" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle">ELECTRIC FIELD E(t)</text>
+          <text x="26" y="204" fill="#ff0000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">E(t)</text>
+          <text x="220" y="426" fill="#ff0000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">E(t)</text>
+
+          <circle cx="220" cy="200" r="140" fill="none" stroke="#6b7280" stroke-width="9"/>
+
+          <path d="M 300 120 A 110 110 0 0 0 160 120" fill="none" stroke="#15803d" stroke-width="3"/>
+          <polygon points="152,124 164,116 161,126" fill="#15803d"/>
+          <text x="220" y="114" fill="#15803d" font-size="15" font-family="sans-serif" font-weight="bold" font-style="italic" text-anchor="middle">current I(t)</text>
+
+          <text x="220" y="174" fill="#1e3a8a" font-size="16" font-family="sans-serif" font-weight="bold" text-anchor="middle">MAGNETIC FIELD B1(t)</text>
+          <text x="220" y="192" fill="#1e3a8a" font-size="12" font-family="sans-serif" font-style="italic" font-weight="bold" text-anchor="middle">uniform vector field directed into</text>
+          <text x="220" y="208" fill="#1e3a8a" font-size="12" font-family="sans-serif" font-style="italic" font-weight="bold" text-anchor="middle">paper and increasing:</text>
+          <text x="220" y="236" fill="#1e3a8a" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle">B1(t) = B1 cos(&omega;t)</text>
+
+          <text x="220" y="280" fill="#374151" font-size="14" font-family="sans-serif" font-weight="bold" font-style="italic" text-anchor="middle">Conductive loop in</text>
+          <text x="220" y="298" fill="#374151" font-size="14" font-family="sans-serif" font-weight="bold" font-style="italic" text-anchor="middle">tissue with area A</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>Specific Absorption Rate (SAR Formulation):</strong><br>
+      SAR = σ × E² / ρ
+    </div>
+    <div class="formulaLine">
+      <strong>Incident Power Density (IPD Formulation):</strong><br>
+      IPD = E² / 377
+    </div>
+    <p>Where E represents the baseline Electric field RMS scale profile, σ establishes localized Material Conductivity thresholds, and ρ tracks tissue Mass Density bounds.</p>
+  </section>
+</main>
 
 <script>
 function clearResults(){
-  document.getElementById("sarResult").innerHTML = "";
-  document.getElementById("ipdResult").innerHTML = "";
+  document.getElementById("sarResult").innerText = "-";
+  document.getElementById("ipdResult").innerText = "-";
 }
 
-function calc(){
+// Attach variance change inputs trackers natively to clear calculations safely
+document.getElementById("electricField").addEventListener("input", clearResults);
+document.getElementById("conductivity").addEventListener("input", clearResults);
+document.getElementById("massDensity").addEventListener("input", clearResults);
+document.getElementById("electricUnit").addEventListener("change", clearResults);
+document.getElementById("conductivityUnit").addEventListener("change", clearResults);
+document.getElementById("densityUnit").addEventListener("change", clearResults);
 
+function calc(){
   var E = Number(document.getElementById("electricField").value) * Number(document.getElementById("electricUnit").value);
   var sigma = Number(document.getElementById("conductivity").value) * Number(document.getElementById("conductivityUnit").value);
   var md = Number(document.getElementById("massDensity").value) * Number(document.getElementById("densityUnit").value);
@@ -230,14 +216,12 @@ function calc(){
 
   document.getElementById("errorBox").style.display = "none";
 
-  /* ORIGINAL FORMULA */
+  /* ORIGINAL COMPUTATION OPERATORS PRESERVED EXPLICITLY */
   var c1 = ((sigma * (Math.pow(E,2))) / md);
   var c2 = ((Math.pow(E,2)) / 377);
 
-  document.getElementById("sarResult").innerHTML = c1.toFixed(6) + " W/kg";
-  document.getElementById("ipdResult").innerHTML = c2.toFixed(6) + " W/m²";
+  document.getElementById("sarResult").innerText = c1.toFixed(6) + " W/kg";
+  document.getElementById("ipdResult").innerText = c2.toFixed(6) + " W/m²";
 }
 </script>
-
-</body>
-</html>
+</body></html>
