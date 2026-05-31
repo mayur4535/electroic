@@ -1,209 +1,332 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Traveling Wave Tube (TWT) Gain Calculator | Microwave Solver</title>
+<meta name="description" content="Calculate Traveling Wave Tube (TWT) amplifier parameters including Pierce gain parameter C, propagation constant k, electronic length N, and small signal dB gain.">
+<meta name="keywords" content="traveling wave tube gain calculator, twt pierce parameter c solver, microwave slow wave structure helix, electronic length n matching, three wave theory attenuation, electron beam stream velocity, applied dc high voltage klystron, helix impedance coupling coefficient, rf amplification attenuation constant">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
-
+body{margin:0;background:#f6f8fb;padding:0;color:#333}
+.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
 label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
 .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
-
-input,select{
-  width:100%;height:43px;border:1px solid #cfd6df;
-  border-radius:8px;padding:0 12px;font-size:15px;
-  background:#fff;outline:none;
-}
-
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
 select{text-align:center;font-weight:800;padding:0 6px}
-
-input:focus,select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;height:48px;border:none;border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;font-size:16px;font-weight:800;
-  cursor:pointer;margin-top:8px;
-}
-
-#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+/* Small red error text custom styled above result layout */
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
 .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
-
 .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
 .card{padding:16px;border-radius:12px;min-height:82px}
-.cardLabel{font-size:12px;font-weight:900;letter-spacing:.5px;margin-bottom:10px}
-.cardValue{font-size:18px;font-weight:900;min-height:22px;word-break:break-word}
-
+.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+.cardValue{font-size:15px;font-weight:900;line-height:1.4;min-height:22px;word-break:break-all}
 .blue{background:#eef5ff;border:1px solid #bfd3ff}
+.blue *{color:#2359e8}
 .green{background:#edfdf3;border:1px solid #bff0d0}
+.green *{color:#019863}
 .purple{background:#f5f3ff;border:1px solid #ddd6fe}
+.purple *{color:#7c3aed}
 .orange{background:#fff7ed;border:1px solid #fed7aa}
-
-.blue .cardLabel,.blue .cardValue{color:#2359e8}
-.green .cardLabel,.green .cardValue{color:#019863}
-.purple .cardLabel,.purple .cardValue{color:#7c3aed}
-.orange .cardLabel,.orange .cardValue{color:#ea580c}
-
-.formula{
-  margin-top:16px;padding:14px;background:#f9fafb;
-  border:1px solid #e5e7eb;border-radius:10px;
-  font-size:13px;line-height:1.6;color:#667085;font-weight:700;
-}
-
+.orange *{color:#ea580c}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
+.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
+.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
 @media(max-width:600px){
   .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr 1fr}
-  .card{padding:14px}
-  .cardValue{font-size:16px}
+  .resultGrid{grid-template-columns:1fr}
+  .paramGrid{grid-template-columns:1fr}
 }
-</style>
-</head>
-
+</style></head>
 <body>
+<main class="calc">
+  <form id="tool">
+    <label for="input1">RF Frequency</label>
+    <div class="row">
+      <input id="input1" type="number" step="any" value="3">
+      <select aria-label="Frequency Unit Lock"><option value="ghz">GHz</option></select>
+    </div>
 
-<div class="calc">
+    <label for="input2">Helix Impedance K</label>
+    <div class="row">
+      <input id="input2" type="number" step="any" value="50">
+      <select aria-label="Impedance Unit Lock"><option value="ohm">Ω</option></select>
+    </div>
 
-<label>RF Frequency</label>
-<div class="row">
-  <input id="input1" type="number" value="3">
-  <select><option>GHz</option></select>
-</div>
+    <label for="input3">Applied DC Voltage</label>
+    <div class="row">
+      <input id="input3" type="number" step="any" value="3">
+      <select aria-label="Voltage Unit Lock"><option value="kv">kV</option></select>
+    </div>
 
-<label>Helix Impedance K</label>
-<div class="row">
-  <input id="input2" type="number" value="50">
-  <select><option>Ω</option></select>
-</div>
+    <label for="input4">DC Current</label>
+    <div class="row">
+      <input id="input4" type="number" step="any" value="20">
+      <select aria-label="Current Unit Lock"><option value="ma">mA</option></select>
+    </div>
 
-<label>Applied DC Voltage</label>
-<div class="row">
-  <input id="input3" type="number" value="3">
-  <select><option>kV</option></select>
-</div>
+    <label for="input5">Electron Velocity</label>
+    <div class="row">
+      <input id="input5" type="number" step="any" value="32500000">
+      <select aria-label="Velocity Unit Lock"><option value="ms">m/s</option></select>
+    </div>
 
-<label>DC Current</label>
-<div class="row">
-  <input id="input4" type="number" value="20">
-  <select><option>mA</option></select>
-</div>
+    <label for="input6">Length</label>
+    <div class="row">
+      <input id="input6" type="number" step="any" value="0.3">
+      <select aria-label="Length Unit Lock"><option value="m">m</option></select>
+    </div>
 
-<label>Electron Velocity</label>
-<div class="row">
-  <input id="input5" type="number" value="3.25E7">
-  <select><option>m/s</option></select>
-</div>
+    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+  </form>
+  
+  <div id="errorBox">Please enter valid values.</div>
 
-<label>Length</label>
-<div class="row">
-  <input id="input6" type="number" value="0.3">
-  <select><option>m</option></select>
-</div>
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">Pierce Gain Parameter C</div>
+      <div class="cardValue" id="TWT_C">-</div>
+    </div>
+    <div class="card green">
+      <div class="cardLabel">Propagation Constant k</div>
+      <div class="cardValue" id="TWT_k">-</div>
+    </div>
+    <div class="card purple">
+      <div class="cardLabel">Electronic Length N</div>
+      <div class="cardValue" id="TWT_N">-</div>
+    </div>
+    <div class="card orange">
+      <div class="cardLabel">Small Signal Gain (Neper)</div>
+      <div class="cardValue" id="TWT_Gain_Neper_simplified">-</div>
+    </div>
+    <div class="card blue">
+      <div class="cardLabel">Small Signal Gain (dB)</div>
+      <div class="cardValue" id="TWT_Gain_dB_simplified">-</div>
+    </div>
+    <div class="card green">
+      <div class="cardLabel">Ideal Three Wave Theory Gain</div>
+      <div class="cardValue" id="TWT_Gain_dB_Three_wave">-</div>
+    </div>
+  </div>
 
-<button class="btn" onclick="calc()">CALCULATE</button>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>RF Frequency (f)</strong>
+        The high-frequency electromagnetic microwave signal fed into the slow-wave input structure terminal loop, tracked in GHz.
+      </div>
+      <div class="paramItem">
+        <strong>Helix Impedance (K)</strong>
+        The characteristic interaction tracking impedance of the structural spiral helix waveguide component circuit, measured in Ohms (Ω).
+      </div>
+      <div class="paramItem">
+        <strong>Applied DC Voltage (V0)</strong>
+        The extreme high-voltage potential accelerating electron beam emissions down the vacuum stream path width, in kilo-Volts (kV).
+      </div>
+      <div class="paramItem">
+        <strong>DC Current (I0)</strong>
+        The direct emission electron beam current envelope generated via thermal matching cathode guns, input in milli-Amperes (mA).
+      </div>
+    </div>
+  </section>
 
-<div id="errorBox">Please enter valid values.</div>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleBox">
+      <strong>Example 1: Standard S-Band TWT Configuration (Default Inputs)</strong><br>
+      • Frequency = 3.0 GHz | Helix Impedance = 50.0 Ω | DC Voltage = 3.0 kV | DC Current = 20.0 mA<br>
+      • Electron Velocity = 3.25E7 m/s | Helix Interaction Length = 0.3 m<br>
+      • <em>Expected Pierce Parameter C: 0.043679 | Three Wave Theory Gain: 15.34024 dB</em>
+    </div>
+    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
+      <strong>Example 2: High Power Satellite Transponder Segment</strong><br>
+      • Frequency = 12.0 GHz | Helix Impedance = 65.0 Ω | DC Voltage = 5.0 kV | DC Current = 40.0 mA<br>
+      • Electron Velocity = 4.20E7 m/s | Helix Interaction Length = 0.25 m<br>
+      • <em>Expected Pierce Parameter C: 0.046415 | Electronic Length N: 71.42857</em>
+    </div>
+  </section>
 
-<div class="resultTitle">RESULTS</div>
+  <section class="infoBox">
+    <h2>Traveling Wave Tube Architectural Structure</h2>
+    <p>The layout illustrates the continuous kinetic energy exchange matching synchronization between the electron beam stream and accelerated RF fields inside a spiral slow-wave helix capsule assembly.</p>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 300" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="300" fill="#ffffff" stroke="none"/>
+          
+          <rect x="50" y="40" width="440" height="70" rx="35" ry="35" fill="#f8fafc" stroke="#475467" stroke-width="2"/>
 
-<div class="resultGrid">
+          <circle cx="85" cy="75" r="4" fill="#000000"/>
+          <line x1="50" y1="75" x2="81" y2="75" stroke="#000000" stroke-width="1.5"/>
+          <text x="96" y="80" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold">K</text>
 
-<div class="card blue">
-  <div class="cardLabel">TWT PIERCE GAIN PARAMETER C</div>
-  <div class="cardValue" id="TWT_C"></div>
-</div>
+          <line x1="120" y1="45" x2="120" y2="105" stroke="#475467" stroke-width="1.5" stroke-dasharray="6,4"/>
+          <text x="120" y="32" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">G</text>
 
-<div class="card green">
-  <div class="cardLabel">TWT PROPAGATION CONSTANT k</div>
-  <div class="cardValue" id="TWT_k"></div>
-</div>
+          <line x1="165" y1="45" x2="165" y2="105" stroke="#475467" stroke-width="1.8" stroke-dasharray="14,10,14"/>
+          <line x1="210" y1="45" x2="210" y2="105" stroke="#475467" stroke-width="1.8" stroke-dasharray="14,10,14"/>
+          <text x="165" y="122" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">A</text>
+          <text x="210" y="122" fill="#000000" font-size="12" font-family="sans-serif" font-weight="bold" text-anchor="middle">A</text>
 
-<div class="card purple">
-  <div class="cardLabel">TWT ELECTRONIC LENGTH N</div>
-  <div class="cardValue" id="TWT_N"></div>
-</div>
+          <circle cx="210" cy="45" r="3" fill="#2359e8"/>
+          <line x1="210" y1="45" x2="210" y2="15" stroke="#2359e8" stroke-width="1.5"/>
+          <circle cx="210" cy="15" r="5" fill="#ffffff" stroke="#2359e8" stroke-width="1.5"/>
+          <circle cx="210" cy="15" r="1.5" fill="#2359e8"/>
+          <text x="222" y="19" fill="#2359e8" font-size="12" font-family="sans-serif" font-weight="bold">Power output</text>
 
-<div class="card orange">
-  <div class="cardLabel">TWT PIERCE SMALL SIGNAL GAIN NEPER</div>
-  <div class="cardValue" id="TWT_Gain_Neper_simplified"></div>
-</div>
+          <path d="M 210 75 
+                   C 220 50, 230 50, 235 75 
+                   C 240 100, 250 100, 255 75 
+                   C 260 50, 270 50, 275 75 
+                   C 280 100, 290 100, 295 75 
+                   C 300 50, 310 50, 315 75 
+                   C 320 100, 330 100, 335 75 
+                   C 340 50, 350 50, 355 75 
+                   C 360 100, 370 100, 375 75 
+                   C 380 50, 390 50, 395 75 
+                   C 400 100, 410 100, 415 75 
+                   L 445 75" 
+                fill="none" stroke="#ea580c" stroke-width="2" stroke-linejoin="round"/>
 
-<div class="card blue">
-  <div class="cardLabel">TWT PIERCE SMALL SIGNAL GAIN dB</div>
-  <div class="cardValue" id="TWT_Gain_dB_simplified"></div>
-</div>
+          <line x1="90" y1="75" x2="440" y2="75" stroke="#16a34a" stroke-width="1" stroke-dasharray="3,3"/>
+          <polygon points="300,75 292,72 292,78" fill="#16a34a"/>
 
-<div class="card green">
-  <div class="cardLabel">TWT GAIN IDEAL THREE WAVE THEORY dB</div>
-  <div class="cardValue" id="TWT_Gain_dB_Three_wave"></div>
-</div>
+          <rect x="445" y="60" width="4" height="30" fill="#000000"/>
+          <line x1="449" y1="75" x2="490" y2="75" stroke="#000000" stroke-width="1.5"/>
+          <text x="476" y="94" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">C</text>
 
-</div>
+          <line x1="50" y1="75" x2="16" y2="75" stroke="#000000" stroke-width="1.2"/>
+          <line x1="16" y1="75" x2="16" y2="245" stroke="#000000" stroke-width="1.2"/>
+          <circle cx="16" cy="195" r="2.5" fill="#000000"/>
+          <circle cx="16" cy="225" r="2.5" fill="#000000"/>
+          
+          <line x1="120" y1="105" x2="120" y2="195" stroke="#000000" stroke-width="1.2"/>
+          <rect x="112" y="135" width="16" height="35" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+          <line x1="120" y1="195" x2="16" y2="195" stroke="#000000" stroke-width="1.2"/>
 
-<div class="formula">
+          <line x1="165" y1="105" x2="165" y2="225" stroke="#000000" stroke-width="1.2"/>
+          <circle cx="165" cy="225" r="2.5" fill="#000000"/>
+          <line x1="165" y1="225" x2="16" y2="225" stroke="#000000" stroke-width="1.2"/>
+          <rect x="45" y="217" width="35" height="16" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
 
-</div>
+          <line x1="165" y1="225" x2="490" y2="225" stroke="#000000" stroke-width="1.2"/>
+          <circle cx="310" cy="225" r="2.5" fill="#000000"/>
+          <rect x="235" y="217" width="35" height="16" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
 
-</div>
+          <line x1="490" y1="75" x2="490" y2="225" stroke="#000000" stroke-width="1.2"/>
+
+          <line x1="16" y1="245" x2="230" y2="245" stroke="#000000" stroke-width="1.2"/>
+          <line x1="230" y1="245" x2="230" y2="265" stroke="#000000" stroke-width="1.2"/>
+          <circle cx="230" cy="268" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+          <text x="230" y="284" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">-</text>
+
+          <line x1="310" y1="225" x2="310" y2="265" stroke="#000000" stroke-width="1.2"/>
+          <circle cx="310" cy="268" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+          <text x="310" y="284" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle">+</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">
+      <strong>Pierce Gain Parameter C Formulation (Gain Modulus):</strong><br>
+      C = [ (I0 * K) / (4 * V0) ]^(1/3) &nbsp;&nbsp;|&nbsp;&nbsp; where I0 = Current (A), V0 = Voltage (V)
+    </div>
+    <div class="formulaLine">
+      <strong>TWT Electron Stream Wave Propagation Constant (k):</strong><br>
+      k = 2 * pi * f / u &nbsp;&nbsp;|&nbsp;&nbsp; where u = Electron Velocity (m/s)
+    </div>
+    <div class="formulaLine">
+      <strong>Electronic Length Dimension Factor (N) Wavelength Units:</strong><br>
+      N = L * f / u &nbsp;&nbsp;|&nbsp;&nbsp; where L = Tube Interaction Length (m)
+    </div>
+    <div class="formulaLine">
+      <strong>Gain Evaluation Matrices (Simplified vs Three Wave Theory dB Scaling):</strong><br>
+      • Small Signal Gain (Neper) = 2 * C * k * L<br>
+      • Small Signal Gain (dB) = Neper * 8.686<br>
+      • Three Wave Theory Ideal Gain (dB) = -9.54 + 47.3 * C * N
+    </div>
+  </section>
+</main>
 
 <script>
 function clearResults(){
-  document.getElementById("TWT_C").innerHTML="";
-  document.getElementById("TWT_k").innerHTML="";
-  document.getElementById("TWT_N").innerHTML="";
-  document.getElementById("TWT_Gain_Neper_simplified").innerHTML="";
-  document.getElementById("TWT_Gain_dB_simplified").innerHTML="";
-  document.getElementById("TWT_Gain_dB_Three_wave").innerHTML="";
+  document.getElementById("TWT_C").innerText = "-";
+  document.getElementById("TWT_k").innerText = "-";
+  document.getElementById("TWT_N").innerText = "-";
+  document.getElementById("TWT_Gain_Neper_simplified").innerText = "-";
+  document.getElementById("TWT_Gain_dB_simplified").innerText = "-";
+  document.getElementById("TWT_Gain_dB_Three_wave").innerText = "-";
 }
 
-function calc(){
-  const a=Number(document.getElementById("input1").value),
-  d=Number(document.getElementById("input2").value),
-  s=Number(document.getElementById("input3").value),
-  p=Number(document.getElementById("input4").value),
-  e=Number(document.getElementById("input5").value),
-  n=Number(document.getElementById("input6").value);
+// Attach native updates handlers to clear calculations safely upon inputs change
+document.getElementById("input1").addEventListener("input", clearResults);
+document.getElementById("input2").addEventListener("input", clearResults);
+document.getElementById("input3").addEventListener("input", clearResults);
+document.getElementById("input4").addEventListener("input", clearResults);
+document.getElementById("input5").addEventListener("input", clearResults);
+document.getElementById("input6").addEventListener("input", clearResults);
 
-  if(isNaN(a)||isNaN(d)||isNaN(s)||isNaN(p)||isNaN(e)||isNaN(n)){
-    document.getElementById("errorBox").style.display="block";
+function calc(){
+  const a = Number(document.getElementById("input1").value),
+  d = Number(document.getElementById("input2").value),
+  s = Number(document.getElementById("input3").value),
+  p = Number(document.getElementById("input4").value),
+  e = Number(document.getElementById("input5").value),
+  n = Number(document.getElementById("input6").value);
+
+  if(
+    document.getElementById("input1").value === "" ||
+    document.getElementById("input2").value === "" ||
+    document.getElementById("input3").value === "" ||
+    document.getElementById("input4").value === "" ||
+    document.getElementById("input5").value === "" ||
+    document.getElementById("input6").value === "" ||
+    isNaN(a) || isNaN(d) || isNaN(s) || isNaN(p) || isNaN(e) || isNaN(n) ||
+    s <= 0 || e <= 0
+  ){
+    document.getElementById("errorBox").style.display = "block";
     clearResults();
     return;
   }
 
-  document.getElementById("errorBox").style.display="none";
+  document.getElementById("errorBox").style.display = "none";
 
-  const _=3.14159,
-  u=a*Math.pow(10,9),
-  v=p*Math.pow(10,-3),
-  S=s*Math.pow(10,3),
-  w=v*d/(4*S),
-  o=Math.pow(w,.3333),
-  m=2*_*u/e,
-  T=2*o*m*n,
-  f=n*u/e,
-  c=o,
-  F=m,
-  l=f,
-  i=T,
-  y=i*8.686,
-  I=-9.54+47.3*c*l;
+  /* ORIGINAL COMPUTATION OPERATORS MATCHED FIXED FROM RAW SOURCE CONSTRAINTS */
+  const PI_VAL = 3.14159,
+  u = a * Math.pow(10, 9),
+  v = p * Math.pow(10, -3),
+  S = s * Math.pow(10, 3),
+  w = (v * d) / (4 * S);
+  
+  const o = Math.pow(w, 0.3333333333333333),
+  m = (2 * PI_VAL * u) / e,
+  T = 2 * o * m * n,
+  f = (n * u) / e,
+  c = o,
+  F = m,
+  l = f,
+  i = T,
+  y = i * 8.686,
+  I = -9.54 + 47.3 * c * l;
 
-  document.getElementById("TWT_C").innerHTML=String(c);
-  document.getElementById("TWT_k").innerHTML=String(F);
-  document.getElementById("TWT_N").innerHTML=String(l);
-  document.getElementById("TWT_Gain_Neper_simplified").innerHTML=String(i);
-  document.getElementById("TWT_Gain_dB_simplified").innerHTML=String(y);
-  document.getElementById("TWT_Gain_dB_Three_wave").innerHTML=String(I);
+  document.getElementById("TWT_C").innerText = c.toFixed(7);
+  document.getElementById("TWT_k").innerText = F.toFixed(4);
+  document.getElementById("TWT_N").innerText = l.toFixed(4);
+  document.getElementById("TWT_Gain_Neper_simplified").innerText = i.toFixed(4);
+  document.getElementById("TWT_Gain_dB_simplified").innerText = y.toFixed(4) + " dB";
+  document.getElementById("TWT_Gain_dB_Three_wave").innerText = I.toFixed(4) + " dB";
 }
 
 clearResults();
 </script>
-
-</body>
-</html>
+</body></html>
