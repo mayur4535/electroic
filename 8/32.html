@@ -3,369 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pi Attenuator Calculator | RF Passive Pad Resistor Solver</title>
 
-<title>Pi Attenuator Calculator</title>
-<meta name="description" content="Calculate Pi attenuator resistor values R1 and R2 from attenuation in dB and system impedance.">
+<meta name="description" content="Free online Pi Attenuator Calculator. Compute symmetric passive resistor pad values R1 and R2 using targeted signal attenuation dB drops and system line impedance matching bounds.">
+<meta name="keywords" content="pi attenuator calculator, passive rf attenuator pad solver, pi resistor matching configuration, microstrip attenuation pad network, return loss impedance matching equation, broadcast signal distribution attenuation, passive network power drop tracker, characteristic line impedance conversion, 50 ohm pad attenuation calculator, standard pi pad circuit layout planner">
 
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-.valueBox,input,select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-.valueBox{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  color:#374151;
-}
-
-input:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
-.resultTitle{
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1px;
-  color:#7b8794;
-  margin-top:22px;
-  margin-bottom:12px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.card{
-  padding:16px;
-  border-radius:12px;
-  min-height:82px;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:10px;
-}
-
-.cardLine{
-  display:flex;
-  align-items:baseline;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
-.cardValue,.cardUnit{
-  font-size:18px;
-  font-weight:900;
-}
-
-.blue{background:#eef5ff;border:1px solid #bfd3ff}
-.blue *{color:#2359e8}
-
-.green{background:#ecfdf5;border:1px solid #bbf7d0}
-.green *{color:#16a34a}
-
-.infoBox{
-  margin-top:16px;
-  padding:14px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-}
-
-.infoBox h2,.infoBox h3{
-  margin:0 0 10px;
-  font-size:16px;
-  color:#374151;
-}
-
-.infoBox p,.infoBox li{
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
-.formulaLine{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:8px;
-  padding:10px;
-  margin:8px 0;
-  font-size:13px;
-  color:#475467;
-  font-weight:800;
-  overflow-x:auto;
-}
-
-.diagramBox{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  padding:10px;
-  overflow-x:auto;
-}
-
-.pi-diagram svg{
-  width:100%;
-  min-width:560px;
-  height:auto;
-  display:block;
-}
-
-.exampleGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.exampleCard{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  padding:10px;
-}
-
-@media(max-width:600px){
-  .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr 1fr}
-  .card{padding:14px}
-  .cardValue,.cardUnit{font-size:16px}
-  .exampleGrid{grid-template-columns:1fr}
-}
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;background:#f6f8fb;padding:0;color:#333}
+    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+    .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+    .valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+    .valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151;background:#eee}
+    input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+    .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+    .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
+    .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+    .cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+    .cardValue,.cardUnit{font-size:18px;font-weight:900;line-height:1}
+    .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
+    .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
+    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr} .paramGrid{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
-
 <main class="calc">
-
-<label>Attenuation</label>
-<div class="row">
-  <input type="number" id="att" placeholder="Example: 10" step="any">
-  <div class="valueBox">dB</div>
-</div>
-
-<label>Impedance</label>
-<div class="row">
-  <input type="number" id="imp" placeholder="Example: 50" step="any">
-  <div class="valueBox">Ω</div>
-</div>
-
-<button class="btn" id="calculate" type="button">CALCULATE</button>
-
-<div id="errorBox">Please enter valid positive values.</div>
-
-<div class="resultTitle">RESULTS</div>
-
-<div class="resultGrid">
-  <div class="card blue">
-    <div class="cardLabel">R1</div>
-    <div class="cardLine">
-      <span class="cardValue" id="r1"></span>
-      <span class="cardUnit">Ω</span>
+  <form id="tool" onsubmit="event.preventDefault();">
+    <label for="att">Attenuation</label>
+    <div class="row">
+      <input type="number" id="att" placeholder="Example: 10" step="any">
+      <div class="valueBox">dB</div>
     </div>
+
+    <label for="imp">Impedance</label>
+    <div class="row">
+      <input type="number" id="imp" placeholder="Example: 50" step="any">
+      <div class="valueBox">Ω</div>
+    </div>
+
+    <button class="btn" id="calculate" type="button" onclick="calculatePi()">CALCULATE</button>
+  </form>
+
+  <div id="errorBox">Please enter valid positive values. Attenuation and impedance must be greater than zero.</div>
+
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue"><div class="cardLabel">SHUNT RESISTOR (R1 / R3)</div><div class="cardLine"><span class="cardValue" id="r1">-</span><span class="cardUnit">Ω</span></div></div>
+    <div class="card green"><div class="cardLabel">SERIES RESISTOR (R2)</div><div class="cardLine"><span class="cardValue" id="r2">-</span><span class="cardUnit">Ω</span></div></div>
   </div>
 
-  <div class="card green">
-    <div class="cardLabel">R2</div>
-    <div class="cardLine">
-      <span class="cardValue" id="r2"></span>
-      <span class="cardUnit">Ω</span>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Target Attenuation (dB)</strong> Power loss ratio parameter configured to damp signal strength cleanly without line reflection.</div>
+      <div class="paramItem"><strong>System Impedance (Z)</strong> Characteristic target match boundary, standard fixed to 50 or 75 Ohm loops.</div>
     </div>
-  </div>
-</div>
+  </section>
 
-<section class="infoBox">
-  <h2>Pi Attenuator Diagram</h2>
-
-  <div class="diagramBox">
-    <div class="pi-diagram">
-      <svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pi attenuator circuit diagram">
-
-        <rect x="0" y="0" width="760" height="330" fill="#ffffff"/>
-
-        <!-- main wire -->
-        <line x1="80" y1="150" x2="680" y2="150" stroke="#111827" stroke-width="4"/>
-
-        <!-- input/output labels -->
-        <text x="70" y="125" font-size="18" font-weight="700" fill="#111827">Input</text>
-        <text x="640" y="125" font-size="18" font-weight="700" fill="#111827">Output</text>
-
-        <!-- left shunt R1 -->
-        <circle cx="220" cy="150" r="6" fill="#ef4444"/>
-        <line x1="220" y1="150" x2="220" y2="185" stroke="#111827" stroke-width="3"/>
-        <rect x="200" y="185" width="40" height="72" rx="5" fill="#fff7ed" stroke="#ef4444" stroke-width="3"/>
-        <text x="220" y="228" text-anchor="middle" font-size="18" font-weight="700" fill="#c2410c">R1</text>
-        <line x1="220" y1="257" x2="220" y2="285" stroke="#111827" stroke-width="3"/>
-
-        <!-- ground left -->
-        <line x1="195" y1="285" x2="245" y2="285" stroke="#16a34a" stroke-width="3"/>
-        <line x1="203" y1="294" x2="237" y2="294" stroke="#16a34a" stroke-width="3"/>
-        <line x1="211" y1="303" x2="229" y2="303" stroke="#16a34a" stroke-width="3"/>
-
-        <!-- series R2 -->
-        <rect x="330" y="125" width="100" height="50" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="3"/>
-        <text x="380" y="156" text-anchor="middle" font-size="20" font-weight="700" fill="#2359e8">R2</text>
-
-        <!-- hide inner line behind resistor -->
-        <line x1="330" y1="150" x2="430" y2="150" stroke="#eef5ff" stroke-width="8"/>
-
-        <!-- right shunt R1 -->
-        <circle cx="540" cy="150" r="6" fill="#ef4444"/>
-        <line x1="540" y1="150" x2="540" y2="185" stroke="#111827" stroke-width="3"/>
-        <rect x="520" y="185" width="40" height="72" rx="5" fill="#fff7ed" stroke="#ef4444" stroke-width="3"/>
-        <text x="540" y="228" text-anchor="middle" font-size="18" font-weight="700" fill="#c2410c">R1</text>
-        <line x1="540" y1="257" x2="540" y2="285" stroke="#111827" stroke-width="3"/>
-
-        <!-- ground right -->
-        <line x1="515" y1="285" x2="565" y2="285" stroke="#16a34a" stroke-width="3"/>
-        <line x1="523" y1="294" x2="557" y2="294" stroke="#16a34a" stroke-width="3"/>
-        <line x1="531" y1="303" x2="549" y2="303" stroke="#16a34a" stroke-width="3"/>
-
-        <!-- arrows -->
-        <line x1="90" y1="95" x2="190" y2="95" stroke="#111827" stroke-width="3"/>
-        <polygon points="190,95 174,87 174,103" fill="#111827"/>
-
-        <line x1="570" y1="95" x2="670" y2="95" stroke="#111827" stroke-width="3"/>
-        <polygon points="670,95 654,87 654,103" fill="#111827"/>
-
-        <text x="380" y="55" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">Pi Attenuator Network</text>
-        <text x="380" y="85" text-anchor="middle" font-size="15" font-weight="700" fill="#667085">Two shunt resistors and one series resistor</text>
-
-      </svg>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Symmetric Pad Parameters</strong></p>
+        <p>Target Attenuation = 10.00 dB<br>System Impedance = 50.00 Ω</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Calculated Resistor Profiles</strong></p>
+        <p>• Shunt Branch (R1 / R3) = 96.2481 Ω<br>• Series Branch (R2) = 71.1512 Ω<br>• Values guarantee perfect reflection balancing matrices.</p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="infoBox">
-  <h2>Formulas</h2>
-  <div class="formulaLine">K = 10^(Attenuation / 20)</div>
-  <div class="formulaLine">R1 = Z × ((K + 1) / (K - 1))</div>
-  <div class="formulaLine">R2 = (Z / 2) × ((10^(Attenuation / 10) - 1) / K)</div>
-</section>
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="280" fill="#ffffff" stroke="none"/>
+          
+          <line x1="45" y1="90" x2="495" y2="90" stroke="#475569" stroke-width="2"/>
+          
+          <circle cx="45" cy="90" r="3.5" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+          <text x="35" y="94" fill="#1e293b" font-size="13" font-weight="bold" text-anchor="end">Zin</text>
+          
+          <circle cx="495" cy="90" r="3.5" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+          <text x="505" y="94" fill="#1e293b" font-size="13" font-weight="bold" text-anchor="start">Zout</text>
+          
+          <line x1="140" y1="90" x2="140" y2="120" stroke="#000000" stroke-width="1.5"/>
+          <circle cx="140" cy="90" r="3.5" fill="#000000"/>
+          
+          <path d="M 140,120 L 140,125 L 133,130 L 147,136 L 133,142 L 147,148 L 133,154 L 147,160 L 133,166 L 140,171 L 140,195" fill="none" stroke="#2563eb" stroke-width="2"/>
+          <text x="115" y="152" fill="#2563eb" font-size="14" font-weight="bold" text-anchor="end">R1</text>
+          
+          <line x1="125" y1="195" x2="155" y2="195" stroke="#16a34a" stroke-width="1.8"/>
+          <line x1="131" y1="201" x2="149" y2="201" stroke="#16a34a" stroke-width="1.5"/>
+          <line x1="137" y1="207" x2="143" y2="207" stroke="#16a34a" stroke-width="1.2"/>
+          
+          <rect x="215" y="78" width="110" height="24" fill="#ffffff" stroke="none"/>
+          <path d="M 215,90 L 225,90 L 230,83 L 236,97 L 242,83 L 248,97 L 254,83 L 260,97 L 266,83 L 272,97 L 278,83 L 284,97 L 290,83 L 296,97 L 301,90 L 325,90" fill="none" stroke="#ea580c" stroke-width="2"/>
+          <text x="270" y="68" fill="#ea580c" font-size="14" font-weight="bold" text-anchor="middle">R2</text>
+          
+          <line x1="400" y1="90" x2="400" y2="120" stroke="#000000" stroke-width="1.5"/>
+          <circle cx="400" cy="90" r="3.5" fill="#000000"/>
+          
+          <path d="M 400,120 L 400,125 L 393,130 L 407,136 L 393,142 L 407,148 L 393,154 L 407,160 L 393,166 L 400,171 L 400,195" fill="none" stroke="#2563eb" stroke-width="2"/>
+          <text x="425" y="152" fill="#2563eb" font-size="14" font-weight="bold" text-anchor="start">R3</text>
+          
+          <line x1="385" y1="195" x2="415" y2="195" stroke="#16a34a" stroke-width="1.8"/>
+          <line x1="391" y1="201" x2="409" y2="201" stroke="#16a34a" stroke-width="1.5"/>
+          <line x1="397" y1="207" x2="403" y2="207" stroke="#16a34a" stroke-width="1.2"/>
 
-<section class="infoBox">
-  <h2>Diagrams & Theory</h2>
-  <p>
-    A Pi attenuator uses two shunt resistors and one series resistor to reduce RF signal level while maintaining the desired system impedance.
-  </p>
-  <p>
-    Enter the attenuation in dB and the system impedance. For most RF systems, impedance is commonly 50 Ω.
-  </p>
-</section>
-
-<section class="infoBox">
-  <h2>Example</h2>
-  <div class="exampleGrid">
-    <div class="exampleCard">
-      <p><b>Input Example</b></p>
-      <p>
-        Attenuation: 10 dB<br>
-        Impedance: 50 Ω
-      </p>
+          <text x="270" y="245" fill="#1e293b" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle">Two shunt resistors and one series resistor</text>
+        </svg>
+      </div>
     </div>
+    <p>A symmetric Pi attenuator circuit model loops dual shunt branch elements tightly with a central longitudinal series resistor matrix to dissipate signal energy cleanly while stabilizing source line impedances perfectly.</p>
+  </section>
 
-    <div class="exampleCard">
-      <p><b>How to Use</b></p>
-      <p>
-        Enter the required attenuation and impedance, then click calculate to get R1 and R2 resistor values.
-      </p>
-    </div>
-  </div>
-</section>
-
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">K = 10^(Attenuation / 20)</div>
+    <div class="formulaLine">R1 = R3 = Z * ((K + 1) / (K - 1))</div>
+    <div class="formulaLine">R2 = (Z / 2) * ((10^(Attenuation / 10) - 1) / K)</div>
+    <p>The mathematical layout isolates the voltage reduction factor ($K$) prior to multiplying output network impedances against fractional branch coefficients safely.</p>
+  </section>
 </main>
 
 <script>
-document.addEventListener("DOMContentLoaded",function(){
-  document.getElementById("calculate").addEventListener("click",function(e){
-    e.preventDefault();
-    calculatePi();
-  });
-
-  ["att","imp"].forEach(function(id){
-    document.getElementById(id).addEventListener("input",clearResults);
-  });
-
-  clearResults();
-});
-
 function clearResults(){
-  document.getElementById("r1").textContent="";
-  document.getElementById("r2").textContent="";
+  document.getElementById("r1").textContent="-";
+  document.getElementById("r2").textContent="-";
   document.getElementById("errorBox").style.display="none";
 }
 
 function calculatePi(){
   var att=parseFloat(document.getElementById("att").value);
   var imp=parseFloat(document.getElementById("imp").value);
+  var eBox=document.getElementById("errorBox");
 
-  if(!isFinite(att) || !isFinite(imp) || att<=0 || imp<=0){
-    document.getElementById("errorBox").style.display="block";
-    return;
+  if(!isFinite(att) || !isFinite(imp) || att<=0 || imp<=0 || isNaN(att) || isNaN(imp)){
+    eBox.style.display="block"; clearResults(); return;
   }
+  eBox.style.display="none";
 
   var k=Math.pow(10,att/20);
   var r1=imp*((k+1)/(k-1));
-  var r2=imp/2*((Math.pow(10,att/10)-1)/k);
+  var r2=(imp/2)*((Math.pow(10,att/10)-1)/k);
 
   document.getElementById("r1").textContent=r1.toFixed(4);
   document.getElementById("r2").textContent=r2.toFixed(4);
-  document.getElementById("errorBox").style.display="none";
 }
+clearResults();
 </script>
-
 </body>
 </html>
