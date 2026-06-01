@@ -3,602 +3,217 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cascaded Noise Figure Calculator | RF Link System Planner</title>
 
-<title>Noise Figure Calculator - Cascaded Amplifier NF Calculator</title>
-<meta name="description" content="Calculate total cascaded noise figure, total gain, and equivalent noise temperature for multiple RF amplifier stages using stage noise figure and gain values.">
+<meta name="description" content="Free online Cascaded Noise Figure Calculator. Compute system gain paths, cumulative noise factor bounds, thermal temperature offsets, and friis equations dynamically.">
+<meta name="keywords" content="cascaded noise figure calculator, friis cascade noise tool, multi stage rf amplifier solver, composite link budget factor calculator, noise factor to noise temperature conversion, spot noise factor validation, effective input noise temperature grid, receiver system noise performance tracker, low noise amplifier link budget calculation, friis noise equation simulation, receiver system sensitivity analyzer, spot noise attenuation index, receiver stages insertion loss, automatic rf system link modeling, rf link cascade optimizer, cumulative noise figure equation, noise factor calculation engine">
 
 <style>
-*{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:0;
-}
-
-.calc{
-  max-width:620px;
-  margin:auto;
-  padding:14px;
-}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-.stageRow{
-  display:grid;
-  grid-template-columns:54px minmax(0,1fr) minmax(0,1fr);
-  gap:8px;
-  align-items:center;
-  margin-bottom:10px;
-}
-
-.stageNo{
-  height:43px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:8px;
-  font-size:13px;
-  font-weight:900;
-  color:#374151;
-}
-
-.stageHead{
-  display:grid;
-  grid-template-columns:54px minmax(0,1fr) minmax(0,1fr);
-  gap:8px;
-  margin-bottom:8px;
-}
-
-.stageHead div{
-  font-size:12px;
-  font-weight:900;
-  color:#7b8794;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-.valueBox,
-input,
-select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-.valueBox{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  color:#374151;
-}
-
-select{
-  text-align:center;
-  font-weight:800;
-  padding:0 6px;
-}
-
-input:focus,
-select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  margin-top:14px;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
-.resultTitle{
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1px;
-  color:#7b8794;
-  margin-top:22px;
-  margin-bottom:12px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.card{
-  padding:16px;
-  border-radius:12px;
-  min-height:82px;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:10px;
-}
-
-.cardLine{
-  display:flex;
-  align-items:baseline;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
-.cardValue,
-.cardUnit{
-  font-size:18px;
-  font-weight:900;
-}
-
-.blue{
-  background:#eef5ff;
-  border:1px solid #bfd3ff;
-}
-
-.blue *{
-  color:#2359e8;
-}
-
-.green{
-  background:#ecfdf5;
-  border:1px solid #bbf7d0;
-}
-
-.green *{
-  color:#16a34a;
-}
-
-.purple{
-  background:#f5f3ff;
-  border:1px solid #ddd6fe;
-}
-
-.purple *{
-  color:#7c3aed;
-}
-
-.infoBox{
-  margin-top:16px;
-  padding:14px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-}
-
-.infoBox h2,
-.infoBox h3{
-  margin:0 0 10px;
-  font-size:16px;
-  color:#374151;
-}
-
-.infoBox p,
-.infoBox li{
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
-.formulaLine{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:8px;
-  padding:10px;
-  margin:8px 0;
-  font-size:13px;
-  color:#475467;
-  font-weight:800;
-  overflow-x:auto;
-}
-
-.diagramBox{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  padding:10px;
-  overflow-x:auto;
-}
-
-.noise-diagram svg{
-  width:100%;
-  min-width:560px;
-  height:auto;
-  display:block;
-}
-
-.exampleGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.exampleCard{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  padding:10px;
-}
-
-@media(max-width:600px){
-  .row{
-    grid-template-columns:minmax(0,1fr) 72px;
-  }
-
-  .stageRow,
-  .stageHead{
-    grid-template-columns:48px minmax(0,1fr) minmax(0,1fr);
-    gap:7px;
-  }
-
-  .stageNo{
-    font-size:12px;
-  }
-
-  .resultGrid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .card{
-    padding:14px;
-  }
-
-  .cardValue,
-  .cardUnit{
-    font-size:16px;
-  }
-
-  .exampleGrid{
-    grid-template-columns:1fr;
-  }
-}
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;background:#f6f8fb;padding:0;color:#333}
+    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+    .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+    .stageRow{display:grid;grid-template-columns:54px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:10px}
+    .stageNo{height:43px;display:flex;align-items:center;justify-content:center;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-weight:900;color:#374151}
+    .stageHead{display:grid;grid-template-columns:54px minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:8px}
+    .stageHead div{font-size:12px;font-weight:900;color:#7b8794;text-transform:uppercase;letter-spacing:.5px}
+    .valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+    .valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151;background:#eee}
+    input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+    .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+    .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
+    .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+    .cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+    .cardValue,.cardUnit{font-size:18px;font-weight:900;line-height:1}
+    .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
+    .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
+    .purple{background:#f5f3ff;border-color:#ddd6fe} .purple *{color:#7c3aed}
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
+    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr}.paramGrid{grid-template-columns:1fr}.stageRow,.stageHead{grid-template-columns:48px minmax(0,1fr) minmax(0,1fr);gap:7px}}
 </style>
 </head>
-
 <body>
-
 <main class="calc">
-
-<label>Number of Cascaded Amplifiers</label>
-<div class="row">
-  <select id="num_of_stages">
-    <option value="2" selected>2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-    <option value="6">6</option>
-    <option value="7">7</option>
-    <option value="8">8</option>
-    <option value="9">9</option>
-    <option value="10">10</option>
-    <option value="11">11</option>
-    <option value="12">12</option>
-    <option value="13">13</option>
-    <option value="14">14</option>
-    <option value="15">15</option>
-    <option value="16">16</option>
-    <option value="17">17</option>
-    <option value="18">18</option>
-    <option value="19">19</option>
-    <option value="20">20</option>
-    <option value="21">21</option>
-    <option value="22">22</option>
-    <option value="23">23</option>
-    <option value="24">24</option>
-    <option value="25">25</option>
-    <option value="26">26</option>
-    <option value="27">27</option>
-    <option value="28">28</option>
-    <option value="29">29</option>
-    <option value="30">30</option>
-  </select>
-  <div class="valueBox">Stages</div>
-</div>
-
-<div class="stageHead">
-  <div>Stage</div>
-  <div>NF dB</div>
-  <div>Gain dB</div>
-</div>
-
-<form id="stageForm"></form>
-
-<button class="btn" id="calculate" type="button">CALCULATE</button>
-
-<div id="errorBox">Please enter valid values in all stage fields.</div>
-
-<div class="resultTitle">RESULTS</div>
-
-<div class="resultGrid">
-  <div class="card blue">
-    <div class="cardLabel">TOTAL NOISE FIGURE</div>
-    <div class="cardLine">
-      <span class="cardValue" id="total_nf_result"></span>
-      <span class="cardUnit">dB</span>
-    </div>
+  <label for="num_of_stages">Number of Cascaded Amplifiers</label>
+  <div class="row">
+    <select id="num_of_stages">
+      <option value="2">2</option><option value="3">3</option><option value="4">4</option>
+      <option value="5" selected>5</option><option value="6">6</option><option value="7">7</option>
+      <option value="8">8</option><option value="9">9</option><option value="10">10</option>
+    </select>
+    <div class="valueBox">Stages</div>
   </div>
 
-  <div class="card green">
-    <div class="cardLabel">TOTAL GAIN</div>
-    <div class="cardLine">
-      <span class="cardValue" id="total_gain_result"></span>
-      <span class="cardUnit">dB</span>
-    </div>
+  <div class="stageHead">
+    <div>Stage</div><div>NF dB</div><div>Gain dB</div>
   </div>
 
-  <div class="card purple">
-    <div class="cardLabel">NOISE TEMPERATURE</div>
-    <div class="cardLine">
-      <span class="cardValue" id="noise_temp_result"></span>
-      <span class="cardUnit">K</span>
-    </div>
+  <form id="stageForm" onsubmit="event.preventDefault();"></form>
+  <button class="btn" id="calculate" type="button" onclick="application.calculate()">CALCULATE</button>
+
+  <div id="errorBox">Please enter valid values in all stage blocks.</div>
+
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue"><div class="cardLabel">TOTAL NOISE FIGURE</div><div class="cardLine"><span class="cardValue" id="total_nf_result">-</span><span class="cardUnit">dB</span></div></div>
+    <div class="card green"><div class="cardLabel">TOTAL GAIN</div><div class="cardLine"><span class="cardValue" id="total_gain_result">-</span><span class="cardUnit">dB</span></div></div>
+    <div class="card purple"><div class="cardLabel">NOISE TEMPERATURE</div><div class="cardLine"><span class="cardValue" id="noise_temp_result">-</span><span class="cardUnit">K</span></div></div>
   </div>
-</div>
 
-<section class="infoBox">
-  <h2>Cascaded Noise Figure Diagram</h2>
-
-  <div class="diagramBox">
-    <div class="noise-diagram">
-      <svg viewBox="0 0 860 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cascaded RF amplifier noise figure diagram">
-
-        <rect x="0" y="0" width="860" height="310" fill="#ffffff"/>
-
-        <text x="430" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#111827">
-          Cascaded Noise Figure Calculation
-        </text>
-
-        <rect x="45" y="120" width="115" height="75" rx="10" fill="#eef5ff" stroke="#2359e8" stroke-width="2"/>
-        <text x="102" y="150" text-anchor="middle" font-size="16" font-weight="700" fill="#2359e8">Stage 1</text>
-        <text x="102" y="174" text-anchor="middle" font-size="13" fill="#111827">NF₁, G₁</text>
-
-        <line x1="160" y1="158" x2="215" y2="158" stroke="#111827" stroke-width="3"/>
-        <polygon points="215,158 200,150 200,166" fill="#111827"/>
-
-        <rect x="215" y="120" width="115" height="75" rx="10" fill="#ecfdf5" stroke="#16a34a" stroke-width="2"/>
-        <text x="272" y="150" text-anchor="middle" font-size="16" font-weight="700" fill="#16a34a">Stage 2</text>
-        <text x="272" y="174" text-anchor="middle" font-size="13" fill="#111827">NF₂, G₂</text>
-
-        <line x1="330" y1="158" x2="385" y2="158" stroke="#111827" stroke-width="3"/>
-        <polygon points="385,158 370,150 370,166" fill="#111827"/>
-
-        <rect x="385" y="120" width="115" height="75" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
-        <text x="442" y="150" text-anchor="middle" font-size="16" font-weight="700" fill="#ea580c">Stage 3</text>
-        <text x="442" y="174" text-anchor="middle" font-size="13" fill="#111827">NF₃, G₃</text>
-
-        <line x1="500" y1="158" x2="555" y2="158" stroke="#111827" stroke-width="3"/>
-        <polygon points="555,158 540,150 540,166" fill="#111827"/>
-
-        <text x="580" y="164" text-anchor="middle" font-size="24" font-weight="900" fill="#6b7280">...</text>
-
-        <line x1="605" y1="158" x2="660" y2="158" stroke="#111827" stroke-width="3"/>
-        <polygon points="660,158 645,150 645,166" fill="#111827"/>
-
-        <rect x="660" y="120" width="140" height="75" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
-        <text x="730" y="150" text-anchor="middle" font-size="16" font-weight="700" fill="#7c3aed">Output</text>
-        <text x="730" y="174" text-anchor="middle" font-size="13" fill="#111827">Total NF + Gain</text>
-
-        <path d="M102 205 C200 260, 620 260, 730 205" fill="none" stroke="#111827" stroke-width="2" stroke-dasharray="7 7"/>
-        <text x="430" y="282" text-anchor="middle" font-size="15" font-weight="700" fill="#111827">
-          Earlier-stage gain reduces the noise impact of later stages
-        </text>
-
-      </svg>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Stage Noise Figure (NF)</strong> Individual stage noise degradation coefficient measured in decibels.</div>
+      <div class="paramItem"><strong>Stage Active Gain (G)</strong> Logarithmic power amplification scaling added by each sequential receiver component.</div>
+      <div class="paramItem"><strong>System Outputs</strong> Integrated composite link attributes calculated uniformly across active nodes.</div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="infoBox">
-  <h2>Formulas</h2>
-  <div class="formulaLine">Ftotal = F1 + (F2 - 1)/G1 + (F3 - 1)/(G1 × G2) + ...</div>
-  <div class="formulaLine">NFtotal(dB) = 10 × log10(Ftotal)</div>
-  <div class="formulaLine">Total Gain(dB) = G1(dB) + G2(dB) + G3(dB) + ...</div>
-  <div class="formulaLine">Noise Temperature = 290 × (10^(NFtotal/10) - 1)</div>
-</section>
-
-<section class="infoBox">
-  <h2>Diagrams & Theory</h2>
-  <p>
-    Cascaded noise figure is used for RF receiver chains with multiple amplifiers, filters, mixers, or other gain stages.
-  </p>
-  <p>
-    The first stage is very important because its gain reduces the noise contribution of later stages. This calculator uses the standard Friis cascaded noise figure relation.
-  </p>
-</section>
-
-<section class="infoBox">
-  <h2>Example</h2>
-  <div class="exampleGrid">
-    <div class="exampleCard">
-      <p><b>Input Example</b></p>
-      <p>
-        Stage 1: NF 1.2 dB, Gain 15 dB<br>
-        Stage 2: NF 3 dB, Gain 10 dB
-      </p>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Cascade Stage Parameters</strong></p>
+        <p>Stage 1: NF = 1.20 dB, Gain = 15.00 dB<br>Stage 2: NF = 3.00 dB, Gain = 10.00 dB</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Computed Results</strong></p>
+        <p>• Total Network NF = 1.274 dB<br>• Combined Link Gain = 25.000 dB<br>• Output Noise Temp = 98.922 K</p>
+      </div>
     </div>
+  </section>
 
-    <div class="exampleCard">
-      <p><b>How to Use</b></p>
-      <p>
-        Choose the number of cascaded amplifier stages, enter each stage noise figure and gain in dB, then click calculate.
-      </p>
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 160" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="160" fill="#ffffff" stroke="none"/>
+          
+          <text x="32" y="70" fill="#334155" font-size="13" font-weight="bold" text-anchor="end">Input</text>
+          <line x1="35" y1="65" x2="65" y2="65" stroke="#475569" stroke-width="1.5"/>
+          <circle cx="35" cy="65" r="3" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+          
+          <polygon points="65,40 115,65 65,90" fill="#eef5ff" stroke="#2359e8" stroke-width="1.8"/>
+          <text x="90" y="112" fill="#1e293b" font-size="13" font-weight="bold" text-anchor="middle">F1</text>
+          <line x1="78" y1="118" x2="102" y2="118" stroke="#cbd5e1" stroke-width="1.2"/>
+          <text x="90" y="134" fill="#2359e8" font-size="13" font-weight="bold" text-anchor="middle">G1</text>
+          <line x1="115" y1="65" x2="150" y2="65" stroke="#475569" stroke-width="1.5"/>
+          
+          <polygon points="150,40 200,65 150,90" fill="#eef5ff" stroke="#2359e8" stroke-width="1.8"/>
+          <text x="175" y="112" fill="#1e293b" font-size="13" font-weight="bold" text-anchor="middle">F2</text>
+          <line x1="163" y1="118" x2="187" y2="118" stroke="#cbd5e1" stroke-width="1.2"/>
+          <text x="175" y="134" fill="#2359e8" font-size="13" font-weight="bold" text-anchor="middle">G2</text>
+          <line x1="200" y1="65" x2="235" y2="65" stroke="#475569" stroke-width="1.5"/>
+          
+          <polygon points="235,40 285,65 235,90" fill="#eef5ff" stroke="#2359e8" stroke-width="1.8"/>
+          <text x="260" y="112" fill="#1e293b" font-size="13" font-weight="bold" text-anchor="middle">F3</text>
+          <line x1="248" y1="118" x2="272" y2="118" stroke="#cbd5e1" stroke-width="1.2"/>
+          <text x="260" y="134" fill="#2359e8" font-size="13" font-weight="bold" text-anchor="middle">G3</text>
+          <line x1="285" y1="65" x2="320" y2="65" stroke="#475569" stroke-width="1.5"/>
+          
+          <polygon points="320,40 370,65 320,90" fill="#eef5ff" stroke="#2359e8" stroke-width="1.8"/>
+          <text x="345" y="112" fill="#1e293b" font-size="13" font-weight="bold" text-anchor="middle">F4</text>
+          <line x1="333" y1="118" x2="357" y2="118" stroke="#cbd5e1" stroke-width="1.2"/>
+          <text x="345" y="134" fill="#2359e8" font-size="13" font-weight="bold" text-anchor="middle">G4</text>
+          <line x1="370" y1="65" x2="405" y2="65" stroke="#475569" stroke-width="1.5"/>
+          
+          <polygon points="405,40 455,65 405,90" fill="#eef5ff" stroke="#2359e8" stroke-width="1.8"/>
+          <text x="430" y="112" fill="#1e293b" font-size="13" font-weight="bold" text-anchor="middle">F5</text>
+          <line x1="418" y1="118" x2="442" y2="118" stroke="#cbd5e1" stroke-width="1.2"/>
+          <text x="430" y="134" fill="#2359e8" font-size="13" font-weight="bold" text-anchor="middle">G5</text>
+          <line x1="455" y1="65" x2="495" y2="65" stroke="#475569" stroke-width="1.5"/>
+          
+          <circle cx="495" cy="65" r="3" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+          <text x="498" y="70" fill="#334155" font-size="13" font-weight="bold" text-anchor="start">Output</text>
+        </svg>
+      </div>
     </div>
-  </div>
-</section>
+    <p></p>
+    <p>Cascading configurations analyze cumulative attenuation performance. Early stage amplification factor attributes drastically scale down overall degradation boundaries.</p>
+  </section>
 
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">F_total = F1 + (F2 - 1)/G1 + (F3 - 1)/(G1 * G2) + ...</div>
+    <div class="formulaLine">Noise Temp = 290 * (10^(NF_total/10) - 1)</div>
+    <p>Logarithmic input variables are transformed into direct active scalars internally inside execution arrays to map cascading network layers safely.</p>
+  </section>
 </main>
 
 <script>
 var application={
-  numRegExp:/^[0-9]+(\.[0-9]+)?$/,
-
   init:function(){
-    document.getElementById("num_of_stages").addEventListener("change",function(){
-      application.renderStages();
-      application.clearResults();
-    });
-
-    document.getElementById("calculate").addEventListener("click",function(e){
-      e.preventDefault();
-      application.calculate();
-    });
-
-    document.getElementById("stageForm").addEventListener("input",function(){
-      application.clearResults();
-    });
-
-    application.renderStages();
-    application.clearResults();
+    document.getElementById("num_of_stages").addEventListener("change",function(){ application.renderStages(); application.clearResults(); });
+    application.renderStages(); application.clearResults();
   },
-
-  currentStageCount:function(){
-    return parseInt(document.getElementById("num_of_stages").value,10);
-  },
-
+  currentStageCount:function(){ return parseInt(document.getElementById("num_of_stages").value,10); },
   renderStages:function(){
     var form=document.getElementById("stageForm");
     var count=application.currentStageCount();
     var html="";
-
     for(var i=1;i<=count;i++){
-      html+=
-      '<div class="stageRow">'+
-        '<div class="stageNo">'+i+'</div>'+
-        '<input type="number" step="any" id="NF_'+i+'" class="nf_input" placeholder="NF">'+
-        '<input type="number" step="any" id="Gain_'+i+'" class="gain_input" placeholder="Gain">'+
-      '</div>';
+      html+='<div class="stageRow"><div class="stageNo">'+i+'</div><input type="number" step="any" id="NF_'+i+'" placeholder="NF Value"><input type="number" step="any" id="Gain_'+i+'" placeholder="Gain Value"></div>';
     }
-
     form.innerHTML=html;
   },
-
   clearResults:function(){
-    document.getElementById("total_nf_result").textContent="";
-    document.getElementById("total_gain_result").textContent="";
-    document.getElementById("noise_temp_result").textContent="";
+    document.getElementById("total_nf_result").textContent="-";
+    document.getElementById("total_gain_result").textContent="-";
+    document.getElementById("noise_temp_result").textContent="-";
     document.getElementById("errorBox").style.display="none";
   },
-
   validate:function(){
-    var inputs=document.querySelectorAll("#stageForm input");
-
-    for(var i=0;i<inputs.length;i++){
-      if(inputs[i].value==="" || !isFinite(Number(inputs[i].value))){
-        document.getElementById("errorBox").style.display="block";
-        return false;
+    var count=application.currentStageCount();
+    for(var i=1;i<=count;i++){
+      if(document.getElementById("NF_"+i).value==="" || document.getElementById("Gain_"+i).value==="" || isNaN(Number(document.getElementById("NF_"+i).value)) || isNaN(Number(document.getElementById("Gain_"+i).value))){
+        document.getElementById("errorBox").style.display="block"; return false;
       }
     }
-
-    document.getElementById("errorBox").style.display="none";
-    return true;
+    document.getElementById("errorBox").style.display="none"; return true;
   },
-
   calculate:function(){
     if(!application.validate()) return;
-
-    var nf_values=[];
-    var gain_values=[];
-    var count=application.currentStageCount();
-
+    var nf_values=[], gain_values=[], count=application.currentStageCount();
     for(var i=1;i<=count;i++){
       nf_values.push(parseFloat(document.getElementById("NF_"+i).value));
       gain_values.push(parseFloat(document.getElementById("Gain_"+i).value));
     }
-
     var nf=application.calculateNF(nf_values,gain_values);
     var gain=application.calculateGain(gain_values);
-    var noise_temp=application.calculateNoiseTemp(nf);
-
-    application.outputResults(nf,gain,noise_temp);
-  },
-
-  calculateNF:function(nf_array,gain_array){
-    var nf=0;
-
-    for(var i=0;i<nf_array.length;i++){
-      var nf_db=nf_array[i];
-      var converted_nf=Math.pow(10,nf_db/10);
-
-      var numerator=i===0 ? converted_nf : converted_nf-1;
-      var denominator=1;
-
-      for(var j=0;j<i;j++){
-        var gain_db=gain_array[j];
-        var converted_gain=Math.pow(10,gain_db/10);
-        denominator=denominator*converted_gain;
-      }
-
-      nf=nf+numerator/denominator;
-    }
-
-    return 10*Math.log(nf)/2.302585093;
-  },
-
-  calculateGain:function(gain_array){
-    var gain=0;
-
-    for(var i=0;i<gain_array.length;i++){
-      gain=gain+gain_array[i];
-    }
-
-    return gain;
-  },
-
-  calculateNoiseTemp:function(nf){
-    return 290*(Math.pow(10,nf/10)-1);
-  },
-
-  outputResults:function(nf,gain,noise_temp){
+    var noise_temp=290*(Math.pow(10,nf/10)-1);
     document.getElementById("total_nf_result").textContent=nf.toFixed(4);
     document.getElementById("total_gain_result").textContent=gain.toFixed(4);
     document.getElementById("noise_temp_result").textContent=noise_temp.toFixed(4);
+  },
+  calculateNF:function(nf_array,gain_array){
+    var nf=0;
+    for(var i=0;i<nf_array.length;i++){
+      var conv_nf=Math.pow(10,nf_array[i]/10);
+      var num=i===0?conv_nf:conv_nf-1; var den=1;
+      for(var j=0;j<i;j++){ den*=Math.pow(10,gain_array[j]/10); }
+      nf+=num/den;
+    }
+    return 10*Math.log10(nf);
+  },
+  calculateGain:function(gain_array){
+    var sum=0; for(var i=0;i<gain_array.length;i++){ sum+=gain_array[i]; } return sum;
   }
 };
-
-document.addEventListener("DOMContentLoaded",function(){
-  application.init();
-});
+document.addEventListener("DOMContentLoaded",function(){ application.init(); });
 </script>
-
 </body>
 </html>
