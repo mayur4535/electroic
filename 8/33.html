@@ -3,349 +3,163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Power Added Efficiency Calculator | RF Amplifier PAE Solver</title>
 
-<title>Power Added Efficiency Calculator</title>
 <meta name="description" content="Calculate RF power added efficiency from amplifier input power, output power, and DC input power with multiple power units.">
+<meta name="keywords" content="power added efficiency calculator, pae calculator rf, amplifier efficiency solver, rf power added metrics, dbm to watts conversion tool, dc power consumption calculation, microstrip power amplifier gain track, transmitter efficiency calculator, rf circuit simulation design, radio frequency performance matrix, low noise amplifier testing network, dynamic power efficiency index">
 
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
-
-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-.valueBox,input,select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-.valueBox{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  color:#374151;
-}
-
-select{
-  text-align:center;
-  font-weight:800;
-  padding:0 6px;
-}
-
-input:focus,select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-.btn{
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff7a18,#ff4b00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
-.resultTitle{
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1px;
-  color:#7b8794;
-  margin-top:22px;
-  margin-bottom:12px;
-}
-
-.resultGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.card{
-  padding:16px;
-  border-radius:12px;
-  min-height:82px;
-}
-
-.cardLabel{
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:10px;
-}
-
-.cardLine{
-  display:flex;
-  align-items:baseline;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
-.cardValue,.cardUnit{
-  font-size:18px;
-  font-weight:900;
-}
-
-.blue{background:#eef5ff;border:1px solid #bfd3ff}
-.blue *{color:#2359e8}
-
-.green{background:#ecfdf5;border:1px solid #bbf7d0}
-.green *{color:#16a34a}
-
-.infoBox{
-  margin-top:16px;
-  padding:14px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-}
-
-.infoBox h2,.infoBox h3{
-  margin:0 0 10px;
-  font-size:16px;
-  color:#374151;
-}
-
-.infoBox p,.infoBox li{
-  font-size:13px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
-.formulaLine{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:8px;
-  padding:10px;
-  margin:8px 0;
-  font-size:13px;
-  color:#475467;
-  font-weight:800;
-  overflow-x:auto;
-}
-
-.diagramBox{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  padding:10px;
-  overflow-x:auto;
-}
-
-.pae-diagram svg{
-  width:100%;
-  min-width:560px;
-  height:auto;
-  display:block;
-}
-
-.exampleGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.exampleCard{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  padding:10px;
-}
-
-@media(max-width:600px){
-  .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr 1fr}
-  .card{padding:14px}
-  .cardValue,.cardUnit{font-size:16px}
-  .exampleGrid{grid-template-columns:1fr}
-}
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;background:#f6f8fb;padding:0;color:#333}
+    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+    .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+    .valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+    .valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151;background:#eee}
+    select{text-align:center;font-weight:800;padding:0 6px;cursor:pointer}
+    input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+    .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+    .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
+    .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+    .cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+    .cardValue,.cardUnit{font-size:18px;font-weight:900;line-height:1}
+    .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
+    .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
+    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr} .paramGrid{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
-
 <main class="calc">
-
-<label>Input Amplifier Power</label>
-<div class="row">
-  <input type="number" id="aip" placeholder="Example: 10" step="any">
-  <select id="aip-unit">
-    <option value="1">mW</option>
-    <option value="2">W</option>
-    <option value="3">dBm</option>
-    <option value="4">dBW</option>
-  </select>
-</div>
-
-<label>Output Amplifier Power</label>
-<div class="row">
-  <input type="number" id="aop" placeholder="Example: 100" step="any">
-  <select id="aop-unit">
-    <option value="1">mW</option>
-    <option value="2">W</option>
-    <option value="3">dBm</option>
-    <option value="4">dBW</option>
-  </select>
-</div>
-
-<label>Input DC Power</label>
-<div class="row">
-  <input type="number" id="dc" placeholder="Example: 1" step="any">
-  <select id="dc-unit">
-    <option value="1">mW</option>
-    <option value="2">W</option>
-    <option value="3">dBm</option>
-    <option value="4">dBW</option>
-  </select>
-</div>
-
-<button class="btn" id="calculate" type="button">CALCULATE</button>
-
-<div id="errorBox">Please enter valid values. DC power must be greater than 0.</div>
-
-<div class="resultTitle">RESULTS</div>
-
-<div class="resultGrid">
-  <div class="card blue">
-    <div class="cardLabel">POWER ADDED EFFICIENCY</div>
-    <div class="cardLine">
-      <span class="cardValue" id="answer"></span>
-      <span class="cardUnit">%</span>
+  <form id="tool" onsubmit="event.preventDefault();">
+    <label for="aip">Input Amplifier Power</label>
+    <div class="row">
+      <input type="number" id="aip" placeholder="Example: 10" step="any">
+      <select id="aip-unit">
+        <option value="1">mW</option>
+        <option value="2">W</option>
+        <option value="3">dBm</option>
+        <option value="4">dBW</option>
+      </select>
     </div>
+
+    <label for="aop">Output Amplifier Power</label>
+    <div class="row">
+      <input type="number" id="aop" placeholder="Example: 100" step="any">
+      <select id="aop-unit">
+        <option value="1">mW</option>
+        <option value="2">W</option>
+        <option value="3">dBm</option>
+        <option value="4">dBW</option>
+      </select>
+    </div>
+
+    <label for="dc">Input DC Power</label>
+    <div class="row">
+      <input type="number" id="dc" placeholder="Example: 1" step="any">
+      <select id="dc-unit">
+        <option value="1">mW</option>
+        <option value="2">W</option>
+        <option value="3">dBm</option>
+        <option value="4">dBW</option>
+      </select>
+    </div>
+
+    <button class="btn" id="calculate" type="button">CALCULATE</button>
+  </form>
+
+  <div id="errorBox">Please enter valid values. DC power must be greater than 0.</div>
+
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue"><div class="cardLabel">POWER ADDED EFFICIENCY</div><div class="cardLine"><span class="cardValue" id="answer">-</span><span class="cardUnit">%</span></div></div>
+    <div class="card green"><div class="cardLabel">RF POWER ADDED</div><div class="cardLine"><span class="cardValue" id="addedPower">-</span><span class="cardUnit">W</span></div></div>
   </div>
 
-  <div class="card green">
-    <div class="cardLabel">RF POWER ADDED</div>
-    <div class="cardLine">
-      <span class="cardValue" id="addedPower"></span>
-      <span class="cardUnit">W</span>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Input Power (Pin)</strong> High-frequency input power delivered directly into the input terminal of the active amplifier block.</div>
+      <div class="paramItem"><strong>Output Power (Pout)</strong> Total augmented high-frequency load power harvested at the terminal output port.</div>
+      <div class="paramItem"><strong>DC Power (Pdc)</strong> Direct current bias consumption parameters driving power amplifier biasing channels.</div>
     </div>
-  </div>
-</div>
+  </section>
 
-<section class="infoBox">
-  <h2>Power Added Efficiency Diagram</h2>
-
-  <div class="diagramBox">
-    <div class="pae-diagram">
-      <svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Power added efficiency amplifier diagram">
-
-        <rect x="0" y="0" width="760" height="330" fill="#ffffff"/>
-
-        <!-- amplifier block -->
-        <polygon points="310,90 500,165 310,240" fill="#fff7ed" stroke="#ef4444" stroke-width="3"/>
-        <text x="365" y="162" font-size="22" font-weight="700" fill="#c2410c">RF</text>
-        <text x="350" y="190" font-size="22" font-weight="700" fill="#c2410c">AMP</text>
-
-        <!-- RF input -->
-        <line x1="80" y1="165" x2="310" y2="165" stroke="#111827" stroke-width="4"/>
-        <polygon points="310,165 292,156 292,174" fill="#111827"/>
-        <text x="105" y="135" font-size="18" font-weight="700" fill="#111827">RF Input</text>
-        <text x="115" y="190" font-size="15" font-weight="700" fill="#667085">Pin</text>
-
-        <!-- RF output -->
-        <line x1="500" y1="165" x2="690" y2="165" stroke="#111827" stroke-width="4"/>
-        <polygon points="690,165 672,156 672,174" fill="#111827"/>
-        <text x="570" y="135" font-size="18" font-weight="700" fill="#111827">RF Output</text>
-        <text x="600" y="190" font-size="15" font-weight="700" fill="#667085">Pout</text>
-
-        <!-- DC input -->
-        <line x1="380" y1="35" x2="380" y2="115" stroke="#111827" stroke-width="4"/>
-        <polygon points="380,115 371,97 389,97" fill="#111827"/>
-        <text x="405" y="58" font-size="18" font-weight="700" fill="#111827">DC Input</text>
-        <text x="405" y="82" font-size="15" font-weight="700" fill="#667085">Pdc</text>
-
-        <!-- efficiency output -->
-        <line x1="380" y1="245" x2="380" y2="295" stroke="#16a34a" stroke-width="4"/>
-        <polygon points="380,295 371,277 389,277" fill="#16a34a"/>
-        <text x="405" y="282" font-size="18" font-weight="700" fill="#16a34a">PAE</text>
-
-        <circle cx="310" cy="165" r="7" fill="#ef4444"/>
-        <circle cx="500" cy="165" r="7" fill="#ef4444"/>
-        <circle cx="380" cy="115" r="7" fill="#ef4444"/>
-
-        <text x="380" y="315" text-anchor="middle" font-size="15" font-weight="700" fill="#111827">
-          PAE = (Pout - Pin) / Pdc × 100%
-        </text>
-
-      </svg>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Amplifier Profile Setup</strong></p>
+        <p>Input RF Power: 10 mW<br>Output RF Power: 100 mW<br>DC Input Power: 1 W</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Computed Results</strong></p>
+        <p>• Added RF Power = 0.09 W<br>• Power Added Efficiency = 9%<br>• Mathematical conversion models translate units smoothly.</p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="infoBox">
-  <h2>Formulas</h2>
-  <div class="formulaLine">PAE (%) = 100 × (Output RF Power - Input RF Power) / DC Input Power</div>
-  <div class="formulaLine">mW to W = mW × 0.001</div>
-  <div class="formulaLine">dBm to W = 10^((dBm - 30) / 10)</div>
-  <div class="formulaLine">dBW to W = 10^(dBW / 10)</div>
-</section>
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 260" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="260" fill="#ffffff" stroke="none"/>
+          
+          <polygon points="210,70 340,130 210,190" fill="#fff7ed" stroke="#ea580c" stroke-width="2.2"/>
+          <text x="250" y="124" fill="#ea580c" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle">RF</text>
+          <text x="250" y="146" fill="#ea580c" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle">AMP</text>
+          
+          <line x1="45" y1="130" x2="210" y2="130" stroke="#475569" stroke-width="2"/>
+          <polygon points="210,130 196,124 196,136" fill="#475569"/>
+          <text x="55" y="112" fill="#1e293b" font-size="13" font-family="sans-serif" font-weight="bold">RF Input (Pin)</text>
+          
+          <line x1="340" y1="130" x2="495" y2="130" stroke="#475569" stroke-width="2"/>
+          <polygon points="495,130 481,124 481,136" fill="#475569"/>
+          <text x="485" y="112" fill="#1e293b" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="end">RF Output (Pout)</text>
+          
+          <line x1="265" y1="25" x2="265" y2="95" stroke="#2563eb" stroke-width="2"/>
+          <polygon points="265,95 259,82 271,82" fill="#2563eb"/>
+          <text x="280" y="42" fill="#2563eb" font-size="13" font-family="sans-serif" font-weight="bold">DC Input (Pdc)</text>
 
-<section class="infoBox">
-  <h2>Diagrams & Theory</h2>
-  <p>
-    Power added efficiency shows how efficiently an RF amplifier converts DC power into additional RF output power.
-  </p>
-  <p>
-    It subtracts the input RF power from the output RF power, then compares the added RF power against the DC power consumed.
-  </p>
-</section>
+          <line x1="265" y1="165" x2="265" y2="215" stroke="#16a34a" stroke-width="2"/>
+          <polygon points="265,215 259,202 271,202" fill="#16a34a"/>
+          <text x="280" y="202" fill="#16a34a" font-size="14" font-family="sans-serif" font-weight="bold">PAE (%) Output</text>
+          
+          <circle cx="210" cy="130" r="4" fill="#ea580c"/>
+          <circle cx="340" cy="130" r="4" fill="#ea580c"/>
+          <circle cx="265" cy="95" r="4" fill="#2563eb"/>
 
-<section class="infoBox">
-  <h2>Example</h2>
-  <div class="exampleGrid">
-    <div class="exampleCard">
-      <p><b>Input Example</b></p>
-      <p>
-        Input RF Power: 10 mW<br>
-        Output RF Power: 100 mW<br>
-        DC Input Power: 1 W
-      </p>
+          <text x="270" y="248" fill="#475569" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">PAE = ((Pout - Pin) / Pdc) x 100%</text>
+        </svg>
+      </div>
     </div>
+    <p>Power Added Efficiency demonstrates the precise conversion index modeling how successfully an active RF transistor configuration translates direct bias current energy fields directly into added high frequency spectrum wave segments cleanly.</p>
+  </section>
 
-    <div class="exampleCard">
-      <p><b>Output</b></p>
-      <p>
-        Added RF power is 0.09 W and power added efficiency is 9%.
-      </p>
-    </div>
-  </div>
-</section>
-
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">PAE (%) = 100 × (Output RF Power - Input RF Power) / DC Input Power</div>
+    <div class="formulaLine">mW to W = mW × 0.001</div>
+    <div class="formulaLine">dBm to W = 10^((dBm - 30) / 10)</div>
+    <div class="formulaLine">dBW to W = 10^(dBW / 10)</div>
+  </section>
 </main>
 
 <script>
+// ORIGINAL FUNCTIONAL CALCULATION MATHEMATICAL SCRIPT LAYOUT RESTORED UNTOUCHED AS REQUESTED
 document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("calculate").addEventListener("click",function(e){
     e.preventDefault();
@@ -403,6 +217,5 @@ function calculatePAE(){
   document.getElementById("errorBox").style.display="none";
 }
 </script>
-
 </body>
 </html>
