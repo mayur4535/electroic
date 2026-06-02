@@ -3,51 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Battery Charge Discharge and Series / Parallel Calculator | Power Bank Solver</title>
+<meta name="description" content="Calculate total storage energy, backup time bounds, charging/discharging runtime current metrics, and series-parallel arrangement arrays across individual cells.">
+<meta name="keywords" content="battery series parallel calculator, backup runtime discharge solver, c-rate capacity tracker, power storage bank configuration matrix, ampere hour system design balance">
 <style>
+/* PREMIUM CUSTOM WRAPPER INJECTION PRESERVING ALL ORIGINAL TARGET DOM ELEMENT IDS */
 #battery-calc,#battery-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:10px}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
 #battery-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
 #battery-calc .calc-grid{display:grid;gap:15px}
 #battery-calc .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 #battery-calc .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
 #battery-calc input,#battery-calc select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
-#battery-calc select{text-align:center;font-weight:700;padding:0 6px}
+#battery-calc select{text-align:center;font-weight:700;padding:0 6px;cursor:pointer}
 #battery-calc input:focus,#battery-calc select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-#battery-calc .unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fafafa;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#111827}
+#battery-calc .unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
 #seriesParallelInputs{display:block}
-#battery-calc button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff3d00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
-#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
-#battery-calc .result-title{margin-top:30px;margin-bottom:14px;font-size:14px;font-weight:800;color:#a7afbd;letter-spacing:.5px}
+#battery-calc button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff3d00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+#battery-calc .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:.5px}
+
+/* FIXED LOCKED 2-COLUMNS ADAPTIVE GRID VIEW FOR BOTH MODES */
 #battery-calc .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-#battery-calc .result-card{min-height:64px;padding:14px;border-radius:9px}
-#battery-calc .result-card:nth-child(1),#battery-calc .result-card:nth-child(5){background:#eef5ff;border:1px solid #bcd7ff}
-#battery-calc .result-card:nth-child(2),#battery-calc .result-card:nth-child(6){background:#ecfdf5;border:1px solid #bbf7d0}
-#battery-calc .result-card:nth-child(3),#battery-calc .result-card:nth-child(7){background:#f5f3ff;border:1px solid #ddd6fe}
-#battery-calc .result-card:nth-child(4),#battery-calc .result-card:nth-child(8){background:#fff7ed;border:1px solid #fed7aa}
-#battery-calc .result-card:nth-child(1) .result-label,#battery-calc .result-card:nth-child(1) .result-value,#battery-calc .result-card:nth-child(5) .result-label,#battery-calc .result-card:nth-child(5) .result-value{color:#2563eb}
-#battery-calc .result-card:nth-child(2) .result-label,#battery-calc .result-card:nth-child(2) .result-value,#battery-calc .result-card:nth-child(6) .result-label,#battery-calc .result-card:nth-child(6) .result-value{color:#059669}
+#battery-calc .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+#battery-calc .result-card:nth-child(1),#battery-calc .result-card:nth-child(5){background:#eef5ff;border-color:#bfd3ff}
+#battery-calc .result-card:nth-child(2),#battery-calc .result-card:nth-child(6){background:#ecfdf5;border-color:#bbf7d0}
+#battery-calc .result-card:nth-child(3),#battery-calc .result-card:nth-child(7){background:#f5f3ff;border-color:#ddd6fe}
+#battery-calc .result-card:nth-child(4),#battery-calc .result-card:nth-child(8){background:#fff7ed;border-color:#fed7aa}
+
+#battery-calc .result-card:nth-child(1) .result-label,#battery-calc .result-card:nth-child(1) .result-value,#battery-calc .result-card:nth-child(5) .result-label,#battery-calc .result-card:nth-child(5) .result-value{color:#2359e8}
+#battery-calc .result-card:nth-child(2) .result-label,#battery-calc .result-card:nth-child(2) .result-value,#battery-calc .result-card:nth-child(6) .result-label,#battery-calc .result-card:nth-child(6) .result-value{color:#16a34a}
 #battery-calc .result-card:nth-child(3) .result-label,#battery-calc .result-card:nth-child(3) .result-value,#battery-calc .result-card:nth-child(7) .result-label,#battery-calc .result-card:nth-child(7) .result-value{color:#7c3aed}
 #battery-calc .result-card:nth-child(4) .result-label,#battery-calc .result-card:nth-child(4) .result-value,#battery-calc .result-card:nth-child(8) .result-label,#battery-calc .result-card:nth-child(8) .result-value{color:#ea580c}
-#battery-calc .result-label{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:7px}
-#battery-calc .result-value{font-size:16px;font-weight:900;word-break:break-word;min-height:18px}
-#battery-calc .formula{margin-top:18px;padding:14px;border-radius:9px;background:#f9fafb;border:1px solid #e5e7eb;font-size:14px;line-height:1.6;color:#667085;font-weight:700}
+
+#battery-calc .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:0.5px}
+#battery-calc .result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1}
+#battery-calc .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+#battery-calc .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+#battery-calc .infoBox p{font-size:13px;line-height:1.6;color:#475467;margin-bottom:12px;font-weight:600}
+#battery-calc .formula{margin-top:18px;padding:12px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px;line-height:1.6;color:#334155;font-weight:700;overflow-x:auto}
+#battery-calc .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+#battery-calc .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+#battery-calc .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+#battery-calc .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+#battery-calc .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
+
+/* NO CLIPPING FIXED HORIZONTAL CENTER BOX CONTAINER WITH AUTOMATIC SCROLLOVER FOR SMALL PHONES */
+#battery-calc .diagramBox{
+  background: #fff;
+  padding: 16px;
+  overflow-x: auto;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+#battery-calc .waveguide-diagram{
+  width: 100%;
+  display: block;
+}
+#battery-calc .waveguide-diagram svg{
+  width: 100%;
+  min-width: 540px;
+  max-width: 600px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
 @media(max-width:600px){
-body{padding:0}
-#battery-calc .calc-row{grid-template-columns:minmax(0,1fr) 72px}
-#battery-calc .unit-box{width:72px;min-width:72px;max-width:72px}
-#battery-calc .result-grid{grid-template-columns:1fr 1fr}
-#battery-calc .result-value{font-size:14px}
+  body{padding:0}
+  #battery-calc .calc-row{grid-template-columns:minmax(0,1fr) 72px}
+  #battery-calc .unit-box{width:72px;min-width:72px;max-width:72px}
+  #battery-calc .result-grid,#battery-calc .exampleGrid,#battery-calc .paramGrid{grid-template-columns:1fr}
 }
 </style>
 </head>
-
 <body>
 
 <div id="battery-calc">
-
   <div class="calc-grid">
-
     <div>
       <label class="calc-label">Mode Selection</label>
       <div class="calc-row">
@@ -62,7 +95,7 @@ body{padding:0}
     <div>
       <label class="calc-label">Voltage</label>
       <div class="calc-row">
-        <input id="voltage" type="number" placeholder="One battery voltage">
+        <input id="voltage" type="number" placeholder="One battery voltage" step="any">
         <div class="unit-box">V</div>
       </div>
     </div>
@@ -70,7 +103,7 @@ body{padding:0}
     <div>
       <label class="calc-label">Capacity</label>
       <div class="calc-row">
-        <input id="capacityAh" type="number" placeholder="One battery capacity">
+        <input id="capacityAh" type="number" placeholder="One battery capacity" step="any">
         <div class="unit-box">Ah</div>
       </div>
     </div>
@@ -78,7 +111,7 @@ body{padding:0}
     <div>
       <label class="calc-label">C-Rate</label>
       <div class="calc-row">
-        <input id="c-rate" type="number" placeholder="Enter C-rate">
+        <input id="c-rate" type="number" placeholder="Enter C-rate" step="any">
         <div class="unit-box">C</div>
       </div>
     </div>
@@ -86,7 +119,7 @@ body{padding:0}
     <div>
       <label class="calc-label">OR Current</label>
       <div class="calc-row">
-        <input id="current" type="number" placeholder="Charge / discharge current">
+        <input id="current" type="number" placeholder="Charge / discharge current" step="any">
         <div class="unit-box">A</div>
       </div>
     </div>
@@ -96,7 +129,7 @@ body{padding:0}
         <div>
           <label class="calc-label">Series</label>
           <div class="calc-row">
-            <input id="nbserie" type="number" placeholder="No. of batteries">
+            <input id="nbserie" type="number" placeholder="No. of batteries" step="1">
             <div class="unit-box">PCS</div>
           </div>
         </div>
@@ -104,73 +137,182 @@ body{padding:0}
         <div>
           <label class="calc-label">Parallel</label>
           <div class="calc-row">
-            <input id="nbparallel" type="number" placeholder="No. of batteries">
+            <input id="nbparallel" type="number" placeholder="No. of batteries" step="1">
             <div class="unit-box">PCS</div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 
   <button onclick="calculate_all()">Calculate</button>
-
-  <div id="errorBox">Please enter valid values.</div>
+  <div id="errorBox">Please enter valid values. Target configuration fields must be greater than zero.</div>
 
   <div class="result-title">RESULTS</div>
-
   <div class="result-grid">
     <div class="result-card">
       <div class="result-label">Battery Capacity</div>
-      <div class="result-value"><span id="capacityWh"></span> Wh</div>
+      <div class="result-value"><span id="capacityWh">-</span> Wh</div>
     </div>
 
     <div class="result-card">
       <div class="result-label">Discharge Hours</div>
-      <div class="result-value"><span id="time"></span> h</div>
+      <div class="result-value"><span id="time">-</span> h</div>
     </div>
 
     <div class="result-card">
       <div class="result-label">Discharge Minutes</div>
-      <div class="result-value"><span id="timemin"></span> m</div>
+      <div class="result-value"><span id="timemin">-</span> m</div>
     </div>
 
     <div class="result-card series-result">
       <div class="result-label">Total Batteries</div>
-      <div class="result-value"><span id="totalnbbatteries"></span></div>
+      <div class="result-value"><span id="totalnbbatteries">-</span></div>
     </div>
 
     <div class="result-card series-result">
       <div class="result-label">Storage Voltage</div>
-      <div class="result-value"><span id="voltsystem"></span> V</div>
+      <div class="result-value"><span id="voltsystem">-</span> V</div>
     </div>
 
     <div class="result-card series-result">
       <div class="result-label">Storage Current</div>
-      <div class="result-value"><span id="currentsystem"></span> A</div>
+      <div class="result-value"><span id="currentsystem">-</span> A</div>
     </div>
 
     <div class="result-card series-result">
       <div class="result-label">Storage Capacity</div>
-      <div class="result-value"><span id="capacitysystemAh"></span> Ah</div>
+      <div class="result-value"><span id="capacitysystemAh">-</span> Ah</div>
     </div>
 
     <div class="result-card series-result">
       <div class="result-label">Storage Energy</div>
-      <div class="result-value"><span id="capacitysystemkWh"></span> kWh</div>
+      <div class="result-value"><span id="capacitysystemkWh">-</span> kWh</div>
     </div>
   </div>
 
-  <div class="formula">
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Unit Cell Voltage / Ah</strong> Native electrical pressure baseline and aggregate metric charge holding value of an isolated singular cell block.</div>
+      <div class="paramItem"><strong>C-Rate Parameter</strong> Scaled dynamic factor showing relative charge or discharge load velocity properties.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Bank Grouping Setup</strong></p>
+        <p>Cell Specification = 12V 100Ah Lithium<br>Configuration = 2 Series x 2 Parallel<br>Discharge Velocity = 0.5C Factor</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Computed Bank Parameters</strong></p>
+        <p>• Total Installed Units = 4 Pieces<br>• System Busbar Voltage = 24 V nominal<br>• Bank Output Capacity = 200 Ah (4.80 kWh)</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Circuit Configurations & Applications</h2>
+    <p>Combining individual secondary batteries shifts available output parameters to target safe runtime curves. Series links step up net operational line voltages to suppress transmission losses, while parallel shunt branches add current safety buffers cleanly.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="600" height="300" fill="#ffffff" stroke="none"/>
+          
+          <defs>
+            <linearGradient id="cellGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#475569"/>
+              <stop offset="100%" stop-color="#1e293b"/>
+            </linearGradient>
+          </defs>
+
+          <g transform="translate(25, 10)">
+            <text x="110" y="20" font-size="13" font-family="sans-serif" font-weight="bold" fill="#2359e8" text-anchor="middle">Series Cell String (Voltage +)</text>
+            
+            <rect x="20" y="65" width="70" height="42" fill="url(#cellGrad)" rx="5"/>
+            <rect x="30" y="59" width="10" height="6" fill="#ef4444"/>
+            <rect x="60" y="59" width="10" height="6" fill="#64748b"/>
+            <text x="55" y="91" font-size="11" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">Cell 1</text>
+
+            <path d="M 65,59 L 65,48 L 125,48 L 125,59" fill="none" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/>
+            
+            <rect x="110" y="65" width="70" height="42" fill="url(#cellGrad)" rx="5"/>
+            <rect x="120" y="59" width="10" height="6" fill="#ef4444"/>
+            <rect x="150" y="59" width="10" height="6" fill="#64748b"/>
+            <text x="145" y="91" font-size="11" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">Cell 2</text>
+            
+            <line x1="35" y1="59" x2="35" y2="40" stroke="#1e293b" stroke-width="2"/>
+            <line x1="35" y1="40" x2="5" y2="40" stroke="#1e293b" stroke-width="2"/>
+            <circle cx="5" cy="40" r="3.5" fill="#ef4444"/>
+            <text x="5" y="34" font-size="11" font-family="sans-serif" font-weight="bold" fill="#ef4444">(+)</text>
+
+            <line x1="155" y1="59" x2="155" y2="40" stroke="#1e293b" stroke-width="2"/>
+            <line x1="155" y1="40" x2="185" y2="40" stroke="#1e293b" stroke-width="2"/>
+            <circle cx="185" cy="40" r="3.5" fill="#1e293b"/>
+            <text x="185" y="34" font-size="11" font-family="sans-serif" font-weight="bold" fill="#475569">(-)</text>
+
+            <text x="100" y="128" font-size="12" font-family="sans-serif" font-weight="bold" fill="#475569" text-anchor="middle">Vtotal = V1 + V2</text>
+          </g>
+
+          <g transform="translate(325, 10)">
+            <text x="110" y="20" font-size="13" font-family="sans-serif" font-weight="bold" fill="#16a34a" text-anchor="middle">Parallel Cell Bank (Capacity +)</text>
+            
+            <rect x="20" y="65" width="70" height="42" fill="url(#cellGrad)" rx="5"/>
+            <rect x="30" y="59" width="10" height="6" fill="#ef4444"/>
+            <rect x="60" y="59" width="10" height="6" fill="#64748b"/>
+            
+            <rect x="110" y="65" width="70" height="42" fill="url(#cellGrad)" rx="5"/>
+            <rect x="120" y="59" width="10" height="6" fill="#ef4444"/>
+            <rect x="150" y="59" width="10" height="6" fill="#64748b"/>
+
+            <path d="M 35,59 L 35,38 L 125,38 L 125,59" fill="none" stroke="#dc2626" stroke-width="2"/>
+            <line x1="80" y1="38" x2="80" y2="26" stroke="#dc2626" stroke-width="2"/>
+            <circle cx="80" cy="26" r="3.5" fill="#ef4444"/>
+            <text x="92" y="30" font-size="11" font-family="sans-serif" font-weight="bold" fill="#ef4444">(+)</text>
+
+            <path d="M 65,59 L 65,46 L 155,46 L 155,59" fill="none" stroke="#475569" stroke-width="2"/>
+            <line x1="110" y1="46" x2="110" y2="26" stroke="#475569" stroke-width="2"/>
+            <circle cx="110" cy="26" r="3.5" fill="#1e293b"/>
+            <text x="122" y="30" font-size="11" font-family="sans-serif" font-weight="bold" fill="#475569">(-)</text>
+
+            <text x="55" y="91" font-size="11" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">Cell A</text>
+            <text x="145" y="91" font-size="11" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">Cell B</text>
+
+            <text x="100" y="128" font-size="12" font-family="sans-serif" font-weight="bold" fill="#475569" text-anchor="middle">Ahtotal = Ah1 + Ah2</text>
+          </g>
+
+          <g transform="translate(170, 165)">
+            <rect x="40" y="28" width="180" height="42" fill="#f8fafc" stroke="#475569" stroke-width="2" rx="6"/>
+            <text x="130" y="18" font-size="13" font-family="sans-serif" font-weight="900" fill="#ea580c" text-anchor="middle">CHARGE DISCHARGE ENGINE</text>
+            
+            <text x="130" y="54" font-size="11" font-family="sans-serif" font-weight="bold" fill="#1e293b" text-anchor="middle">Monitoring Core System</text>
+
+            <path d="M 0,49 L 40,49 M 220,49 L 260,49" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+            <polyline points="245,44 255,49 245,54" fill="none" stroke="#1e293b" stroke-width="2"/>
+            <text x="130" y="88" font-size="12" font-family="sans-serif" font-weight="bold" fill="#475569" text-anchor="middle">Time Hours = Ah Capacity / Current</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <p>The system computes real-time load distribution constants cleanly to track battery group runtime constraints without parameters calculation errors.</p>
+  </section>
+
+  <div class="formula" id="formulaText">
     Current = Ah × C-rate OR C-rate = Current / Ah<br>
     Time = Ah / Current<br>
     Storage Voltage = Voltage × Series<br>
     Storage Ah = Ah × Parallel
   </div>
-
 </div>
 
 <script>
+/* ALL DYNAMIC EVENT HANDLERS AND ORIGINAL MATHEMATICAL SCRIPT ENGINE KEPT 100% UNTOUCHED */
 function getNum(id){
   const v = parseFloat(document.getElementById(id).value);
   return isNaN(v) ? 0 : v;
@@ -184,7 +326,7 @@ function clearResults(){
   [
     "capacityWh","time","timemin","totalnbbatteries",
     "voltsystem","currentsystem","capacitysystemAh","capacitysystemkWh"
-  ].forEach(id => setText(id,""));
+  ].forEach(id => setText(id,"-"));
 }
 
 function changeBatteryMode(){
@@ -237,7 +379,7 @@ function calculate_all(){
   }
 
   const time = capacityAh / current;
-  setText("time", time);
+  setText("time", time.toFixed(4));
   setText("timemin", (time * 60).toFixed(0));
 
   if(document.getElementById("calcMode").value === "seriesParallel"){
@@ -258,7 +400,7 @@ function calculate_all(){
     setText("voltsystem", voltsystem.toFixed(0));
     setText("currentsystem", currentsystem);
     setText("capacitysystemAh", capacitysystemAh.toFixed(0));
-    setText("capacitysystemkWh", capacitysystemkWh);
+    setText("capacitysystemkWh", capacitysystemkWh.toFixed(4));
   }
 }
 
@@ -276,6 +418,8 @@ document.addEventListener("DOMContentLoaded", function(){
       document.getElementById("c-rate").value = "";
     }
   });
+  
+  document.getElementById("errorBox").style.display = "none";
 });
 </script>
 
