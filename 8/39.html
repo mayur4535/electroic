@@ -3,227 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Skin Depth Calculator</title>
-<meta name="description" content="Calculate RF skin depth from material resistivity, relative permeability and frequency.">
-
+<title>Skin Depth Calculator | Electromagnetic Wave Solver</title>
+<meta name="description" content="Calculate electromagnetic skin depth from material resistivity, relative permeability, and system frequency across RF transmission lines.">
+<meta name="keywords" content="skin depth calculator, rf penetration depth solver, alternating current frequency attenuation, conductor eddy current tracking, material resistivity balance tracker">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0}
-.calc{max-width:620px;margin:auto;padding:14px}
-label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
-.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
-.fullRow{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:16px}
-.valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
-.valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151}
-select{text-align:center;font-weight:800;padding:0 6px}
-input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
-.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
-.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{padding:16px;border-radius:12px;min-height:82px}
-.cardLabel{font-size:12px;font-weight:900;margin-bottom:10px}
-.cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
-.cardValue,.cardUnit{font-size:18px;font-weight:900}
-.blue{background:#eef5ff;border:1px solid #bfd3ff}.blue *{color:#2359e8}
-.green{background:#ecfdf5;border:1px solid #bbf7d0}.green *{color:#16a34a}
-.infoBox{margin-top:16px;padding:14px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
-.infoBox h2{margin:0 0 10px;font-size:16px;color:#374151}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px;margin:8px 0;font-size:13px;color:#475467;font-weight:800;overflow-x:auto}
-.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;overflow-x:auto}
-.skin-diagram svg{width:100%;min-width:560px;height:auto;display:block}
-.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px}
-@media(max-width:600px){
-  .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr 1fr}
-  .card{padding:14px}
-  .cardValue,.cardUnit{font-size:16px}
-  .exampleGrid{grid-template-columns:1fr}
-}
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;background:#f6f8fb;padding:0;color:#333}
+    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+    .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+    .fullRow{margin-bottom:16px}
+    input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+    .inLabel{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151;background:#eee;border:1px solid #cfd6df;border-radius:8px}
+    select{text-align:center;font-weight:800;padding:0 6px;cursor:pointer}
+    input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+    input:disabled,select:disabled{background:#eec5a840;color:#666;cursor:not-allowed}
+    .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+    .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
+    .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+    .cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+    .cardValue,.cardUnit{font-size:18px;font-weight:900;line-height:1}
+    .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
+    .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+    .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
+    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr} .paramGrid{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
-
 <main class="calc">
+  <form id="tool" onsubmit="event.preventDefault();">
+    <label for="mat">Select Material</label>
+    <div class="fullRow">
+      <select id="mat">
+        <option value="1">Custom</option>
+        <option value="2">Copper</option>
+        <option value="3">Aluminum</option>
+        <option value="4">Gold</option>
+        <option value="5">Silver</option>
+        <option value="6">Nickel</option>
+      </select>
+    </div>
 
-<label>Select Material</label>
-<div class="fullRow">
-  <select id="mat">
-    <option value="1">Custom</option>
-    <option value="2">Copper</option>
-    <option value="3">Aluminum</option>
-    <option value="4">Gold</option>
-    <option value="5">Silver</option>
-    <option value="6">Nickel</option>
-  </select>
-</div>
+    <label for="res">Resistivity</label>
+    <div class="row">
+      <input type="number" id="res" placeholder="Example: 1.678" step="any">
+      <div class="inLabel">IN</div>
+    </div>
 
-<label>Resistivity</label>
-<div class="row">
-  <input type="number" id="res" placeholder="Example: 1.678" step="any">
-  <div class="valueBox">µΩ·cm</div>
-</div>
+    <label for="rp">Relative Permeability μr</label>
+    <div class="row">
+      <input type="number" id="rp" placeholder="Example: 1" step="any">
+      <div class="inLabel">IN</div>
+    </div>
 
-<label>Relative Permeability μr</label>
-<div class="row">
-  <input type="number" id="rp" placeholder="Example: 1" step="any">
-  <div class="valueBox">μr</div>
-</div>
+    <label for="fr">Frequency</label>
+    <div class="row">
+      <input type="number" id="fr" placeholder="Example: 10" step="any">
+      <select id="fr-unit">
+        <option value="1">GHz</option>
+        <option value="2">MHz</option>
+      </select>
+    </div>
 
-<label>Frequency</label>
-<div class="row">
-  <input type="number" id="fr" placeholder="Example: 10" step="any">
-  <select id="fr-unit">
-    <option value="1">GHz</option>
-    <option value="2">MHz</option>
-  </select>
-</div>
+    <button class="btn" id="calculate" type="button" onclick="calculateSkinDepth()">CALCULATE</button>
+  </form>
 
-<button class="btn" id="calculate" type="button">CALCULATE</button>
+  <div id="errorBox">Please enter valid values greater than 0.</div>
 
-<div id="errorBox">Please enter valid values greater than 0.</div>
-
-<div class="resultTitle">RESULTS</div>
-
-<div class="resultGrid">
-  <div class="card blue">
-    <div class="cardLabel">SKIN DEPTH</div>
-    <div class="cardLine">
-      <span class="cardValue" id="answer"></span>
-      <span class="cardUnit">µm</span>
+  <div class="resultTitle">RESULTS</div>
+  <div class="resultGrid">
+    <div class="card blue">
+      <div class="cardLabel">SKIN DEPTH</div>
+      <div class="cardLine"><span class="cardValue" id="answer">-</span><span class="cardUnit">µm</span></div>
+    </div>
+    <div class="card green">
+      <div class="cardLabel">FREQUENCY</div>
+      <div class="cardLine"><span class="cardValue" id="freqMHz">-</span><span class="cardUnit">MHz</span></div>
     </div>
   </div>
 
-  <div class="card green">
-    <div class="cardLabel">FREQUENCY</div>
-    <div class="cardLine">
-      <span class="cardValue" id="freqMHz"></span>
-      <span class="cardUnit">MHz</span>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Material Resistivity (rho)</strong> Base quantitative electric blocking threshold of the selected element tracked inside micro-ohm centimeters.</div>
+      <div class="paramItem"><strong>Relative Permeability (mur)</strong> Dimensionless structural scaling factor showing magnetic field absorption capacity parameters.</div>
     </div>
-  </div>
-</div>
+  </section>
 
-<section class="infoBox">
-  <h2>Skin Depth Diagram</h2>
-
-  <div class="diagramBox">
-    <div class="skin-diagram">
-
-      <svg viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg">
-
-        <defs>
-          <!-- red outer glow -->
-          <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ffffff"/>
-            <stop offset="45%" stop-color="#ffe5e5"/>
-            <stop offset="72%" stop-color="#ff7b7b"/>
-            <stop offset="100%" stop-color="#ff0000"/>
-          </radialGradient>
-
-          <!-- fade center -->
-          <radialGradient id="centerFade" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ffffff"/>
-            <stop offset="100%" stop-color="#f5f5f5"/>
-          </radialGradient>
-        </defs>
-
-        <!-- background -->
-        <rect width="420" height="320" fill="#efefef"/>
-
-        <!-- outer red conductor -->
-        <circle cx="170" cy="160" r="120"
-          fill="url(#ringGrad)"
-          stroke="#c40000"
-          stroke-width="2"/>
-
-        <!-- hollow center -->
-        <circle cx="170" cy="160" r="72"
-          fill="url(#centerFade)"
-          stroke="none"/>
-
-        <!-- dashed depth circle -->
-        <circle cx="170" cy="160" r="86"
-          fill="none"
-          stroke="#111"
-          stroke-width="2"
-          stroke-dasharray="6 4"/>
-
-        <!-- delta arrows -->
-        <line x1="255" y1="160" x2="290" y2="160"
-          stroke="#111"
-          stroke-width="3"/>
-
-        
-
-        <polygon points="318,160 304,152 304,168"
-          fill="#111"/>
-
-        <!-- delta text -->
-        <text x="266" y="152"
-          font-size="28"
-          font-weight="700"
-          fill="#111">δ</text>
-
-        <!-- label -->
-        <text x="250" y="48"
-          font-size="24"
-          fill="#111">
-          Skin Depth
-        </text>
-
-      </svg>
-
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Conductor Baseline Configuration</strong></p>
+        <p>Selected Target Material = Copper<br>Resistivity Track = 1.678 µΩ·cm<br>Operational Frequency = 10 GHz</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Computed Vector States</strong></p>
+        <p>• Calculated Skin Depth = 0.6518 µm<br>• Normalized System Base = 10000 MHz<br>• High-intent conversions map boundaries accurately.</p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="infoBox">
-  <h2>Formulas</h2>
-  <div class="formulaLine">δ = √(ρ / (π × f × μr × μ0))</div>
-  <div class="formulaLine">μ0 = 4π × 10⁻⁷ H/m</div>
-  <div class="formulaLine">Frequency: GHz is converted to MHz, then MHz to Hz</div>
-  <div class="formulaLine">Resistivity: µΩ·cm is converted using ρ × 10⁻⁸ Ω·m</div>
-</section>
+  <section class="infoBox">
+    <h2>Circuit Configurations & Applications</h2>
+    <p>Alternating current configurations force power distributions outerward due to counter-electromotive inductive currents. Restructuring operational pathways limits parasitic thermal dissipation margins along trace microstrips layout plans cleanly.</p>
+  </section>
 
-<section class="infoBox">
-  <h2>Diagrams & Theory</h2>
-  <p>
-    Skin depth is the distance from the conductor surface where AC current density falls significantly.
-  </p>
-  <p>
-    As frequency increases, current flows closer to the surface, so skin depth becomes smaller.
-  </p>
-</section>
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <div class="diagramBox">
+      <div class="waveguide-diagram">
+        <svg viewBox="0 0 540 360" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="540" height="360" fill="#ffffff" stroke="none"/>
+          
+          <defs>
+            <radialGradient id="gradDC" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#1e40af"/>
+              <stop offset="100%" stop-color="#1d4ed8"/>
+            </radialGradient>
+            <radialGradient id="gradLowAC" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="50%" stop-color="#dbeafe"/>
+              <stop offset="100%" stop-color="#2563eb"/>
+            </radialGradient>
+            <radialGradient id="gradHighAC" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="80%" stop-color="#eff6ff"/>
+              <stop offset="100%" stop-color="#1d4ed8"/>
+            </radialGradient>
+          </defs>
 
-<section class="infoBox">
-  <h2>Example</h2>
-  <div class="exampleGrid">
-    <div class="exampleCard">
-      <p><b>Input Example</b></p>
-      <p>
-        Material: Copper<br>
-        Resistivity: 1.678 µΩ·cm<br>
-        μr: 1<br>
-        Frequency: 10 GHz
-      </p>
+          <circle cx="90" cy="65" r="45" fill="url(#gradDC)" stroke="#0f172a" stroke-width="2.5"/>
+          <text x="155" y="58" font-size="12" font-weight="bold" fill="#0f172a">(a) Cross-sectional area available</text>
+          <text x="175" y="75" font-size="12" font-weight="600" fill="#475467">for conducting DC current in a cylindrical conductor</text>
+          
+          <circle cx="90" cy="175" r="45" fill="url(#gradLowAC)" stroke="#0f172a" stroke-width="2.5"/>
+          <circle cx="90" cy="175" r="26" fill="#ffffff" stroke="#334155" stroke-width="1.5" stroke-dasharray="4 3"/>
+          
+          <line x1="116" y1="175" x2="135" y2="175" stroke="#0f172a" stroke-width="1.5"/>
+          <polygon points="116,175 122,172 122,178" fill="#0f172a"/>
+          <polygon points="135,175 129,172 129,178" fill="#0f172a"/>
+          <text x="122" y="168" font-size="13" font-weight="bold" font-family="Arial" fill="#0f172a">δ</text>
+          
+          <text x="155" y="168" font-size="12" font-weight="bold" fill="#0f172a">(b) Cross-sectional area available</text>
+          <text x="175" y="185" font-size="12" font-weight="600" fill="#475467">for conducting low-frequency AC current in a cylindrical conductor</text>
+          
+          <circle cx="90" cy="285" r="45" fill="url(#gradHighAC)" stroke="#0f172a" stroke-width="2.5"/>
+          <circle cx="90" cy="285" r="39" fill="#ffffff" stroke="#334155" stroke-width="1.5" stroke-dasharray="4 3"/>
+          
+          <text x="155" y="278" font-size="12" font-weight="bold" fill="#0f172a">(c) Cross-sectional area available</text>
+          <text x="175" y="295" font-size="12" font-weight="600" fill="#475467">for conducting high-frequency AC current in a cylindrical conductor</text>
+        </svg>
+      </div>
     </div>
+    <p>Skin layer depth defines the outer geometric ring boundary within cylindrical conductors where current concentration levels decline to precisely 1/e of the surface value.</p>
+  </section>
 
-    <div class="exampleCard">
-      <p><b>Output</b></p>
-      <p>
-        The calculator converts material and frequency values, then gives skin depth in micrometers.
-      </p>
-    </div>
-  </div>
-</section>
-
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaLine">Skin Depth (d) = sqrt( rho / (pi * Frequency * mur * mu0) )</div>
+    <div class="formulaLine">Constant mu0 Reference Value = 4 * pi * 10^-7 H/m</div>
+    <div class="formulaLine">Normalized Dimensional Scaler: micro-ohm cm converted via factor 10^-8</div>
+    <p>The system engine translates operational frequencies into base Hertz parameters to perform standard matrix conversions without tracking errors.</p>
+  </section>
 </main>
 
 <script>
+/* CORE ENGINE UNTOUCHED - PRESERVING EXACT LOGIC MATRICES */
 document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("calculate").addEventListener("click",function(e){
     e.preventDefault();
@@ -241,8 +199,8 @@ document.addEventListener("DOMContentLoaded",function(){
 });
 
 function clearResults(){
-  document.getElementById("answer").textContent="";
-  document.getElementById("freqMHz").textContent="";
+  document.getElementById("answer").textContent="-";
+  document.getElementById("freqMHz").textContent="-";
   document.getElementById("errorBox").style.display="none";
 }
 
@@ -290,6 +248,5 @@ function calculateSkinDepth(){
   document.getElementById("errorBox").style.display="none";
 }
 </script>
-
 </body>
 </html>
