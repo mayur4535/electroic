@@ -1,93 +1,98 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Rectangular Waveguide Calculator | Cutoff Frequency & Operating Range</title>
 <meta name="description" content="Calculate the cutoff frequency and recommended operating frequency range for standard and custom rectangular waveguides based on broad wall width.">
 <meta name="keywords" content="rectangular waveguide calculator, waveguide cutoff frequency calculator, broad wall width calculator, TE10 mode calculator, WR90 cutoff frequency, operating frequency range waveguide, microwave engineering calculator, waveguide dimensions chart">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0;color:#333}
-.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
-label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
-.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
-.full-row{display:block;margin-bottom:16px}
-input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
-select{text-align:center;font-weight:800;padding:0 6px}
-input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
-.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
-.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{padding:16px;border-radius:12px;min-height:82px}
-.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
-.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
-.cardLine input{background:transparent;font-weight:800;color:inherit;border:none;padding:0;height:auto;font-size:16px;width:100%}
-.cardLine span{font-weight:800;font-size:14px}
-.blue{background:#eef5ff;border:1px solid #bfd3ff}
-.blue *{color:#2359e8}
-.green{background:#ecfdf5;border:1px solid #bbf7d0}
-.green *{color:#16a34a}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
-.infoBox h2{margin:0 0 12px;font-size:16px;color:#2d3748;border-bottom:1px solid #edf2f7;padding-bottom:6px}
-.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
-.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#475467;font-weight:700;overflow-x:auto;line-height:1.6}
-.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
-.waveguide-diagram svg{width:100%;min-width:450px;height:auto;display:block;margin:auto}
-.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
-.exampleCard p{margin:4px 0;font-size:13px;color:#4a5568}
-@media(max-width:600px){
-  .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr}
-  .exampleGrid{grid-template-columns:1fr}
-}
-</style></head>
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;background:#f6f8fb;padding:0;color:#333}
+    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
+    .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
+    .full-row{margin-bottom:16px}
+    input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+    select{text-align:center;font-weight:800;padding:0 6px;cursor:pointer}
+    input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+    input:disabled,select:disabled{background:#eec5a840;color:#666;cursor:not-allowed}
+    .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+    .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    
+    /* LOCKED EXACT 2-COLUMNS RESULT MATRIX CARD LAYOUT */
+    .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    
+    .card{padding:16px;border-radius:12px;min-height:82px}
+    .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
+    .cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
+    .cardLine input{background:transparent;font-weight:800;color:inherit;border:none;padding:0;height:auto;font-size:16px;width:100%;outline:none}
+    .cardLine span{font-weight:800;font-size:14px}
+    .blue{background:#eef5ff;border:1px solid #bfd3ff} .blue *{color:#2359e8}
+    .green{background:#ecfdf5;border:1px solid #bbf7d0} .green *{color:#16a34a}
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+    .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .infoBox p{font-size:13px;line-height:1.6;color:#475467;margin-bottom:12px;font-weight:600}
+    .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
+    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr}.exampleGrid{grid-template-columns:1fr}}
+</style>
+</head>
 <body>
 <main class="calc">
-  <div class="full-row">
-    <label for="wg">Select Standard Waveguide</label>
-    <select id="wg">
-      <option value="x">custom</option>
-      <option value="0.034">WR3</option>
-      <option value="0.043">WR4</option>
-      <option value="0.065">WR7</option>
-      <option value="0.080">WR8</option>
-      <option value="0.100">WR10</option>
-      <option value="0.122">WR12</option>
-      <option value="0.148">WR15</option>
-      <option value="0.188">WR19</option>
-      <option value="0.224">WR22</option>
-      <option value="0.280">WR28</option>
-      <option value="0.340">WR34</option>
-      <option value="0.420">WR42</option>
-      <option value="0.510">WR51</option>
-      <option value="0.622">WR62</option>
-      <option value="0.750">WR75</option>
-      <option value="0.900">WR90</option>
-      <option value="1.122">WR112</option>
-      <option value="1.372">WR137</option>
-      <option value="1.590">WR159</option>
-      <option value="1.872">WR187</option>
-      <option value="2.280">WR229</option>
-      <option value="2.840">WR284</option>
-      <option value="3.400">WR340</option>
-      <option value="4.300">WR430</option>
-      <option value="5.100">WR510</option>
-      <option value="6.500">WR650</option>
-      <option value="7.00">WR770</option>
-      <option value="9.750">WR975</option>
-    </select>
-  </div>
+  <form id="tool" onsubmit="event.preventDefault();">
+    <div class="full-row">
+      <label for="wg">Select Standard Waveguide</label>
+      <select id="wg">
+        <option value="x">custom</option>
+        <option value="0.034">WR3</option>
+        <option value="0.043">WR4</option>
+        <option value="0.065">WR7</option>
+        <option value="0.080">WR8</option>
+        <option value="0.100">WR10</option>
+        <option value="0.122">WR12</option>
+        <option value="0.148">WR15</option>
+        <option value="0.188">WR19</option>
+        <option value="0.224">WR22</option>
+        <option value="0.280">WR28</option>
+        <option value="0.340">WR34</option>
+        <option value="0.420">WR42</option>
+        <option value="0.510">WR51</option>
+        <option value="0.622">WR62</option>
+        <option value="0.750">WR75</option>
+        <option value="0.900">WR90</option>
+        <option value="1.122">WR112</option>
+        <option value="1.372">WR137</option>
+        <option value="1.590">WR159</option>
+        <option value="1.872">WR187</option>
+        <option value="2.280">WR229</option>
+        <option value="2.840">WR284</option>
+        <option value="3.400">WR340</option>
+        <option value="4.300">WR430</option>
+        <option value="5.100">WR510</option>
+        <option value="6.500">WR650</option>
+        <option value="7.000">WR770</option>
+        <option value="9.750">WR975</option>
+      </select>
+    </div>
 
-  <label for="width">Broad Wall Width (a)</label>
-  <div class="row">
-    <input type="number" id="width" placeholder="Example: 2.84" step="any">
-    <select id="width_unit">
-      <option value="in">in</option>
-      <option value="cm">cm</option>
-      <option value="mm">mm</option>
-    </select>
-  </div>
+    <label for="width">Broad Wall Width (a)</label>
+    <div class="row">
+      <input type="number" id="width" placeholder="Example: 2.84" step="any">
+      <select id="width_unit">
+        <option value="in">in</option>
+        <option value="cm">cm</option>
+        <option value="mm">mm</option>
+      </select>
+    </div>
 
-  <button class="btn" id="tool_submit" type="button">CALCULATE</button>
+    <button class="btn" id="tool_submit" type="button" onclick="executeCalculation()">CALCULATE</button>
+  </form>
+
   <div id="errorBox">Please enter or select a valid waveguide dimension greater than 0.</div>
 
   <div class="resultTitle">RESULTS</div>
@@ -109,116 +114,140 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
   </div>
 
   <section class="infoBox">
-    <h2>Rectangular Waveguide Structure</h2>
-    <p>A rectangular waveguide is a hollow metallic pipe used to guide high-frequency radio waves, specifically microwaves. The dominant mode of propagation is typically the TE10 mode, which depends exclusively on the inner broad wall dimension.</p>
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Broad Wall Width (a)</strong> Interior horizontal cross-section dimensional span governing overall boundary propagation variables.</div>
+      <div class="paramItem"><strong>Waveguide Designation Scale</strong> Unified standard indexing reference array mapping predefined structural apertures perfectly.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Waveguide Component Setup</strong></p>
+        <p>Selected Index Profile = WR90 Standard<br>Broad Wall Width (a) = 0.900 inches</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Computed Core Matrix States</strong></p>
+        <p>• Dominant Mode Cutoff = 6.56 GHz<br>• Recommended Operating Range = 8.20 to 12.40 GHz<br>• High-fidelity bandwidth balances translate seamlessly.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Circuit Configurations & Applications</h2>
+    <p>Rectangular hollow waveguides manage high power microwave distribution boundaries efficiently. Confining the spectral wavefront maps stable signal parameters for the fundamental lowest-order transverse electric mode (TE10), blocking cross-modal interference lines safely.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
     <div class="diagramBox">
       <div class="waveguide-diagram">
         <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
-          <rect x="5" y="5" width="490" height="210" rx="6" fill="#ffffff" stroke="none"/>
-          <path d="M 60 70 L 260 40 L 420 100 L 220 130 Z" fill="none" stroke="#000000" stroke-width="2"/>
-          <path d="M 60 140 L 220 200 L 420 170 L 420 100" fill="none" stroke="#000000" stroke-width="2"/>
-          <line x1="60" y1="70" x2="60" y2="140" stroke="#000000" stroke-width="2"/>
-          <line x1="220" y1="130" x2="220" y2="200" stroke="#000000" stroke-width="2"/>
-          <path d="M 260 40 L 260 110 L 60 140" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="4,4"/>
-          <line x1="260" y1="110" x2="420" y2="170" stroke="#000000" stroke-width="1" stroke-dasharray="4,4"/>
-          <line x1="56" y1="145" x2="214" y2="204" stroke="#ff3b30" stroke-width="1.5"/>
-          <circle cx="56" cy="145" r="3" fill="#ff3b30"/>
-          <circle cx="214" cy="204" r="3" fill="#ff3b30"/>
-          <line x1="430" y1="102" x2="430" y2="168" stroke="#ff3b30" stroke-width="1.5"/>
-          <circle cx="430" cy="102" r="3" fill="#ff3b30"/>
-          <circle cx="430" cy="168" r="3" fill="#ff3b30"/>
-          <path d="M 330 140 L 340 145 M 333 143 L 340 147 M 337 145 L 340 149" stroke="#16a34a" stroke-width="1.5"/>
-          <path d="M 130 110 L 140 115 M 133 113 L 140 117 M 137 115 L 140 119" stroke="#16a34a" stroke-width="1.5"/>
-          <text x="125" y="190" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold" transform="rotate(20 125 190)">Broad Wall (a)</text>
-          <text x="442" y="140" fill="#000000" font-size="13" font-family="sans-serif" font-weight="bold">Height (b)</text>
-          <text x="240" y="75" fill="#555555" font-size="12" font-family="sans-serif" font-style="italic">Propagation Axis</text>
+          <defs>
+            <linearGradient id="metallicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#cbd5e1"/>
+              <stop offset="50%" stop-color="#94a3b8"/>
+              <stop offset="100%" stop-color="#475569"/>
+            </linearGradient>
+          </defs>
+          <rect x="5" y="5" width="490" height="210" rx="12" fill="#ffffff" stroke="none"/>
+          
+          <path d="M 60 70 L 260 40 L 420 100 L 220 130 Z" fill="url(#metallicGrad)" fill-opacity="0.25" stroke="#1e293b" stroke-width="2"/>
+          <path d="M 60 140 L 220 200 L 420 170 L 420 100" fill="none" stroke="#1e293b" stroke-width="2"/>
+          <line x1="60" y1="70" x2="60" y2="140" stroke="#1e293b" stroke-width="2"/>
+          <line x1="220" y1="130" x2="220" y2="200" stroke="#1e293b" stroke-width="2"/>
+          <path d="M 260 40 L 260 110 L 60 140" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="260" y1="110" x2="420" y2="170" stroke="#475569" stroke-width="1" stroke-dasharray="4,4"/>
+          
+          <line x1="56" y1="145" x2="214" y2="204" stroke="#ff4b00" stroke-width="2"/>
+          <circle cx="56" cy="145" r="3.5" fill="#ff4b00"/>
+          <circle cx="214" cy="204" r="3.5" fill="#ff4b00"/>
+          
+          <line x1="430" y1="102" x2="430" y2="168" stroke="#2563eb" stroke-width="2"/>
+          <circle cx="430" cy="102" r="3.5" fill="#2563eb"/>
+          <circle cx="430" cy="168" r="3.5" fill="#2563eb"/>
+          
+          <path d="M 330 140 L 340 145 M 333 143 L 340 147 M 337 145 L 340 149" stroke="#16a34a" stroke-width="2"/>
+          <path d="M 130 110 L 140 115 M 133 113 L 140 117 M 137 115 L 140 119" stroke="#16a34a" stroke-width="2"/>
+          
+          <text x="135" y="185" fill="#ff4b00" font-size="13" font-family="sans-serif" font-weight="bold" transform="rotate(20 135 185)">Broad Wall (a)</text>
+          <text x="442" y="140" fill="#2563eb" font-size="13" font-family="sans-serif" font-weight="bold">Height (b)</text>
+          <text x="240" y="75" fill="#16a34a" font-size="12" font-family="sans-serif" font-weight="bold" font-style="italic">Propagation Axis</text>
         </svg>
       </div>
     </div>
+    <p>Hollow structural boundaries isolate electromagnetic wavefront geometric limits cleanly relative to internal broad wall widths.</p>
   </section>
 
   <section class="infoBox">
     <h2>Formulas & Mathematical Logic</h2>
-    <p>The system calculates parameters for the fundamental lowest-order transverse electric mode (TE10) where height requirements are non-restrictive to cutoff thresholds:</p>
-    <div class="formulaLine">
-      <strong>Cutoff Frequency (fc):</strong><br>
-      fc = c / (2 * a)<br><br>
-      Where 'c' is the speed of light (approximately 2.99792458 x 10^8 m/s) and 'a' is the internal broad wall width dimension converted to meters.
-    </div>
-    <div class="formulaLine">
-      <strong>Recommended Operating Range:</strong><br>
-      Lower Bound = 1.25 * fc<br>
-      Upper Bound = 1.89 * fc
-    </div>
-  </section>
-
-  <section class="infoBox">
-    <h2>Practical Calculation Example</h2>
-    <div class="exampleGrid">
-      <div class="exampleCard">
-        <p><b>Input Parameters</b></p>
-        <p>Selected Waveguide: WR90</p>
-        <p>Broad Wall Width (a): 0.900 inches</p>
-      </div>
-      <div class="exampleCard">
-        <p><b>Determined Output Data</b></p>
-        <p>Cutoff Frequency: ~6.56 GHz</p>
-        <p>Ideal Bandwidth: 8.20 GHz to 12.40 GHz</p>
-      </div>
-    </div>
+    <div class="formulaLine">Cutoff Frequency (fc) = Speed of Light Constant / (2 * Broad Wall Width in Meters)</div>
+    <div class="formulaLine">Standard Upper Recommended Operating Bound = 1.89 * Cutoff Frequency</div>
+    <div class="formulaLine">Standard Lower Recommended Operating Bound = 1.25 * Cutoff Frequency</div>
+    <p>The processing matrix targets standard transverse mode calculations where interior parameters handle structural transitions without fragmentation anomalies.</p>
   </section>
 </main>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-var _0x96bf=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x77\x69\x64\x74\x68","\x74\x6F\x46\x69\x78\x65\x64","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x20\x74\x6F\x20","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x23\x77\x67","\x78","\x69\x6E","\x23\x77\x69\x64\x74\x68\x5F\x75\x6E\x69\x74","\x63\x68\x61\x6E\x67\x65","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];
-!function(_0xae68x1){
-  _0x96bf[0];
-  var _0xae68x2={calculate:function(){
-    var _0xae68x2=_0xae68x1(_0x96bf[2])[_0x96bf[1]](),
-        _0xae68x3=29.9792458/(5.08*_0xae68x2),
-        _0xae68x4=1.25*_0xae68x3,
-        _0xae68x5=1.89*_0xae68x3;
-    _0xae68x1("#tool_output1")[_0x96bf[1]](_0xae68x3[_0x96bf[3]](2));
-    _0xae68x1("#tool_output2")[_0x96bf[1]](_0xae68x4[_0x96bf[3]](2)+_0x96bf[5]+_0xae68x5[_0x96bf[3]](2));
-    document.getElementById("errorBox").style.display="none";
-  }};
+/* RE-ENGINEERED PURE VANILLA JAVASCRIPT LOGIC REWRITTEN FROM BASE MATRICES */
+document.addEventListener("DOMContentLoaded", function() {
+    var wgSelect = document.getElementById("wg");
+    var widthInput = document.getElementById("width");
+    var unitSelect = document.getElementById("width_unit");
 
-  function clearResults(){
-    document.getElementById("tool_output1").value="";
-    document.getElementById("tool_output2").value="";
-    document.getElementById("errorBox").style.display="none";
-  }
+    wgSelect.addEventListener("change", function() {
+        var selection = wgSelect.value;
+        if (selection !== "x") {
+            unitSelect.value = "in";
+            unitSelect.disabled = true;
+            widthInput.value = selection;
+            widthInput.disabled = true;
+        } else {
+            unitSelect.disabled = false;
+            widthInput.value = "";
+            widthInput.disabled = false;
+        }
+        clearResults();
+    });
 
-  _0xae68x1(_0x96bf[15])[_0x96bf[19]](function(){
-    var _0xae68x2=_0xae68x1(_0x96bf[15])[_0x96bf[1]]();
-    if(_0x96bf[16]!=_0xae68x2){
-      _0xae68x1(_0x96bf[18])[_0x96bf[1]](_0x96bf[17]);
-      _0xae68x1(_0x96bf[18])[_0x96bf[11]](_0x96bf[10],_0x96bf[10]);
-      _0xae68x1(_0x96bf[2])[_0x96bf[1]](_0xae68x2);
-      _0xae68x1(_0x96bf[2])[_0x96bf[11]](_0x96bf[10],_0x96bf[10]);
-    }else{
-      _0xae68x1(_0x96bf[18])[_0x96bf[13]](_0x96bf[10]);
-      _0xae68x1(_0x96bf[2])[_0x96bf[1]](_0x96bf[7]);
-      _0xae68x1(_0x96bf[2])[_0x96bf[13]](_0x96bf[10]);
-    }
+    widthInput.addEventListener("input", clearResults);
+    unitSelect.addEventListener("change", clearResults);
     clearResults();
-  });
+});
 
-  _0xae68x1(_0x96bf[2])[0].addEventListener("input",clearResults);
-  _0xae68x1(_0x96bf[18])[_0x96bf[19]](clearResults);
+function clearResults() {
+    document.getElementById("tool_output1").value = "";
+    document.getElementById("tool_output2").value = "";
+    document.getElementById("errorBox").style.display = "none";
+}
 
-  _0xae68x1(_0x96bf[12])[_0x96bf[23]](_0x96bf[20],function(_0xae68x1){
-    _0xae68x1[_0x96bf[21]]();
-    var val=parseFloat(document.getElementById("width").value);
-    if(!isFinite(val)||val<=0){
-      document.getElementById("errorBox").style.display="block";
-      return;
+function executeCalculation() {
+    var widthVal = parseFloat(document.getElementById("width").value);
+    var unit = document.getElementById("width_unit").value;
+
+    if (!isFinite(widthVal) || widthVal <= 0 || isNaN(widthVal)) {
+        document.getElementById("errorBox").style.display = "block";
+        return;
     }
-    _0xae68x2[_0x96bf[22]]();
-  });
-  
-  clearResults();
-}(jQuery);
+    document.getElementById("errorBox").style.display = "none";
+
+    // OBFUSCATED BASE COMPUTATION LOGIC MAPPED TO CONVERT CONTEXT TRACES CLEANLY
+    var convertedWidth = widthVal;
+    if (unit === "cm") {
+        convertedWidth = widthVal / 2.54;
+    } else if (unit === "mm") {
+        convertedWidth = widthVal / 25.4;
+    }
+
+    var baseFreq = 29.9792458 / (5.08 * convertedWidth);
+    var lowerBound = 1.25 * baseFreq;
+    var upperBound = 1.89 * baseFreq;
+
+    document.getElementById("tool_output1").value = baseFreq.toFixed(2);
+    document.getElementById("tool_output2").value = lowerBound.toFixed(2) + " to " + upperBound.toFixed(2);
+}
 </script>
-</body></html>
+</body>
+</html>
