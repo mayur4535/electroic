@@ -2,37 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Resistor Ratio Calculator | E-Series Voltage Divider Tool</title>
+<meta name="description" content="Find accurate E-series resistor ratios and voltage divider pairs with single, series and parallel resistor matching plus error percentage.">
+<meta name="keywords" content="resistor ratio calculator, voltage divider resistor calculator, E12 E24 E48 E96 resistor ratio finder, resistor matching calculator, precision voltage divider tool, resistor divider ratio calculator, electronics resistor selection, resistor series parallel ratio, low error resistor pair calculator, standard resistor value finder">
 <style>
-#resistor-ratio-calc,*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:10px}
-#resistor-ratio-calc{max-width:620px;margin:auto;padding-top:14px}
+#resistor-ratio-calc,#resistor-ratio-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#resistor-ratio-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
 input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
-select{text-align:center;font-weight:700}
-.unit-box{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fafafa;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
-.check-row{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;gap:10px;padding:0 12px;font-weight:700}
+select{text-align:center;font-weight:700;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+.check-row{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;gap:10px;padding:0 12px;font-weight:700;color:#4b5563}
 .check-row input{width:18px;height:18px}
-button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff3d00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
-.result-title{margin-top:30px;margin-bottom:14px;font-size:14px;font-weight:800;color:#a7afbd}
-.result-grid{display:grid;gap:12px}
-.result-card{padding:14px;border-radius:9px}
-.result-card:nth-child(1){background:#eef5ff;border:1px solid #bcd7ff}
-.result-card:nth-child(2){background:#ecfdf5;border:1px solid #bbf7d0}
-.result-card:nth-child(3){background:#f5f3ff;border:1px solid #ddd6fe}
-.result-label{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:7px}
-.result-value{font-size:15px;font-weight:900;line-height:1.8;visibility:hidden}
-.show-result .result-value,.show-result #equRratio{visibility:visible}
-#errorBox{display:none;margin-top:12px;color:#dc2626;font-size:14px;font-weight:800}
-#equRratio{visibility:hidden;font-size:14px;font-weight:800;color:#dc2626;margin-bottom:10px}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+#equRratio{font-size:13px;font-weight:900;color:#dc2626;margin-bottom:10px;min-height:18px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:104px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-card:nth-child(3) .result-label,.result-card:nth-child(3) .result-value{color:#7c3aed}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:14px;font-weight:900;line-height:1.7;word-break:break-word;min-height:58px}
 .mini-error{color:#dc2626;font-size:13px;font-weight:900}
-.formula{margin-top:18px;padding:14px;border-radius:9px;background:#f9fafb;border:1px solid #e5e7eb;font-size:14px;line-height:1.6;color:#667085;font-weight:700}
-@media(max-width:600px){body{padding:0}.calc-row{grid-template-columns:minmax(0,1fr) 72px}.result-value{font-size:14px}}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:13px}
+}
 </style>
 </head>
-
 <body>
 
 <div id="resistor-ratio-calc">
@@ -41,7 +61,7 @@ button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;backgro
     <div>
       <label class="calc-label">Resistor Series</label>
       <div class="calc-row">
-        <select id="seriesSelect" onchange="serclick(this.value)">
+        <select id="seriesSelect" onchange="serclick(this.value);clearResults();">
           <option value="12" selected>E12</option>
           <option value="24">E24</option>
           <option value="48">E48</option>
@@ -54,7 +74,7 @@ button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;backgro
     <div>
       <label class="calc-label">Ratio Type</label>
       <div class="calc-row">
-        <select id="ratioTypeSelect" onchange="ratioclick(this.value)">
+        <select id="ratioTypeSelect" onchange="ratioclick(this.value);clearResults();">
           <option value="0" selected>R1 / R2</option>
           <option value="1">Voltage Divider</option>
         </select>
@@ -65,18 +85,18 @@ button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;backgro
     <div>
       <label class="calc-label">Desired Ratio</label>
       <div class="calc-row">
-        <input id="Rratio" type="number" value="0.35" step="0.01">
+        <input id="Rratio" type="number" value="0.35" step="0.01" oninput="clearResults()">
         <div class="unit-box">R</div>
       </div>
     </div>
 
     <label class="check-row">
-      <input type="checkbox" id="recipCheck">
-      Inverse <span id="reciprocal"></span>
+      <input type="checkbox" id="recipCheck" onchange="clearResults()">
+      Inverse Ratio
     </label>
   </div>
 
-  <button onclick="ratioCalc()">Calculate</button>
+  <button onclick="ratioCalc()">CALCULATE</button>
 
   <div id="errorBox">Please enter valid ratio.</div>
 
@@ -87,36 +107,113 @@ button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;backgro
     <div class="result-card">
       <div class="result-label">Single</div>
       <div class="result-value">
-        <span id="ratioSingle1"></span> ÷ <span id="ratioSingle2"></span> =
-        <span id="ratioSingleVal"></span><br>
-        <span class="mini-error">ERROR: </span><span id="ratioSingleErr" class="mini-error"></span>
+        <span id="ratioSingle1"></span> <span id="singleSep"></span> <span id="ratioSingle2"></span>
+        <span id="singleEq"></span> <span id="ratioSingleVal"></span><br>
+        <span id="singleErrLabel" class="mini-error"></span><span id="ratioSingleErr" class="mini-error"></span>
       </div>
     </div>
 
     <div class="result-card">
       <div class="result-label">Series</div>
       <div class="result-value">
-        <span id="ratioSeries1"></span> ÷
-        (<span id="ratioSeries2"></span> + <span id="ratioSeries3"></span>) =
-        <span id="ratioSerVal"></span><br>
-        <span class="mini-error">ERROR: </span><span id="ratioSerErr" class="mini-error"></span>
+        <span id="ratioSeries1"></span> <span id="seriesSep"></span>
+        <span id="ratioSeries2"></span> <span id="seriesPlus"></span> <span id="ratioSeries3"></span>
+        <span id="seriesEq"></span> <span id="ratioSerVal"></span><br>
+        <span id="seriesErrLabel" class="mini-error"></span><span id="ratioSerErr" class="mini-error"></span>
       </div>
     </div>
 
     <div class="result-card">
       <div class="result-label">Parallel</div>
       <div class="result-value">
-        <span id="ratioPar1"></span> ÷
-        (<span id="ratioPar2"></span> // <span id="ratioPar3"></span>) =
-        <span id="ratioParVal"></span><br>
-        <span class="mini-error">ERROR: </span><span id="ratioParErr" class="mini-error"></span>
+        <span id="ratioPar1"></span> <span id="parSep"></span>
+        <span id="ratioPar2"></span> <span id="parSymbol"></span> <span id="ratioPar3"></span>
+        <span id="parEq"></span> <span id="ratioParVal"></span><br>
+        <span id="parErrLabel" class="mini-error"></span><span id="ratioParErr" class="mini-error"></span>
       </div>
     </div>
   </div>
 
-  <div class="formula">
-    Original E-series resistor ratio search formula preserved.
-  </div>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Resistor Series</strong>Select E12, E24, E48 or E96 standard resistor values to search practical resistor combinations.</div>
+      <div class="paramItem"><strong>Ratio Type</strong>Choose direct resistor ratio R1 / R2 or voltage divider mode for Vout / Vin resistor network design.</div>
+      <div class="paramItem"><strong>Desired Ratio</strong>Enter the target ratio for precision divider selection, gain setting, sensor scaling or feedback network design.</div>
+      <div class="paramItem"><strong>Inverse Option</strong>Use inverse mode when the required circuit ratio is easier to express as the reciprocal target value.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Voltage Divider Case</strong></p>
+        <p>Ratio Type: Voltage Divider<br>Desired Ratio: 0.35<br>Series: E24<br>Use for Vin to Vout divider scaling.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Resistor Ratio Matching</strong></p>
+        <p>Ratio Type: R1 / R2<br>Desired Ratio: 2.5<br>Series: E96<br>Find low-error standard resistor pairs.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A resistor ratio or voltage divider uses two resistors to convert input voltage into a predictable output voltage. E-series matching helps reduce ratio error using real-world resistor values.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 500 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Voltage divider resistor ratio diagram">
+        <rect width="500" height="480" fill="#fff"/>
+
+        <path d="M48 10 L226 10 L226 112" fill="none" stroke="#00991a" stroke-width="2"/>
+        <path d="M48 290 L48 466 L226 466" fill="none" stroke="#00991a" stroke-width="2"/>
+        <path d="M226 210 L226 263" fill="none" stroke="#00991a" stroke-width="2"/>
+        <path d="M226 263 L226 293" fill="none" stroke="#00991a" stroke-width="2"/>
+        <path d="M226 388 L226 466" fill="none" stroke="#00991a" stroke-width="2"/>
+        <path d="M226 263 L355 263" fill="none" stroke="#00991a" stroke-width="2"/>
+        <path d="M226 466 L355 466" fill="none" stroke="#00991a" stroke-width="2"/>
+
+        <line x1="8" y1="226" x2="88" y2="226" stroke="#991717" stroke-width="5" stroke-linecap="round"/>
+        <line x1="34" y1="238" x2="62" y2="238" stroke="#991717" stroke-width="5" stroke-linecap="round"/>
+        <line x1="8" y1="250" x2="88" y2="250" stroke="#991717" stroke-width="5" stroke-linecap="round"/>
+        <line x1="34" y1="263" x2="62" y2="263" stroke="#991717" stroke-width="5" stroke-linecap="round"/>
+
+        <line x1="48" y1="10" x2="48" y2="220" stroke="#00991a" stroke-width="2"/>
+        <line x1="48" y1="270" x2="48" y2="466" stroke="#00991a" stroke-width="2"/>
+
+        <text x="92" y="271" font-size="30" fill="#00008b">Vin</text>
+
+        <path d="M226 112 L226 123 L212 131 L240 145 L212 158 L240 172 L212 185 L226 198 L226 210"
+              fill="none" stroke="#b50000" stroke-width="2"/>
+        <text x="244" y="169" font-size="26" fill="#00008b">R1</text>
+
+        <circle cx="226" cy="263" r="7" fill="#d40000"/>
+
+        <circle cx="226" cy="293" r="6" fill="#d40000"/>
+        <path d="M226 293 L226 306 L212 314 L240 328 L212 341 L240 355 L212 368 L226 381 L226 388"
+              fill="none" stroke="#b50000" stroke-width="2"/>
+        <text x="244" y="339" font-size="26" fill="#00008b">R2</text>
+
+        <circle cx="226" cy="466" r="7" fill="#d40000"/>
+
+        <line x1="385" y1="292" x2="385" y2="438" stroke="#000" stroke-width="3"/>
+        <polygon points="385,269 366,308 385,294 404,308" fill="#333"/>
+        <polygon points="385,462 366,423 385,437 404,423" fill="#333"/>
+        <text x="410" y="374" font-size="32" fill="#0000d8">Vout</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Direct resistor ratio: Ratio = R1 / R2</div>
+    <div class="formula">Voltage divider ratio: Vout / Vin = R2 / (R1 + R2)</div>
+    <div class="formula">Equivalent divider resistor ratio used by search: R1 / R2 = ratio / (1 - ratio)</div>
+    <div class="formula">Error percentage compares the selected standard resistor combination against the desired ratio.</div>
+    <p>The calculator searches standard E-series values and compares single resistor, series-pair and parallel-pair denominator combinations to reduce practical matching error.</p>
+  </section>
+
 </div>
 
 <script>
@@ -131,12 +228,18 @@ function serclick(ser){
   else if(ser==24) Es=E24;
   else{
     Es=[];
-    for(i=0;i<ser;i++) Es[i]=Number((Math.pow(10,i/ser)).toFixed(2));
+    for(var i=0;i<ser;i++) Es[i]=Number((Math.pow(10,i/ser)).toFixed(2));
   }
 }
 
 function ratioclick(type){
   ratiotype=Number(type);
+}
+
+function clearResults(){
+  var ids=["equRratio","ratioSingle1","singleSep","ratioSingle2","singleEq","ratioSingleVal","singleErrLabel","ratioSingleErr","ratioSeries1","seriesSep","ratioSeries2","seriesPlus","ratioSeries3","seriesEq","ratioSerVal","seriesErrLabel","ratioSerErr","ratioPar1","parSep","ratioPar2","parSymbol","ratioPar3","parEq","ratioParVal","parErrLabel","ratioParErr"];
+  ids.forEach(function(id){document.getElementById(id).innerHTML="";});
+  document.getElementById("errorBox").style.display="none";
 }
 
 function toEng(r){
@@ -209,13 +312,13 @@ function findBestPar(res){
 }
 
 function ratioCalc(){
-  document.getElementById("resistor-ratio-calc").classList.add("show-result");
-
   var dratio=Number(document.getElementById("Rratio").value);
+
   if(isNaN(dratio)||dratio<=0||(ratiotype==1&&dratio>=1)){
     document.getElementById("errorBox").style.display="block";
     return;
   }
+
   document.getElementById("errorBox").style.display="none";
 
   if(document.getElementById("recipCheck").checked){
@@ -235,7 +338,7 @@ function ratioCalc(){
   var bestSingleErr=1E9,bestSerErr=1E9,bestParErr=1E9;
   var bestSingleRNum,bestSingleRDen,bestSeriesRNum,bestSeriesRDen1,bestSeriesRDen2,bestParRNum,bestParRDen1,bestParRDen2;
 
-  for(i in Es){
+  for(var i in Es){
     var rNum=Math.round(Es[i]*exp);
     var rDen=rNum/dratio;
 
@@ -259,31 +362,43 @@ function ratioCalc(){
   bestSingleRNum=Math.round(100*bestSingleRNum)/100;
   bestSingleRDen=Math.round(100*bestSingleRDen)/100;
   document.getElementById("ratioSingle1").innerHTML=toEng(bestSingleRNum);
+  document.getElementById("singleSep").innerHTML="÷";
   document.getElementById("ratioSingle2").innerHTML=toEng(bestSingleRDen);
+  document.getElementById("singleEq").innerHTML="=";
   document.getElementById("ratioSingleVal").innerHTML=(bestSingleRNum/bestSingleRDen).toPrecision(4);
+  document.getElementById("singleErrLabel").innerHTML="ERROR: ";
   document.getElementById("ratioSingleErr").innerHTML=(100*(bestSingleErr-1)).toFixed(2)+" %";
 
   bestSeriesRNum=Math.round(100*bestSeriesRNum)/100;
   bestSeriesRDen1=Math.round(100*bestSeriesRDen1)/100;
   bestSeriesRDen2=Math.round(100*bestSeriesRDen2)/100;
   document.getElementById("ratioSeries1").innerHTML=toEng(bestSeriesRNum);
-  document.getElementById("ratioSeries2").innerHTML=toEng(bestSeriesRDen1);
-  document.getElementById("ratioSeries3").innerHTML=toEng(bestSeriesRDen2);
+  document.getElementById("seriesSep").innerHTML="÷";
+  document.getElementById("ratioSeries2").innerHTML="("+toEng(bestSeriesRDen1);
+  document.getElementById("seriesPlus").innerHTML="+";
+  document.getElementById("ratioSeries3").innerHTML=toEng(bestSeriesRDen2)+")";
+  document.getElementById("seriesEq").innerHTML="=";
   document.getElementById("ratioSerVal").innerHTML=(bestSeriesRNum/(bestSeriesRDen1+bestSeriesRDen2)).toPrecision(4);
+  document.getElementById("seriesErrLabel").innerHTML="ERROR: ";
   document.getElementById("ratioSerErr").innerHTML=(100*(bestSerErr-1)).toFixed(2)+" %";
 
   bestParRNum=Math.round(100*bestParRNum)/100;
   bestParRDen1=Math.round(100*bestParRDen1)/100;
   bestParRDen2=Math.round(100*bestParRDen2)/100;
   document.getElementById("ratioPar1").innerHTML=toEng(bestParRNum);
-  document.getElementById("ratioPar2").innerHTML=toEng(bestParRDen1);
-  document.getElementById("ratioPar3").innerHTML=toEng(bestParRDen2);
+  document.getElementById("parSep").innerHTML="÷";
+  document.getElementById("ratioPar2").innerHTML="("+toEng(bestParRDen1);
+  document.getElementById("parSymbol").innerHTML="//";
+  document.getElementById("ratioPar3").innerHTML=toEng(bestParRDen2)+")";
+  document.getElementById("parEq").innerHTML="=";
   document.getElementById("ratioParVal").innerHTML=(bestParRNum*(bestParRDen1+bestParRDen2)/(bestParRDen1*bestParRDen2)).toPrecision(4);
+  document.getElementById("parErrLabel").innerHTML="ERROR: ";
   document.getElementById("ratioParErr").innerHTML=(100*(bestParErr-1)).toFixed(2)+" %";
 }
 
 document.addEventListener("DOMContentLoaded",function(){
   serclick(12);
+  clearResults();
 });
 </script>
 
