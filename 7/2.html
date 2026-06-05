@@ -1,136 +1,274 @@
-
-
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-
-
-function calcbattery(){
-    var form = document.form1;
-   
-    var r = form.rating.value;
-    
-    var d = form.device.value;
-	
-   
-	var Precision=6;
-
-    var result = (r/d)* (.7);
-
-
-     form.result.value =result.toPrecision(Precision);
-    
- return true;
-}
-//-->
-</SCRIPT>
-</head>
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Battery Run Time Calculator | Battery Life Calculator</title>
+<meta name="description" content="Calculate battery run time from mAh or Ah capacity and device current in mA or A with smooth animated battery level indicator.">
+<meta name="keywords" content="battery run time calculator, battery life calculator, battery mAh calculator, Ah battery runtime calculator, mAh to hours calculator, battery backup calculator, device power consumption calculator, battery duration calculator, DC battery runtime calculator, battery capacity calculator, electronics battery calculator, battery life in hours calculator, battery amp hour calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#battery-runtime-calc,#battery-runtime-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#battery-runtime-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:700;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box,.unit-select{width:82px;min-width:82px;max-width:82px;height:43px}
+.unit-box{border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+.resetBtn{background:#64748b;margin-top:10px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.batteryWrap{margin-top:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+.batteryHead{font-size:13px;font-weight:900;color:#334155;text-transform:uppercase;margin-bottom:12px}
+.batteryBox{display:flex;align-items:center;gap:8px}
+.batteryShell{position:relative;width:100%;height:46px;border:4px solid #334155;border-radius:10px;background:#f8fafc;overflow:hidden}
+.batteryCap{width:14px;height:26px;background:#334155;border-radius:0 5px 5px 0}
+.batteryFill{height:100%;width:0%;background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e);transition:width 1.2s ease;border-radius:5px}
+.batteryPercent{margin-top:10px;font-size:14px;font-weight:900;color:#334155;text-align:center}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box,.unit-select{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
+<body>
 
+<div id="battery-runtime-calc">
 
+  <div class="calc-grid">
+    <div>
+      <label class="calc-label">Battery Capacity</label>
+      <div class="calc-row">
+        <input id="capacity" type="number" placeholder="Example: 5000" oninput="clearResults()">
+        <select id="capacityUnit" class="unit-select" onchange="clearResults()">
+          <option value="1" selected>mAh</option>
+          <option value="1000">Ah</option>
+        </select>
+      </div>
+    </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+    <div>
+      <label class="calc-label">Device Power Consumption</label>
+      <div class="calc-row">
+        <input id="current" type="number" placeholder="Example: 250" oninput="clearResults()">
+        <select id="currentUnit" class="unit-select" onchange="clearResults()">
+          <option value="1" selected>mA</option>
+          <option value="1000">A</option>
+        </select>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">Time Format</label>
+      <div class="calc-row">
+        <select id="timeFormat" onchange="updateTimeDisplay()">
+          <option value="hours" selected>Hours</option>
+          <option value="days">Days</option>
+          <option value="weeks">Weeks</option>
+          <option value="months">Months</option>
+          <option value="years">Years</option>
+        </select>
+        <div class="unit-box">TIME</div>
+      </div>
+    </div>
+  </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+  <button type="button" onclick="calculateRuntime()">CALCULATE</button>
+  <button type="button" class="resetBtn" onclick="resetCalc()">RESET</button>
 
+  <div id="errorBox">Please enter valid battery capacity and device power consumption.</div>
 
+  <div class="result-title">RESULTS</div>
 
-	 <FORM name="form1">
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="result-label">Estimated Battery Life</div>
+      <div class="result-value"><span id="runtimeResult"></span></div>
+    </div>
 
+    <div class="result-card">
+      <div class="result-label">Runtime In Hours</div>
+      <div class="result-value"><span id="hourResult"></span></div>
+    </div>
+  </div>
 
-<label for="r2" style="font-size:55;" >Battery</label><font face="Arial" size="6"> (Capacity Rating)  </font><input maxlength="15" NAME="rating" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:42px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">mAH</label>
-<h1 style="font-size:55;"></h1>		
-<label for="r2" style="font-size:60;" >  device</label><font face="Arial" size="6"> (Consumption) </font><input  maxlength="15" NAME="device" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">mA</label>		
-	
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT TYPE="button" VALUE=" Calculate " 
-   onClick="calcbattery(this.form)" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <div class="batteryWrap">
+    <div class="batteryHead">Battery Level Indicator</div>
+    <div class="batteryBox">
+      <div class="batteryShell">
+        <div id="batteryFill" class="batteryFill"></div>
+      </div>
+      <div class="batteryCap"></div>
+    </div>
+    <div id="batteryPercent" class="batteryPercent"></div>
+  </div>
 
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Battery Capacity</strong>Enter capacity in mAh or Ah. Example: 5000 mAh is the same as 5 Ah.</div>
+      <div class="paramItem"><strong>Device Consumption</strong>Enter current draw in mA or A. Example: 250 mA is the same as 0.25 A.</div>
+      <div class="paramItem"><strong>Time Format</strong>Display estimated runtime in hours, days, weeks, months, or years.</div>
+      <div class="paramItem"><strong>Battery Indicator</strong>100 hours equals full battery indicator. 50 hours equals 50%, 25 hours equals 25%.</div>
+    </div>
+  </section>
 
-<h3>Outputs</h3></div></legend>	
-		
-<label for="r2" style="font-size:60;" >Battery Life</label><font face="Arial" size="7">  </font><input   NAME="result"  class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:105px;">H</label>		
-		
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Small IoT Device</strong></p>
+        <p>Battery: 2000 mAh<br>Current: 100 mA<br>Runtime: 20 hours<br>Indicator: 20%</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Power Bank Load</strong></p>
+        <p>Battery: 10 Ah<br>Current: 0.5 A<br>Runtime: 20 hours<br>Indicator: 20%</p>
+      </div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>This battery run time calculator estimates how long a battery lasts from capacity and device current. Real runtime can change due to battery age, temperature, battery chemistry, conversion loss, and discharge condition.</p>
+    <div class="diagramBox">
+      <svg viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Battery run time diagram">
+        <rect width="560" height="260" fill="#fff"/>
+        <rect x="40" y="80" width="210" height="95" rx="14" fill="#eef5ff" stroke="#2563eb" stroke-width="4"/>
+        <rect x="250" y="112" width="20" height="32" rx="4" fill="#2563eb"/>
+        <text x="145" y="122" text-anchor="middle" font-size="22" font-weight="900" fill="#1e40af">BATTERY</text>
+        <text x="145" y="152" text-anchor="middle" font-size="16" font-weight="800" fill="#1e40af">mAh / Ah</text>
+        <line x1="270" y1="128" x2="430" y2="128" stroke="#16a34a" stroke-width="6" stroke-linecap="round"/>
+        <polygon points="430,128 405,113 405,143" fill="#16a34a"/>
+        <text x="350" y="108" text-anchor="middle" font-size="16" font-weight="900" fill="#16a34a">mA / A Load</text>
+        <rect x="430" y="88" width="90" height="80" rx="10" fill="#ecfdf5" stroke="#16a34a" stroke-width="4"/>
+        <text x="475" y="125" text-anchor="middle" font-size="18" font-weight="900" fill="#047857">DEVICE</text>
+        <text x="475" y="150" text-anchor="middle" font-size="14" font-weight="800" fill="#047857">LOAD</text>
+      </svg>
+    </div>
+  </section>
 
-	
-</FORM>
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Battery capacity is converted to mAh.</div>
+    <div class="formula">Device current is converted to mA.</div>
+    <div class="formula">Battery life in hours = Battery Capacity in mAh / Device Power Consumption in mA</div>
+    <div class="formula">Days = Hours / 24</div>
+    <div class="formula">Weeks = Hours / 168</div>
+    <div class="formula">Months = Hours / 730</div>
+    <div class="formula">Years = Hours / 8760</div>
+    <div class="formula">Battery indicator percent = Runtime hours, capped at 100%. So 100 hours = 100% full.</div>
+  </section>
 
-</fieldset>
+</div>
+
+<script>
+var lastHours=null;
+
+function clearResults(){
+  document.getElementById("runtimeResult").innerText="";
+  document.getElementById("hourResult").innerText="";
+  document.getElementById("errorBox").style.display="none";
+  lastHours=null;
+  animateBattery(0);
+  document.getElementById("batteryPercent").innerText="";
+}
+
+function resetCalc(){
+  document.getElementById("capacity").value="";
+  document.getElementById("current").value="";
+  document.getElementById("capacityUnit").value="1";
+  document.getElementById("currentUnit").value="1";
+  document.getElementById("timeFormat").value="hours";
+  clearResults();
+}
+
+function animateBattery(percent){
+  var fill=document.getElementById("batteryFill");
+  fill.style.width=Math.max(0,Math.min(100,percent))+"%";
+}
+
+function indicatorPercent(hours){
+  if(hours<=0)return 0;
+  if(hours>=100)return 100;
+  return hours;
+}
+
+function updateTimeDisplay(){
+  if(lastHours===null){
+    document.getElementById("runtimeResult").innerText="";
+    document.getElementById("hourResult").innerText="";
+    return;
+  }
+
+  var format=document.getElementById("timeFormat").value;
+  var value=lastHours;
+  var unit="hours";
+
+  if(format==="days"){value=lastHours/24;unit="days";}
+  else if(format==="weeks"){value=lastHours/168;unit="weeks";}
+  else if(format==="months"){value=lastHours/730;unit="months";}
+  else if(format==="years"){value=lastHours/8760;unit="years";}
+
+  document.getElementById("runtimeResult").innerText=value.toPrecision(5)+" "+unit;
+  document.getElementById("hourResult").innerText=lastHours.toPrecision(5)+" hours";
+
+  var pct=indicatorPercent(lastHours);
+  animateBattery(pct);
+  document.getElementById("batteryPercent").innerText=Math.round(pct)+"% battery indicator based on 100-hour full scale";
+}
+
+function calculateRuntime(){
+  var capacity=Number(document.getElementById("capacity").value);
+  var current=Number(document.getElementById("current").value);
+
+  var capacityUnit=Number(document.getElementById("capacityUnit").value);
+  var currentUnit=Number(document.getElementById("currentUnit").value);
+
+  if(capacity<=0||current<=0||isNaN(capacity)||isNaN(current)){
+    document.getElementById("errorBox").style.display="block";
+    lastHours=null;
+    document.getElementById("runtimeResult").innerText="";
+    document.getElementById("hourResult").innerText="";
+    animateBattery(0);
+    document.getElementById("batteryPercent").innerText="";
+    return;
+  }
+
+  document.getElementById("errorBox").style.display="none";
+
+  capacity=capacity*capacityUnit;
+  current=current*currentUnit;
+
+  lastHours=capacity/current;
+
+  updateTimeDisplay();
+}
+</script>
+
+</body>
+</html>
