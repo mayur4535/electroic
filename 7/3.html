@@ -1,151 +1,270 @@
-
-	<script>
-		function Compute(form) {
-			with(Math) {
-				var Precision= 10;
-				var Days;
-				var Ed;
-				var mAh= Number(form.mAh.value); // in mW.
-				var V= Number(form.V.value);
-				var Ps= Number(form.Ps.value);
-				var Pl= Number(form.Pl.value);   // in mW.
-				var N= Number(form.N.value);
-				var F= Number(form.F.value);
-				var T= Number(form.T.value);
-				Ed= (Ps*N*F*T)/(3600*V) + 24*Pl/V; // energy use/day. divide by 1000 converts uW to mW, 24 is hours per day. 
-				Days= (mAh/Ed);
-				form.Ed.value= Ed.toPrecision(Precision);
-				form.Days.value= Days.toPrecision(Precision);
-
-			}
-		}
-	</script>
-</head>
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Data Logger Battery Life Calculator | Sensor Battery Runtime Tool</title>
+<meta name="description" content="Calculate data logger battery life using battery capacity, voltage, sleep power, sensor power, sample rate, on-time and sensor count.">
+<meta name="keywords" content="data logger battery life calculator, sensor battery life calculator, data logger runtime calculator, battery capacity mAh calculator, sensor power consumption calculator, battery energy per day calculator, low power data logger calculator, IoT sensor battery calculator, wireless sensor battery runtime, sample rate battery life calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#data-logger-battery-calc,#data-logger-battery-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#data-logger-battery-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:700;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box,.unit-select{width:82px;min-width:82px;max-width:82px;height:43px}
+.unit-box{border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.batteryWrap{margin-top:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+.batteryHead{font-size:13px;font-weight:900;color:#334155;text-transform:uppercase;margin-bottom:12px}
+.batteryBox{display:flex;align-items:center;gap:8px}
+.batteryShell{position:relative;width:100%;height:46px;border:4px solid #334155;border-radius:10px;background:#f8fafc;overflow:hidden}
+.batteryCap{width:14px;height:26px;background:#334155;border-radius:0 5px 5px 0}
+.batteryFill{height:100%;width:0%;background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e);transition:width 1.2s ease;border-radius:5px}
+.batteryPercent{margin-top:10px;font-size:14px;font-weight:900;color:#334155;text-align:center}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box,.unit-select{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
 
+<body>
+<div id="data-logger-battery-calc">
 
+  <div class="calc-grid">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+    <div>
+      <label class="calc-label">Battery Energy / Capacity</label>
+      <div class="calc-row">
+        <input id="mAh" type="number" placeholder="Example: 2200" oninput="clearResults()">
+        <div class="unit-box">mAh</div>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">Battery Voltage</label>
+      <div class="calc-row">
+        <input id="V" type="number" placeholder="Example: 3.7" oninput="clearResults()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<form method="post" name="ParamForm">
+    <div>
+      <label class="calc-label">Data Logger Sleep Power</label>
+      <div class="calc-row">
+        <input id="Pl" type="number" placeholder="Example: 0.5" oninput="clearResults()">
+        <div class="unit-box">mW</div>
+      </div>
+    </div>
 
-<label for="r2" style="font-size:55;" >E</label><font face="Arial" size="6"> (Battery Energy)  </font><input  NAME="mAh" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:45px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mAH</label>
-<h1 style="font-size:50;"></h1>		
+    <div>
+      <label class="calc-label">Sensor Power</label>
+      <div class="calc-row">
+        <input id="Ps" type="number" placeholder="Example: 30" oninput="clearResults()">
+        <div class="unit-box">mW</div>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">Sensor On Time Per Sample</label>
+      <div class="calc-row">
+        <input id="T" type="number" placeholder="Example: 2" oninput="clearResults()">
+        <div class="unit-box">Sec</div>
+      </div>
+    </div>
 
-<label for="r2" style="font-size:55;" >V</label><font face="Arial" size="6"> (Battery Voltage)  </font><input  name="V" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:50;"></h1>	
+    <div>
+      <label class="calc-label">Sample Rate Per Day</label>
+      <div class="calc-row">
+        <input id="F" type="number" placeholder="Example: 144" oninput="clearResults()">
+        <div class="unit-box">SPD</div>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">Number of Sensors</label>
+      <div class="calc-row">
+        <input id="N" type="number" placeholder="Example: 2" oninput="clearResults()">
+        <div class="unit-box">N</div>
+      </div>
+    </div>
 
-<label for="r2" style="font-size:55;" >Pl</label><font face="Arial" size="5"> (Data Logger Power when Sleeping)  </font><input  name="Pl" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mW</label>
-<h1 style="font-size:50px;"></h1>	
+  </div>
 
-<label for="r2" style="font-size:55;" >Ps</label><font face="Arial" size="6"> (Sensor Power)  </font><input  name="Ps" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mW</label>
-<h1 style="font-size:50;"></h1>	
+  <button type="button" onclick="computeLoggerBattery()">CALCULATE</button>
 
-<label for="r2" style="font-size:55;" >T</label><font face="Arial" size="6"> (Sensor On time per sample)  </font><input  name="T" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Sec</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >F</label><font face="Arial" size="6"> (Sample Rate per Day)  </font><input  name="F" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Spd</label>
-<h1 style="font-size:50;"></h1>	
+  <div id="errorBox">Please enter valid positive values.</div>
 
-<label for="r2" style="font-size:55;" >Num. Sensors</label><font face="Arial" size="6">   </font><input  name="N" class="intro"  style="position: absolute;   width:412; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:40;"></h1>		
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT TYPE="button" VALUE=" Calculate " 
-   name="B1" onclick="Compute(document.ParamForm);" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <div class="result-title">RESULTS</div>
 
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="result-label">Energy Usage Per Day</div>
+      <div class="result-value"><span id="Ed"></span></div>
+    </div>
 
-<h3>Outputs</h3></div></legend>			
-<label for="r2" style="font-size:55;" >Ed</label><font face="Arial" size="6"> (Energy usage per day)  </font><input maxlength="15" NAME="Ed" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:45px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mAH</label>
-<h1 style="font-size:50;"></h1>		
-<label for="r2" style="font-size:55;" >Battery Life</label><font face="Arial" size="5"> (Estimated)  </font><input maxlength="15" NAME="Days" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:45px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Day</label>
-<h1 style="font-size:40;"></h1>		
-			
-			
-		
-		</form>
+    <div class="result-card">
+      <div class="result-label">Estimated Battery Life</div>
+      <div class="result-value"><span id="Days"></span></div>
+    </div>
+  </div>
 
-		
+  <div class="batteryWrap">
+    <div class="batteryHead">Battery Life Indicator</div>
+    <div class="batteryBox">
+      <div class="batteryShell">
+        <div id="batteryFill" class="batteryFill"></div>
+      </div>
+      <div class="batteryCap"></div>
+    </div>
+    <div id="batteryPercent" class="batteryPercent"></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Battery Energy</strong>Battery capacity in mAh used as the available energy store for the data logger system.</div>
+      <div class="paramItem"><strong>Battery Voltage</strong>Battery voltage used to convert logger and sensor power demand into mAh per day.</div>
+      <div class="paramItem"><strong>Sleep Power</strong>Power consumed by the data logger during low-power sleep state across the full day.</div>
+      <div class="paramItem"><strong>Sensor Sampling</strong>Sensor power, on-time, sample rate and sensor count define the active measurement energy demand.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Low Power Logger</strong></p>
+        <p>Battery: 2200 mAh<br>Voltage: 3.7 V<br>Sleep: 0.5 mW<br>Sensor: 30 mW<br>Time: 2 sec<br>Rate: 144/day<br>Sensors: 2</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Battery Life Check</strong></p>
+        <p>Use this calculator for IoT loggers, wireless sensor nodes, environmental monitoring, temperature loggers and remote data collection.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A data logger battery drain has two parts: continuous sleep power and short sensor-on pulses. Total daily energy use determines how many days the battery can support the system.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 560 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Data logger battery life diagram">
+        <rect width="560" height="280" fill="#fff"/>
+
+        <rect x="35" y="85" width="145" height="90" rx="14" fill="#eef5ff" stroke="#2563eb" stroke-width="4"/>
+        <rect x="180" y="115" width="18" height="30" rx="4" fill="#2563eb"/>
+        <text x="108" y="123" text-anchor="middle" font-size="20" font-weight="900" fill="#1e40af">BATTERY</text>
+        <text x="108" y="150" text-anchor="middle" font-size="14" font-weight="800" fill="#1e40af">mAh + V</text>
+
+        <line x1="198" y1="130" x2="270" y2="130" stroke="#16a34a" stroke-width="6" stroke-linecap="round"/>
+        <polygon points="270,130 248,117 248,143" fill="#16a34a"/>
+
+        <rect x="270" y="75" width="135" height="110" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="4"/>
+        <text x="338" y="112" text-anchor="middle" font-size="18" font-weight="900" fill="#ea580c">DATA</text>
+        <text x="338" y="138" text-anchor="middle" font-size="18" font-weight="900" fill="#ea580c">LOGGER</text>
+        <text x="338" y="164" text-anchor="middle" font-size="13" font-weight="800" fill="#ea580c">Sleep Power</text>
+
+        <line x1="405" y1="130" x2="470" y2="130" stroke="#16a34a" stroke-width="6" stroke-linecap="round"/>
+        <polygon points="470,130 448,117 448,143" fill="#16a34a"/>
+
+        <rect x="470" y="85" width="65" height="90" rx="10" fill="#ecfdf5" stroke="#16a34a" stroke-width="4"/>
+        <text x="503" y="122" text-anchor="middle" font-size="15" font-weight="900" fill="#047857">SENSOR</text>
+        <text x="503" y="148" text-anchor="middle" font-size="13" font-weight="800" fill="#047857">Pulse</text>
+
+        <path d="M100 220 H170 V198 H210 V220 H250 V198 H290 V220 H330 V198 H370 V220 H460" fill="none" stroke="#dc2626" stroke-width="4"/>
+        <text x="280" y="252" text-anchor="middle" font-size="15" font-weight="900" fill="#dc2626">Sensor ON pulses per day</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Original formula preserved:</div>
+    <div class="formula">Energy use per day = (Sensor Power × Number of Sensors × Sample Rate × Sensor On Time) / (3600 × Battery Voltage) + 24 × Sleep Power / Battery Voltage</div>
+    <div class="formula">Battery Life in Days = Battery Capacity / Energy use per day</div>
+    <p>Sensor power and sleep power are treated in mW, battery voltage in V, battery capacity in mAh, on-time in seconds and sample rate as samples per day.</p>
+  </section>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("Ed").innerText="";
+  document.getElementById("Days").innerText="";
+  document.getElementById("errorBox").style.display="none";
+  animateBattery(0);
+  document.getElementById("batteryPercent").innerText="";
+}
+
+function animateBattery(percent){
+  document.getElementById("batteryFill").style.width=Math.max(0,Math.min(100,percent))+"%";
+}
+
+function batteryPercentFromDays(days){
+  if(days<=0)return 0;
+  if(days>=100)return 100;
+  return days;
+}
+
+function computeLoggerBattery(){
+  var Precision=10;
+
+  var mAh=Number(document.getElementById("mAh").value);
+  var V=Number(document.getElementById("V").value);
+  var Ps=Number(document.getElementById("Ps").value);
+  var Pl=Number(document.getElementById("Pl").value);
+  var N=Number(document.getElementById("N").value);
+  var F=Number(document.getElementById("F").value);
+  var T=Number(document.getElementById("T").value);
+
+  if(mAh<=0||V<=0||Ps<0||Pl<0||N<=0||F<=0||T<=0||isNaN(mAh)||isNaN(V)||isNaN(Ps)||isNaN(Pl)||isNaN(N)||isNaN(F)||isNaN(T)){
+    document.getElementById("errorBox").style.display="block";
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var Ed=(Ps*N*F*T)/(3600*V)+24*Pl/V;
+  var Days=mAh/Ed;
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("Ed").innerText=Ed.toPrecision(Precision)+" mAh/day";
+  document.getElementById("Days").innerText=Days.toPrecision(Precision)+" days";
+
+  var pct=batteryPercentFromDays(Days);
+  animateBattery(pct);
+  document.getElementById("batteryPercent").innerText=Math.round(pct)+"% battery indicator based on 100-day full scale";
+}
+</script>
+
+</body>
+</html>
