@@ -1,143 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Adjustable Voltage Regulator Resistor Divider Calculator</title>
+<meta name="description" content="Calculate R2 for adjustable voltage regulator resistor divider circuits using output voltage, reference voltage and selectable resistor units.">
+<meta name="keywords" content="adjustable voltage regulator calculator, resistor divider calculator, LM317 resistor calculator, voltage regulator R1 R2 calculator, adjustable regulator resistor divider, output voltage resistor calculator, Vref resistor divider formula, R2 unit selector calculator, power supply resistor divider">
+<style>
+#adj-reg-calc,#adj-reg-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#adj-reg-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:700;padding:0 6px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box,.unit-select{width:82px;min-width:82px;max-width:82px;height:43px}
+.unit-box{border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.result-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box,.unit-select{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
+}
+</style>
+</head>
 
+<body>
+<div id="adj-reg-calc">
 
+  <div class="calc-grid">
+    <div>
+      <label class="calc-label">Input Voltage</label>
+      <div class="calc-row">
+        <input id="Vr" type="number" placeholder="Example: 1.25" oninput="clearResults()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">Output Voltage</label>
+      <div class="calc-row">
+        <input id="Vo" type="number" placeholder="Example: 5" oninput="clearResults()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
-<script language="JavaScript">
+    <div>
+      <label class="calc-label">R1</label>
+      <div class="calc-row">
+        <input id="R1" type="number" placeholder="Example: 1" oninput="clearResults()">
+        <select id="R1Unit" class="unit-select" onchange="clearResults()">
+          <option value="1">Ω</option>
+          <option value="1000" selected>kΩ</option>
+          <option value="1000000">MΩ</option>
+          <option value="1000000000">GΩ</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
+  <button type="button" onclick="computeRegulator()">CALCULATE</button>
 
-function Compute(form) {
-	with(Math) {
-		var Kilo= 1000;
-		var Precision= 3;
-		var R1;
-				
-		var Vo= Number(form.Vo.value);
-		var Vr= Number(form.Vr.value);
-		var R1= Number(form.R1.value);
+  <div id="errorBox">Please enter valid non-zero values.</div>
 
-		
+  <div class="result-title">RESULTS</div>
 
-		
-		R2= (Vo-Vr)*R1/Vr;
-				
-		form.R2.value= R2.toPrecision(Precision);
-	}
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="result-label">R2</div>
+      <div class="result-row">
+        <div class="result-value"><span id="R2"></span></div>
+        <select id="R2Unit" class="unit-select" onchange="updateR2Display()">
+          <option value="1">Ω</option>
+          <option value="1000" selected>kΩ</option>
+          <option value="1000000">MΩ</option>
+          <option value="1000000000">GΩ</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-label">Divider Ratio</div>
+      <div class="result-value"><span id="ratioOut"></span></div>
+    </div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Reference Voltage</strong>Enter regulator reference voltage such as 1.25 V for LM317-style adjustable regulator circuits.</div>
+      <div class="paramItem"><strong>Output Voltage</strong>Enter the target regulated output voltage required from the adjustable power supply.</div>
+      <div class="paramItem"><strong>R1 Unit Selector</strong>Choose Ω, kΩ, MΩ or GΩ for the input R1 value only.</div>
+      <div class="paramItem"><strong>R2 Unit Selector</strong>Choose separately whether the R2 result should display in Ω, kΩ, MΩ or GΩ.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>5 V Regulator Example</strong></p>
+        <p>Reference: 1.25 V<br>Output: 5 V<br>R1: 1 kΩ<br>R2: 3 kΩ</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Separate Unit Example</strong></p>
+        <p>R1 can be entered in kΩ while R2 result can be displayed in Ω, kΩ, MΩ or GΩ.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>An adjustable voltage regulator uses a feedback resistor divider. R1 connects from output to adjust node, while R2 connects from adjust node to ground.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Adjustable voltage regulator resistor divider diagram">
+        <rect width="560" height="360" fill="#fff"/>
+
+        <rect x="50" y="90" width="150" height="95" rx="10" fill="#eef5ff" stroke="#2563eb" stroke-width="3"/>
+        <text x="125" y="125" text-anchor="middle" font-size="17" font-weight="900" fill="#1e40af">ADJ REG</text>
+        <text x="75" y="165" font-size="13" font-weight="800" fill="#1e40af">IN</text>
+        <text x="165" y="165" font-size="13" font-weight="800" fill="#1e40af">OUT</text>
+        <text x="120" y="202" font-size="13" font-weight="800" fill="#1e40af">ADJ</text>
+
+        <line x1="10" y1="150" x2="50" y2="150" stroke="#00991a" stroke-width="3"/>
+        <text x="14" y="137" font-size="15" font-weight="900" fill="#00991a">Vin</text>
+
+        <line x1="200" y1="150" x2="500" y2="150" stroke="#00991a" stroke-width="3"/>
+        <circle cx="500" cy="150" r="5" fill="#d40000"/>
+        <text x="458" y="132" font-size="17" font-weight="900" fill="#0000cc">Vout</text>
+
+        <line x1="125" y1="185" x2="125" y2="225" stroke="#00991a" stroke-width="3"/>
+        <line x1="125" y1="225" x2="300" y2="225" stroke="#00991a" stroke-width="3"/>
+
+        <line x1="300" y1="150" x2="300" y2="166" stroke="#00991a" stroke-width="3"/>
+        <path d="M300 166 L286 176 L314 188 L286 200 L314 212 L286 224 L300 236"
+              fill="none" stroke="#b50000" stroke-width="3"/>
+        <line x1="300" y1="236" x2="300" y2="225" stroke="#00991a" stroke-width="3"/>
+        <text x="318" y="202" font-size="22" font-weight="900" fill="#0000cc">R1</text>
+        <circle cx="300" cy="225" r="6" fill="#d40000"/>
+
+        <path d="M300 225 L300 245 L286 255 L314 267 L286 279 L314 291 L286 303 L300 314"
+              fill="none" stroke="#b50000" stroke-width="3"/>
+        <line x1="300" y1="314" x2="300" y2="330" stroke="#00991a" stroke-width="3"/>
+        <text x="318" y="282" font-size="22" font-weight="900" fill="#0000cc">R2</text>
+
+        <line x1="275" y1="330" x2="325" y2="330" stroke="#111" stroke-width="3"/>
+        <line x1="282" y1="340" x2="318" y2="340" stroke="#111" stroke-width="3"/>
+        <line x1="290" y1="350" x2="310" y2="350" stroke="#111" stroke-width="3"/>
+
+        <text x="338" y="232" font-size="14" font-weight="900" fill="#ea580c">Adjust node</text>
+        <path d="M348 225 C385 210,420 198,455 170" fill="none" stroke="#ea580c" stroke-width="2" stroke-dasharray="5 4"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Original formula preserved: R2 = (Output Voltage - Reference Voltage) × R1 / Reference Voltage</div>
+    <div class="formula">In symbols: R2 = (Vo - Vr) × R1 / Vr</div>
+    <div class="formula">R1 input unit is converted internally to Ω. R2 output is converted only for display using the R2 result selector.</div>
+    <p>This adjustable voltage regulator resistor divider calculator keeps the original formula behavior, including negative R2 when output voltage is lower than reference voltage.</p>
+  </section>
+
+</div>
+
+<script>
+var lastR2Ohms=null;
+
+function clearResults(){
+  document.getElementById("R2").innerText="";
+  document.getElementById("ratioOut").innerText="";
+  document.getElementById("errorBox").style.display="none";
+  lastR2Ohms=null;
 }
 
+function updateR2Display(){
+  if(lastR2Ohms===null){
+    document.getElementById("R2").innerText="";
+    return;
+  }
 
+  var outUnit=Number(document.getElementById("R2Unit").value);
+  var outText=document.getElementById("R2Unit").options[document.getElementById("R2Unit").selectedIndex].text;
 
+  document.getElementById("R2").innerText=(lastR2Ohms/outUnit).toPrecision(4)+" "+outText;
+}
+
+function computeRegulator(){
+  var precision=3;
+
+  var Vo=Number(document.getElementById("Vo").value);
+  var Vr=Number(document.getElementById("Vr").value);
+  var R1=Number(document.getElementById("R1").value);
+  var R1Unit=Number(document.getElementById("R1Unit").value);
+
+  if(Vr===0||R1===0||isNaN(Vo)||isNaN(Vr)||isNaN(R1)){
+    document.getElementById("errorBox").style.display="block";
+    document.getElementById("R2").innerText="";
+    document.getElementById("ratioOut").innerText="";
+    lastR2Ohms=null;
+    return;
+  }
+
+  R1=R1*R1Unit;
+
+  lastR2Ohms=(Vo-Vr)*R1/Vr;
+  var ratio=Vo/Vr;
+
+  document.getElementById("errorBox").style.display="none";
+  updateR2Display();
+  document.getElementById("ratioOut").innerText=ratio.toPrecision(precision)+":1";
+}
 </script>
 
-
-
-
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-
-
-
-
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-
-
-
-
- 
-     
-     
-      <form method="POST" name="ParamForm">
-
-<label for="r2" style="font-size:55;" >Input Voltage</label><font face="Arial" size="7"> </font><input   name="Vr"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-<h1 style="font-size:55;"></h1>
-<label for="r2" style="font-size:55;" >Output Voltage</label><font face="Arial" size="7"> </font><input   name="Vo" class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-<h1 style="font-size:55;"></h1>
-<label for="r2" style="font-size:55;" >R<sub>1</sub></label><font face="Arial" size="7"> </font><input   name="R1" class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">K&Omega;</label>
-<h1 style="font-size:30;"></h1>       
-</fieldset>   
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button"  name="B1" value="Calculate" onClick="Compute(document.ParamForm);" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>            
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend> 
-
-<label for="r2" style="font-size:60;" >R<sub>2</sub></label><font face="Arial" size="7"> </font><input   name="R2" class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">K&Omega;</label>       
-         
-      </form>
-      
+</body>
+</html>
