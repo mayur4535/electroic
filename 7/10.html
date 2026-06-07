@@ -1,134 +1,240 @@
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-F=Number(document.calculator.number1.value);
-Vo=Number(document.calculator.number2.value);
-Io=Number(document.calculator.number3.value);
-N=Number(document.calculator.number4.value);
-L=Number(document.calculator.number5.value);
-c1  = ( (0.398 * Vo * Io * (Math.pow(10,-3))) / N  );
-c2 = ( 6.74 * (Math.pow(10,-6)) * (F* Math.pow(10,9)) * (L) * ( (Math.pow(Vo,0.5))/N ) ) - Vo ;
-c3  = ( (0.398/N ) * 100 );
-document.calculator.Power.value=c1;
-document.calculator.repellervoltage.value=c2;
-document.calculator.efficiency.value=c3;
-}
-</SCRIPT>
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Reflex Klystron Calculator</title>
+<meta name="description" content="Calculate reflex klystron output power, repeller voltage and electronic efficiency from frequency, beam voltage, current, mode and spacing.">
+<meta name="keywords" content="reflex klystron calculator, repeller voltage calculator, output power calculator, electronic efficiency calculator, microwave tube calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#klystron-calc,#klystron-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#klystron-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(3){background:#f5f3ff;border-color:#ddd6fe}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-card:nth-child(3) .result-label,.result-card:nth-child(3) .result-value{color:#7c3aed}
+.result-value{font-size:16px;font-weight:900;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
+<body>
 
+<div id="klystron-calc">
 
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Operating Frequency</label>
+    <div class="calc-row">
+      <input id="F" type="number" oninput="clearResults()">
+      <select id="Funit" onchange="clearResults()">
+        <option value="1000" selected>kHz</option>
+        <option value="1000000">MHz</option>
+        <option value="1000000000">GHz</option>
+      </select>
+    </div>
+  </div>
 
-<div id="borderimg">
+  <div>
+    <label class="calc-label">DC Beam Voltage</label>
+    <div class="calc-row">
+      <input id="Vo" type="number" oninput="clearResults()">
+      <select id="Vunit" onchange="clearResults()">
+        <option value="1" selected>V</option>
+        <option value="0.001">mV</option>
+      </select>
+    </div>
+  </div>
 
-    <borderimg id="control-label" style="width:100%; height:500px;">
+  <div>
+    <label class="calc-label">DC Beam Current</label>
+    <div class="calc-row">
+      <input id="Io" type="number" oninput="clearResults()">
+      <select id="Iunit" onchange="clearResults()">
+        <option value="1000">A</option>
+        <option value="1" selected>mA</option>
+      </select>
+    </div>
+  </div>
 
+  <div>
+    <label class="calc-label">Mode of Operation</label>
+    <div class="calc-row">
+      <input id="N" type="number" oninput="clearResults()">
+      <select disabled><option>N</option></select>
+    </div>
+  </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<FORM name="calculator">
+  <div>
+    <label class="calc-label">Repeller Spacing</label>
+    <div class="calc-row">
+      <input id="L" type="number" oninput="clearResults()">
+      <select id="Lunit" onchange="clearResults()">
+        <option value="1" selected>m</option>
+        <option value="1000">km</option>
+      </select>
+    </div>
+  </div>
+</div>
 
-<label for="r2" style="font-size:50;" >Frequency</label><font face="Arial" size="6"></font><input name="number1" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Hz</label>
-<h1 style="font-size:60;"></h1>	
+<button onclick="calc()">CALCULATE</button>
 
-<label for="r2" style="font-size:50;" >Voltage</label><font face="Arial" size="6"> (DC Beam)</font><input name="number2" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:60;"></h1>	
-<label for="r2" style="font-size:50;" >Current</label><font face="Arial" size="6"> (DC Beam)</font><input name="number3" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 144px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mA</label>
-<h1 style="font-size:60;"></h1>	
-<label for="r2" style="font-size:50;" >Mode</label><font face="Arial" size="6"> (Operation)</font><input name="number4" class="intro"  style="position: absolute;   width:415; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:62;"></h1>	
-<label for="r2" style="font-size:50;" >Repeller Spacing</label><font face="Arial" size="6"></font><input name="number5" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:58px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mtr</label>
-<h1 style="font-size:40;"></h1>	
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+<div id="errorBox">Please enter all required values.</div>
 
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card"><div class="result-label">Output Power</div><div class="result-value" id="Power"></div></div>
+  <div class="result-card"><div class="result-label">Repeller Voltage</div><div class="result-value" id="repellervoltage"></div></div>
+  <div class="result-card"><div class="result-label">Electronic Efficiency</div><div class="result-value" id="efficiency"></div></div>
+</div>
 
-<h3>Outputs</h3></div></legend>				
-				
-<label for="r2" style="font-size:50;" >Power</label><font face="Arial" size="6"> </font><input name="Power" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
-<h1 style="font-size:60;"></h1>	
-<label for="r2" style="font-size:50;" >Repeller Voltage</label><font face="Arial" size="6"> </font><input name="repellervoltage" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:60;"></h1>	
-<label for="r2" style="font-size:50;" >Efficiency</label><font face="Arial" size="6"> </font><input name="efficiency" class="intro"  style="position: absolute;   width:413; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:50;"></h1>	
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>Operating Frequency</strong>Microwave operating frequency with kHz, MHz and GHz unit selection.</div>
+<div class="paramItem"><strong>DC Beam Voltage</strong>Accelerating voltage applied to the electron beam.</div>
+<div class="paramItem"><strong>DC Beam Current</strong>Beam current used to estimate output power.</div>
+<div class="paramItem"><strong>Mode and Spacing</strong>Mode number and repeller spacing determine repeller voltage.</div>
+</div>
+</section>
 
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>Output Power</strong></p><p>Use beam voltage, current and mode number to estimate reflex klystron output power.</p></div>
+<div class="exampleCard"><p><strong>Repeller Tuning</strong></p><p>Use frequency and spacing to estimate the required repeller voltage.</p></div>
+</div>
+</section>
 
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>A reflex klystron uses an electron gun, resonant cavity and negatively biased repeller electrode. Electrons are reflected back through the cavity to generate RF oscillation.</p>
 
+<div class="diagramBox">
+<svg viewBox="0 0 620 330" xmlns="http://www.w3.org/2000/svg">
+<rect width="620" height="330" fill="#fff"/>
+<style>
+.kLabel{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#00aeca}
+.kSmall{font-family:Arial,sans-serif;font-size:12px;font-weight:800;fill:#374151}
+.kTube{fill:#eaf2ff;stroke:#00bcd4;stroke-width:3}
+.kMetal{fill:#ffd28a;stroke:#00bcd4;stroke-width:2.5}
+.kCavity{fill:#e8fff6;stroke:#00bcd4;stroke-width:2.5}
+.kCath{fill:#ffb36b;stroke:#00bcd4;stroke-width:2.5}
+.kWire{stroke:#00bcd4;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.kArrow{stroke:#ef4444;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#redArr)}
+.kBlueArrow{stroke:#00bcd4;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#cyanArr)}
+.kDash{stroke:#ef4444;stroke-width:2;fill:none;stroke-dasharray:6 5}
+</style>
+<defs>
+<marker id="redArr" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#ef4444"/></marker>
+<marker id="cyanArr" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00bcd4"/></marker>
+</defs>
+<rect x="70" y="92" width="480" height="120" rx="58" class="kTube"/>
+<rect x="95" y="132" width="42" height="40" rx="8" class="kCath"/>
+<text x="82" y="84" class="kLabel">Electron Gun</text>
+<path d="M137 152 H215" class="kWire"/>
+<path d="M140 142 C170 135,190 135,216 142" class="kArrow"/>
+<path d="M140 162 C175 172,195 172,218 162" class="kArrow"/>
+<rect x="220" y="78" width="95" height="150" rx="14" class="kCavity"/>
+<rect x="246" y="108" width="42" height="88" rx="10" fill="#fff" stroke="#00bcd4" stroke-width="2"/>
+<text x="218" y="64" class="kLabel">Resonant Cavity</text>
+<path d="M315 152 H430" class="kWire"/>
+<path d="M430 152 C395 130,350 130,315 152" class="kDash"/>
+<path d="M430 152 C395 174,350 174,315 152" class="kDash"/>
+<path d="M430 112 Q500 152 430 192" class="kMetal"/>
+<text x="438" y="84" class="kLabel">Repeller</text>
+<text x="432" y="104" class="kSmall">negative voltage</text>
+<path d="M270 78 V40 H370" class="kWire"/>
+<circle cx="370" cy="40" r="12" fill="#fff" stroke="#00bcd4" stroke-width="2"/>
+<path d="M382 40 H500" class="kWire"/>
+<text x="397" y="30" class="kLabel">RF Output</text>
+<text x="92" y="238" class="kSmall">Cathode sends electron beam</text>
+<path d="M180 232 C215 214,238 195,254 170" class="kBlueArrow"/>
+<text x="370" y="256" class="kSmall">Electrons return to cavity after reflection</text>
+<path d="M442 248 C410 218,365 188,300 165" class="kBlueArrow"/>
+<text x="245" y="295" class="kLabel">Reflex Klystron Oscillator</text>
+</svg>
+</div>
+</section>
 
-</FORM>
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Step 1: Convert operating frequency to Hz, DC beam voltage to V, DC beam current to mA and repeller spacing to m.</div>
+<div class="formula">Step 2: Output Power = (0.398 × Vo × Io × 10^-3) / N.</div>
+<div class="formula">Step 3: Repeller Voltage = (6.451324898 × 10^-6 × F × L × sqrt(Vo)) / N.</div>
+<div class="formula">Step 4: Electronic Efficiency = (0.398 / N) × 100.</div>
+</section>
+
+</div>
+
+<script>
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
+
+function clearResults(){
+  document.getElementById("Power").innerText="";
+  document.getElementById("repellervoltage").innerText="";
+  document.getElementById("efficiency").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function formatValue(v){
+  if(!isFinite(v)) return "Not defined";
+  return Number(v).toPrecision(8);
+}
+
+function calc(){
+  if(isMissing("F") || isMissing("Vo") || isMissing("Io") || isMissing("N") || isMissing("L")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var F=Number(document.getElementById("F").value) * Number(document.getElementById("Funit").value);
+  var Vo=Number(document.getElementById("Vo").value) * Number(document.getElementById("Vunit").value);
+  var Io=Number(document.getElementById("Io").value) * Number(document.getElementById("Iunit").value);
+  var N=Number(document.getElementById("N").value);
+  var L=Number(document.getElementById("L").value) * Number(document.getElementById("Lunit").value);
+
+  var c1=((0.398*Vo*Io*(Math.pow(10,-3)))/N);
+  var c2=(6.74e-6 * F * L * Math.sqrt(Vo))/N;
+  var c3=((0.398/N)*100);
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("Power").innerText=formatValue(c1)+" W";
+  document.getElementById("repellervoltage").innerText=formatValue(c2)+" V";
+  document.getElementById("efficiency").innerText=formatValue(c3)+" %";
+}
+</script>
+
+</body>
+</html>
