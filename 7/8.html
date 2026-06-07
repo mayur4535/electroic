@@ -1,349 +1,414 @@
-
-	
-	<script>
-	function StandardValue(val) {
-		var i;
-		var standard_values = [1.0,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2,10,12,15,18,22,27,33,39,47,56,68,82,100,120,150,180,220,270,330,390,470,560,680,820,1000];
-		var len;
-		
-		len= standard_values.length;
-		for(i=0;i<len;i++) {
-			if(val < standard_values[i]) return standard_values[i];
-		}
-		return standard_values[standard_values.length-1]; // default to max standard value.
-	}
-	
-	function Compute(form) {
-		
-		with(Math) {
-			var micro= 1e-6;
-			var nano= 1e-9;
-			var pico= 1e-12;
-			var Kilo= 1000;
-			var Precision= 3;
-			var Tonmin;
-			var Fs;
-			var DutyCycle; 
-			var DutyCycleMin;
-			var td;
-			var Radj; 
-			var Cadj= 1000; // fixed at 1000 pf;
-			var L;
-			var Irip;	// max output ripple
-			var Icl;	// max current limit;
-			var Iclmin;	//
-			var Iclmax;
-			var Cout;
-			var Tonmax;
-			var Pd;			// power disipated in diode
-			var Pdiss;		// power disipated in LM25085
-			var Prsen;		// power disipated in the sense resistor. 
-			var Vsw;
-			var Va;
-			var R3C1;
-			var R3;
-			var C1;
-			var C2= 0.1;	// Fixed at .1uF. 
-			
-			
-		
-			
-			var Vinmax= Number(form.Vinmax.value);
-			var Vinmin= Number(form.Vinmin.value);
-			var Vin= Number(form.Vin.value);
-			var Vout= Number(form.Vout.value);
-			var Vd= Number(form.Vd.value);
-			var Qon= Number(form.Qon.value);			// MOSFET Transistor turn on time (ns)
-			var Qoff= Number(form.Qoff.value);			// MOSFET Transistor turn off time (ns)
-			var charge= Number(form.charge.value)*nano;	// MOSFET Gate Charge
-			var Fs= Number(form.Fs.value)*Kilo;  		// desired switching frequency
-			var Imax= Number(form.Imax.value);  		// maximum current limit in amps.
-			var Imin= Number(form.Imin.value); 	 		// minimum current in amps.
-			var Vrip= Number(form.Vrip.value)/Kilo; 	// maximum ripple voltage in volts.
-			var Rsen= Number(form.Rsen.value);  		// Current Sensing resistor in ohms.
-			var Rf1= Number(form.Rf1.value)*Kilo;  		// Top feedback resistor in ohms.
-
-			
-			if((Vin < 4.5)||(Vin>42)) ;
-			if(Vinmax>42);
-			if(Vinmin < 4.5) ;
-			if(Qoff < Qon) ;
-			
-			td= (50 + Qoff - Qon)*nano; 	// 50ns + the difference between the on and off times of the MOSFET.
-			DutyCycle= Vout/Vin;
-			RT= (Vout*(Vin-1.56))/(1.45e-7*Vin*Fs) - (td*(Vin-1.56))/(1.45e-7)- 1.4;
-			Tonmin= (1.45e-7*(RT+1.4))/(Vinmax - 1.56+ RT/3167) + td; // in seconds.
-			if(Tonmin<150e-9) ("")
-			Tonmax= (1.45e-7*(RT+1.4))/(Vinmin - 1.56+ RT/3167) + td; // in seconds.
-			
-			Rf2= Rf1/((Vout/1.25) - 1)/Kilo;
-
-			// inductor is selected so that it stays in continuous mode.  This is determinted by the 
-			// minimum output current.  If output current is near 0 then just select 20% of the max current.
-			Irip= 2*Imin;
-			if(Irip < 0.2*Imax) Irip= 0.2*Imax;
-			
-			
-			L= Tonmin*(Vinmax-Vout)/(Irip);
-			
-			L= StandardValue(L/micro)*micro;
-			
-
-			
-			
-			Irip= Tonmin*(Vinmax-Vout)/L;
-			
-			Iclmin= Imax + Irip/2;
-			Icl= (Iclmin*Rsen+.009)/Rsen;
-			Radj= Icl*Rsen/32e-6;		// this could be standardized.
-			Iclmax= (Radj*48e-6+.009)/Rsen;
-			
-			Cout= Irip/(8*Vrip*Fs);
-			Cout= StandardValue(Cout/micro)*micro;
-			
-			Cin= Imax*Tonmax/.5;			// 0.5V is the maximum allowable droop at Vin. 
-			Cin= StandardValue(Cin/micro)*micro;
-			
-			DutyCycleMin= Vout/Vinmax;
-			Pd= Vd*Imax*(1-DutyCycleMin);
-			Pdiss= Vinmax*(charge*Fs+1.3e-3);
-			Prsen= Imax*Imax*Rsen;
-			
-			Vsw= 0.65;						// Voltage across mosfet, ranges .5 to 1V. 
-			Va= Vout-(Vsw*(1-Vout/Vinmin));
-			R3C1= (Vinmin-Va)*Tonmax/0.025; // desired ripple 0.025V at junction. 
-			C1= 3300e-12;					// pf
-			R3= R3C1/C1;					
-			
-			DutyCycle*= 100;		// in percent.
-			Tonmin= Tonmin/1e-9;	// in nano seconds.			
-			Tonmax= Tonmax/1e-9;	// in nano seconds.	
-			L= L/micro;				// in uH
-			Cout= Cout/micro;		// in uF
-			Cin= Cin/micro;			// in uF
-			R3= R3/Kilo;
-			C1= C1/pico;
-			
-			
-			form.R3.value= R3.toPrecision(Precision);
-			form.C1.value= C1.toPrecision(Precision);
-			form.C2.value= C2.toPrecision(Precision);
-			form.R3C1.value= R3C1.toPrecision(Precision);
-			form.Pd.value= Pd.toPrecision(Precision);
-			form.Pdiss.value= Pdiss.toPrecision(Precision);
-			form.Prsen.value= Prsen.toPrecision(Precision);
-			form.L.value= L.toPrecision(Precision);
-			form.Iclmax.value= Iclmax.toPrecision(Precision);
-			form.Cout.value= Cout.toPrecision(Precision);
-			form.Cin.value= Cin.toPrecision(Precision);
-			form.Rf2.value= Rf2.toPrecision(Precision);
-			form.RT.value= RT.toPrecision(Precision);
-			form.Radj.value= Radj.toPrecision(Precision);
-			form.Cadj.value= Cadj;
-			form.DutyCycle.value= DutyCycle.toPrecision(Precision);
-			form.Tonmin.value= Tonmin.toPrecision(Precision);
-			form.Tonmax.value= Tonmax.toPrecision(Precision);
-		}
-	}
-	</script>	
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LM25085 Switching Regulator Design Calculator</title>
+<meta name="description" content="LM25085 switching regulator calculator for duty cycle, inductor, capacitors, timing resistor, current limit and power loss design.">
+<meta name="keywords" content="LM25085 calculator, LM25085 switching regulator design, LM25085 buck converter calculator, switching regulator calculator, buck regulator design calculator, LM25085 inductor calculator, LM25085 RT calculator, LM25085 current limit calculator, feedback resistor calculator, output capacitor calculator, input capacitor calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#lm25085-calc,#lm25085-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#lm25085-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+.subTitle{font-size:13px;font-weight:900;color:#64748b;text-transform:uppercase;margin-top:4px;padding:10px 0 0;border-top:1px solid #e5e7eb}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
+.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
+.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
+.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
+<body>
 
+<div id="lm25085-calc">
 
+<div class="calc-grid">
+<div class="subTitle">Input and Output Parameters</div>
+<div><label class="calc-label">Vin Max</label><div class="calc-row"><input id="Vinmax" type="number" oninput="clearResults()"><div class="unit-box">V</div></div></div>
+<div><label class="calc-label">Vin Nominal</label><div class="calc-row"><input id="Vin" type="number" oninput="clearResults()"><div class="unit-box">V</div></div></div>
+<div><label class="calc-label">Vin Min</label><div class="calc-row"><input id="Vinmin" type="number" oninput="clearResults()"><div class="unit-box">V</div></div></div>
+<div><label class="calc-label">Vout</label><div class="calc-row"><input id="Vout" type="number" oninput="clearResults()"><div class="unit-box">V</div></div></div>
+<div><label class="calc-label">Diode Forward Voltage VD</label><div class="calc-row"><input id="Vd" type="number" oninput="clearResults()"><div class="unit-box">V</div></div></div>
+<div><label class="calc-label">Iout Max</label><div class="calc-row"><input id="Imax" type="number" oninput="clearResults()"><div class="unit-box">A</div></div></div>
+<div><label class="calc-label">Iout Min</label><div class="calc-row"><input id="Imin" type="number" oninput="clearResults()"><div class="unit-box">A</div></div></div>
+<div><label class="calc-label">Max Output Ripple</label><div class="calc-row"><input id="Vrip" type="number" oninput="clearResults()"><div class="unit-box">mVpp</div></div></div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<div class="subTitle">Control and MOSFET Parameters</div>
+<div><label class="calc-label">Current Sense Resistor</label><div class="calc-row"><input id="Rsen" type="number" oninput="clearResults()"><div class="unit-box">Ω</div></div></div>
+<div><label class="calc-label">Feedback Resistor Rf1</label><div class="calc-row"><input id="Rf1" type="number" oninput="clearResults()"><div class="unit-box">kΩ</div></div></div>
+<div><label class="calc-label">Desired Switching Frequency Fs</label><div class="calc-row"><input id="Fs" type="number" oninput="clearResults()"><div class="unit-box">kHz</div></div></div>
+<div><label class="calc-label">MOSFET On Time</label><div class="calc-row"><input id="Qon" type="number" oninput="clearResults()"><div class="unit-box">ns</div></div></div>
+<div><label class="calc-label">MOSFET Off Time</label><div class="calc-row"><input id="Qoff" type="number" oninput="clearResults()"><div class="unit-box">ns</div></div></div>
+<div><label class="calc-label">MOSFET Gate Charge</label><div class="calc-row"><input id="charge" type="number" oninput="clearResults()"><div class="unit-box">nC</div></div></div>
+</div>
 
+<button type="button" onclick="Compute()">CALCULATE</button>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-			
+<div id="errorBox">Please enter all required values.</div>
 
-			
-			<form method="POST" name="ParamForm">
-			
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+<div class="result-card"><div class="result-label">Duty Cycle</div><div class="result-value" id="DutyCycle"></div></div>
+<div class="result-card"><div class="result-label">Ton Min</div><div class="result-value" id="Tonmin"></div></div>
+<div class="result-card"><div class="result-label">Ton Max</div><div class="result-value" id="Tonmax"></div></div>
+<div class="result-card"><div class="result-label">Diode Power</div><div class="result-value" id="Pd"></div></div>
+<div class="result-card"><div class="result-label">IC Power</div><div class="result-value" id="Pdiss"></div></div>
+<div class="result-card"><div class="result-label">Sense Resistor Power</div><div class="result-value" id="Prsen"></div></div>
+<div class="result-card"><div class="result-label">Inductor</div><div class="result-value" id="L"></div></div>
+<div class="result-card"><div class="result-label">Peak Current Limit</div><div class="result-value" id="Iclmax"></div></div>
+<div class="result-card"><div class="result-label">Output Capacitor</div><div class="result-value" id="Cout"></div></div>
+<div class="result-card"><div class="result-label">Input Capacitor</div><div class="result-value" id="Cin"></div></div>
+<div class="result-card"><div class="result-label">Feedback Rf2</div><div class="result-value" id="Rf2"></div></div>
+<div class="result-card"><div class="result-label">RT</div><div class="result-value" id="RT"></div></div>
+<div class="result-card"><div class="result-label">Radj</div><div class="result-value" id="Radj"></div></div>
+<div class="result-card"><div class="result-label">Cadj</div><div class="result-value" id="Cadj"></div></div>
+<div class="result-card"><div class="result-label">R3 × C1 Product</div><div class="result-value" id="R3C1"></div></div>
+<div class="result-card"><div class="result-label">C1</div><div class="result-value" id="C1out"></div></div>
+<div class="result-card"><div class="result-label">C2</div><div class="result-value" id="C2"></div></div>
+<div class="result-card"><div class="result-label">R3</div><div class="result-value" id="R3"></div></div>
+</div>
 
-<label for="r2" style="font-size:55;" >V<sub>in</sub></label><font face="Arial" size="6"> (max)  </font><input name="Vinmax" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:38;"></h1>	
-<label for="r2" style="font-size:55;" >V<sub>in</sub></label><font face="Arial" size="6"> (nominal)  </font><input name="Vin" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:38;"></h1>	
-<label for="r2" style="font-size:55;" >V<sub>in</sub></label><font face="Arial" size="6"> (min)  </font><input name="Vinmin" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:40;"></h1>	
-<label for="r2" style="font-size:55;" >V<sub>out</sub></label><font face="Arial" size="6">  </font><input name="Vout" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:40;"></h1>	
-<label for="r2" style="font-size:55;" >VD</label><font face="Arial" size="6"> (Diode Forward Voltage)  </font><input name="Vd" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:55;"></h1>	
-<label for="r2" style="font-size:55;" >I<sub>out</label><font face="Arial" size="6"> (max out current)  </font><input name="Imax" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-<h1 style="font-size:40;"></h1>	
-<label for="r2" style="font-size:55;" >I<sub>out</label><font face="Arial" size="6"> (min out current)  </font><input name="Imin" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-<h1 style="font-size:40;"></h1>	
-<label for="r2" style="font-size:55;" >V<sub>out</label><font face="Arial" size="6"> (Max. Out. Volt. Ripple)  </font><input name="Vrip" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:38px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mVpp</label>
-<h1 style="font-size:40;"></h1>									
-<label for="r2" style="font-size:55;" >R</label><font face="Arial" size="6"> (Current Sense Res.DF(0.1))  </font><input name="Rsen" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-<h1 style="font-size:55;"></h1>				
-<label for="r2" style="font-size:55;" >R<sub>f1</sub></label><font face="Arial" size="6"> (Feedback Res. DF(10k))  </font><input name="Rf1" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">K&Omega;</label>
-<h1 style="font-size:40;"></h1>					
-<label for="r2" style="font-size:55;" >F<sub>s</sub></label><font face="Arial" size="6"> (Desired Switching Freq.)  </font><input name="Fs" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">KHz</label>
-<h1 style="font-size:40;"></h1>							
-<label for="r2" style="font-size:55;" >MOSFET</sub></label><font face="Arial" size="6"> (On Time)  </font><input name="Qon" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:42px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">NSec</label>
-<h1 style="font-size:55;"></h1>					
-<label for="r2" style="font-size:55;" >MOSFET</sub></label><font face="Arial" size="6"> (Off Time)  </font><input name="Qoff" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:42px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">NSec</label>
-<h1 style="font-size:55;"></h1>				
-<label for="r2" style="font-size:55;" >MOSFET</sub></label><font face="Arial" size="6"> (Gate Charge)  </font><input name="charge" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">nC</label>
-<h1 style="font-size:40;"></h1>					
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" value="Calculate" name="B1" onClick="Compute(document.ParamForm);" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>Input Voltage Range</strong>Vin max, nominal and min are used for LM25085 buck regulator timing, duty cycle and capacitor design.</div>
+<div class="paramItem"><strong>Output Conditions</strong>Vout, output current and ripple define inductor, output capacitor and current limit selection.</div>
+<div class="paramItem"><strong>MOSFET Timing</strong>On time, off time and gate charge affect delay, switching frequency and LM25085 internal power loss.</div>
+<div class="paramItem"><strong>Feedback and Sense</strong>Rf1 and current sense resistor calculate feedback resistor, current limit and sense resistor dissipation.</div>
+</div>
+</section>
 
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>LM25085 Buck Supply</strong></p><p>Use this calculator for step-down switching regulator design with external MOSFET, diode, inductor and output capacitor.</p></div>
+<div class="exampleCard"><p><strong>Component Selection</strong></p><p>The results help select RT, Radj, L, Cin, Cout, Rf2, R3, C1 and estimate diode, IC and sense resistor power loss.</p></div>
+</div>
+</section>
 
-<h3>Outputs</h3></div></legend>				
-				
-<label for="r2" style="font-size:55;" >Duty Cycle</label><font face="Arial" size="6"> </font><input name="DutyCycle" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">%</label>
-<h1 style="font-size:55;"></h1>					
-<label for="r2" style="font-size:55;" >T<sub>on </sub></label><font face="Arial" size="6">(Min. Switch On Time) </font><input name="Tonmin" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:45px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">nsec</label>
-<h1 style="font-size:43;"></h1>					
-<label for="r2" style="font-size:55;" >T<sub>on </sub></label><font face="Arial" size="6">(Max. Switch On Time) </font><input name="Tonmax" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:45px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">nsec</label>
-<h1 style="font-size:40;"></h1>				
-<label for="r2" style="font-size:55;" >D<sub>pwr </sub></label><font face="Arial" size="6">(Max. Diode Power) </font><input name="Pd" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
-<h1 style="font-size:40;"></h1>								
-<label for="r2" style="font-size:55;" >IC<sub>pwr </sub></label><font face="Arial" size="6">(Max. Power) </font><input name="Pdiss" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
-<h1 style="font-size:40;"></h1>					
-<label for="r2" style="font-size:55;" >C</sub></label><font face="Arial" size="6">(Max Current Sense Res. Pwr) </font><input name="Prsen" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
-<h1 style="font-size:55;"></h1>					
-<label for="r2" style="font-size:55;" >Inductor</label><font face="Arial" size="6"> </font><input name="L" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">uH</label>
-<h1 style="font-size:55;"></h1>				
-<label for="r2" style="font-size:55;" >Icl </label><font face="Arial" size="6">(Peak Ind. Current Limit) </font><input name="Iclmax" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-<h1 style="font-size:55;"></h1>					
-<label for="r2" style="font-size:55;" >C<sub>Output </sub></label><font face="Arial" size="6"> </font><input name="Cout" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">uF</label>
-<h1 style="font-size:40;"></h1>					
-<label for="r2" style="font-size:55;" >C<sub>Input </sub></label><font face="Arial" size="6"> </font><input name="Cin" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">uF</label>
-<h1 style="font-size:40;"></h1>					
-<label for="r2" style="font-size:55;" >R<sub>f2 </sub></label><font face="Arial" size="6">(Feedback Resistor) </font><input name="Rf2" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">K&Omega;</label>
-<h1 style="font-size:40;"></h1>								
-<label for="r2" style="font-size:55;" >R<sub>t </sub></label><font face="Arial" size="6"> </font><input name="RT" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">K&Omega;</label>
-<h1 style="font-size:40;"></h1>						
-<label for="r2" style="font-size:55;" >R<sub>adj </sub></label><font face="Arial" size="6">(Resistor Adj) </font><input name="Radj" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-<h1 style="font-size:40;"></h1>					
-<label for="r2" style="font-size:55;" >C<sub>adj </sub></label><font face="Arial" size="6">(Capacitor Adj) </font><input name="Cadj" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-<h1 style="font-size:40;"></h1>								
-<label for="r2" style="font-size:55;" >R3XC1<sub> </sub></label><font face="Arial" size="6">(Product) </font><input name="R3C1" class="intro"  style="position: absolute;   width:412; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:40;"></h1>										
-<label for="r2" style="font-size:55;" >C1<sub> </sub></label><font face="Arial" size="6"> </font><input  name="C1" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">pF</label>
-<h1 style="font-size:55;"></h1>	
-<label for="r2" style="font-size:55;" >C2<sub> </sub></label><font face="Arial" size="6"> </font><input  name="C2" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">uf</label>
-<h1 style="font-size:55;"></h1>					
-<label for="r2" style="font-size:55;" >R3<sub> </sub></label><font face="Arial" size="6"> </font><input  name="R3" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">K&Omega;</label>
-<h1 style="font-size:40;"></h1>								
-					
-				
-				
-				
-							
-				
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>The LM25085 switching regulator uses an external MOSFET buck stage, diode clamp, inductor, input/output capacitors and feedback divider to regulate output voltage.</p>
 
-			</form>
-			
-			
-			
-		
+<div class="diagramBox">
+  <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LM25085 switching regulator reference style schematic">
+    <rect width="620" height="300" fill="#ffffff"/>
+
+    <style>
+      .wire{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .thin{stroke:#111827;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .node{fill:#111827}
+      .ic{fill:#f8fafc;stroke:#111827;stroke-width:2}
+      .cap{stroke:#059669;stroke-width:2;fill:none;stroke-linecap:round}
+      .res{stroke:#ef4444;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .diode{stroke:#2563eb;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .mos{stroke:#2563eb;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .ind{stroke:#f97316;stroke-width:2.2;fill:none;stroke-linecap:round}
+      .txt{font-family:Arial,sans-serif;font-size:9px;font-weight:800;fill:#111827}
+      .pin{font-family:Arial,sans-serif;font-size:8px;font-weight:800;fill:#111827}
+      .redText{font-family:Arial,sans-serif;font-size:9px;font-weight:900;fill:#ef4444}
+      .greenText{font-family:Arial,sans-serif;font-size:9px;font-weight:900;fill:#059669}
+      .blueText{font-family:Arial,sans-serif;font-size:9px;font-weight:900;fill:#2563eb}
+      .orangeText{font-family:Arial,sans-serif;font-size:9px;font-weight:900;fill:#f97316}
+    </style>
+
+    <text x="10" y="23" class="txt">4.5V to 42V</text>
+    <text x="25" y="35" class="txt">Input</text>
+    <path d="M49 37 h17 l8 4 l-8 4 h-17 z" fill="#fff" stroke="#111827" stroke-width="1.4"/>
+    <path d="M74 41 H162" class="wire"/>
+    <circle cx="101" cy="41" r="3" class="node"/>
+    <circle cx="134" cy="41" r="3" class="node"/>
+    <circle cx="162" cy="41" r="3" class="node"/>
+
+    <path d="M74 41 V67" class="wire"/>
+    <line x1="63" y1="70" x2="85" y2="70" class="cap"/>
+    <line x1="63" y1="80" x2="85" y2="80" class="cap"/>
+    <path d="M74 80 V105" class="wire"/>
+    <text x="43" y="78" class="greenText">CIN</text>
+
+    <text x="8" y="112" class="txt">GND</text>
+    <path d="M36 105 H101" class="wire"/>
+    <circle cx="74" cy="105" r="3" class="node"/>
+
+    <text x="92" y="55" class="txt">NX</text>
+    <path d="M101 41 V65" class="wire"/>
+    <polygon points="91,65 111,65 101,84" fill="#fff" stroke="#2563eb" stroke-width="1.8"/>
+    <path d="M91 88 H111 M93 88 L91 94 M109 88 L111 94" class="diode"/>
+    <path d="M101 94 V105" class="wire"/>
+
+    <text x="6" y="170" class="txt">SHUTDOWN</text>
+    <rect x="72" y="158" width="13" height="13" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+    <path d="M85 164.5 H101 V105" class="wire"/>
+
+    <path d="M134 41 V69" class="wire"/>
+    <path d="M134 69 L126 75 L142 83 L126 91 L142 99 L126 107 L134 113" class="res"/>
+    <path d="M134 113 V155" class="wire"/>
+    <text x="145" y="94" class="redText">RT</text>
+    <line x1="122" y1="155" x2="146" y2="155" class="thin"/>
+    <line x1="126" y1="162" x2="142" y2="162" class="thin"/>
+    <line x1="130" y1="169" x2="138" y2="169" class="thin"/>
+
+    <rect x="162" y="30" width="120" height="178" class="ic"/>
+    <text x="196" y="47" class="txt">LM25085</text>
+
+    <text x="174" y="76" class="pin">VIN</text>
+    <path d="M162 72 H134 V41" class="wire"/>
+
+    <text x="174" y="116" class="pin">RT</text>
+    <path d="M162 112 H134" class="wire"/>
+
+    <text x="174" y="188" class="pin">GND</text>
+    <path d="M162 184 H145" class="wire"/>
+    <path d="M145 184 V214" class="wire"/>
+    <line x1="133" y1="214" x2="157" y2="214" class="thin"/>
+    <line x1="137" y1="221" x2="153" y2="221" class="thin"/>
+    <line x1="141" y1="228" x2="149" y2="228" class="thin"/>
+
+    <text x="252" y="65" class="pin">VCC</text>
+    <text x="252" y="88" class="pin">ADJ</text>
+    <text x="244" y="112" class="pin">PGATE</text>
+    <text x="254" y="138" class="pin">ISEN</text>
+    <text x="265" y="168" class="pin">FB</text>
+
+    <path d="M282 62 H318" class="wire"/>
+    <path d="M318 62 V37" class="wire"/>
+    <line x1="308" y1="34" x2="328" y2="34" class="cap"/>
+    <line x1="308" y1="25" x2="328" y2="25" class="cap"/>
+    <path d="M318 25 V12" class="wire"/>
+    <line x1="306" y1="12" x2="330" y2="12" class="thin"/>
+    <line x1="310" y1="5" x2="326" y2="5" class="thin"/>
+    <text x="332" y="35" class="greenText">CVCC</text>
+
+    <path d="M282 86 H350" class="wire"/>
+    <path d="M350 86 V65" class="wire"/>
+    <line x1="340" y1="62" x2="360" y2="62" class="cap"/>
+    <line x1="340" y1="54" x2="360" y2="54" class="cap"/>
+    <text x="363" y="61" class="greenText">CADJ</text>
+    <path d="M350 86 H391" class="wire"/>
+    <path d="M391 86 L398 78 L406 94 L414 78 L422 94 L430 78 L437 86" class="res"/>
+    <text x="405" y="73" class="redText">RADJ</text>
+    <path d="M437 86 V119" class="wire"/>
+    <circle cx="437" cy="119" r="3" class="node"/>
+
+    <path d="M282 110 H365" class="wire"/>
+    <path d="M365 110 V119" class="wire"/>
+    <text x="414" y="105" class="blueText">Q1</text>
+    <path d="M365 119 H405" class="wire"/>
+    <line x1="405" y1="119" x2="415" y2="119" class="mos"/>
+    <line x1="415" y1="104" x2="415" y2="134" class="mos"/>
+    <line x1="431" y1="104" x2="431" y2="134" class="mos"/>
+    <line x1="431" y1="104" x2="437" y2="104" class="mos"/>
+    <line x1="431" y1="134" x2="437" y2="134" class="mos"/>
+    <line x1="437" y1="104" x2="437" y2="119" class="wire"/>
+    <line x1="437" y1="134" x2="437" y2="142" class="wire"/>
+    <polygon points="419,111 431,119 419,127" fill="#2563eb"/>
+
+    <path d="M437 142 H466" class="wire"/>
+    <circle cx="466" cy="142" r="3" class="node"/>
+
+    <path d="M282 136 H397 V142 H466" class="wire"/>
+
+    <path d="M466 142 V158" class="wire"/>
+    <path d="M456 158 L476 158 L466 176 Z" fill="#fff" stroke="#2563eb" stroke-width="1.8"/>
+    <path d="M456 180 H476 M458 180 L456 186 M474 180 L476 186" class="diode"/>
+    <path d="M466 186 V203" class="wire"/>
+    <text x="480" y="172" class="blueText">D1</text>
+    <line x1="454" y1="203" x2="478" y2="203" class="thin"/>
+    <line x1="458" y1="210" x2="474" y2="210" class="thin"/>
+    <line x1="462" y1="217" x2="470" y2="217" class="thin"/>
+
+    <path d="M466 142 H492" class="wire"/>
+    <path d="M492 142
+             C496 130,504 130,508 142
+             C512 154,520 154,524 142
+             C528 130,536 130,540 142
+             C544 154,552 154,556 142" class="ind"/>
+    <path d="M556 142 H598" class="wire"/>
+    <text x="522" y="126" class="orangeText">L1</text>
+
+    <circle cx="556" cy="142" r="3" class="node"/>
+    <rect x="598" y="134" width="13" height="16" fill="#fff" stroke="#111827" stroke-width="1.2"/>
+    <text x="566" y="165" class="txt">VOUT</text>
+
+    <path d="M556 142 V166" class="wire"/>
+    <line x1="546" y1="170" x2="566" y2="170" class="cap"/>
+    <line x1="546" y1="180" x2="566" y2="180" class="cap"/>
+    <path d="M556 180 V212" class="wire"/>
+    <text x="568" y="179" class="greenText">COUT</text>
+
+    <path d="M522 142 H556" class="wire"/>
+    <path d="M522 142 V166" class="wire"/>
+    <path d="M522 166 L514 172 L530 180 L514 188 L530 196 L514 204 L522 210" class="res"/>
+    <text x="534" y="188" class="redText">RFB2</text>
+
+    <path d="M522 210 V224" class="wire"/>
+    <circle cx="522" cy="224" r="3" class="node"/>
+
+    <path d="M522 224 L514 230 L530 238 L514 246 L530 254 L514 262 L522 268" class="res"/>
+    <text x="534" y="249" class="redText">RFB1</text>
+
+    <path d="M282 166 H405 V224 H522" class="wire"/>
+
+    <path d="M556 212 H598" class="wire"/>
+    <rect x="598" y="204" width="13" height="16" fill="#fff" stroke="#111827" stroke-width="1.2"/>
+    <text x="566" y="235" class="txt">GND</text>
+
+    <path d="M522 268 V276" class="wire"/>
+    <line x1="510" y1="276" x2="534" y2="276" class="thin"/>
+    <line x1="514" y1="283" x2="530" y2="283" class="thin"/>
+    <line x1="518" y1="290" x2="526" y2="290" class="thin"/>
+  </svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Standard value selection uses: 1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2 decades up to 1000.</div>
+<div class="formula">Delay time: td = (50 + Qoff - Qon) × 1e-9.</div>
+<div class="formula">Duty cycle: DutyCycle = Vout / Vin × 100.</div>
+<div class="formula">RT = Vout × (Vin - 1.56) / (1.45e-7 × Vin × Fs) - td × (Vin - 1.56) / 1.45e-7 - 1.4.</div>
+<div class="formula">Tonmin and Tonmax are calculated from RT, Vinmax, Vinmin and td, then displayed in ns.</div>
+<div class="formula">Inductor ripple uses Irip = 2 × Imin, or 20% of Imax when that is larger. L is selected to the next standard value.</div>
+<div class="formula">Cout = Irip / (8 × Vrip × Fs). Cin = Imax × Tonmax / 0.5.</div>
+<div class="formula">Rf2 = Rf1 / ((Vout / 1.25) - 1). Power losses calculate diode, LM25085 IC and sense resistor dissipation.</div>
+</section>
+
+</div>
+
+<script>
+function StandardValue(val){
+var standard_values=[1.0,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2,10,12,15,18,22,27,33,39,47,56,68,82,100,120,150,180,220,270,330,390,470,560,680,820,1000];
+for(var i=0;i<standard_values.length;i++){if(val<standard_values[i])return standard_values[i];}
+return standard_values[standard_values.length-1];
+}
+function get(id){return Number(document.getElementById(id).value);}
+function miss(id){var e=document.getElementById(id);return e.value.trim()===""||isNaN(Number(e.value));}
+function put(id,val,unit){document.getElementById(id).innerText=Number(val).toPrecision(3)+(unit?(" "+unit):"");}
+function clearResults(){
+["DutyCycle","Tonmin","Tonmax","Pd","Pdiss","Prsen","L","Iclmax","Cout","Cin","Rf2","RT","Radj","Cadj","R3C1","C1out","C2","R3"].forEach(function(id){document.getElementById(id).innerText="";});
+document.getElementById("errorBox").style.display="none";
+}
+function Compute(){
+var ids=["Vinmax","Vin","Vinmin","Vout","Vd","Imax","Imin","Vrip","Rsen","Rf1","Fs","Qon","Qoff","charge"];
+for(var i=0;i<ids.length;i++){if(miss(ids[i])){clearResults();document.getElementById("errorBox").style.display="block";return;}}
+with(Math){
+var micro=1e-6,nano=1e-9,pico=1e-12,Kilo=1000;
+var Cadj=1000,C2=0.1;
+var Vinmax=get("Vinmax");
+var Vinmin=get("Vinmin");
+var Vin=get("Vin");
+var Vout=get("Vout");
+var Vd=get("Vd");
+var Qon=get("Qon");
+var Qoff=get("Qoff");
+var charge=get("charge")*nano;
+var Fs=get("Fs")*Kilo;
+var Imax=get("Imax");
+var Imin=get("Imin");
+var Vrip=get("Vrip")/Kilo;
+var Rsen=get("Rsen");
+var Rf1=get("Rf1")*Kilo;
+
+var td=(50+Qoff-Qon)*nano;
+var DutyCycle=Vout/Vin;
+var RT=(Vout*(Vin-1.56))/(1.45e-7*Vin*Fs)-(td*(Vin-1.56))/(1.45e-7)-1.4;
+var Tonmin=(1.45e-7*(RT+1.4))/(Vinmax-1.56+RT/3167)+td;
+var Tonmax=(1.45e-7*(RT+1.4))/(Vinmin-1.56+RT/3167)+td;
+var Rf2=Rf1/((Vout/1.25)-1)/Kilo;
+
+var Irip=2*Imin;
+if(Irip<0.2*Imax)Irip=0.2*Imax;
+
+var L=Tonmin*(Vinmax-Vout)/(Irip);
+L=StandardValue(L/micro)*micro;
+Irip=Tonmin*(Vinmax-Vout)/L;
+
+var Iclmin=Imax+Irip/2;
+var Icl=(Iclmin*Rsen+0.009)/Rsen;
+var Radj=Icl*Rsen/32e-6;
+var Iclmax=(Radj*48e-6+0.009)/Rsen;
+
+var Cout=Irip/(8*Vrip*Fs);
+Cout=StandardValue(Cout/micro)*micro;
+
+var Cin=Imax*Tonmax/0.5;
+Cin=StandardValue(Cin/micro)*micro;
+
+var DutyCycleMin=Vout/Vinmax;
+var Pd=Vd*Imax*(1-DutyCycleMin);
+var Pdiss=Vinmax*(charge*Fs+1.3e-3);
+var Prsen=Imax*Imax*Rsen;
+
+var Vsw=0.65;
+var Va=Vout-(Vsw*(1-Vout/Vinmin));
+var R3C1=(Vinmin-Va)*Tonmax/0.025;
+var C1=3300e-12;
+var R3=R3C1/C1;
+
+DutyCycle*=100;
+Tonmin=Tonmin/1e-9;
+Tonmax=Tonmax/1e-9;
+L=L/micro;
+Cout=Cout/micro;
+Cin=Cin/micro;
+R3=R3/Kilo;
+C1=C1/pico;
+
+document.getElementById("errorBox").style.display="none";
+put("DutyCycle",DutyCycle,"%");
+put("Tonmin",Tonmin,"ns");
+put("Tonmax",Tonmax,"ns");
+put("Pd",Pd,"W");
+put("Pdiss",Pdiss,"W");
+put("Prsen",Prsen,"W");
+put("L",L,"µH");
+put("Iclmax",Iclmax,"A");
+put("Cout",Cout,"µF");
+put("Cin",Cin,"µF");
+put("Rf2",Rf2,"kΩ");
+put("RT",RT,"kΩ");
+put("Radj",Radj,"Ω");
+put("Cadj",Cadj,"pF");
+put("R3C1",R3C1,"");
+put("C1out",C1,"pF");
+put("C2",C2,"µF");
+put("R3",R3,"kΩ");
+}
+}
+</script>
+
+</body>
+</html>
