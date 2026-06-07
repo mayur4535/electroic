@@ -1,201 +1,375 @@
-	<script>
-		function Compute(form) {
-			with(Math) {
-				var KILO = 1000;
-				var MEG = KILO * KILO;
-				var MICRO = 1 / MEG;
-				var PICO = 1 / (MEG * MEG);
-				var NANO = 1 / (MEG * KILO);
-				var Precision = 3;
-
-				var Vin = abs(Number(form.Vin.value));
-				var Vo1 = abs(Number(form.Vo1.value));
-				var Lpri = Number(form.Lpri.value) * MICRO;
-				var VT = Number(form.VT.value) * MICRO;
-				var Isat = Number(form.Isat.value);
-				var Lleak = Number(form.Lleak.value) * MICRO;
-				var N = Number(form.N.value);
-				var Vd = abs(Number(form.Vd.value)); // Diode Drop
-				var Vtran = Number(form.Vtran.value);
-
-				if (VT) {
-					Isat = VT / Lpri;
-				} else {
-					VT = Isat * Lpri;
-				}
-
-				Duty = Vo1 / (Vin * N);
-
-				Tonmax = VT / Vin;
-				F = Duty / Tonmax;
-				En = Lpri * Isat * Isat / 2;
-				P = F * En;
-				Io1 = P / Vo1;
-				Iin = P / Vin;
-
-				Tonmax *= MEG;
-				VT *= MEG;
-				F /= KILO;
-				En *= MEG;
-				form.Tonmax.value = Tonmax.toPrecision(Precision);
-				form.Duty.value = Duty.toPrecision(Precision);
-				form.Isat.value = Isat.toPrecision(Precision);
-				form.VT.value = VT.toPrecision(Precision);
-				form.F.value = F.toPrecision(Precision);
-				form.En.value = En.toPrecision(Precision);
-				form.P.value = P.toPrecision(Precision);
-				form.Iin.value = Iin.toPrecision(Precision);
-				form.Io1.value = Io1.toPrecision(Precision);
-			}
-		}
-	</script>
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Flyback Switch Mode Regulator Calculator</title>
+<meta name="description" content="Calculate flyback SMPS duty cycle, on-time, switching frequency, energy, power and currents from transformer and input parameters.">
+<meta name="keywords" content="flyback regulator calculator, flyback SMPS calculator, flyback switch mode regulator, flyback transformer calculator, duty cycle calculator, flyback power calculator, transformer VT product calculator, flyback frequency calculator, isolated power supply calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#flyback-calc,#flyback-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#flyback-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#374151;text-align:center}
+.noteBox{font-size:12px;line-height:1.5;color:#667085;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px;font-weight:700}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
+.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
+.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
+.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="flyback-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Vin - Primary Voltage</label>
+    <div class="calc-row"><input id="Vin" type="number" oninput="clearResults()"><div class="unit-box">V</div></div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Vout1 - Output Voltage 1</label>
+    <div class="calc-row"><input id="Vo1" type="number" oninput="clearResults()"><div class="unit-box">V</div></div>
+  </div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+  <div class="noteBox">Vout1 must be positive. Feedback is derived from this winding.</div>
+
+  <div>
+    <label class="calc-label">Primary Inductance</label>
+    <div class="calc-row"><input id="Lpri" type="number" oninput="clearResults()"><div class="unit-box">µH</div></div>
+  </div>
+
+  <div>
+    <label class="calc-label">VT Product</label>
+    <div class="calc-row"><input id="VT" type="number" oninput="clearResults()"><div class="unit-box">V·µs</div></div>
+  </div>
+
+  <div class="noteBox">Enter either VT Product or Isat. If VT is entered, Isat is calculated from VT / Lpri. If VT is blank, VT is calculated from Isat × Lpri.</div>
+
+  <div>
+    <label class="calc-label">Isat - Saturation Current</label>
+    <div class="calc-row"><input id="Isat" type="number" oninput="clearResults()"><div class="unit-box">A</div></div>
+  </div>
+
+  <div>
+    <label class="calc-label">Leakage Inductance</label>
+    <div class="calc-row"><input id="Lleak" type="number" oninput="clearResults()"><div class="unit-box">µH</div></div>
+  </div>
+
+  <div>
+    <label class="calc-label">Turns Ratio</label>
+    <div class="calc-row"><input id="N" type="number" oninput="clearResults()"><div class="unit-box">Np:Ns</div></div>
+  </div>
+
+  <div>
+    <label class="calc-label">Diode Voltage Drop Vd</label>
+    <div class="calc-row"><input id="Vd" type="number" oninput="clearResults()"><div class="unit-box">V</div></div>
+  </div>
+
+  <div>
+    <label class="calc-label">Transistor Voltage Drop Vtd</label>
+    <div class="calc-row"><input id="Vtran" type="number" oninput="clearResults()"><div class="unit-box">V</div></div>
+  </div>
+</div>
+
+<button type="button" onclick="Compute()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values. Enter either VT Product or Isat.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card"><div class="result-label">Ton Max</div><div class="result-value" id="Tonmax"></div></div>
+  <div class="result-card"><div class="result-label">Duty Cycle</div><div class="result-value" id="Duty"></div></div>
+  <div class="result-card"><div class="result-label">Frequency Min</div><div class="result-value" id="Fout"></div></div>
+  <div class="result-card"><div class="result-label">Energy Per Cycle</div><div class="result-value" id="En"></div></div>
+  <div class="result-card"><div class="result-label">Power Max</div><div class="result-value" id="P"></div></div>
+  <div class="result-card"><div class="result-label">Input Current Max</div><div class="result-value" id="Iin"></div></div>
+  <div class="result-card"><div class="result-label">Output Current 1 Max</div><div class="result-value" id="Io1"></div></div>
+  <div class="result-card"><div class="result-label">Calculated Isat / VT</div><div class="result-value" id="calcNote"></div></div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Vin and Vout1</strong>Primary input voltage and feedback output voltage used for flyback duty cycle and power transfer calculation.</div>
+  <div class="paramItem"><strong>Lpri and VT Product</strong>Primary magnetizing inductance and volt-second product define maximum on-time and saturation limit.</div>
+  <div class="paramItem"><strong>Isat and Turns Ratio</strong>Transformer saturation current and primary-to-secondary ratio determine stored energy and output transfer.</div>
+  <div class="paramItem"><strong>Leakage, Diode and Transistor Drops</strong>These are design inputs kept from the original flyback calculator source for complete SMPS parameter entry.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Flyback SMPS Design</strong></p><p>Estimate switching frequency, duty cycle, on-time, transformer energy and output current for an isolated flyback converter.</p></div>
+  <div class="exampleCard"><p><strong>Transformer Saturation Check</strong></p><p>Use VT product or saturation current with primary inductance to verify whether the flyback transformer can safely store energy.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>A flyback regulator stores energy in the primary magnetizing inductance when the switch is on, then transfers that energy to the secondary through the diode when the switch turns off.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flyback switch mode regulator transformer schematic">
+<rect width="620" height="380" fill="#ffffff"/>
+
+<style>
+.fWire{stroke:#111827;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fThin{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fPri{stroke:#2563eb;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fSec{stroke:#f97316;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fGreen{stroke:#16a34a;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fDot{fill:#111827}
+.fCore{stroke:#111827;stroke-width:5;fill:none;stroke-linecap:round}
+.fTxt{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#111827}
+.fBlueTxt{font-family:Arial,sans-serif;font-size:16px;font-weight:900;fill:#2563eb}
+.fOrangeTxt{font-family:Arial,sans-serif;font-size:16px;font-weight:900;fill:#f97316}
+.fGreenTxt{font-family:Arial,sans-serif;font-size:16px;font-weight:900;fill:#16a34a}
 </style>
 
+<!-- input source -->
+<circle cx="90" cy="190" r="40" fill="#ffffff" stroke="#111827" stroke-width="5"/>
+<path d="M90 150 V70 H205 " class="fWire"/>RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+<path d="M90 230 V330 H245" class="fWire"/>
+<text x="10" y="215" class="fTxt">Vi</text>
 
+<!-- input voltage arrow -->
+<path d="M35 265 V120" class="fThin"/>
+<path d="M35 120 L25 145 H45 Z" fill="#111827"/>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<!-- primary transformer winding: locked inductor style vertical -->
+<path d="M205 70 H245" class="fWire"/>
+<path d="M245 70 V95" class="fWire"/>
+<g transform="translate(260 95) rotate(90)">
+  <path d="M 0,15 L 10,15 
+           C 10,0 26,0 26,15 
+           C 26,0 42,0 42,15 
+           C 42,0 58,0 58,15 
+           C 58,0 74,0 74,15 
+           L 90,15"
+        class="fPri"/>
+</g>
+<path d="M245 185 V242" class="fWire"/>
 
+<!-- primary dot -->
+<circle cx="260" cy="86" r="7" class="fDot"/>
+<text x="190" y="160" class="fBlueTxt">V1</text>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-					<form name=ParamForm method=post>
-					
-					
-<label for="r2" style="font-size:55;" >V<sub>in</sub></label><font face="Arial" size="6"> (Voltage Primary) </font><input name="Vin" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:40;"></h1>	
-<label for="r2" style="font-size:55;" >V<sub>Out1</sub></label><font face="Arial" size="6"> (Voltage Out 1) </font><input  name="Vo1" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
+<!-- primary voltage arrow -->
+<path d="M218 178 V115" class="fThin"/>
+<path d="M218 115 L208 138 H228 Z" fill="#111827"/>
 
-<h1 style="font-size:35"></h1>	
-<font style=" margin-right: 10px; face="Arial" size="4"> (Note that this must be positive, and feed back is derived from this winding) </font>
-<h1 style="font-size:1;"></h1>	
+<text x="255" y="200" class="fTxt">Is</text>
+<path d="M245 205 V244" class="fThin"/>
+<path d="M245 244 L235 221 H255 Z" fill="#111827"/>
 
+<!-- transformer core -->
+<line x1="280" y1="95" x2="280" y2="200" class="fCore"/>
+<line x1="295" y1="95" x2="295" y2="200" class="fCore"/>
 
+<!-- switch -->
+<path d="M245 242 L225 302" class="fWire"/>
+<text x="215" y="294" class="fTxt">S</text>
+<path d="M245 302 V330" class="fWire"/>
 
+<!-- switch voltage arrow -->
+<text x="310" y="282" class="fTxt">Vs</text>
+<path d="M305 315 V235" class="fThin"/>
+<path d="M305 235 L295 258 H315 Z" fill="#111827"/>
 
-<label for="r2" style="font-size:50;" >Inductance</label><font face="Arial" size="5"> (Trans. Primary) </font><input name="Lpri" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&micro;H</label>
-<h1 style="font-size:65;"></h1>	
-<label for="r2" style="font-size:50;" >VT product</label><font face="Arial" size="5"> (Transformer) </font><input name="VT" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:40px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V*&micro;S</label>
-<h1 style="font-size:80;"></h1>	
-<font style="text-align:center;position: absolute;right: 800px;" "face="Arial" size="6"> (OR) </font>
-<h1 style="font-size:130;"></h1>	
-<label for="r2" style="font-size:55;" >I<sub>sat</label><font face="Arial" size="6"></font><input name="Isat" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-<h1 style="font-size:40;"></h1>		
-<label for="r2" style="font-size:55;" >Leakage</label><font face="Arial" size="5"> (Tran, Inductance)</font><input name="Lleak" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&micro;H</label>
-<h1 style="font-size:53;"></h1>								
-<label for="r2" style="font-size:55;" >Turns Ratio</label><font face="Arial" size="6"> </font><input name="N" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:38px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">N<sub>p</sub>:N<sub>s</sub></label>
-<h1 style="font-size:53;"></h1>								
-<label for="r2" style="font-size:55;" >V<sub>d</sub></label><font face="Arial" size="6"> (Diode Voltage Drop) </font><input name="Vd" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:39;"></h1>								
-<label for="r2" style="font-size:55;" >V<sub>td</sub></label><font face="Arial" size="6"> (Transistor Voltage Drop) </font><input name="Vtran" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:50;"></h1>								
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" value="CALCULATE" name="B1" onclick="Compute(document.ParamForm);" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>								
-<fieldset><legend><div colspan="2" align="center" height="19">
+<!-- secondary transformer winding: opposite side / mirrored coil -->
+<path d="M330 70 V95" class="fWire"/>
+<g transform="translate(315 185) rotate(-90)">
+  <path d="M 0,15 L 10,15 
+           C 10,0 26,0 26,15 
+           C 26,0 42,0 42,15 
+           C 42,0 58,0 58,15 
+           C 58,0 74,0 74,15 
+           L 90,15"
+        class="fSec"/>
+</g>
+<path d="M330 185 V245 H560 V90 H485" class="fWire"/>
 
+<!-- secondary dot opposite side -->
+<circle cx="315" cy="220" r="7" class="fDot"/>
+<text x="360" y="160" class="fOrangeTxt">V2</text>
 
-<h3>Outputs</h3></div></legend>							
-<label for="r2" style="font-size:55;" >T<sub>ON</sub></label><font face="Arial" size="6"> (Time ON max) </font><input name="Tonmax" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&micro;s</label>
-<h1 style="font-size:40;"></h1>							
-<label for="r2" style="font-size:55;" >Duty Cycle</label><font face="Arial" size="6"> (switch On) </font><input name="Duty" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&micro;s</label>
-<h1 style="font-size:53;"></h1>								
-<label for="r2" style="font-size:55;" >Frequency</label><font face="Arial" size="6"> (min) </font><input name="F" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">KHz</label>
-<h1 style="font-size:53;"></h1>								
-<label for="r2" style="font-size:55;" >EPC</label><font face="Arial" size="6"> (Energy Per
-									Cycle) </font><input name="En" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&micro;j</label>
-<h1 style="font-size:53;"></h1>							
-<label for="r2" style="font-size:55;" >Power</label><font face="Arial" size="6"> (max) </font><input name="P" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
-<h1 style="font-size:53;"></h1>								
-<label for="r2" style="font-size:55;" >I<sub>In</aub> </label><font face="Arial" size="6"> (max Current
-									In) </font><input name="Iin" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-<h1 style="font-size:39;"></h1>								
-<label for="r2" style="font-size:55;" >I<sub>Out</aub> </label><font face="Arial" size="6"> (max Current Out 1) </font><input name="Io1" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-<h1 style="font-size:50;"></h1>							
-							
-					</form>
+<!-- secondary voltage arrow -->
+<path d="M355 178 V115" class="fThin"/>
+<path d="M355 115 L345 138 H365 Z" fill="#111827"/>
 
-					
+<text x="290" y="72" class="fTxt">L</text>
+
+<!-- diode -->
+<path d="M330 70 H382" class="fWire"/>
+<polygon points="382,50 382,90 422,70" fill="#ffffff" stroke="#111827" stroke-width="4"/>
+<line x1="428" y1="50" x2="428" y2="90" class="fWire"/>
+<path d="M428 70 H485" class="fWire"/>
+<text x="395" y="122" class="fTxt">D</text>
+
+<!-- diode current arrow -->
+<text x="340" y="50" class="fTxt">ID</text>
+
+<path d="M370 70 L350 55 V80 " fill="#111827"/>
+
+<!-- diode voltage arrow -->
+<text x="385" y="30" class="fTxt">VD</text>
+<path d="M380 15 H410" class="fThin"/>
+<path d="M350 15 L380 5 V25 Z" fill="#111827"/>
+
+<!-- output capacitor -->
+<path d="M485 70 V135" class="fWire"/>
+<line x1="455" y1="145" x2="515" y2="145" class="fGreen"/>
+<line x1="455" y1="165" x2="515" y2="165" class="fGreen"/>
+<path d="M485 165 V245" class="fWire"/>
+<text x="435" y="166" class="fGreenTxt">C</text>
+
+<!-- load resistor -->
+<path d="M560 90 V120" class="fWire"/>
+<rect x="540" y="120" width="40" height="115" fill="#ffffff" stroke="#111827" stroke-width="5"/>
+<path d="M560 235 V245" class="fWire"/>
+<text x="520" y="175" class="fTxt">R</text>
+
+<!-- output voltage arrow -->
+<path d="M602 235 V100" class="fThin"/>
+<path d="M602 100 L592 125 H612 Z" fill="#111827"/>
+<text x="595" y="250" class="fTxt">Vo</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Step 1: Convert primary inductance Lpri from µH to H, VT from V·µs to V·s, and use absolute values for Vin, Vout and diode drop.</div>
+<div class="formula">Step 2: If VT product is entered, Isat = VT / Lpri. If VT is blank, VT = Isat × Lpri.</div>
+<div class="formula">Step 3: Duty Cycle = Vout1 / (Vin × N).</div>
+<div class="formula">Step 4: Tonmax = VT / Vin.</div>
+<div class="formula">Step 5: Minimum switching frequency F = Duty Cycle / Tonmax.</div>
+<div class="formula">Step 6: Energy per cycle En = Lpri × Isat² / 2.</div>
+<div class="formula">Step 7: Maximum power P = F × En.</div>
+<div class="formula">Step 8: Output current Io1 = P / Vout1 and input current Iin = P / Vin.</div>
+</section>
+
+</div>
+
+<script>
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
+
+function clearResults(){
+  ["Tonmax","Duty","Fout","En","P","Iin","Io1","calcNote"].forEach(function(id){
+    document.getElementById(id).innerText="";
+  });
+  document.getElementById("errorBox").style.display="none";
+}
+
+function format(v){
+  if(!isFinite(v)) return "Not defined";
+  return Number(v).toPrecision(3);
+}
+
+function Compute(){
+  var required=["Vin","Vo1","Lpri","Lleak","N","Vd","Vtran"];
+  for(var i=0;i<required.length;i++){
+    if(isMissing(required[i])){
+      clearResults();
+      document.getElementById("errorBox").style.display="block";
+      return;
+    }
+  }
+
+  var vtMissing=isMissing("VT");
+  var isatMissing=isMissing("Isat");
+  if(vtMissing && isatMissing){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  with(Math){
+    var KILO=1000;
+    var MEG=KILO*KILO;
+    var MICRO=1/MEG;
+    var Precision=3;
+
+    var Vin=abs(Number(document.getElementById("Vin").value));
+    var Vo1=abs(Number(document.getElementById("Vo1").value));
+    var Lpri=Number(document.getElementById("Lpri").value)*MICRO;
+    var VT=Number(document.getElementById("VT").value)*MICRO;
+    var Isat=Number(document.getElementById("Isat").value);
+    var Lleak=Number(document.getElementById("Lleak").value)*MICRO;
+    var N=Number(document.getElementById("N").value);
+    var Vd=abs(Number(document.getElementById("Vd").value));
+    var Vtran=Number(document.getElementById("Vtran").value);
+
+    if(VT){
+      Isat=VT/Lpri;
+    }else{
+      VT=Isat*Lpri;
+    }
+
+    var Duty=Vo1/(Vin*N);
+    var Tonmax=VT/Vin;
+    var F=Duty/Tonmax;
+    var En=Lpri*Isat*Isat/2;
+    var P=F*En;
+    var Io1=P/Vo1;
+    var Iin=P/Vin;
+
+    Tonmax*=MEG;
+    VT*=MEG;
+    F/=KILO;
+    En*=MEG;
+
+    document.getElementById("errorBox").style.display="none";
+    document.getElementById("Tonmax").innerText=Tonmax.toPrecision(Precision)+" µs";
+    document.getElementById("Duty").innerText=Duty.toPrecision(Precision);
+    document.getElementById("Fout").innerText=F.toPrecision(Precision)+" kHz";
+    document.getElementById("En").innerText=En.toPrecision(Precision)+" µJ";
+    document.getElementById("P").innerText=P.toPrecision(Precision)+" W";
+    document.getElementById("Iin").innerText=Iin.toPrecision(Precision)+" A";
+    document.getElementById("Io1").innerText=Io1.toPrecision(Precision)+" A";
+    document.getElementById("calcNote").innerText="Isat: "+Isat.toPrecision(Precision)+" A, VT: "+VT.toPrecision(Precision)+" V·µs";
+  }
+}
+</script>
+
+</body>
+</html>
