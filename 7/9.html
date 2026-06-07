@@ -1,136 +1,294 @@
-
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-a=Number(document.calculator.number1.value);
-b=Number(document.calculator.number2.value);
-B=Number(document.calculator.number3.value);
-Fr=Number(document.calculator.number4.value);
-N=Number(document.calculator.number5.value);
-m = (9.11 * (Math.pow(10,-31))) ;
-e = (1.6 * (Math.pow(10,-19))) ;
-m1 =( 1 - ((Math.pow(a,2))/(Math.pow(b,2))));
-c1= ( ( ( e * (Math.pow(b,2)) * (Math.pow(B,2)) )/(8*m) ) * (Math.pow(m1,2))  ) ;
-c2 = (( 2 * (Math.PI) * Fr* (Math.pow(10,9)) * B )/N )* ( (Math.pow(b,2)) - (Math.pow(a,2)) ) ;
-c1 =c1/1000;
-c2 = c2/1000;
-document.calculator.Hull_potential.value=c1;
-document.calculator.Hartree_potential.value=c2;
-}
-</SCRIPT>
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Magnetron Hull Cutoff and Hartree Potential Calculator</title>
+<meta name="description" content="Calculate magnetron Hull cutoff potential and Hartree potential from cathode radius, anode radius, magnetic field, frequency and resonators.">
+<meta name="keywords" content="magnetron calculator, Hull cutoff potential calculator, Hartree potential calculator, microwave magnetron calculator, magnetron voltage calculator, cathode radius calculator, anode radius calculator, magnetic field magnetron calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#magnetron-calc,#magnetron-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#magnetron-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff}
+.unit-box{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#374151;text-align:center}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
+<body>
 
+<div id="magnetron-calc">
 
+<div class="calc-grid">
+<div>
+<label class="calc-label">Cathode Radius</label>
+<div class="calc-row"><input id="a" type="number" oninput="clearResults()"><div class="unit-box">m</div></div>
+</div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<div>
+<label class="calc-label">Anode Radius</label>
+<div class="calc-row"><input id="b" type="number" oninput="clearResults()"><div class="unit-box">m</div></div>
+</div>
 
+<div>
+<label class="calc-label">Magnetic Field</label>
+<div class="calc-row"><input id="B" type="number" oninput="clearResults()"><div class="unit-box">Wb/m²</div></div>
+</div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+<div>
+<label class="calc-label">Tuning Frequency</label>
+<div class="calc-row"><input id="Fr" type="number" oninput="clearResults()"><div class="unit-box">GHz</div></div>
+</div>
 
+<div>
+<label class="calc-label">Number of Resonators</label>
+<div class="calc-row"><input id="N" type="number" oninput="clearResults()"><div class="unit-box">No.</div></div>
+</div>
+</div>
 
+<button onclick="calc()">CALCULATE</button>
 
-<FORM name="calculator">
-<label for="r2" style="font-size:50;" >Cathod radius</label><font face="Arial" size="6">  </font><input name="number1" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mtr</label>
-<h1 style="font-size:60;"></h1>	
-<label for="r2" style="font-size:50;" >Anode radius</label><font face="Arial" size="6">  </font><input name="number2" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mtr</label>
-<h1 style="font-size:60;"></h1>	
-<label for="r2" style="font-size:50;" >Magnetic Field</label><font face="Arial" size="6">  </font><input name="number3" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:30px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;"> Wb/m<sup>2</sup> </label>
-<h1 style="font-size:60;"></h1>	
-<label for="r2" style="font-size:50;" >Tuning Frequency</label><font face="Arial" size="6">  </font><input name="number4" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:54px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">GHz </label>
-<h1 style="font-size:62;"></h1>
-<label for="r2" style="font-size:50;" >Numbers</label><font face="Arial" size="6"> (Resonators)  </font><input name="number5" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:54px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">GHz </label>
-<h1 style="font-size:45;"></h1>
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+<div id="errorBox">Please enter all required values.</div>
 
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+<div class="result-card"><div class="result-label">Hull Cutoff Potential</div><div class="result-value" id="Hull_potential"></div></div>
+<div class="result-card"><div class="result-label">Hartree Potential</div><div class="result-value" id="Hartree_potential"></div></div>
+</div>
 
-<h3>Outputs</h3></div></legend>		
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>Cathode Radius</strong>Inner cathode radius in meters used for Hull cutoff potential.</div>
+<div class="paramItem"><strong>Anode Radius</strong>Outer anode radius in meters for the magnetron interaction region.</div>
+<div class="paramItem"><strong>Magnetic Field</strong>Applied magnetic flux density in Wb/m².</div>
+<div class="paramItem"><strong>Frequency & Resonators</strong>GHz tuning frequency and resonator count for Hartree potential.</div>
+</div>
+</section>
 
-<label for="r2" style="font-size:50;" >Magnetron</label><font face="Arial" size="5"> (Hull Cutoff Pot.)  </font><input name="Hull_potential" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:54px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">KV</label>
-<h1 style="font-size:60;"></h1>
-<label for="r2" style="font-size:50;" >Magnetron</label><font face="Arial" size="5"> (Hartree Potential)  </font><input name="Hartree_potential" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:54px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">KV</label>
-<h1 style="font-size:40;"></h1>
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>Hull Cutoff</strong></p><p>Estimate the cutoff voltage using cathode radius, anode radius and magnetic field.</p></div>
+<div class="exampleCard"><p><strong>Hartree Potential</strong></p><p>Estimate microwave magnetron Hartree potential using frequency and resonator count.</p></div>
+</div>
+</section>
 
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Resonant cavity magnetron structure with output coupling loop, resonating cavities, copper anode block, oxide-coated cathode and heater leads.</p>
 
+<div class="diagramBox">
+  <svg viewBox="0 0 620 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Resonant cavity magnetron high power oscillator diagram">
+    <rect width="620" height="430" fill="#ffffff"/>
 
-</FORM>
+    <style>
+      .label{font-family:Arial,sans-serif;font-size:16px;font-weight:800;fill:#00aeca}
+      .title{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#00aeca}
+      .small{font-family:Arial,sans-serif;font-size:13px;font-weight:800;fill:#0f172a}
+      .cyan{stroke:#00bcd4;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .cyanThin{stroke:#00bcd4;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .arrow{stroke:#00bcd4;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arr)}
+      .copper{fill:#ffd28a;stroke:#00bcd4;stroke-width:2.5}
+      .cavity{fill:#e8fff6;stroke:#00bcd4;stroke-width:2.4}
+      .slot{fill:#ffffff;stroke:#00bcd4;stroke-width:2.2}
+      .cathode{fill:#ffb36b;stroke:#00bcd4;stroke-width:2.6}
+      .heater{stroke:#ff7a18;stroke-width:2.4;fill:none;stroke-linecap:round}
+      .dash{stroke:#00bcd4;stroke-width:2;fill:none;stroke-dasharray:4 4}
+    </style>
+
+    <defs>
+      <marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#00bcd4"/>
+      </marker>
+    </defs>
+
+    <!-- Main magnetron rings -->
+    <circle cx="310" cy="185" r="112" class="copper"/>
+    <circle cx="310" cy="185" r="102" fill="#ffffff" stroke="#00bcd4" stroke-width="2.4"/>
+    <circle cx="310" cy="185" r="52" fill="#ffffff" stroke="#00bcd4" stroke-width="2.4"/>
+    <circle cx="310" cy="185" r="30" fill="#d9f7ff" stroke="#00bcd4" stroke-width="2.4"/>
+
+    <!-- Resonating cavities / slots -->
+    <g transform="translate(310 185)">
+      <g>
+        <path d="M0,-52 L0,-78" class="cyanThin"/>
+        <circle cx="0" cy="-75" r="15" class="cavity"/>
+      </g>
+      <g transform="rotate(45)">
+        <path d="M0,-52 L0,-78" class="cyanThin"/>
+        <circle cx="0" cy="-75" r="15" class="cavity"/>
+      </g>
+      <g transform="rotate(90)">
+        <path d="M0,-52 L0,-78" class="cyanThin"/>
+        <circle cx="0" cy="-75" r="15" class="cavity"/>
+      </g>
+      <g transform="rotate(135)">
+        <path d="M0,-52 L0,-78" class="cyanThin"/>
+        <circle cx="0" cy="-75" r="15" class="cavity"/>
+      </g>
+      <g transform="rotate(180)">
+        <path d="M0,-52 L0,-78" class="cyanThin"/>
+        <circle cx="0" cy="-75" r="15" class="cavity"/>
+      </g>
+      <g transform="rotate(225)">
+        <path d="M0,-52 L0,-78" class="cyanThin"/>
+        <circle cx="0" cy="-75" r="15" class="cavity"/>
+      </g>
+      <g transform="rotate(270)">
+        <path d="M0,-52 L0,-78" class="cyanThin"/>
+        <circle cx="0" cy="-75" r="15" class="cavity"/>
+      </g>
+      <g transform="rotate(315)">
+        <path d="M0,-52 L0,-78" class="cyanThin"/>
+        <circle cx="0" cy="-75" r="15" class="cavity"/>
+      </g>
+
+      <!-- copper vanes -->
+      <g stroke="#00bcd4" stroke-width="2.2" fill="#fff3d6">
+        <path d="M-8,-51 L8,-51 L4,-30 L-4,-30 Z"/>
+        <path d="M-8,-51 L8,-51 L4,-30 L-4,-30 Z" transform="rotate(45)"/>
+        <path d="M-8,-51 L8,-51 L4,-30 L-4,-30 Z" transform="rotate(90)"/>
+        <path d="M-8,-51 L8,-51 L4,-30 L-4,-30 Z" transform="rotate(135)"/>
+        <path d="M-8,-51 L8,-51 L4,-30 L-4,-30 Z" transform="rotate(180)"/>
+        <path d="M-8,-51 L8,-51 L4,-30 L-4,-30 Z" transform="rotate(225)"/>
+        <path d="M-8,-51 L8,-51 L4,-30 L-4,-30 Z" transform="rotate(270)"/>
+        <path d="M-8,-51 L8,-51 L4,-30 L-4,-30 Z" transform="rotate(315)"/>
+      </g>
+    </g>
+
+    <!-- Cathode center -->
+    <circle cx="310" cy="185" r="18" class="cathode"/>
+    <circle cx="310" cy="185" r="8" fill="#ffffff" stroke="#00bcd4" stroke-width="2"/>
+    <circle cx="310" cy="185" r="3" fill="#00bcd4"/>
+
+    <!-- Output coupling loop top -->
+    
+    <path d="M298 42 V86" class="cyanThin"/>
+    <path d="M322 42 V86" class="cyanThin"/>
+    <path d="M298 86 C298 105,322 105,322 86" class="cyanThin"/>
+    <circle cx="310" cy="110" r="11" fill="#ffffff" stroke="#00bcd4" stroke-width="2.3"/>
+    <path d="M310 104 V130" class="cyanThin"/>
+
+    <!-- Bottom cathode/heater leads -->
+    <path d="M310 203 V255" class="cyanThin"/>
+    
+    <path d="M304 190 V310" class="dash"/>
+    <path d="M316 190 V310" class="dash"/>
+    
+    <path d="M310 190 V338" class="dash"/>
+
+    <!-- Labels and arrows same reference placement -->
+    <text x="165" y="22" class="label">Output</text>
+    <text x="145" y="42" class="label">coupling loop</text>
+    <path d="M205 48 C235 58,270 63,294 99" class="arrow"/>
+
+    <text x="430" y="92" class="label">Resonating</text>
+    <text x="430" y="112" class="label">cavity</text>
+    <path d="M425 120 C390 130,368 112,350 136" class="arrow"/>
+
+    <text x="435" y="200" class="label">Copper</text>
+    <text x="435" y="220" class="label">anode block</text>
+    <path d="M426 203 C395 195,365 240,350 270" class="arrow"/>
+
+    <text x="35" y="185" class="label">Oxide-coated</text>
+    <text x="65" y="205" class="label">cathode</text>
+    <path d="M158 190 H288" class="arrow"/>
+
+    <text x="390" y="300" class="label">Leads to</text>
+    <text x="365" y="320" class="label">cathode &amp; heater</text>
+    <path d="M380 292 C350 280,350 237,320 330" class="arrow"/>
+
+    
+  </svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Step 1: Read cathode radius a, anode radius b, magnetic field B, frequency Fr and resonator count N.</div>
+<div class="formula">Step 2: Electron mass m = 9.11 × 10^-31 kg and electron charge e = 1.6 × 10^-19 C.</div>
+<div class="formula">Step 3: m1 = 1 - (a² / b²).</div>
+<div class="formula">Step 4: Hull cutoff potential = ((e × b² × B²) / (8 × m)) × m1² / 1000.</div>
+<div class="formula">Step 5: Hartree potential = ((2 × π × Fr × 10^9 × B) / N) × (b² - a²) / 1000.</div>
+</section>
+
+</div>
+
+<script>
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
+
+function clearResults(){
+  document.getElementById("Hull_potential").innerText="";
+  document.getElementById("Hartree_potential").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function formatValue(v){
+  if(!isFinite(v)) return "Not defined";
+  return Number(v).toPrecision(6);
+}
+
+function calc(){
+  if(isMissing("a") || isMissing("b") || isMissing("B") || isMissing("Fr") || isMissing("N")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var a=Number(document.getElementById("a").value);
+  var b=Number(document.getElementById("b").value);
+  var B=Number(document.getElementById("B").value);
+  var Fr=Number(document.getElementById("Fr").value);
+  var N=Number(document.getElementById("N").value);
+
+  var m=(9.11*(Math.pow(10,-31)));
+  var e=(1.6*(Math.pow(10,-19)));
+  var m1=(1-((Math.pow(a,2))/(Math.pow(b,2))));
+
+  var c1=(((e*(Math.pow(b,2))*(Math.pow(B,2)))/(8*m))*(Math.pow(m1,2)));
+  var c2=((2*(Math.PI)*Fr*(Math.pow(10,9))*B)/N)*((Math.pow(b,2))-(Math.pow(a,2)));
+
+  c1=c1/1000;
+  c2=c2/1000;
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("Hull_potential").innerText=formatValue(c1)+" kV";
+  document.getElementById("Hartree_potential").innerText=formatValue(c2)+" kV";
+}
+</script>
+
+</body>
+</html>
