@@ -1,176 +1,363 @@
-
-<script>
-	function Compute1(form) {
-		with(Math) {
-			var GIGA= 1000000000;
-			var MEGA= 1000000;
-			var KILO= 1000;
-			var Ipk= Number(form.Ipk.value);
-			var V= Number(form.V.value);		
-			var rt= Number(form.rt.value)/MEGA;		
-			var F= Number(form.F.value)*KILO;
-			
-			var Precision= 3;
-			
-			C= Ipk*rt/V; 
-			R= 1/(F*C*20.0);	
-			P= C*V*V*F/2;
-
-			C*= GIGA;
-
-			form.C.value= C.toFixed(Precision);		
-			form.R.value= R.toFixed(Precision);		
-			form.P.value= P.toFixed(Precision);		
-		}
-	}
-
-	function Compute2(form) {
-		with(Math) {
-			var GIGA= 1000000000;	
-			var MEGA= 1000000;
-			var KILO= 1000;
-			var Ipk= Number(form.Ipk.value);		
-			var V= Number(form.V.value);		
-			var dV= Number(form.dV.value);
-			var F= Number(form.F.value)*KILO;
-			var L= Number(form.L.value)/MEGA;
-
-			
-			var Precision= 3;
-			
-			C= L*Ipk*Ipk/(dV*(dV+2*V));
-			R= 10/(F*C);
-			P= (L*Ipk*Ipk/2)*F;
-			
-			C*= GIGA;
-
-			form.C.value= C.toFixed(Precision);		
-			form.R.value= R.toFixed(Precision);		
-			form.P.value= P.toFixed(Precision);	
-		}
-	}
-</script>
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Snubber Circuit Design Calculator</title>
+<meta name="description" content="Snubber circuit design calculator for RC snubber capacitor, resistor and power using peak current, rail voltage, rise time, frequency and inductance.">
+<meta name="keywords" content="snubber circuit calculator, RC snubber calculator, snubber capacitor calculator, snubber resistor calculator, snubber power calculator, switching snubber design, MOSFET snubber calculator, diode snubber calculator, switching spike suppression calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#snubber-calc,#snubber-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#snubber-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#374151;text-align:center}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(3){background:#f5f3ff;border-color:#ddd6fe}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-card:nth-child(3) .result-label,.result-card:nth-child(3) .result-value{color:#7c3aed}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="snubber-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Snubber Design Method</label>
+    <div class="calc-row">
+      <select id="method" onchange="showMethod();clearResults();">
+        <option value="1" selected>Rise Time Method</option>
+        <option value="2">Inductance and Voltage Spike Method</option>
+      </select>
+      <div class="unit-box">type</div>
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Peak Current Ipk</label>
+    <div class="calc-row">
+      <input id="Ipk" type="number" oninput="clearResults()">
+      <div class="unit-box">A</div>
+    </div>
+  </div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+  <div>
+    <label class="calc-label">Rail Voltage Vrail</label>
+    <div class="calc-row">
+      <input id="V" type="number" oninput="clearResults()">
+      <div class="unit-box">V</div>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Switching Frequency</label>
+    <div class="calc-row">
+      <input id="F" type="number" oninput="clearResults()">
+      <div class="unit-box">kHz</div>
+    </div>
+  </div>
+
+  <div id="riseBox">
+    <label class="calc-label">Rise Time</label>
+    <div class="calc-row">
+      <input id="rt" type="number" oninput="clearResults()">
+      <div class="unit-box">µs</div>
+    </div>
+  </div>
+
+  <div id="dvBox">
+    <label class="calc-label">Allowed Voltage Rise dV</label>
+    <div class="calc-row">
+      <input id="dV" type="number" oninput="clearResults()">
+      <div class="unit-box">V</div>
+    </div>
+  </div>
+
+  <div id="indBox">
+    <label class="calc-label">Circuit Inductance L</label>
+    <div class="calc-row">
+      <input id="L" type="number" oninput="clearResults()">
+      <div class="unit-box">µH</div>
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="Compute()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">Snubber Capacitor C</div>
+    <div class="result-value" id="C"></div>
+  </div>
+  <div class="result-card">
+    <div class="result-label">Snubber Resistance R</div>
+    <div class="result-value" id="R"></div>
+  </div>
+  <div class="result-card">
+    <div class="result-label">Snubber Power P</div>
+    <div class="result-value" id="P"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Peak Current Ipk</strong>Maximum switching current through the device or diode used for RC snubber sizing.</div>
+  <div class="paramItem"><strong>Rail Voltage Vrail</strong>DC bus or switching rail voltage used to estimate capacitor stress and power loss.</div>
+  <div class="paramItem"><strong>Rise Time and Frequency</strong>Rise time method uses transition time and switching frequency to size snubber capacitor and resistor.</div>
+  <div class="paramItem"><strong>dV and Inductance</strong>Inductance method uses parasitic inductance and allowed voltage rise to control switching spike energy.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>MOSFET Switching Spike</strong></p><p>Use the rise time method when peak current, rail voltage, switching frequency and transition rise time are known.</p></div>
+  <div class="exampleCard"><p><strong>Parasitic Inductance Snubber</strong></p><p>Use the inductance method when leakage inductance or wiring inductance creates voltage overshoot across the switch.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>An RC snubber is placed across a switching device, diode, relay contact or transformer winding to absorb leakage energy, reduce voltage spikes, and damp high-frequency ringing.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RC snubber discharge and charge current diagram">
+<rect width="620" height="380" fill="#ffffff"/>
+
+<style>
+.wire{stroke:#ff5a5f;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.node{fill:#0047ff}
+.blue{stroke:#00a8ff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.blueDash{stroke:#00a8ff;stroke-width:2;fill:none;stroke-dasharray:4 4;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#blueArr)}
+.redDash{stroke:#ff8aa0;stroke-width:2;fill:none;stroke-dasharray:5 5;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#redArr)}
+.comp{stroke:#334155;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ind{stroke:#5454c8;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.txt{font-family:Arial,sans-serif;font-size:15px;font-weight:700;fill:#111}
+.boxTxt{font-family:Arial,sans-serif;font-size:16px;font-weight:700;fill:#111}
+.box{fill:#ffe3cf;stroke:#ff3b30;stroke-width:1.5}
+.pulse{stroke:#ff5a5f;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 </style>
 
+<defs>
+<marker id="blueArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#00a8ff"/>
+</marker>
+<marker id="redArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#ff8aa0"/>
+</marker>
+</defs>
+
+<!-- top rail and proper half-loop inductor -->
+<path d="M205 40 H320 V78" class="wire"/>
+
+<path d="M320 78
+         C300 78,300 96,320 96
+         C340 96,340 114,320 114
+         C300 114,300 132,320 132
+         C340 132,340 150,320 150"
+      class="ind"/>
+
+<path d="M320 150 V175" class="wire"/>
+
+<text x="342" y="116" class="txt">L1</text>
+
+<!-- main switch node -->
+<circle cx="320" cy="175" r="4" class="node"/>
+
+<!-- vertical main track -->
+<path d="M320 175 V278" class="wire"/>
+<circle cx="320" cy="278" r="4" class="node"/>
+
+<!-- ground below track, no overlap -->
+<path d="M320 278 V320" class="wire"/>
+<path d="M320 340 V320" class="blue"/>
+<path d="M300 340 H340" class="blue"/>
+<path d="M308 350 H332" class="blue"/>
+<path d="M316 360 H324" class="blue"/>
+
+<!-- MOSFET Q1 -->
+<line x1="285" y1="238" x2="285" y2="270" class="comp"/>
+<line x1="300" y1="232" x2="300" y2="276" class="comp"/>
+<line x1="300" y1="245" x2="320" y2="245" class="comp"/>
+<line x1="300" y1="265" x2="320" y2="265" class="comp"/>
+<path d="M270 252 H285" class="comp"/>
+<text x="328" y="246" class="txt">Q1</text>
+
+<!-- gate drive pulse -->
+<path d="M85 270
+         V242 H110 V270
+         H135 V242 H160 V270
+         H192
+         V252
+         H270" class="pulse"/>
+
+<!-- RC snubber branch -->
+<path d="M320 175 H440 V205" class="wire"/>
+
+<!-- R1 -->
+<path d="M440 205 L425 216 L455 228 L425 240 L455 252 L425 264 L440 275" class="comp"/>
+<text x="463" y="238" class="txt">R1</text>
+
+<!-- capacitor connection: top wire stops above top plate -->
+<path d="M440 275 V292" class="wire"/>
+
+<!-- C1 capacitor plates, NOT shorted -->
+<line x1="418" y1="298" x2="462" y2="298" class="blue"/>
+<line x1="418" y1="314" x2="462" y2="314" class="blue"/>
+
+<!-- bottom plate connection only -->
+<path d="M440 314 V330 H320" class="wire"/>
+<text x="465" y="315" class="txt">C1</text>
+
+<!-- discharge current dotted path -->
+<path d="M185 210 H289" class="blueDash"/>
+
+<path d="M390 205 V250" class="blueDash"/>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
 
+<!-- charge current dotted path -->
+<path d="M405 165 H490 V280" class="redDash"/>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+<!-- label boxes -->
+<rect x="50" y="170" width="90" height="50" class="box"/>
+<text x="58" y="190" class="boxTxt">discharge</text>
+<text x="65" y="210" class="boxTxt">current</text>
 
-<form method="POST" name="ParamForm1" action="">
-   
-        
-<label for="r2" style="font-size:55;" >Ipk</sub></label><font face="Arial" size="6"> </font><input name="Ipk" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >Rd</sub></label><font face="Arial" size="6"> (Rise Time)</font><input name="rt" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:45px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">	&micro;sec</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >V<sub>rail</sub></label><font face="Arial" size="6"></font><input name="V" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:35;"></h1>	
-<label for="r2" style="font-size:55;" >Frequency<sub></sub></label><font face="Arial" size="6"></font><input name="F" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">KHz</label>
-<h1 style="font-size:40;"></h1>	
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="Button" value="CALCULATE" onClick="Compute1(document.ParamForm1)"style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+<rect x="535" y="190" width="70" height="70" class="box"/>
+<text x="546" y="218" class="boxTxt">Charge</text>
+<text x="546" y="242" class="boxTxt">current</text>
 
+</svg>
+</div>
+</section>
 
-<h3>Outputs</h3></div></legend>				
-				
-<label for="r2" style="font-size:55;" >C</label><font face="Arial" size="6"> </font><input name="C" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">nF</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >Resistance</label><font face="Arial" size="6"> </font><input name="R" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >Power</label><font face="Arial" size="6"> </font><input name="P" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:55px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
-<h1 style="font-size:50;"></h1>	        
-        
-       
-       
-     
-        
-   
-      </form>
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Rise Time Method: Convert rise time from µs to seconds and frequency from kHz to Hz.</div>
+<div class="formula">Capacitance: C = Ipk × rt / Vrail, then C is displayed in nF.</div>
+<div class="formula">Resistance: R = 1 / (F × C × 20).</div>
+<div class="formula">Power: P = C × Vrail² × F / 2.</div>
+<div class="formula">Inductance Method: Convert inductance from µH to H and frequency from kHz to Hz.</div>
+<div class="formula">Capacitance: C = L × Ipk² / (dV × (dV + 2 × Vrail)), then C is displayed in nF.</div>
+<div class="formula">Resistance: R = 10 / (F × C).</div>
+<div class="formula">Power: P = (L × Ipk² / 2) × F.</div>
+</section>
 
+</div>
 
+<script>
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
 
+function clearResults(){
+  document.getElementById("C").innerText="";
+  document.getElementById("R").innerText="";
+  document.getElementById("P").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
 
-     
+function showMethod(){
+  var method=Number(document.getElementById("method").value);
+  document.getElementById("riseBox").style.display=method===1?"block":"none";
+  document.getElementById("dvBox").style.display=method===2?"block":"none";
+  document.getElementById("indBox").style.display=method===2?"block":"none";
+}
+
+function Compute(){
+  var method=Number(document.getElementById("method").value);
+
+  if(isMissing("Ipk") || isMissing("V") || isMissing("F")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  if(method===1 && isMissing("rt")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  if(method===2 && (isMissing("dV") || isMissing("L"))){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  with(Math){
+    var GIGA=1000000000;
+    var MEGA=1000000;
+    var KILO=1000;
+    var Precision=3;
+
+    var Ipk=Number(document.getElementById("Ipk").value);
+    var V=Number(document.getElementById("V").value);
+    var F=Number(document.getElementById("F").value)*KILO;
+    var C,R,P;
+
+    if(method===1){
+      var rt=Number(document.getElementById("rt").value)/MEGA;
+      C=Ipk*rt/V;
+      R=1/(F*C*20.0);
+      P=C*V*V*F/2;
+    }
+
+    if(method===2){
+      var dV=Number(document.getElementById("dV").value);
+      var L=Number(document.getElementById("L").value)/MEGA;
+      C=L*Ipk*Ipk/(dV*(dV+2*V));
+      R=10/(F*C);
+      P=(L*Ipk*Ipk/2)*F;
+    }
+
+    C*=GIGA;
+
+    document.getElementById("errorBox").style.display="none";
+    document.getElementById("C").innerText=C.toFixed(Precision)+" nF";
+    document.getElementById("R").innerText=R.toFixed(Precision)+" Ω";
+    document.getElementById("P").innerText=P.toFixed(Precision)+" W";
+  }
+}
+
+showMethod();
+</script>
+
+</body>
+</html>
