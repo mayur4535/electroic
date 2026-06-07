@@ -1,201 +1,274 @@
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Trace Resistance Calculator</title>
+<meta name="description" content="Calculate PCB trace resistance from trace width, length, copper thickness and temperature with mil, cm, mm, µm, inch and temperature units.">
+<meta name="keywords" content="trace resistance calculator, PCB trace resistance calculator, copper trace resistance calculator, PCB resistance calculator, copper track resistance, trace width resistance, PCB copper thickness calculator, circuit board trace resistance, microstrip trace resistance">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#trace-calc,#trace-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#trace-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="trace-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Trace Width</label>
+    <div class="calc-row">
+      <input id="width" type="number" oninput="clearResults()">
+      <select id="width_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Trace Length</label>
+    <div class="calc-row">
+      <input id="length" type="number" oninput="clearResults()">
+      <select id="length_unit" onchange="clearResults()">
+        <option value="0.00254">mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54" selected>inch</option>
+      </select>
+    </div>
+  </div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+  <div>
+    <label class="calc-label">Trace Thickness</label>
+    <div class="calc-row">
+      <input id="thick" type="number" oninput="clearResults()">
+      <select id="thick_unit" onchange="clearResults()">
+        <option value="0.0035">oz/ft²</option>
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Temperature</label>
+    <div class="calc-row">
+      <input id="temp" type="number" oninput="clearResults()">
+      <select id="temp_unit" onchange="clearResults()">
+        <option value="1" selected>°C</option>
+        <option value="2">K</option>
+        <option value="3">°F</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="calculateTraceResistance()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">Resistance</div>
+    <div class="result-value" id="resistanceResult"></div>
+  </div>
+  <div class="result-card">
+    <div class="result-label">Converted Temperature</div>
+    <div class="result-value" id="tempResult"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Trace Width</strong>PCB copper track width. Wider traces reduce resistance because cross-sectional area increases.</div>
+  <div class="paramItem"><strong>Trace Length</strong>Total conductor path length. Longer PCB traces increase copper resistance.</div>
+  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness in oz/ft², mil, cm, mm, µm or inch. Thicker copper lowers trace resistance.</div>
+  <div class="paramItem"><strong>Temperature</strong>Copper resistance rises with temperature using the temperature coefficient of copper.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>PCB Power Trace</strong></p><p>Estimate voltage drop risk by calculating trace resistance for high-current copper tracks.</p></div>
+  <div class="exampleCard"><p><strong>Thermal Design</strong></p><p>Use operating temperature to estimate how copper resistance changes in real board conditions.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>PCB trace resistance depends on copper resistivity, trace length, trace width, copper thickness and operating temperature. The diagram shows trace dimensions used in the calculation.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PCB trace resistance width length thickness diagram">
+<rect width="620" height="340" fill="#ffffff"/>
+
+<style>
+.pcb{fill:#14532d;stroke:#0f172a;stroke-width:2}
+.copperTop{fill:#f59e0b;stroke:#92400e;stroke-width:2}
+.copperSide{fill:#d97706;stroke:#92400e;stroke-width:2}
+.copperEdge{fill:#fbbf24;stroke:#92400e;stroke-width:2}
+.arrow{stroke:#111827;stroke-width:2;fill:none;marker-start:url(#arrStart);marker-end:url(#arrEnd)}
+.thin{stroke:#111827;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dash{stroke:#64748b;stroke-width:1.5;stroke-dasharray:5 5;fill:none}
+.txt{font-family:Arial,sans-serif;font-size:15px;font-weight:900;fill:#111827}
+.blueTxt{font-family:Arial,sans-serif;font-size:15px;font-weight:900;fill:#2563eb}
+.orangeTxt{font-family:Arial,sans-serif;font-size:15px;font-weight:900;fill:#ea580c}
+.greenTxt{font-family:Arial,sans-serif;font-size:15px;font-weight:900;fill:#16a34a}
+.redTxt{font-family:Arial,sans-serif;font-size:15px;font-weight:900;fill:#ef4444}
 </style>
 
+<defs>
+<marker id="arrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="arrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+</defs>
 
+<!-- PCB base -->
+<path d="M95 165 L465 105 L540 170 L170 235 Z" class="pcb"/>
+<path d="M170 235 L540 170 L540 205 L170 270 Z" fill="#0f3d25" stroke="#0f172a" stroke-width="2"/>
+<path d="M95 165 L170 235 L170 270 L95 200 Z" fill="#166534" stroke="#0f172a" stroke-width="2"/>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<!-- copper trace top -->
+<path d="M145 164 L430 118 L488 167 L203 215 Z" class="copperTop"/>
+<!-- copper trace side thickness -->
+<path d="M203 215 L488 167 L488 182 L203 230 Z" class="copperSide"/>
+<path d="M145 164 L203 215 L203 230 L145 179 Z" class="copperEdge"/>
 
+<!-- length dimension -->
+<line x1="147" y1="90" x2="430" y2="45" class="arrow"/>
+<line x1="145" y1="164" x2="145" y2="90" class="dash"/>
+<line x1="430" y1="118" x2="430" y2="45" class="dash"/>
+<text x="250" y="58" class="blueTxt">Length (L)</text>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
+<!-- width dimension -->
+<line x1="510" y1="99" x2="558" y2="150" class="arrow"/>
+<line x1="430" y1="118" x2="500" y2="100" class="dash"/>
+<line x1="488" y1="167" x2="558" y2="150" class="dash"/>
+<line x1="488" y1="181" x2="558" y2="164" class="dash"/>
+<text x="535" y="120" class="greenTxt">Width (W)</text>
 
+<!-- thickness dimension -->
+<line x1="560" y1="170" x2="560" y2="150" class="arrow"/>
+<text x="540" y="184" class="orangeTxt">Thickness (T)</text>
 
+<!-- resistance path -->
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<circle cx="215" cy="185" r="5" fill="#ef4444"/>
+<circle cx="455" cy="150" r="5" fill="#ef4444"/>
+<text x="222" y="170" class="redTxt">Trace resistance path</text>
+
+<!-- temperature icon -->
+<circle cx="105" cy="285" r="24" fill="#e0f2fe" stroke="#2563eb" stroke-width="2"/>
+<path d="M105 270 V288" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>
+<circle cx="105" cy="294" r="7" fill="#2563eb"/>
+<text x="138" y="292" class="blueTxt">Temperature affects copper resistance</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Step 1: Convert width, length and thickness to centimeters using selected unit multipliers.</div>
+<div class="formula">Step 2: Convert temperature to Celsius. °C stays same, K becomes K - 273.15, °F becomes 100 / 180 × (°F - 32).</div>
+<div class="formula">Step 3: Copper resistivity constant = 17 × 10^-7 Ω·cm.</div>
+<div class="formula">Step 4: Copper temperature coefficient = 0.0039 per °C.</div>
+<div class="formula">Step 5: Resistance = resistivity × length / (width × thickness) × (1 + coefficient × (temperature - 25)).</div>
+</section>
 
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Width<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="width"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 165px;"class="form-control"  />
-<select class="form-control" id="width_unit" style="padding: 5px ;  position: absolute;height:84.5px;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
 
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<script>
+function clearResults(){
+  document.getElementById("resistanceResult").innerText="";
+  document.getElementById("tempResult").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Length<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="length"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 165px;"class="form-control"  />
-<select class="form-control" id="length_unit" style="padding: 5px ;  position: absolute;height:84.5px;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; border:3px solid #aaa;">
-<option value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option selected="" value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Thickness<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="thick"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 165px;"class="form-control"  />
-<select class="form-control" id="thick_unit" style="padding: 5px ;  position: absolute;height:84.5px;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; border:3px solid #aaa;">
-<option  value="0.0035">oz/ft^2</option>
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+function calculateTraceResistance(){
+  if(isMissing("width") || isMissing("length") || isMissing("thick") || isMissing("temp")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Temperature<font face="Arial" size="6"> </font></label><input type="number" id="temp"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 165px;"class="form-control"  />
-<select class="form-control" id="temp_unit" style="padding: 5px ;  position: absolute;height:84.5px;right: 10px;font-size:58px;margin:8px 0;width:148px;border-radius:4px; border:3px solid #aaa;">
-<option selected="" value="1">°C</option>
-<option value="2">°K</option>
-<option value="3">°F</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12">
+  var width=Number(document.getElementById("width").value)*Number(document.getElementById("width_unit").value);
+  var length=Number(document.getElementById("length").value)*Number(document.getElementById("length_unit").value);
+  var thick=Number(document.getElementById("thick").value)*Number(document.getElementById("thick_unit").value);
+  var tempInput=Number(document.getElementById("temp").value);
+  var tempUnit=document.getElementById("temp_unit").value;
+  var tempC=tempInput;
 
-<div class="col-sm-4">
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+  if(tempUnit==="1"){
+    tempC=tempInput;
+  }else if(tempUnit==="2"){
+    tempC=tempInput-273.15;
+  }else if(tempUnit==="3"){
+    tempC=(100/180)*(tempInput-32);
+  }
 
+  var copperResistivity=17e-7;
+  var copperTempCoefficient=0.0039;
+  var resistance=copperResistivity*length/(width*thick)*(1+copperTempCoefficient*(tempC-25));
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("resistanceResult").innerText=resistance.toPrecision(3)+" Ω";
+  document.getElementById("tempResult").innerText=tempC.toFixed(2)+" °C";
+}
+</script>
 
-
-<h3>Outputs</h3></div></legend>
-
-
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Resistance</label><font face="Arial" size="7">  </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ; height:69.5px; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-
-
-</div>
-</div>
-<h1 style="font-size:30;"></h1>
-<script type="text/javascript">
-var _0x7da4=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x77\x69\x64\x74\x68","\x23\x77\x69\x64\x74\x68\x5F\x75\x6E\x69\x74","\x23\x6C\x65\x6E\x67\x74\x68","\x23\x6C\x65\x6E\x67\x74\x68\x5F\x75\x6E\x69\x74","\x23\x74\x65\x6D\x70","\x23\x74\x65\x6D\x70\x5F\x75\x6E\x69\x74","\x23\x74\x68\x69\x63\x6B","\x23\x74\x68\x69\x63\x6B\x5F\x75\x6E\x69\x74","\x31","\x32","\x33","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];!function(_0x8766x1){_0x7da4[0];var _0x8766x2={calculate:function(){var _0x8766x2=_0x8766x1(_0x7da4[2])[_0x7da4[1]]()* _0x8766x1(_0x7da4[3])[_0x7da4[1]](),_0x8766x3=_0x8766x1(_0x7da4[4])[_0x7da4[1]]()* _0x8766x1(_0x7da4[5])[_0x7da4[1]](),_0x8766x4=_0x8766x1(_0x7da4[6])[_0x7da4[1]]()* _0x8766x1(_0x7da4[7])[_0x7da4[1]](),_0x8766x5=_0x8766x1(_0x7da4[8])[_0x7da4[1]]()* _0x8766x1(_0x7da4[9])[_0x7da4[1]](),_0x8766x6=_0x8766x1(_0x7da4[7])[_0x7da4[1]]();switch(_0x8766x6){case _0x7da4[10]:_0x8766x4= _0x8766x1(_0x7da4[6])[_0x7da4[1]]();break;case _0x7da4[11]:_0x8766x4= _0x8766x1(_0x7da4[6])[_0x7da4[1]]()- 273.15;break;case _0x7da4[12]:_0x8766x4= 100/ 180* (_0x8766x1(_0x7da4[6])[_0x7da4[1]]()- 32)};var _0x8766x7=17e-7,_0x8766x8=0.0039,_0x8766x9=_0x8766x7* _0x8766x3/ (_0x8766x2* _0x8766x5)* (1+ _0x8766x8* (_0x8766x4- 25));_0x8766x1(_0x7da4[14])[_0x7da4[1]](_0x8766x9[_0x7da4[13]](3))}};_0x8766x1(_0x7da4[17])[_0x7da4[22]](function(){var _0x8766x2=!1;_0x8766x1(_0x7da4[17])[_0x7da4[16]](function(){_0x7da4[15]== _0x8766x1(this)[_0x7da4[1]]()&& (_0x8766x2=  !0)}),_0x8766x2?_0x8766x1(_0x7da4[20])[_0x7da4[19]](_0x7da4[18],_0x7da4[18]):_0x8766x1(_0x7da4[20])[_0x7da4[21]](_0x7da4[18])}),_0x8766x1(_0x7da4[20])[_0x7da4[26]](_0x7da4[23],function(_0x8766x1){_0x8766x1[_0x7da4[24]](),_0x8766x2[_0x7da4[25]]()})}(jQuery)
-</script></p>
-
-</div>
 </body>
 </html>
