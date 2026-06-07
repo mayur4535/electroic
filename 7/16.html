@@ -1,133 +1,285 @@
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Peak Voltage Calculator</title>
+<meta name="description" content="Calculate peak voltage and peak-to-peak voltage from peak, RMS, or average voltage with V, mV, and kV input unit selection.">
+<meta name="keywords" content="peak voltage calculator, peak to peak voltage calculator, RMS to peak voltage calculator, average voltage to peak calculator, Vpp calculator, voltage converter, AC voltage calculator, sine wave peak voltage">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#peak-voltage-calc,#peak-voltage-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#peak-voltage-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.calc-row.type-row{grid-template-columns:minmax(0,1fr)}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="peak-voltage-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Voltage Type</label>
+    <div class="calc-row type-row">
+      <select id="voltageType" onchange="clearResults()">
+        <option value="peak" selected>Vp - Peak Voltage</option>
+        <option value="rms">Vrms - RMS Voltage</option>
+        <option value="avg">Vavg - Average Voltage</option>
+      </select>
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Input Voltage</label>
+    <div class="calc-row">
+      <input id="inputVoltage" type="number" oninput="clearResults()">
+      <select id="inputUnit" onchange="clearResults()">
+        <option value="1" selected>V</option>
+        <option value="0.001">mV</option>
+        <option value="1000">kV</option>
+      </select>
+    </div>
+  </div>
+</div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+<button type="button" onclick="calculatePeakVoltage()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">Peak Voltage</div>
+    <div class="result-value" id="peakVoltageResult"></div>
+  </div>
+  <div class="result-card">
+    <div class="result-label">Peak-to-Peak Voltage</div>
+    <div class="result-value" id="peakPeakResult"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Voltage Type</strong>Select whether the input value is peak voltage, RMS voltage, or average voltage.</div>
+  <div class="paramItem"><strong>Input Voltage</strong>Enter the known voltage value using V, mV, or kV unit selection.</div>
+  <div class="paramItem"><strong>Peak Voltage</strong>The maximum voltage amplitude from zero reference to the waveform peak.</div>
+  <div class="paramItem"><strong>Peak-to-Peak Voltage</strong>Total voltage swing from positive peak to negative peak.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>RMS to Peak</strong></p><p>Use RMS input to convert AC meter readings into peak voltage for waveform and oscilloscope analysis.</p></div>
+  <div class="exampleCard"><p><strong>Peak-to-Peak Check</strong></p><p>Use peak voltage input to calculate Vp-p for signal generator, amplifier, and AC waveform measurement.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Peak voltage is measured from the zero axis to the maximum waveform amplitude. Peak-to-peak voltage is measured from the positive peak to the negative peak.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Peak RMS Average Voltage Waveform Diagram">
+<rect width="900" height="620" fill="#ffffff"/>
+
+<style>
+.axis{stroke:#111;stroke-width:4;fill:none;stroke-linecap:round}
+.wave{stroke:#0ea526;stroke-width:5;fill:none;stroke-linecap:round}
+.dash{stroke:#111;stroke-width:2;stroke-dasharray:6 5;fill:none}
+.red{stroke:#ff1e1e;stroke-width:3;fill:none;marker-start:url(#arrRed);marker-end:url(#arrRed)}
+.blackArrow{stroke:#111;stroke-width:2;fill:none;marker-start:url(#arrBlack);marker-end:url(#arrBlack)}
+.blueTxt{font-family:Arial,sans-serif;font-size:26px;font-weight:900;fill:#1848ff}
+.blackTxt{font-family:Arial,sans-serif;font-size:22px;font-weight:900;fill:#111}
+.smallTxt{font-family:Arial,sans-serif;font-size:18px;font-weight:700;fill:#111}
 </style>
 
+<defs>
+<marker id="arrRed" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+<path d="M0,0 L10,5 L0,10 Z" fill="#ff1e1e"/>
+</marker>
+<marker id="arrBlack" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+<path d="M0,0 L10,5 L0,10 Z" fill="#111"/>
+</marker>
+</defs>
+
+<!-- Axis -->
+<line x1="70" y1="40" x2="70" y2="570" class="axis"/>
+<line x1="70" y1="300" x2="820" y2="300" class="axis"/>
+<polygon points="70,20 58,45 82,45" fill="#111"/>
+<polygon points="850,300 820,288 820,312" fill="#111"/>
+
+<!-- sine wave copied from your perfect reference and scaled -->
+<path d="M70 300
+         C115 140,185 55,260 115
+         C345 180,320 410,500 470
+         C575 505,655 345,690 300"
+      class="wave"/>
+
+<!-- peak and negative peak reference lines -->
+<line x1="210" y1="90" x2="890" y2="90" class="dash"/>
+<line x1="500" y1="470" x2="840" y2="470" class="dash"/>
+
+<!-- RMS and average lines -->
+<line x1="70" y1="190" x2="780" y2="190" class="dash"/>
+<line x1="70" y1="215" x2="610" y2="215" class="dash"/>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+
+<!-- negative peak locator -->
+<line x1="500" y1="300" x2="500" y2="470" class="dash"/>
+
+<!-- arrows -->
+<line x1="215" y1="285" x2="215" y2="110" class="red"/>
+<line x1="170" y1="285" x2="170" y2="205" class="red"/>
+<line x1="500" y1="317" x2="500" y2="450" class="red"/>
+<line x1="865" y1="115" x2="865" y2="470" class="red"/>
+
+<!-- Labels -->
+<text x="10" y="20" class="blackTxt">+V</text>
+<text x="25" y="595" class="blackTxt">-V</text>
+<text x="35" y="310" class="blackTxt">0</text>
+
+<text x="78" y="332" class="smallTxt">0°</text>
+<text x="245" y="332" class="smallTxt">90°</text>
+<text x="420" y="332" class="smallTxt">180°</text>
+<text x="490" y="332" class="smallTxt">270°</text>
+<text x="745" y="332" class="smallTxt">360°</text>
 
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><div class="container-fluid">
-<form id="tool">
+<circle cx="215" cy="90" r="8" fill="#1848ff"/>
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Input<font face="Arial" size="6"> </font></label>
-<select class="form-control" id="tool_voltage_type" style="padding: 5px ;  position: absolute;right:451px;font-size:58px;margin:8px 0;width:170px;height:85px;border-radius:4px; border:3px solid #aaa;">
-<option value="peakpeak">V<sub>pp</sub>&nbsp; Peak-to-Peak Voltage </option>
-<option value="rms">V<sub>rms</sub> RMS Voltage </option>
-<option value="avg">V<sub>avg</sub> Average Voltage </option>
+<text x="225" y="180" class="blackTxt">Vmax</text>
+<text x="245" y="210" class="blackTxt">Or</text>
+<text x="245" y="240" class="blackTxt">Vp</text>
 
+<text x="95" y="250" class="blackTxt">VRMS</text>
 
-</select><input type="number" id="tool_voltage"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 143px;"class="form-control"  />
-<label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
+<text x="425" y="235" class="blackTxt">Vav</text>
+<text x="485" y="235" class="smallTxt">(Half Cycle)</text>
 
+<text x="515" y="390" class="blackTxt">Vmax</text>
+<text x="535" y="420" class="blackTxt">Or</text>
+<text x="540" y="450" class="blackTxt">Vp</text>
 
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
+<text x="770" y="170" class="blackTxt">VRMS</text>
+<text x="800" y="270" class="blackTxt">VPP</text>
+
+<!-- Half cycle arrow -->
+<line x1="80" y1="380" x2="370" y2="380" class="blackArrow"/>
+<text x="180" y="365" class="blackTxt">Half Cycle</text>
+
+<!-- Full cycle arrow -->
+<line x1="80" y1="500" x2="820" y2="500" class="blackArrow"/>
+<text x="340" y="485" class="blackTxt">1 Full Cycle</text>
+
+<!-- Period -->
+<line x1="80" y1="550" x2="820" y2="550" class="blackArrow"/>
+<text x="350" y="585" class="blackTxt">T = 1 / f = </text>
+<text x="470" y="585" class="blueTxt">Time Period</text>
+
+<text x="805" y="335" class="blackTxt">t</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Step 1: Convert input value to volts using selected input unit: V = value, mV = value × 0.001, kV = value × 1000.</div>
+<div class="formula">If input is Peak Voltage: Vp = input voltage.</div>
+<div class="formula">If input is RMS Voltage: Vp = Vrms × sqrt(2).</div>
+<div class="formula">If input is Average Voltage: Vp-p = Vavg × PI, therefore Vp = Vavg × PI / 2.</div>
+<div class="formula">Peak-to-Peak Voltage: Vp-p = 2 × Vp.</div>
+</section>
 
 </div>
-</div>
 
-</form></fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+<script>
+function clearResults(){
+  document.getElementById("peakVoltageResult").innerText="";
+  document.getElementById("peakPeakResult").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
 
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
 
-<h3>Outputs</h3></div></legend>	
+function formatValue(v){
+  if(!isFinite(v)) return "Not defined";
+  return Number(v).toPrecision(8);
+}
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+function calculatePeakVoltage(){
+  if(isMissing("inputVoltage")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="tool_submit_container form-group has-warning">
-<label for="r2" style="font-size:55;" >V<sub>p</sub></label><font face="Arial" size="6"> (Peak Voltage) </font><input id="tool_voltage_peak" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
+  var voltageType=document.getElementById("voltageType").value;
+  var input=Number(document.getElementById("inputVoltage").value);
+  var unitMultiplier=Number(document.getElementById("inputUnit").value);
+  var inputVolts=input*unitMultiplier;
 
-</div>
-</div>
-<h1 style="font-size:50;"></h1>	
-<script type="text/javascript">
-var _0xbe05=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x74\x6F\x6F\x6C\x5F\x76\x6F\x6C\x74\x61\x67\x65","\x23\x74\x6F\x6F\x6C\x5F\x76\x6F\x6C\x74\x61\x67\x65\x5F\x74\x79\x70\x65","\x23\x74\x6F\x6F\x6C\x5F\x76\x6F\x6C\x74\x61\x67\x65\x5F\x70\x65\x61\x6B","\x70\x65\x61\x6B\x70\x65\x61\x6B","\x72\x6D\x73","\x73\x71\x72\x74","\x50\x49","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x2E\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74\x5F\x63\x6F\x6E\x74\x61\x69\x6E\x65\x72","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x61\x64\x64\x43\x6C\x61\x73\x73","\x6F\x6E"];!function(_0x362ex1){_0xbe05[0];_0x362ex1(_0xbe05[4])[_0xbe05[9]](function(){var _0x362ex2=!1;_0x362ex1(_0xbe05[4])[_0xbe05[3]](function(){_0xbe05[1]== _0x362ex1(this)[_0xbe05[2]]()&& (_0x362ex2=  !0)}),_0x362ex2?_0x362ex1(_0xbe05[7])[_0xbe05[6]](_0xbe05[5],_0xbe05[5]):_0x362ex1(_0xbe05[7])[_0xbe05[8]](_0xbe05[5])}),_0x362ex1(_0xbe05[7])[_0xbe05[24]](_0xbe05[10],function(_0x362ex2){_0x362ex2[_0xbe05[11]]();var _0x362ex3=_0x362ex1(_0xbe05[12]),_0x362ex4=_0x362ex1(_0xbe05[13]),_0x362ex5=_0x362ex1(_0xbe05[14]);_0x362ex3[_0xbe05[2]]()&& _0x362ex4[_0xbe05[2]]()&& (_0xbe05[15]=== _0x362ex4[_0xbe05[2]]()?_0x362ex5[_0xbe05[2]](0.5* _0x362ex3[_0xbe05[2]]()):_0xbe05[16]=== _0x362ex4[_0xbe05[2]]()?_0x362ex5[_0xbe05[2]](_0x362ex3[_0xbe05[2]]()* Math[_0xbe05[17]](2)):_0x362ex5[_0xbe05[2]](_0x362ex3[_0xbe05[2]]()* (Math[_0xbe05[18]]/ 2)),_0x362ex1(_0xbe05[21])[_0xbe05[20]](_0xbe05[19]),_0x362ex1(_0xbe05[21])[_0xbe05[23]](_0xbe05[22]))})}(jQuery)
+  var peakVoltage=0;
+  var peakPeakVoltage=0;
+
+  if(voltageType==="peak"){
+    peakVoltage=inputVolts;
+    peakPeakVoltage=2*inputVolts;
+  }
+
+  if(voltageType==="rms"){
+    peakVoltage=Math.sqrt(2)*inputVolts;
+    peakPeakVoltage=2.8284*inputVolts;
+  }
+
+  if(voltageType==="avg"){
+    peakPeakVoltage=inputVolts*Math.PI;
+    peakVoltage=peakPeakVoltage/2;
+  }
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("peakVoltageResult").innerText=formatValue(peakVoltage)+" V";
+  document.getElementById("peakPeakResult").innerText=formatValue(peakPeakVoltage)+" V";
+}
 </script>
-</div>
+
 </body>
 </html>
