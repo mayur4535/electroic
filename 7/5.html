@@ -1,123 +1,231 @@
-
-
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-Vrms=Number(document.calculator.number1.value);
-Vdc=Number(document.calculator.number2.value);
-Vpeak=Number(document.calculator.number3.value);
-c1 = Vrms/Vdc;
-c2= Vpeak/Vrms;
-document.calculator.form_factor.value=c1;
-document.calculator.crest_factor.value=c2;
-}
-</SCRIPT>
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Form Factor and Crest Factor Calculator</title>
+<meta name="description" content="Calculate form factor and crest factor from RMS, DC and peak voltage with a fast electrical waveform factor calculator.">
+<meta name="keywords" content="form factor calculator, crest factor calculator, rms voltage calculator, peak voltage calculator, dc voltage calculator, waveform factor calculator, electrical form factor, voltage crest factor, AC waveform calculator, RMS to DC ratio calculator, peak to RMS ratio calculator, electronics calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#factor-calc,#factor-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#factor-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
+.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
+.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
+.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
+<body>
 
+<div id="factor-calc">
 
+  <div class="calc-grid">
+    <div>
+      <label class="calc-label">RMS Voltage</label>
+      <div class="calc-row">
+        <input id="Vrms" type="number" oninput="clearResults()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+    <div>
+      <label class="calc-label">DC Voltage</label>
+      <div class="calc-row">
+        <input id="Vdc" type="number" oninput="clearResults()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">Peak Voltage</label>
+      <div class="calc-row">
+        <input id="Vpeak" type="number" oninput="clearResults()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
+  </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+  <button type="button" onclick="calc()">CALCULATE</button>
 
+  <div id="errorBox">Please enter all required values.</div>
 
+  <div class="result-title">RESULTS</div>
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="result-label">Form Factor</div>
+      <div class="result-value"><span id="formFactor"></span></div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Crest Factor</div>
+      <div class="result-value"><span id="crestFactor"></span></div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">RMS / DC Ratio</div>
+      <div class="result-value"><span id="rmsDcRatio"></span></div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Peak / RMS Ratio</div>
+      <div class="result-value"><span id="peakRmsRatio"></span></div>
+    </div>
+  </div>
 
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>RMS Voltage</strong>The effective heating value of an AC waveform used in form factor and crest factor measurement.</div>
+      <div class="paramItem"><strong>DC Voltage</strong>The average or rectified DC value used as the denominator for form factor calculation.</div>
+      <div class="paramItem"><strong>Peak Voltage</strong>The maximum waveform amplitude used for peak-to-RMS crest factor analysis.</div>
+      <div class="paramItem"><strong>Waveform Factors</strong>These values help compare sine wave, square wave, pulse and rectified electrical signals.</div>
+    </div>
+  </section>
 
-<FORM name="calculator">
-<label for="r2" style="font-size:55;" >RMS Voltage</label><font face="Arial" size="6">   </font><input maxlength="15" name="number1" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:50;"></h1>		
-<label for="r2" style="font-size:55;" >DC Voltage</label><font face="Arial" size="6">   </font><input maxlength="15" name="number2" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >PEAK Voltage</label><font face="Arial" size="6">   </font><input maxlength="15" name="number3" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:40;"></h1>	
-</fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Sine Wave Check</strong></p>
+        <p>For a pure sine wave, crest factor is commonly close to 1.414 when peak voltage is divided by RMS voltage.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Rectifier Output Check</strong></p>
+        <p>Form factor helps compare RMS voltage with average DC voltage in rectifier, charger and power supply testing.</p>
+      </div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Form factor and crest factor describe waveform shape. High crest factor means the waveform has a high peak compared with its RMS value.</p>
+    <div class="diagramBox">
+      <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Form factor and crest factor waveform diagram">
+        <rect width="620" height="300" fill="#fff"/>
+        <style>
+          .axis{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round}
+          .grid{stroke:#e5e7eb;stroke-width:1}
+          .wave{stroke:#2563eb;stroke-width:4;fill:none;stroke-linecap:round}
+          .peak{stroke:#ff7a18;stroke-width:3;fill:none;stroke-linecap:round;stroke-dasharray:7 6}
+          .rms{stroke:#10b981;stroke-width:3;fill:none;stroke-linecap:round;stroke-dasharray:6 5}
+          .dc{stroke:#7c3aed;stroke-width:3;fill:none;stroke-linecap:round;stroke-dasharray:4 5}
+          .txt{font-family:Arial,sans-serif;font-size:13px;font-weight:900;fill:#111827}
+          .blue{fill:#2563eb}
+          .orange{fill:#ff7a18}
+          .green{fill:#10b981}
+          .purple{fill:#7c3aed}
+        </style>
 
-<h3>Outputs</h3></div></legend>	
-<label for="r2" style="font-size:55;" >FORM FACTOR</label><font face="Arial" size="6">   </font><input maxlength="15" NAME="form_factor" class="intro"  style="position: absolute;   width:350; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >CREST FACTOR</label><font face="Arial" size="6">   </font><input maxlength="15" NAME="crest_factor" class="intro"  style="position: absolute;   width:350; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:40;"></h1>	
+        <line x1="55" y1="40" x2="55" y2="250" class="axis"/>
+        <line x1="55" y1="250" x2="580" y2="250" class="axis"/>
 
+        <line x1="55" y1="70" x2="580" y2="70" class="grid"/>
+        <line x1="55" y1="120" x2="580" y2="120" class="grid"/>
+        <line x1="55" y1="170" x2="580" y2="170" class="grid"/>
+        <line x1="55" y1="220" x2="580" y2="220" class="grid"/>
 
-</FORM>
+        <path d="M65 160 C95 55,135 55,165 160 S235 265,265 160 S335 55,365 160 S435 265,465 160 S535 55,570 160" class="wave"/>
+
+        <line x1="55" y1="55" x2="580" y2="55" class="peak"/>
+        <line x1="55" y1="105" x2="580" y2="105" class="rms"/>
+        <line x1="55" y1="138" x2="580" y2="138" class="dc"/>
+
+        <text x="190" y="47" class="txt orange">Vpeak</text>
+        <text x="190" y="98" class="txt green">Vrms</text>
+        <text x="160" y="132" class="txt purple">Vdc / Average</text>
+        <text x="410" y="38" class="txt orange">Crest Factor = Vpeak / Vrms</text>
+        <text x="385" y="275" class="txt purple">Form Factor = Vrms / Vdc</text>
+        <text x="60" y="185" class="txt blue">AC Waveform</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Step 1: Read RMS Voltage, DC Voltage and Peak Voltage from the input fields.</div>
+    <div class="formula">Step 2: Form Factor = RMS Voltage / DC Voltage.</div>
+    <div class="formula">Step 3: Crest Factor = Peak Voltage / RMS Voltage.</div>
+    <div class="formula">Step 4: The calculator displays both ratios as dimensionless electrical waveform factors.</div>
+  </section>
+
+</div>
+
+<script>
+function getNumber(id){
+  return Number(document.getElementById(id).value);
+}
+
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
+
+function clearResults(){
+  document.getElementById("formFactor").innerText="";
+  document.getElementById("crestFactor").innerText="";
+  document.getElementById("rmsDcRatio").innerText="";
+  document.getElementById("peakRmsRatio").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function formatValue(v){
+  if(!isFinite(v)) return "Not defined";
+  return Number(v).toPrecision(6);
+}
+
+function calc(){
+  if(isMissing("Vrms") || isMissing("Vdc") || isMissing("Vpeak")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var Vrms=getNumber("Vrms");
+  var Vdc=getNumber("Vdc");
+  var Vpeak=getNumber("Vpeak");
+
+  var c1=Vrms/Vdc;
+  var c2=Vpeak/Vrms;
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("formFactor").innerText=formatValue(c1);
+  document.getElementById("crestFactor").innerText=formatValue(c2);
+  document.getElementById("rmsDcRatio").innerText=formatValue(c1);
+  document.getElementById("peakRmsRatio").innerText=formatValue(c2);
+}
+</script>
+
+</body>
+</html>
