@@ -1,238 +1,347 @@
-
-<script>
-		function Show(form) {
-			var wave = Number(form.Wave.value);
-			switch (wave) {
-				case 1:
-				case 2:
-				case 3:
-					document.getElementById("divF1").style.display = "none";
-					document.getElementById("divF2").style.display = "none";
-					document.getElementById("divT1").style.display = "none";
-					document.getElementById("divT2").style.display = "none";
-					document.getElementById("divB1").style.display = "none";
-					document.getElementById("divB2").style.display = "none";
-					document.getElementById("divVdc1").style.display = "none";
-					document.getElementById("divVdc2").style.display = "none";
-					break;
-				case 4:
-					document.getElementById("divF1").style.display = "none";
-					document.getElementById("divF2").style.display = "none";
-					document.getElementById("divT1").style.display = "none";
-					document.getElementById("divT2").style.display = "none";
-					document.getElementById("divB1").style.display = "none";
-					document.getElementById("divB2").style.display = "none";
-					document.getElementById("divVdc1").style.display = "block";
-					document.getElementById("divVdc2").style.display = "block";
-					break;
-				case 5:
-				case 6:
-				case 7:
-					document.getElementById("divF1").style.display = "block";
-					document.getElementById("divF2").style.display = "block";
-					document.getElementById("divT1").style.display = "block";
-					document.getElementById("divT2").style.display = "block";
-					document.getElementById("divB1").style.display = "none";
-					document.getElementById("divB2").style.display = "none";
-					document.getElementById("divVdc1").style.display = "none";
-					document.getElementById("divVdc2").style.display = "none";
-					break;
-				case 8:
-					document.getElementById("divF1").style.display = "block";
-					document.getElementById("divF2").style.display = "block";
-					document.getElementById("divT1").style.display = "block";
-					document.getElementById("divT2").style.display = "block";
-					document.getElementById("divB1").style.display = "block";
-					document.getElementById("divB2").style.display = "block";
-					document.getElementById("divVdc1").style.display = "none";
-					document.getElementById("divVdc2").style.display = "none";
-					break;
-			}
-		}
-
-		function Compute(form) {
-			with(Math) {
-				var Precision = 3;
-				var Vpk = Number(form.Vpk.value);
-				var F = Number(form.F.value);
-				var T = Number(form.T.value);
-				var B = Number(form.B.value);
-				var Vdc = Number(form.Vdc.value);
-				var Vrms;
-				var Vavg;
-
-				var wave = Number(form.Wave.value);
-				switch (wave) {
-					case 1:
-						Vrms = Vpk / sqrt(2);
-						Vavg = 0;
-						break;
-					case 2:
-						Vrms = Vpk / sqrt(2);
-						Vavg = 0.637 * Vpk;
-						break;
-					case 3:
-						Vrms = Vpk / 2;
-						Vavg = 0.318 * Vpk;
-						break;
-					case 4:
-						Vrms = sqrt(Vdc * Vdc + Vpk * Vpk / 2);
-						Vavg = Vdc;
-						break;
-					case 5:
-						Vrms = Vpk * sqrt(F * T / 2);
-						Vavg = 2 * F * T * Vpk / PI;
-						break;
-					case 6:
-						Vrms = Vpk * sqrt(F * T);
-						Vavg = F * T * Vpk;
-						break;
-					case 7:
-						Vrms = Vpk * sqrt(F * T / 3);
-						Vavg = Vpk * F * T / 2;
-						break;
-					case 8:
-						Vrms = Vpk * sqrt(F * ((B - T) + 3 * T) / 3);
-						Vavg = Vpk * F * (B + T) / 2;
-						break;
-				}
-				form.Vrms.value = Vrms.toFixed(Precision);
-				form.Vavg.value = Vavg.toFixed(Precision);
-			}
-		}
-	</script>
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RMS and Average Calculator</title>
+<meta name="description" content="Calculate RMS and average values for sine, rectified, square, sawtooth, trapezoidal and DC offset waveforms with waveform formulas.">
+<meta name="keywords" content="RMS and average calculator, RMS voltage calculator, average voltage calculator, waveform RMS calculator, sine wave RMS calculator, square wave RMS calculator, sawtooth RMS calculator, trapezoidal wave calculator, rectified sine calculator, DC offset RMS calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#rms-avg-calc,#rms-avg-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#rms-avg-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#374151;text-align:center}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="rms-avg-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Peak Value Vpk</label>
+    <div class="calc-row">
+      <input id="Vpk" type="number" oninput="clearResults()">
+      <div class="unit-box">unit</div>
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Select Waveform Type</label>
+    <div class="calc-row">
+      <select id="Wave" onchange="Show();clearResults();">
+        <option value="1" selected>Sine wave</option>
+        <option value="2">Full rectified wave</option>
+        <option value="3">Half rectified sine wave</option>
+        <option value="4">Sine wave with DC offset</option>
+        <option value="5">Half sine with duration T and frequency f</option>
+        <option value="6">Square wave with duration T and frequency f</option>
+        <option value="7">Saw tooth wave with duration T and frequency f</option>
+        <option value="8">Trapezoidal wave</option>
+      </select>
+      <div class="unit-box">type</div>
+    </div>
+  </div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+  <div id="divF1">
+    <label class="calc-label">Frequency</label>
+    <div class="calc-row">
+      <input id="F" type="number" oninput="clearResults()">
+      <div class="unit-box">Hz</div>
+    </div>
+  </div>
+
+  <div id="divT1">
+    <label class="calc-label">Duration T</label>
+    <div class="calc-row">
+      <input id="T" type="number" oninput="clearResults()">
+      <div class="unit-box">sec</div>
+    </div>
+  </div>
+
+  <div id="divB1">
+    <label class="calc-label">Base B</label>
+    <div class="calc-row">
+      <input id="B" type="number" oninput="clearResults()">
+      <div class="unit-box">sec</div>
+    </div>
+  </div>
+
+  <div id="divVdc1">
+    <label class="calc-label">DC Offset Vdc</label>
+    <div class="calc-row">
+      <input id="Vdc" type="number" oninput="clearResults()">
+      <div class="unit-box">unit</div>
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="Compute()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">Vrms</div>
+    <div class="result-value" id="Vrms"></div>
+  </div>
+  <div class="result-card">
+    <div class="result-label">Vavg</div>
+    <div class="result-value" id="Vavg"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Peak Value Vpk</strong>Maximum waveform amplitude used to calculate RMS value and average value.</div>
+  <div class="paramItem"><strong>Waveform Type</strong>Select sine, rectified sine, square, sawtooth, trapezoidal, or DC offset waveform.</div>
+  <div class="paramItem"><strong>Frequency and Duration</strong>Used for pulse-based half sine, square wave, sawtooth wave, and trapezoidal waveform RMS calculations.</div>
+  <div class="paramItem"><strong>Base and DC Offset</strong>Base B is used for trapezoidal waves, while Vdc is used for sine wave with DC offset.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Sine Wave RMS</strong></p><p>For a sine wave, enter only Vpk and select Sine wave to calculate Vrms = Vpk / sqrt(2).</p></div>
+  <div class="exampleCard"><p><strong>Pulse Wave Analysis</strong></p><p>For square, sawtooth, half sine, or trapezoidal waveforms, enter frequency and duration to calculate RMS and average values.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>This RMS and average calculator supports common electrical waveforms used in AC analysis, rectifier circuits, pulsed power, waveform measurement and signal processing.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RMS and average sine wave diagram">
+<rect width="620" height="380" fill="#ffffff"/>
+
+<style>
+.box{fill:#fff;stroke:#050505;stroke-width:6}
+.axis{stroke:#111;stroke-width:2;fill:none;stroke-linecap:round}
+.wave{stroke:#111;stroke-width:2.2;fill:none;stroke-linecap:round}
+.dash{stroke:#111;stroke-width:1.6;stroke-dasharray:6 4;fill:none}
+.red{stroke:#ef4444;stroke-width:2;fill:none;stroke-linecap:round}
+.green{stroke:#22c55e;stroke-width:2;fill:none;stroke-linecap:round}
+.dim{stroke:#111;stroke-width:1.8;fill:none;marker-start:url(#arrStart);marker-end:url(#arrEnd)}
+.arrow{stroke:#111;stroke-width:1.8;fill:none;marker-start:url(#arrStart);marker-end:url(#arrEnd)}
+.txt{font-family:Arial,sans-serif;font-size:18px;font-weight:700;fill:#111}
 </style>
 
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<form name="ParamForm">
+<defs>
+<marker id="arrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111"/>
+</marker>
+<marker id="arrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111"/>
+</marker>
+</defs>
 
 
 
-<div>
-<label for="r2" style="font-size:55;" >V<sub>pk</sub></label><font face="Arial" size="6"> (Or Unit)  </font><input name="Vpk" class="intro"  style="position: absolute;   width:414; text-align
-:center;right: 10px;"class="form-control" type="number" /></div>
-<h1 style="font-size:40;"></h1>	<div>
-<label for="r2" style="font-size:55;" >Select Type</label><font face="Arial" size="6"> </font><select size="1" name="Wave"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:45px;   height:90;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:414px;" onChange="Show(this.form);">
-<option value="1" selected>Sine wave</option>
-										<option value="2">Full rectified wave</option>
-										<option value="3">Half Rectified Sine wave</option>
-										<option value="4">Sine wave with DC offset</option>
-										<option value="5">Half sine with &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;duration T and frequency f</option>
-										<option value="6">Square wave with &nbsp;duration T and frequency f</option>
-										<option value="7">Saw tooth wave &nbsp;&nbsp;&nbsp;&nbsp;with duration T and frequency f</option>
-										<option value="8">Trapezoidal wave</option>
-									</select></div>
-<h1 style="font-size:62;"></h1>	<div id='divF1'><div id='divF2'>
-<label for="r2" style="font-size:55;" >Frequency</label><font face="Arial" size="6"> </font><input name="F" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">Hz</label></div></div>
-<h1 style="font-size:53;"></h1>	<div id='divT1'><div id='divT2'>
-<label for="r2" style="font-size:55;" >Duration </label><font face="Arial" size="6"> </font><input name="T" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">sec</label></div></div>
-<h1 style="font-size:53;"></h1>	<div id='divB1'><div id='divB2'>
-<label for="r2" style="font-size:55;" >Base </label><font face="Arial" size="6"> (Trapazoid Segment) </font><input name="B" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">sec</label></div></div>
-<h1 style="font-size:53;"></h1>	<div id='divVdc1'><div id='divVdc2'>
-<label for="r2" style="font-size:55;" >VDc</label><font face="Arial" size="6"> </font><input name="Vdc" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">sec</label></div></div>
-<h1 style="font-size:50;"></h1>	
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" value="CALCULATE" name="B1" onClick="Compute(this.form);" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+<!-- axes -->
+<line x1="198" y1="88" x2="198" y2="310" class="axis"/>
+<line x1="198" y1="198" x2="462" y2="198" class="axis"/>
+<line x1="178" y1="286" x2="450" y2="286" class="axis"/>
 
+<!-- sine wave -->
+<path d="M198 198
+         C214 120,245 78,278 108
+         C315 142,303 255,360 282
+         C397 300,420 220,430 198" class="wave"/>
 
-<h3>Outputs</h3></div></legend>				
-				
-<label for="r2" style="font-size:55;" >V<sub>rms</sub></label><font face="Arial" size="6"> (Or Unit) </font><input name="Vrms" class="intro"  style="position: absolute;   width:410; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:40;"></h1>
-<label for="r2" style="font-size:55;" >V<sub>avg</sub></label><font face="Arial" size="6"></font><input name="Vavg" class="intro"  style="position: absolute;   width:410; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:50;"></h1>
+<!-- dashed vertical at peak -->
+<line x1="278" y1="108" x2="278" y2="198" class="dash"/>
 
+<!-- RMS and Average level lines -->
+<line x1="278" y1="148" x2="430" y2="148" class="green"/>
+<line x1="278" y1="158" x2="352" y2="158" class="red"/>
 
+<!-- vertical red marker at end of one cycle -->
+<line x1="430" y1="198" x2="430" y2="318" class="red"/>
 
-							
-							
-							
-							
-							
-							
-					</form>
-					
+<!-- Average vertical arrow -->
+<line x1="348" y1="158" x2="348" y2="198" class="arrow"/>
+<text x="355" y="180" class="txt">Avg</text>
+
+<!-- RMS vertical arrow -->
+<line x1="430" y1="148" x2="430" y2="198" class="arrow"/>
+<text x="435" y="180" class="txt">RMS</text>
+
+<!-- T dimension arrow -->
+<line x1="198" y1="305" x2="430" y2="305" class="dim"/>
+<text x="310" y="330" class="txt">T</text>
+
+<!-- left small bottom tick -->
+<line x1="198" y1="282" x2="198" y2="318" class="axis"/>
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Sine wave: Vrms = Vpk / sqrt(2), Vavg = 0.</div>
+<div class="formula">Full rectified wave: Vrms = Vpk / sqrt(2), Vavg = 0.637 × Vpk.</div>
+<div class="formula">Half rectified sine wave: Vrms = Vpk / 2, Vavg = 0.318 × Vpk.</div>
+<div class="formula">Sine wave with DC offset: Vrms = sqrt(Vdc² + Vpk² / 2), Vavg = Vdc.</div>
+<div class="formula">Half sine pulse: Vrms = Vpk × sqrt(F × T / 2), Vavg = 2 × F × T × Vpk / PI.</div>
+<div class="formula">Square pulse: Vrms = Vpk × sqrt(F × T), Vavg = F × T × Vpk.</div>
+<div class="formula">Sawtooth pulse: Vrms = Vpk × sqrt(F × T / 3), Vavg = Vpk × F × T / 2.</div>
+<div class="formula">Trapezoidal wave: Vrms = Vpk × sqrt(F × ((B - T) + 3 × T) / 3), Vavg = Vpk × F × (B + T) / 2.</div>
+</section>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("Vrms").innerText="";
+  document.getElementById("Vavg").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
+
+function Show(){
+  var wave=Number(document.getElementById("Wave").value);
+
+  document.getElementById("divF1").style.display="none";
+  document.getElementById("divT1").style.display="none";
+  document.getElementById("divB1").style.display="none";
+  document.getElementById("divVdc1").style.display="none";
+
+  if(wave===4){
+    document.getElementById("divVdc1").style.display="block";
+  }
+
+  if(wave===5 || wave===6 || wave===7){
+    document.getElementById("divF1").style.display="block";
+    document.getElementById("divT1").style.display="block";
+  }
+
+  if(wave===8){
+    document.getElementById("divF1").style.display="block";
+    document.getElementById("divT1").style.display="block";
+    document.getElementById("divB1").style.display="block";
+  }
+}
+
+function Compute(){
+  var wave=Number(document.getElementById("Wave").value);
+
+  if(isMissing("Vpk")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  if(wave===4 && isMissing("Vdc")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  if((wave===5 || wave===6 || wave===7) && (isMissing("F") || isMissing("T"))){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  if(wave===8 && (isMissing("F") || isMissing("T") || isMissing("B"))){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  with(Math){
+    var Precision=3;
+    var Vpk=Number(document.getElementById("Vpk").value);
+    var F=Number(document.getElementById("F").value || 0);
+    var T=Number(document.getElementById("T").value || 0);
+    var B=Number(document.getElementById("B").value || 0);
+    var Vdc=Number(document.getElementById("Vdc").value || 0);
+    var Vrms;
+    var Vavg;
+
+    switch(wave){
+      case 1:
+        Vrms=Vpk/sqrt(2);
+        Vavg=0;
+        break;
+      case 2:
+        Vrms=Vpk/sqrt(2);
+        Vavg=0.637*Vpk;
+        break;
+      case 3:
+        Vrms=Vpk/2;
+        Vavg=0.318*Vpk;
+        break;
+      case 4:
+        Vrms=sqrt(Vdc*Vdc+Vpk*Vpk/2);
+        Vavg=Vdc;
+        break;
+      case 5:
+        Vrms=Vpk*sqrt(F*T/2);
+        Vavg=2*F*T*Vpk/PI;
+        break;
+      case 6:
+        Vrms=Vpk*sqrt(F*T);
+        Vavg=F*T*Vpk;
+        break;
+      case 7:
+        Vrms=Vpk*sqrt(F*T/3);
+        Vavg=Vpk*F*T/2;
+        break;
+      case 8:
+        Vrms=Vpk*sqrt(F*((B-T)+3*T)/3);
+        Vavg=Vpk*F*(B+T)/2;
+        break;
+    }
+
+    document.getElementById("errorBox").style.display="none";
+    document.getElementById("Vrms").innerText=Vrms.toFixed(Precision);
+    document.getElementById("Vavg").innerText=Vavg.toFixed(Precision);
+  }
+}
+
+Show();
+</script>
+
+</body>
+</html>
