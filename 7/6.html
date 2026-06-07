@@ -1,153 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Inductor Current and Maximum Power Calculator</title>
+<meta name="description" content="Calculate inductor maximum on-time, minimum frequency, maximum power and saturation energy from voltage, inductance and saturation current.">
+<meta name="keywords" content="inductor current calculator, maximum inductor power calculator, inductor saturation current calculator, inductor energy calculator, inductor on time calculator, minimum switching frequency calculator, inductor saturation energy, inductor power formula, coil current calculator, switching inductor calculator, power electronics inductor calculator">
+<style>
+#inductor-calc,#inductor-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#inductor-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
+.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
+.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
+.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
+}
+</style>
+</head>
+<body>
 
+<div id="inductor-calc">
 
-<script language="JavaScript">
+  <div class="calc-grid">
+    <div>
+      <label class="calc-label">Voltage Across Inductor</label>
+      <div class="calc-row">
+        <input id="V" type="number" oninput="clearResults()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">Inductance</label>
+      <div class="calc-row">
+        <input id="L" type="number" oninput="clearResults()">
+        <div class="unit-box">µH</div>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">Inductor Saturation Current</label>
+      <div class="calc-row">
+        <input id="Isat" type="number" oninput="clearResults()">
+        <div class="unit-box">A</div>
+      </div>
+    </div>
+  </div>
 
-function Compute(form) {
-	with(Math) {
-		var MEGA= 1000000;
-		var KILO= 1000;
-		var V= Number(form.V.value);
-		var L= Number(form.L.value)/MEGA;
-		var Isat= Number(form.Isat.value);
-		
-		var Precision= 3;
-		
-		Tonmax= Isat*L/V;
-		Fmin= 1/(2*Tonmax);
-		Pmax= V*Isat/sqrt(6);
-		Esat= Isat*Isat*L/2;
-		
-		Tonmax*= MEGA;
-		Fmin/= KILO;
-		Esat*= MEGA;
-		
-		form.Tonmax.value= Tonmax.toFixed(Precision);
-		form.Fmin.value= Fmin.toFixed(Precision);
-		form.Pmax.value= Pmax.toFixed(Precision);
-		form.Esat.value= Esat.toFixed(Precision);		
-	}
+  <button type="button" onclick="Compute()">CALCULATE</button>
+
+  <div id="errorBox">Please enter all required values.</div>
+
+  <div class="result-title">RESULTS</div>
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="result-label">Ton Max</div>
+      <div class="result-value"><span id="Tonmax"></span></div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">F Min</div>
+      <div class="result-value"><span id="Fmin"></span></div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">P Max</div>
+      <div class="result-value"><span id="Pmax"></span></div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Energy at Saturation</div>
+      <div class="result-value"><span id="Esat"></span></div>
+    </div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Voltage Across Inductor</strong>The applied voltage across the inductor winding that controls current ramp speed in switching power circuits.</div>
+      <div class="paramItem"><strong>Inductance</strong>The coil inductance in microhenry used to calculate current rise time and stored magnetic energy.</div>
+      <div class="paramItem"><strong>Saturation Current</strong>The maximum inductor current before the magnetic core starts saturating and inductance drops.</div>
+      <div class="paramItem"><strong>Power Electronics Use</strong>Useful for buck, boost, flyback, pulse inductor, SMPS and current ramp estimation.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Switching Inductor Check</strong></p>
+        <p>Enter supply voltage, inductance and saturation current to estimate maximum safe ON time before the core reaches saturation.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>SMPS Power Estimate</strong></p>
+        <p>The maximum power value helps compare inductor capability in DC-DC converters, pulse drivers and energy storage circuits.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>When voltage is applied across an inductor, current rises linearly. The inductor reaches saturation at Isat, and the stored energy depends on inductance and current squared.</p>
+    <div class="diagramBox">
+      <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Inductor current and saturation power diagram">
+        <rect width="620" height="300" fill="#fff"/>
+        <style>
+          .wire{stroke:#15803d;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .coil{stroke:#2563eb;stroke-width:4;fill:none;stroke-linecap:round}
+          .axis{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round}
+          .dash{stroke:#ff7a18;stroke-width:3;fill:none;stroke-dasharray:7 6;stroke-linecap:round}
+          .sat{stroke:#ef4444;stroke-width:4;fill:none;stroke-linecap:round}
+          .green{stroke:#10b981;stroke-width:4;fill:none;stroke-linecap:round}
+          .txt{font-family:Arial,sans-serif;font-size:12px;font-weight:900;fill:#111827}
+          .blueText{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#2563eb}
+          .orangeText{font-family:Arial,sans-serif;font-size:13px;font-weight:900;fill:#ea580c}
+          .redText{font-family:Arial,sans-serif;font-size:13px;font-weight:900;fill:#dc2626}
+        </style>
+
+        <text x="38" y="34" class="blueText">Inductor Current Ramp and Saturation</text>
+
+        <line x1="55" y1="190" x2="235" y2="190" class="wire"/>
+        <path d="M235 190 C250 165,270 165,285 190 C300 215,320 215,335 190 C350 165,370 165,385 190" class="coil"/>
+        <line x1="385" y1="190" x2="555" y2="190" class="wire"/>
+
+        <rect x="62" y="165" width="42" height="50" rx="4" fill="#f8fafc" stroke="#111827" stroke-width="2"/>
+        <line x1="72" y1="178" x2="94" y2="178" stroke="#ef4444" stroke-width="3"/>
+        <line x1="83" y1="167" x2="83" y2="189" stroke="#ef4444" stroke-width="3"/>
+        <line x1="72" y1="205" x2="94" y2="205" stroke="#111827" stroke-width="3"/>
+        <text x="64" y="232" class="txt">V across L</text>
+
+        <text x="282" y="150" class="blueText">L</text>
+        <text x="245" y="238" class="txt">Inductor stores energy</text>
+
+        <line x1="80" y1="95" x2="300" y2="95" class="dash"/>
+        <text x="86" y="84" class="redText">Isat limit</text>
+
+        <line x1="80" y1="135" x2="300" y2="135" stroke="#e5e7eb" stroke-width="2"/>
+        <line x1="80" y1="60" x2="80" y2="150" class="axis"/>
+        <line x1="80" y1="150" x2="310" y2="150" class="axis"/>
+        <path d="M80 150 L245 95" class="green"/>
+        <path d="M245 95 L295 95" class="sat"/>
+        <text x="135" y="118" class="orangeText">Current rises</text>
+        <text x="242" y="82" class="redText">Saturation</text>
+        <text x="62" y="58" class="txt">I</text>
+        <text x="300" y="166" class="txt">t</text>
+
+        <line x1="430" y1="75" x2="430" y2="240" class="axis"/>
+        <line x1="430" y1="240" x2="570" y2="240" class="axis"/>
+        <path d="M430 240 C455 220,480 185,500 135 C520 95,545 75,570 68" stroke="#ff7a18" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <text x="450" y="55" class="orangeText">Energy = I² × L / 2</text>
+        <text x="412" y="75" class="txt">E</text>
+        <text x="566" y="258" class="txt">I</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Step 1: Convert inductance from µH to H: L(H) = L(µH) / 1000000.</div>
+    <div class="formula">Step 2: Maximum ON time: Tonmax = Isat × L / V.</div>
+    <div class="formula">Step 3: Minimum frequency: Fmin = 1 / (2 × Tonmax).</div>
+    <div class="formula">Step 4: Maximum power: Pmax = V × Isat / sqrt(6).</div>
+    <div class="formula">Step 5: Saturation energy: Esat = Isat × Isat × L / 2.</div>
+    <div class="formula">Step 6: Tonmax is displayed in µs, Fmin in kHz, Pmax in W and Esat in µJ.</div>
+  </section>
+
+</div>
+
+<script>
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
 }
 
+function clearResults(){
+  document.getElementById("Tonmax").innerText="";
+  document.getElementById("Fmin").innerText="";
+  document.getElementById("Pmax").innerText="";
+  document.getElementById("Esat").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
 
+function Compute(){
+  if(isMissing("V") || isMissing("L") || isMissing("Isat")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  with(Math){
+    var MEGA=1000000;
+    var KILO=1000;
+    var V=Number(document.getElementById("V").value);
+    var L=Number(document.getElementById("L").value)/MEGA;
+    var Isat=Number(document.getElementById("Isat").value);
+
+    var Precision=3;
+
+    var Tonmax=Isat*L/V;
+    var Fmin=1/(2*Tonmax);
+    var Pmax=V*Isat/sqrt(6);
+    var Esat=Isat*Isat*L/2;
+
+    Tonmax*=MEGA;
+    Fmin/=KILO;
+    Esat*=MEGA;
+
+    document.getElementById("errorBox").style.display="none";
+    document.getElementById("Tonmax").innerText=Tonmax.toFixed(Precision)+" µs";
+    document.getElementById("Fmin").innerText=Fmin.toFixed(Precision)+" kHz";
+    document.getElementById("Pmax").innerText=Pmax.toFixed(Precision)+" W";
+    document.getElementById("Esat").innerText=Esat.toFixed(Precision)+" µJ";
+  }
+}
 </script>
 
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-
-<form method="POST" name="ParamForm" action="">
-
-
-<label for="r2" style="font-size:55;" >Volt. </label><font face="Arial" size="6"> (across the inductor)  </font><input maxlength="15" name="V" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >Inductance </label><font face="Arial" size="6">  </font><input maxlength="15" name="L" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">uH</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >inductor </label><font face="Arial" size="5">(Saturation current) </font><input maxlength="15" name="Isat" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-<h1 style="font-size:40;"></h1>	
-</fieldset>
-<h1 style="font-size:80;"></h1>	
-
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="Button" value="Calculate" onClick="Compute(document.ParamForm)" " style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>	
-<label for="r2" style="font-size:55;" >Ton</label><font face="Arial" size="6"> (max)  </font><input maxlength="15" name="Tonmax" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:40px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">usec</label>
-<h1 style="font-size:50;"></h1>		
-<label for="r2" style="font-size:55;" >F</label><font face="Arial" size="6"> (min)  </font><input maxlength="15" name="Fmin" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:50px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">KHz</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >P</label><font face="Arial" size="6"> (max)  </font><input maxlength="15" name="Pmax" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:50px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
-<h1 style="font-size:50;"></h1>          
-<label for="r2" style="font-size:55;" >E</label><font face="Arial" size="6"> (Energy at saturation)  </font><input maxlength="15" name="Esat" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:50px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
-<h1 style="font-size:40;"></h1>           
-              
-            
-          
-          
-          
-          
-      </form>
-      
+</body>
+</html>
