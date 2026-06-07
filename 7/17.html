@@ -1,134 +1,266 @@
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RMS Voltage Calculator</title>
+<meta name="description" content="Calculate RMS voltage from peak voltage, peak-to-peak voltage, or average voltage with V, mV, and kV unit selection.">
+<meta name="keywords" content="RMS voltage calculator, peak to RMS calculator, peak-to-peak to RMS calculator, average voltage to RMS calculator, AC voltage calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#rms-voltage-calc,#rms-voltage-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#rms-voltage-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.calc-row.type-row{grid-template-columns:minmax(0,1fr)}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="rms-voltage-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Input Voltage Type</label>
+    <div class="calc-row type-row">
+      <select id="voltageType" onchange="clearResults()">
+        <option value="peak" selected>Vp - Peak Voltage</option>
+        <option value="peakpeak">Vpp - Peak-to-Peak Voltage</option>
+        <option value="avg">Vavg - Average Voltage</option>
+      </select>
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Input Voltage</label>
+    <div class="calc-row">
+      <input id="inputVoltage" type="number" oninput="clearResults()">
+      <select id="inputUnit" onchange="clearResults()">
+        <option value="1" selected>V</option>
+        <option value="0.001">mV</option>
+        <option value="1000">kV</option>
+      </select>
+    </div>
+  </div>
+</div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+<button type="button" onclick="calculateRMS()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">RMS Voltage</div>
+    <div class="result-value" id="rmsResult"></div>
+  </div>
+  <div class="result-card">
+    <div class="result-label">RMS Voltage</div>
+    <div class="result-value" id="rmsResultUnit"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Voltage Type</strong>Select peak voltage, peak-to-peak voltage, or average voltage as the known input.</div>
+  <div class="paramItem"><strong>Input Voltage</strong>Enter voltage value with V, mV, or kV unit selection.</div>
+  <div class="paramItem"><strong>RMS Voltage</strong>Equivalent heating/effective AC voltage value.</div>
+  <div class="paramItem"><strong>Waveform Assumption</strong>Calculation is based on sinusoidal waveform relationships.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Peak to RMS</strong></p><p>Convert oscilloscope peak voltage into RMS voltage for AC analysis.</p></div>
+  <div class="exampleCard"><p><strong>Peak-to-Peak to RMS</strong></p><p>Convert signal generator or scope Vpp reading into RMS voltage.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>The diagram shows peak value, RMS value, average value, peak-to-peak value, half cycle, full cycle, and time period for an AC sine waveform.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Peak RMS Average Voltage Waveform Diagram">
+<rect width="900" height="620" fill="#ffffff"/>
+
+<style>
+.axis{stroke:#111;stroke-width:4;fill:none;stroke-linecap:round}
+.wave{stroke:#0ea526;stroke-width:5;fill:none;stroke-linecap:round}
+.dash{stroke:#111;stroke-width:2;stroke-dasharray:6 5;fill:none}
+.red{stroke:#ff1e1e;stroke-width:3;fill:none;marker-start:url(#arrRed);marker-end:url(#arrRed)}
+.blackArrow{stroke:#111;stroke-width:2;fill:none;marker-start:url(#arrBlack);marker-end:url(#arrBlack)}
+.blueTxt{font-family:Arial,sans-serif;font-size:26px;font-weight:900;fill:#1848ff}
+.blackTxt{font-family:Arial,sans-serif;font-size:22px;font-weight:900;fill:#111}
+.smallTxt{font-family:Arial,sans-serif;font-size:18px;font-weight:700;fill:#111}
 </style>
 
+<defs>
+<marker id="arrRed" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+<path d="M0,0 L10,5 L0,10 Z" fill="#ff1e1e"/>
+</marker>
+<marker id="arrBlack" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+<path d="M0,0 L10,5 L0,10 Z" fill="#111"/>
+</marker>
+</defs>
 
+<line x1="70" y1="40" x2="70" y2="570" class="axis"/>
+<line x1="70" y1="300" x2="820" y2="300" class="axis"/>
+<polygon points="70,20 58,45 82,45" fill="#111"/>
+<polygon points="850,300 820,288 820,312" fill="#111"/>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<path d="M70 300
+         C115 140,185 55,260 115
+         C345 180,320 410,500 470
+         C575 505,655 345,690 300"
+      class="wave"/>
 
+<line x1="210" y1="90" x2="890" y2="90" class="dash"/>
+<line x1="500" y1="470" x2="840" y2="470" class="dash"/>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><div class="container-fluid">
-<form id="tool">
+<line x1="70" y1="190" x2="780" y2="190" class="dash"/>
+<line x1="70" y1="215" x2="610" y2="215" class="dash"/>
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Input<font face="Arial" size="6"> </font></label>
-<select class="form-control" id="tool_voltage_type" style="padding: 5px ;  position: absolute;right:451px;font-size:58px;margin:8px 0;width:170px;border-radius:4px; height:85px;border:3px solid #aaa;">
-<option value="peak">V<sub>p</sub>	&nbsp;	&nbsp; Peak Voltage </option>
-<option value="peakpeak">V<sub>pp</sub>	&nbsp; Peak-to-Peak Voltage </option>
-<option value="avg">V<sub>avg</sub>	&nbsp; Average Voltage </option>
-</select><input type="number" id="tool_voltage"  class="intro"  style="position: absolute;   text-align
-:center;width:300; right: 143px;"class="form-control"  />
-<label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
+<line x1="500" y1="300" x2="500" y2="470" class="dash"/>
 
+<line x1="215" y1="285" x2="215" y2="110" class="red"/>
+<line x1="170" y1="285" x2="170" y2="205" class="red"/>
+<line x1="500" y1="317" x2="500" y2="450" class="red"/>
+<line x1="865" y1="115" x2="865" y2="470" class="red"/>
 
+<text x="10" y="20" class="blackTxt">+V</text>
+<text x="25" y="595" class="blackTxt">-V</text>
+<text x="35" y="310" class="blackTxt">0</text>
 
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
+<text x="78" y="332" class="smallTxt">0°</text>
+<text x="245" y="332" class="smallTxt">90°</text>
+<text x="420" y="332" class="smallTxt">180°</text>
+<text x="490" y="332" class="smallTxt">270°</text>
+<text x="745" y="332" class="smallTxt">360°</text>
+
+<circle cx="215" cy="90" r="8" fill="#1848ff"/>
+
+<text x="225" y="180" class="blackTxt">Vmax</text>
+<text x="245" y="210" class="blackTxt">Or</text>
+<text x="245" y="240" class="blackTxt">Vp</text>
+
+<text x="95" y="250" class="blackTxt">VRMS</text>
+
+<text x="425" y="235" class="blackTxt">Vav</text>
+<text x="485" y="235" class="smallTxt">(Half Cycle)</text>
+
+<text x="515" y="390" class="blackTxt">Vmax</text>
+<text x="535" y="420" class="blackTxt">Or</text>
+<text x="540" y="450" class="blackTxt">Vp</text>
+
+<text x="770" y="170" class="blackTxt">VRMS</text>
+<text x="800" y="270" class="blackTxt">VPP</text>
+
+<line x1="80" y1="380" x2="370" y2="380" class="blackArrow"/>
+<text x="180" y="365" class="blackTxt">Half Cycle</text>
+
+<line x1="80" y1="500" x2="820" y2="500" class="blackArrow"/>
+<text x="340" y="485" class="blackTxt">1 Full Cycle</text>
+
+<line x1="80" y1="550" x2="820" y2="550" class="blackArrow"/>
+<text x="350" y="585" class="blackTxt">T = 1 / f = </text>
+<text x="470" y="585" class="blueTxt">Time Period</text>
+
+<text x="805" y="335" class="blackTxt">t</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">If input is Peak Voltage: Vrms = Vp / sqrt(2).</div>
+<div class="formula">If input is Peak-to-Peak Voltage: Vrms = Vpp / (2 × sqrt(2)).</div>
+<div class="formula">If input is Average Voltage: Vrms = Vavg × PI / (2 × sqrt(2)).</div>
+<div class="formula">Unit conversion: V = value, mV = value × 0.001, kV = value × 1000.</div>
+</section>
 
 </div>
-</div>
 
-</form></fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+<script>
+function clearResults(){
+  document.getElementById("rmsResult").innerText="";
+  document.getElementById("rmsResultUnit").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
 
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
 
-<h3>Outputs</h3></div></legend>	
+function formatValue(v){
+  if(!isFinite(v)) return "Not defined";
+  return Number(v).toPrecision(8);
+}
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+function calculateRMS(){
+  if(isMissing("inputVoltage")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="tool_submit_container form-group has-warning">
-<label for="r2" style="font-size:55;" >V<sub>rms</sub></label><font face="Arial" size="6"> (RMS Voltage) </font><input id="tool_voltage_rms" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
+  var type=document.getElementById("voltageType").value;
+  var input=Number(document.getElementById("inputVoltage").value);
+  var unit=Number(document.getElementById("inputUnit").value);
+  var voltage=input*unit;
+  var rms=0;
 
+  if(type==="peak"){
+    rms=voltage*(1/Math.sqrt(2));
+  }
 
-</div>
-</div><h1 style="font-size:80;"></h1>	
-<div class="col-sm-4 col-xs-4">
+  if(type==="peakpeak"){
+    rms=voltage*(1/(2*Math.sqrt(2)));
+  }
 
-<script type="text/javascript">
-var _0xe7bd=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","","\x76\x61\x6C","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x74\x6F\x6F\x6C\x5F\x76\x6F\x6C\x74\x61\x67\x65","\x23\x74\x6F\x6F\x6C\x5F\x76\x6F\x6C\x74\x61\x67\x65\x5F\x74\x79\x70\x65","\x23\x74\x6F\x6F\x6C\x5F\x76\x6F\x6C\x74\x61\x67\x65\x5F\x72\x6D\x73","\x70\x65\x61\x6B","\x73\x71\x72\x74","\x70\x65\x61\x6B\x70\x65\x61\x6B","\x50\x49","\x68\x61\x73\x2D\x77\x61\x72\x6E\x69\x6E\x67","\x72\x65\x6D\x6F\x76\x65\x43\x6C\x61\x73\x73","\x2E\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74\x5F\x63\x6F\x6E\x74\x61\x69\x6E\x65\x72","\x68\x61\x73\x2D\x73\x75\x63\x63\x65\x73\x73","\x61\x64\x64\x43\x6C\x61\x73\x73","\x6F\x6E"];!function(_0xb797x1){_0xe7bd[0];_0xb797x1(_0xe7bd[4])[_0xe7bd[9]](function(){var _0xb797x2=!1;_0xb797x1(_0xe7bd[4])[_0xe7bd[3]](function(){_0xe7bd[1]== _0xb797x1(this)[_0xe7bd[2]]()&& (_0xb797x2=  !0)}),_0xb797x2?_0xb797x1(_0xe7bd[7])[_0xe7bd[6]](_0xe7bd[5],_0xe7bd[5]):_0xb797x1(_0xe7bd[7])[_0xe7bd[8]](_0xe7bd[5])}),_0xb797x1(_0xe7bd[7])[_0xe7bd[24]](_0xe7bd[10],function(_0xb797x2){_0xb797x2[_0xe7bd[11]]();var _0xb797x3=_0xb797x1(_0xe7bd[12]),_0xb797x4=_0xb797x1(_0xe7bd[13]),_0xb797x5=_0xb797x1(_0xe7bd[14]);_0xb797x3[_0xe7bd[2]]()&& _0xb797x4[_0xe7bd[2]]()&& (_0xe7bd[15]=== _0xb797x4[_0xe7bd[2]]()?_0xb797x5[_0xe7bd[2]](_0xb797x3[_0xe7bd[2]]()* (1/ Math[_0xe7bd[16]](2))):_0xe7bd[17]=== _0xb797x4[_0xe7bd[2]]()?_0xb797x5[_0xe7bd[2]](_0xb797x3[_0xe7bd[2]]()* (1/ (2* Math[_0xe7bd[16]](2)))):_0xb797x5[_0xe7bd[2]](_0xb797x3[_0xe7bd[2]]()* (Math[_0xe7bd[18]]/ (2* Math[_0xe7bd[16]](2)))),_0xb797x1(_0xe7bd[21])[_0xe7bd[20]](_0xe7bd[19]),_0xb797x1(_0xe7bd[21])[_0xe7bd[23]](_0xe7bd[22]))})}(jQuery)
+  if(type==="avg"){
+    rms=voltage*(Math.PI/(2*Math.sqrt(2)));
+  }
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("rmsResult").innerText=formatValue(rms)+" V";
+  document.getElementById("rmsResultUnit").innerText=formatValue(rms/1000)+" kV";
+}
 </script>
-</div>
+
 </body>
 </html>
