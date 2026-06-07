@@ -1,156 +1,286 @@
-
-
-	
-	<script>
-	function Compute(form) {
-		with(Math) {
-			var micro= 1e-6;
-			var nano= 1e-9;
-			var pico= 1e-12;
-			var Kilo= 1000;
-			var Precision= 3;
-			
-			var stretch;
-			var Cpar;
-			
-			var Vdip= Number(form.Vdip.value);
-			var Vdipmax= Number(form.Vdipmax.value);
-			var Tdip= Number(form.Tdip.value)*micro;
-			var Cgate= Number(form.Cgate.value)*pico;
-			var C1= Number(form.C1.value)*micro;
-			
-			Cpar= C1+Cgate;
-			
-			stretch= Vdip/Vdipmax; // stretch the duration of the dip by this much. 
-			TC= stretch*Tdip;
-			Rgate= TC/Cpar;			
-			
-			form.Rgate.value= Rgate.toPrecision(Precision);
-			form.TC.value= TC.toPrecision(Precision);
-		}
-	}
-	</script>	
-</head>
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Inrush Current Limiting Load Switch Calculator</title>
+<meta name="description" content="Calculate load switch inrush limiting gate resistance and time constant from voltage dip, gate capacitance and optional capacitance.">
+<meta name="keywords" content="inrush current limiting calculator, load switch calculator, gate resistor calculator, mosfet inrush current calculator, load switch gate resistance calculator, voltage dip calculator, power switch soft start calculator, MOSFET soft start calculator, inrush current limiter design, gate capacitance calculator, time constant calculator, RC soft start calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#inrush-calc,#inrush-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#inrush-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
+.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
+.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
+.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
+<body>
 
+<div id="inrush-calc">
 
+  <div class="calc-grid">
+    <div>
+      <label class="calc-label">FET Gate Capacitance</label>
+      <div class="calc-row">
+        <input id="Cgate" type="number" oninput="clearResults()">
+        <div class="unit-box">pF</div>
+      </div>
+    </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+    <div>
+      <label class="calc-label">Optional Capacitance C1</label>
+      <div class="calc-row">
+        <input id="C1" type="number" value="0" oninput="clearResults()">
+        <div class="unit-box">µF</div>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label">Un-Mitigated Voltage Dip Duration</label>
+      <div class="calc-row">
+        <input id="Tdip" type="number" oninput="clearResults()">
+        <div class="unit-box">µs</div>
+      </div>
+    </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+    <div>
+      <label class="calc-label">Un-Mitigated Voltage Dip Magnitude</label>
+      <div class="calc-row">
+        <input id="Vdip" type="number" oninput="clearResults()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
-			
+    <div>
+      <label class="calc-label">Desired Maximum Voltage Dip</label>
+      <div class="calc-row">
+        <input id="Vdipmax" type="number" oninput="clearResults()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
+  </div>
 
-			<form method="POST" name="ParamForm">
-			
+  <button type="button" onclick="Compute()">CALCULATE</button>
 
-<label for="r2" style="font-size:55;" >C</label><font face="Arial" size="6"> (Capacitance FET gate Power)  </font><input maxlength="15" name="Cgate" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">pF</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:55;" >C1</label><font face="Arial" size="6"> (capacitance (Optional))  </font><input maxlength="15" name="C1" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">uF</label>
-<h1 style="font-size:50;"></h1>	
-<label for="r2" style="font-size:50;" >Duration</label><font face="Arial" size="6"> (Un-Mitigated Volt)  </font><input maxlength="15" name="Tdip" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:45px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">usec</label>
-<h1 style="font-size:60;"></h1>
-<label for="r2" style="font-size:55;" >M</label><font face="Arial" size="6"> (Magnitude Un-Mitigated Volt)  </font><input maxlength="15" name="Vdip" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:50;"></h1>
-<label for="r2" style="font-size:55;" >Desired</label><font face="Arial" size="6"> (maximum vol)  </font><input maxlength="15" name="Vdipmax" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-<h1 style="font-size:40;"></h1>
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" value="Calculate" name="B1" onClick="Compute(document.ParamForm);" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-		
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <div id="errorBox">Please enter all required values.</div>
 
+  <div class="result-title">RESULTS</div>
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="result-label">R3 Gate Resistance</div>
+      <div class="result-value"><span id="Rgate"></span></div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Time Constant</div>
+      <div class="result-value"><span id="TC"></span></div>
+    </div>
+  </div>
 
-<h3>Outputs</h3></div></legend>								
-<label for="r2" style="font-size:55;" >R3</label><font face="Arial" size="6"> (Gate Resistance)  </font><input maxlength="15"  name="Rgate" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">M&Omega;</label>
-<h1 style="font-size:50;"></h1>				
-<label for="r2" style="font-size:55;" >Time Constant</label><font face="Arial" size="6"> </font><input maxlength="15"  name="TC" class="intro"  style="position: absolute;   width:280; text-align
-:center;right: 145px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:45px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">usec</label>
-<h1 style="font-size:40;"></h1>								
-	
-				
-				
-				
-			
-			</form>
-			
-			
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>FET Gate Capacitance</strong>MOSFET gate capacitance in pF used with the soft-start capacitor path for inrush current limiting.</div>
+      <div class="paramItem"><strong>Optional Capacitance C1</strong>External capacitance in µF added to the gate timing network to slow load switch turn-on.</div>
+      <div class="paramItem"><strong>Voltage Dip Duration</strong>Un-mitigated dip duration in microseconds before adding load switch inrush control.</div>
+      <div class="paramItem"><strong>Voltage Dip Magnitude</strong>Original and desired maximum voltage dip values used to stretch the soft-start time constant.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Load Switch Soft Start</strong></p>
+        <p>Use this calculator when a MOSFET load switch causes input rail voltage dip due to capacitor charging current.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Gate Resistor Selection</strong></p>
+        <p>The calculated R3 gate resistance helps slow MOSFET turn-on and reduce inrush current in power distribution circuits.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>This load switch soft-start circuit uses a proper MOSFET symbol, red gate resistors and green timing capacitor to slow startup and reduce inrush current.</p>
+
+    <div class="diagramBox">
+  <svg viewBox="0 0 620 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Colorful P-channel MOSFET inrush current limiting load switch schematic">
+    <rect width="620" height="310" fill="#ffffff"/>
+
+    <style>
+      .wire{stroke:#111827;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .node{fill:#111827}
+      .res{stroke:#ef4444;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .cap{stroke:#10b981;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .mos{stroke:#2563eb;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .arrowBox{fill:#ffffff;stroke:#111827;stroke-width:2}
+      .ground{stroke:#111827;stroke-width:2.5;fill:none;stroke-linecap:round}
+      .txt{font-family:Arial,sans-serif;font-size:13px;font-weight:900;fill:#111827}
+      .blueText{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#2563eb}
+      .redText{font-family:Arial,sans-serif;font-size:13px;font-weight:900;fill:#ef4444}
+      .greenText{font-family:Arial,sans-serif;font-size:13px;font-weight:900;fill:#059669}
+    </style>
+
+    <!-- VIN arrow -->
+    <polygon points="35,58 72,58 92,73 72,88 35,88" class="arrowBox"/>
+    <text x="40" y="100" class="txt">VIN</text>
+
+    <!-- Top rail before MOSFET -->
+    <path d="M92 73 H190" class="wire"/>
+    <circle cx="190" cy="73" r="4" class="node"/>
+
+    <path d="M190 73 H300" class="wire"/>
+    <circle cx="300" cy="73" r="4" class="node"/>
+
+    <!-- Q1 P-channel MOSFET, horizontal series style -->
+    <text x="300" y="39" class="blueText">P CHENNAL MOSFET</text>
+
+    <path d="M300 73 H342" class="wire"/>
+
+    <!-- MOSFET source/drain terminals -->
+    <line x1="342" y1="73" x2="356" y2="73" class="mos"/>
+    <line x1="386" y1="73" x2="430" y2="73" class="wire"/>
+
+    <!-- MOSFET channel body, not capacitor -->
+    <line x1="356" y1="53" x2="356" y2="93" class="mos"/>
+    <line x1="386" y1="53" x2="386" y2="93" class="mos"/>
+    <line x1="356" y1="61" x2="386" y2="61" class="mos"/>
+    <line x1="356" y1="85" x2="386" y2="85" class="mos"/>
+
+    <!-- Gate plate and gate connection below -->
+    <line x1="371" y1="104" x2="371" y2="185" class="mos"/>
+    <line x1="356" y1="104" x2="386" y2="104" class="mos"/>
+
+    <!-- P-channel arrow -->
+    <polygon points="361,73 374,65 374,81" fill="#2563eb"/>
+
+    <!-- LOAD arrow -->
+    <polygon points="430,58 475,58 497,73 475,88 430,88" class="arrowBox"/>
+    <text x="440" y="100" class="txt">Load</text>
+
+    <!-- Main gate node -->
+    <circle cx="371" cy="185" r="4" class="node"/>
+
+    <!-- R1 left branch -->
+    <path d="M190 73 V115" class="wire"/>
+    <path d="M190 115 L178 123 L202 133 L178 143 L202 153 L178 163 L202 173 L190 181" class="res"/>
+    <path d="M190 181 V185 H371" class="wire"/>
+    <text x="207" y="150" class="redText">R1</text>
+
+    <!-- C1 center branch -->
+    <path d="M300 73 V116" class="wire"/>
+    <line x1="282" y1="122" x2="318" y2="122" class="cap"/>
+    <line x1="282" y1="136" x2="318" y2="136" class="cap"/>
+    <path d="M300 136 V185" class="wire"/>
+    <text x="321" y="133" class="greenText">C1</text>
+
+    <!-- R2 to ground -->
+    <path d="M371 185 H415" class="wire"/>
+    <circle cx="415" cy="185" r="4" class="node"/>
+
+    <path d="M415 185 V220" class="wire"/>
+    <path d="M415 220 L403 228 L427 238 L403 248 L427 258 L403 268 L415 276" class="res"/>
+    <text x="433" y="250" class="redText">R2</text>
+
+    <path d="M415 276 V286" class="wire"/>
+    <line x1="394" y1="286" x2="436" y2="286" class="ground"/>
+    <line x1="402" y1="295" x2="428" y2="295" class="ground"/>
+    <line x1="410" y1="303" x2="420" y2="303" class="ground"/>
+  </svg>
+</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Step 1: Convert Cgate from pF to F: Cgate(F) = Cgate × 1e-12.</div>
+    <div class="formula">Step 2: Convert C1 from µF to F: C1(F) = C1 × 1e-6.</div>
+    <div class="formula">Step 3: Convert Tdip from µs to seconds: Tdip(s) = Tdip × 1e-6.</div>
+    <div class="formula">Step 4: Total capacitance: Cpar = C1 + Cgate.</div>
+    <div class="formula">Step 5: Stretch factor: stretch = Vdip / Vdipmax.</div>
+    <div class="formula">Step 6: Time constant: TC = stretch × Tdip.</div>
+    <div class="formula">Step 7: Gate resistance: Rgate = TC / Cpar.</div>
+  </section>
+
+</div>
+
+<script>
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
+
+function clearResults(){
+  document.getElementById("Rgate").innerText="";
+  document.getElementById("TC").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function Compute(){
+  if(isMissing("Cgate") || isMissing("Tdip") || isMissing("Vdip") || isMissing("Vdipmax")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  with(Math){
+    var micro=1e-6;
+    var pico=1e-12;
+    var Precision=3;
+
+    var Vdip=Number(document.getElementById("Vdip").value);
+    var Vdipmax=Number(document.getElementById("Vdipmax").value);
+    var Tdip=Number(document.getElementById("Tdip").value)*micro;
+    var Cgate=Number(document.getElementById("Cgate").value)*pico;
+    var C1=Number(document.getElementById("C1").value || 0)*micro;
+
+    var Cpar=C1+Cgate;
+    var stretch=Vdip/Vdipmax;
+    var TC=stretch*Tdip;
+    var Rgate=TC/Cpar;
+
+    document.getElementById("errorBox").style.display="none";
+    document.getElementById("Rgate").innerText=Rgate.toPrecision(Precision)+" Ω";
+    document.getElementById("TC").innerText=TC.toPrecision(Precision)+" s";
+  }
+}
+</script>
+
+</body>
+</html>
