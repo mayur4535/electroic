@@ -1,377 +1,397 @@
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Microstrip Max Current Calculator</title>
+<meta name="description" content="Calculate maximum microstrip trace current, trace temperature, resistance, voltage drop and power dissipation from PCB trace dimensions.">
+<meta name="keywords" content="microstrip max current calculator, PCB trace current calculator, microstrip current capacity, PCB copper trace current, trace resistance calculator, voltage drop PCB trace">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#microstrip-current-calc,#microstrip-current-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#microstrip-current-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.calc-row.full{grid-template-columns:1fr}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
+.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
+.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
+.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<div id="microstrip-current-calc">
+
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Trace Width</label>
+    <div class="calc-row">
+      <input id="width" type="number" oninput="clearResults()">
+      <select id="width_unit" onchange="clearResults()">
+        <option value="0.0000254" selected>mil</option>
+        <option value="0.01">cm</option>
+        <option value="0.001">mm</option>
+        <option value="0.000001">µm</option>
+        <option value="0.3937">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Trace Thickness</label>
+    <div class="calc-row">
+      <input id="thick" type="number" oninput="clearResults()">
+      <select id="thick_unit" onchange="clearResults()">
+        <option value="0.0000254" selected>mil</option>
+        <option value="0.01">cm</option>
+        <option value="0.001">mm</option>
+        <option value="0.000001">µm</option>
+        <option value="0.3937">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Temperature Rise</label>
+    <div class="calc-row full">
+      <select id="temp_rise" onchange="clearResults()">
+        <option value="10" selected>10 °C</option>
+        <option value="20">20 °C</option>
+        <option value="30">30 °C</option>
+        <option value="45">45 °C</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Ambient Temperature</label>
+    <div class="calc-row">
+      <input id="amb_temp" type="number" oninput="clearResults()">
+      <select id="amb_temp_unit" onchange="clearResults()">
+        <option value="1" selected>°C</option>
+        <option value="2">K</option>
+        <option value="3">°F</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Trace Length</label>
+    <div class="calc-row">
+      <input id="length" type="number" oninput="clearResults()">
+      <select id="length_unit" onchange="clearResults()">
+        <option value="0.0000254" selected>mil</option>
+        <option value="0.01">cm</option>
+        <option value="0.001">mm</option>
+        <option value="0.000001">µm</option>
+        <option value="0.3937">inch</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="calculateMicrostripCurrent()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card"><div class="result-label">Maximum Current</div><div class="result-value" id="currentResult"></div></div>
+  <div class="result-card"><div class="result-label">Trace Temperature</div><div class="result-value" id="tempResult"></div></div>
+  <div class="result-card"><div class="result-label">Resistance</div><div class="result-value" id="resistanceResult"></div></div>
+  <div class="result-card"><div class="result-label">Voltage Drop</div><div class="result-value" id="voltageDropResult"></div></div>
+  <div class="result-card"><div class="result-label">Power Dissipation</div><div class="result-value" id="powerResult"></div></div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Trace Width</strong>Top-layer microstrip copper width. Wider traces support more current.</div>
+  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness used to calculate cross-sectional area.</div>
+  <div class="paramItem"><strong>Temperature Rise</strong>Allowed rise above ambient temperature.</div>
+  <div class="paramItem"><strong>Trace Length</strong>Trace length used for resistance, voltage drop and power dissipation.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Power PCB Trace</strong></p><p>Estimate safe current for top-layer traces in power supply and motor driver boards.</p></div>
+  <div class="exampleCard"><p><strong>Voltage Drop Check</strong></p><p>Use resistance and voltage drop results to improve copper width or reduce heating.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>A microstrip trace is located on the top surface of a PCB dielectric above a reference plane. Maximum current depends mainly on trace cross-sectional area and allowable temperature rise.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Microstrip Wavelength Cross Section Diagram">
+<rect width="620" height="360" fill="#ffffff"></rect>
+
+<style>
+.msDiel{fill:#ffffff;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.msSide{fill:#d1d5db;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+
+.msCopper{
+fill:lightgreen;
+stroke:#111827;
+stroke-width:2.2;
+stroke-linejoin:round
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.msCopperDark{
+fill:lightgreen;
+stroke:#111827;
+stroke-width:2.2;
+stroke-linejoin:round
 }
 
-body { 
-  background: ; 
+.msArrow{
+stroke:#111827;
+stroke-width:2;
+fill:none;
+marker-start:url(#msArrStart);
+marker-end:url(#msArrEnd)
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+.msTick{
+stroke:#111827;
+stroke-width:2;
+fill:none;
+stroke-linecap:round
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+.msWave{
+stroke:#2563eb;
+stroke-width:2.5;
+fill:none;
+stroke-linecap:round;
+marker-end:url(#msBlueArr)
+}
+
+.msTxt{
+font-family:Arial,sans-serif;
+font-size:28px;
+font-weight:900;
+fill:#111827
+}
+
+.msSmall{
+font-family:Arial,sans-serif;
+font-size:15px;
+font-weight:800;
+fill:#334155
+}
 </style>
 
+<defs>
+<marker id="msArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"></path>
+</marker>
 
+<marker id="msArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"></path>
+</marker>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<marker id="msBlueArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"></path>
+</marker>
+</defs>
 
+<!-- right side shadow -->
+<path d="M500 140 L590 70 V270 L500 330 Z" class="msSide"></path>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
+<!-- dielectric -->
+<path d="M80 140 H500 V330 H80 Z" class="msDiel"></path>
 
+<!-- top face -->
+<path d="M80 140 L170 70 H590 L500 140 Z" fill="#ffffff" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"></path>
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<!-- bottom ground plane -->
+<path d="M80 300 H500 V330 H80 Z" class="msCopper"></path>
+<path d="M500 300 L590 240 V270 L500 330 Z" class="msCopperDark"></path>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:50;" >Width<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="width"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="width_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px;height:84.5px; border:3px solid #aaa;">
-<option selected="selected" value="0.0000254">mil</option>
-<option value="0.01">cm</option>
-<option value="0.001">mm</option>
-<option value="0.000001">um</option>
-<option value="0.3937">inch</option>
-</select>
-</div>
-<h1 style="font-size:60;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<!-- MICROSTRIP TRACE ON TOP SURFACE -->
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:50;" >Thickness<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="thick"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="thick_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px; border:3px solid #aaa;">
-<option selected="selected" value="0.0000254">mil</option>
-<option value="0.01">cm</option>
-<option value="0.001">mm</option>
-<option value="0.000001">um</option>
-<option value="0.3937">inch</option>
-</select>
-</div>
-<h1 style="font-size:60;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<path d="M250 95 H355 V139 H250 Z" class="msCopper"></path>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:50;" >Rise<font face="Arial" size="6"> (Temperature) </font></label>
-<select class="form-control" id="temp_rise" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:435px;border-radius:4px; border:3px solid #aaa;">
-<option selected="" value="10">10 ° C</option>
-<option value="20">20 ° C</option>
-<option value="30">30 ° C</option>
-<option value="45">45 ° C</option>
-</select>
-<h1 style="font-size:53;"></h1>
+<path d="M355 95 L445 35 V69 L355 140 Z" class="msCopperDark"></path>
 
-</div>
-</div>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<path d="M250 95 L340 35 H445 L355 95 Z" fill="lightgreen" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"></path>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:50;" >Ambient<font face="Arial" size="6"> (Temperature) </font></label><input type="number" id="amb_temp"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="amb_temp_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px; border:3px solid #aaa;">
-<option selected="" value="1">° C</option>
-<option value="2">° K</option>
-<option value="3">° F</option>
-</select>
-</div>
+<!-- H dimension -->
 
-<h1 style="font-size:60;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<line x1="45" y1="95" x2="245" y2="95" class="msTick"></line>
+<line x1="45" y1="300" x2="230" y2="300" class="msTick"></line>
+<line x1="45" y1="140" x2="245" y2="140" class="msTick"></line>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:50;" >Length<font face="Arial" size="6"></font></label><input type="number" id="length"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="length_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px; border:3px solid #aaa;">
-<option selected="selected" value="0.0000254">mil</option>
-<option value="0.01">cm</option>
-<option value="0.001">mm</option>
-<option value="0.000001">um</option>
-<option value="0.3937">inch</option>
-</select>
-</div>
+<line x1="60" y1="140" x2="60" y2="300" class="msArrow"></line>   H ARROW
 
-<div class="row">
-<div class="col-sm-12">
+<text x="22" y="220" class="msTxt">H</text>
 
-<div class="col-sm-4"><div class="form-group">
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+<!-- T dimension -->
 
+<line x1="60" y1="95" x2="60" y2="140" class="msArrow"></line>
+<text x="22" y="127" class="msTxt">T</text>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+<!-- W dimension -->
 
+<line x1="250" y1="155" x2="355" y2="155" class="msArrow"></line>
 
-<h3>Outputs</h3></div></legend>
+<line x1="250" y1="120" x2="250" y2="160" class="msTick"></line>
+<line x1="355" y1="120" x2="355" y2="160" class="msTick"></line>
 
-
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:50;" >Current</label><font face="Arial" size="7"> (Max)  </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">A</label>
-
-</div>
-</div>
-<h1 style="font-size:60;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<div class="form-group">
-<label for="r2" style="font-size:50;" >Temperature</label><font face="Arial" size="6"> (Trace)  </font><input  id="tool_output2"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">°C</label>
-
-</div>
-</div>
-<h1 style="font-size:60;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:50;" >Resistance</label><font face="Arial" size="7">   </font><input  id="tool_output3"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-
-
-</div>
-</div>
-<h1 style="font-size:60;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:50;" >Voltage Drop</label><font face="Arial" size="7">   </font><input  id="tool_output4"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
+<text x="292" y="182" class="msTxt">W</text>
 
 
 
-</div>
-</div>
-<h1 style="font-size:60;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:50;" >Power</label><font face="Arial" size="7"> (Dissipation)   </font><input  id="tool_output5"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
 
 
+<!-- labels -->
+
+<text x="95" y="323" class="msSmall">Ground Plane</text>
+
+
+
+<text x="110" y="230" class="msSmall">PCB Dielectric</text>
+
+</svg>
 </div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Step 1: Convert trace width, thickness and length using the selected unit multipliers.</div>
+<div class="formula">Step 2: Cross-sectional area = width × thickness.</div>
+<div class="formula">Step 3: Maximum current is found by looping current from 0.01 A to 35 A and matching the closest cross-section value using the original microstrip polynomial formulas.</div>
+<div class="formula">Step 4: Trace temperature result = selected temperature rise.</div>
+<div class="formula">Step 5: Resistance = abs((17e-7 × length / cross-section) × (1 + 0.0039 × temperature rise)).</div>
+<div class="formula">Step 6: Voltage drop = resistance × current.</div>
+<div class="formula">Step 7: Power dissipation = voltage drop × current.</div>
+</section>
+
 </div>
-<h1 style="font-size:30;"></h1>
-<script type="text/javascript">
-    ! function(t) {
-        "use strict";
-        var a = {
-            calculate: function() {
-                var o = 0,
-                    e = t("#width").val() * t("#width_unit").val(),
-                    p = t("#thick").val() * t("#thick_unit").val(),
-                    h = parseInt(t("#temp_rise").val()),
-                    r = t("#amb_temp_unit").val(),
-                    w = 0,
-                    i = t("#amb_temp").val();
-                switch (r) {
-                    case "1":
-                        w = parseInt(i);
-                        break;
-                    case "2":
-                        w = parseInt(i - 273.15);
-                        break;
-                    case "3":
-                        w = parseInt(100 / 180 * (i - 32))
-                }
-                var c = t("#length").val() * t("#length_unit").val(),
-                    s = e * p,
-                    M = a.loop_find_current(h, s, o),
-                    l = s,
-                    u = h,
-                    b = 17e-7,
-                    v = .0039,
-                    _ = Math.abs(((b * c) / l) * (1 + (v * u))),
-                    k = _ * M,
-                    f = k * M;
-                t("#tool_output1").val(M.toPrecision(3)), t("#tool_output2").val(u.toPrecision(3)), t("#tool_output3").val(_.toPrecision(3)), t("#tool_output4").val(k.toPrecision(3)), t("#tool_output5").val(f.toPrecision(3))
-            },
-            find_cross: function(t, a, o) {
-                var e;
-                if (o) switch (t) {
-                    case 10:
-                        e = -.012 * Math.pow(a, 5) + .4008 * Math.pow(a, 4) + -4.4272 * Math.pow(a, 3) + 25.218 * Math.pow(a, 2) + 22.072 * a;
-                        break;
-                    case 20:
-                        e = -.0189 * Math.pow(a, 4) + .2518 * Math.pow(a, 3) + 3.1502 * Math.pow(a, 2) + 29.816 * a;
-                        break;
-                    case 30:
-                        e = .0029 * Math.pow(a, 5) + -.0675 * Math.pow(a, 4) + .3704 * Math.pow(a, 3) + 2.9039 * Math.pow(a, 2) + 20.508 * a;
-                        break;
-                    case 45:
-                        e = .0015 * Math.pow(a, 5) + -.0462 * Math.pow(a, 4) + .3791 * Math.pow(a, 3) + 1.4026 * Math.pow(a, 2) + 18.58 * a;
-                        break;
-                    default:
-                        e = 0
-                } else switch (t) {
-                    case 10:
-                        e = .0076 * Math.pow(a, 4) + -.3082 * Math.pow(a, 3) + 5.1149 * Math.pow(a, 2) + 12.472 * a;
-                        break;
-                    case 20:
-                        e = 3e-4 * Math.pow(a, 4) + -.028 * Math.pow(a, 3) + 1.5033 * Math.pow(a, 2) + 12.522 * a;
-                        break;
-                    case 30:
-                        e = 1e-4 * Math.pow(a, 5) + -.0073 * Math.pow(a, 4) + .1048 * Math.pow(a, 3) + .3891 * Math.pow(a, 2) + 10.814 * a;
-                        break;
-                    case 45:
-                        e = 7e-5 * Math.pow(a, 5) + -.0045 * Math.pow(a, 4) + .0768 * Math.pow(a, 3) + .1738 * Math.pow(a, 2) + 9.5374 * a;
-                        break;
-                    case 60:
-                        e = 9e-5 * Math.pow(a, 5) + -.0058 * Math.pow(a, 4) + .102 * Math.pow(a, 3) + .036 * Math.pow(a, 2) + 7.2743 * a;
-                        break;
-                    case 75:
-                        e = 5e-5 * Math.pow(a, 5) + -.0031 * Math.pow(a, 4) + .0601 * Math.pow(a, 3) + .1117 * Math.pow(a, 2) + 6.5222 * a;
-                        break;
-                    case 100:
-                        e = 2e-5 * Math.pow(a, 5) + -.0013 * Math.pow(a, 4) + .0234 * Math.pow(a, 3) + .3736 * Math.pow(a, 2) + 4.1989 * a;
-                        break;
-                    default:
-                        e = 0
-                }
-                return e
-            },
-            loop_find_current: function(t, o, e) {
-                var p = 0,
-                    h = 0,
-                    r = 1e5,
-                    w = 1,
-                    i = 0;
-                for (p = .01; 35 >= p; p += .01) w = a.find_cross(t, p, e), i = Math.abs(w - o), r > i && (r = i, h = p);
-                return h
-            }
-        };
-        t("#tool :input").keyup(function() {
-            var a = !1;
-            t("#tool :input").each(function() {
-                "" == t(this).val() && (a = !0)
-            }), a ? t("#tool_submit").attr("disabled", "disabled") : t("#tool_submit").removeAttr("disabled")
-        }), t("#tool_submit").on("click", function(t) {
-            t.preventDefault(), a.calculate()
-        })
-    }(jQuery);
+
+<script>
+function clearResults(){
+  ["currentResult","tempResult","resistanceResult","voltageDropResult","powerResult"].forEach(function(id){
+    document.getElementById(id).innerText="";
+  });
+  document.getElementById("errorBox").style.display="none";
+}
+
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
+
+function find_cross(tempRise,current,isStripline){
+  var e;
+  if(isStripline){
+    switch(tempRise){
+      case 10: e=-0.012*Math.pow(current,5)+0.4008*Math.pow(current,4)-4.4272*Math.pow(current,3)+25.218*Math.pow(current,2)+22.072*current; break;
+      case 20: e=-0.0189*Math.pow(current,4)+0.2518*Math.pow(current,3)+3.1502*Math.pow(current,2)+29.816*current; break;
+      case 30: e=0.0029*Math.pow(current,5)-0.0675*Math.pow(current,4)+0.3704*Math.pow(current,3)+2.9039*Math.pow(current,2)+20.508*current; break;
+      case 45: e=0.0015*Math.pow(current,5)-0.0462*Math.pow(current,4)+0.3791*Math.pow(current,3)+1.4026*Math.pow(current,2)+18.58*current; break;
+      default: e=0;
+    }
+  }else{
+    switch(tempRise){
+      case 10: e=0.0076*Math.pow(current,4)-0.3082*Math.pow(current,3)+5.1149*Math.pow(current,2)+12.472*current; break;
+      case 20: e=0.0003*Math.pow(current,4)-0.028*Math.pow(current,3)+1.5033*Math.pow(current,2)+12.522*current; break;
+      case 30: e=0.0001*Math.pow(current,5)-0.0073*Math.pow(current,4)+0.1048*Math.pow(current,3)+0.3891*Math.pow(current,2)+10.814*current; break;
+      case 45: e=0.00007*Math.pow(current,5)-0.0045*Math.pow(current,4)+0.0768*Math.pow(current,3)+0.1738*Math.pow(current,2)+9.5374*current; break;
+      case 60: e=0.00009*Math.pow(current,5)-0.0058*Math.pow(current,4)+0.102*Math.pow(current,3)+0.036*Math.pow(current,2)+7.2743*current; break;
+      case 75: e=0.00005*Math.pow(current,5)-0.0031*Math.pow(current,4)+0.0601*Math.pow(current,3)+0.1117*Math.pow(current,2)+6.5222*current; break;
+      case 100: e=0.00002*Math.pow(current,5)-0.0013*Math.pow(current,4)+0.0234*Math.pow(current,3)+0.3736*Math.pow(current,2)+4.1989*current; break;
+      default: e=0;
+    }
+  }
+  return e;
+}
+
+function loop_find_current(tempRise,crossSection,isStripline){
+  var bestCurrent=0;
+  var bestDiff=100000;
+  for(var current=0.01;current<=35;current+=0.01){
+    var cross=find_cross(tempRise,current,isStripline);
+    var diff=Math.abs(cross-crossSection);
+    if(diff<bestDiff){
+      bestDiff=diff;
+      bestCurrent=current;
+    }
+  }
+  return bestCurrent;
+}
+
+function calculateMicrostripCurrent(){
+  if(isMissing("width") || isMissing("thick") || isMissing("amb_temp") || isMissing("length")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var width=Number(document.getElementById("width").value)*Number(document.getElementById("width_unit").value);
+  var thick=Number(document.getElementById("thick").value)*Number(document.getElementById("thick_unit").value);
+  var tempRise=parseInt(document.getElementById("temp_rise").value);
+  var ambUnit=document.getElementById("amb_temp_unit").value;
+  var ambientRaw=Number(document.getElementById("amb_temp").value);
+  var ambientC=0;
+
+  if(ambUnit==="1"){ambientC=parseInt(ambientRaw);}
+  if(ambUnit==="2"){ambientC=parseInt(ambientRaw-273.15);}
+  if(ambUnit==="3"){ambientC=parseInt(100/180*(ambientRaw-32));}
+
+  var length=Number(document.getElementById("length").value)*Number(document.getElementById("length_unit").value);
+  var crossSection=width*thick;
+  var current=loop_find_current(tempRise,crossSection,0);
+  var traceTemp=tempRise;
+  var copperResistivity=17e-7;
+  var tempCoeff=0.0039;
+  var resistance=Math.abs(((copperResistivity*length)/crossSection)*(1+(tempCoeff*traceTemp)));
+  var voltageDrop=resistance*current;
+  var power=voltageDrop*current;
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("currentResult").innerText=current.toPrecision(3)+" A";
+  document.getElementById("tempResult").innerText=traceTemp.toPrecision(3)+" °C";
+  document.getElementById("resistanceResult").innerText=resistance.toPrecision(3)+" Ω";
+  document.getElementById("voltageDropResult").innerText=voltageDrop.toPrecision(3)+" V";
+  document.getElementById("powerResult").innerText=power.toPrecision(3)+" W";
+}
 </script>
-</div>
+
 </body>
 </html>
