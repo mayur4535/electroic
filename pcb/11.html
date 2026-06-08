@@ -1,303 +1,402 @@
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Microstrip Trace Width Calculator</title>
+<meta name="description" content="Calculate required microstrip PCB trace width, trace temperature, resistance, voltage drop and power dissipation from current and copper thickness.">
+<meta name="keywords" content="microstrip trace width calculator, PCB trace width calculator, microstrip current calculator, PCB current capacity calculator, copper trace width, PCB voltage drop calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#microstrip-width-calc,#microstrip-width-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#microstrip-width-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.calc-row.full{grid-template-columns:1fr}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
+.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
+.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
+.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<div id="microstrip-width-calc">
+
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Maximum Current</label>
+    <div class="calc-row">
+      <input id="current" type="number" oninput="clearResults()">
+      <select id="current_unit" onchange="clearResults()">
+        <option value="1" selected>A</option>
+        <option value="1e-3">mA</option>
+        <option value="1e-6">µA</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Output Width Unit</label>
+    <div class="calc-row full">
+      <select id="width_unit_select" onchange="clearResults()">
+        <option value="1" selected>mil</option>
+        <option value="393.7">cm</option>
+        <option value="39.3">mm</option>
+        <option value="0.00393">µm</option>
+        <option value="1000">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Trace Thickness</label>
+    <div class="calc-row">
+      <input id="thick" type="number" oninput="clearResults()">
+      <select id="thick_unit" onchange="clearResults()">
+        <option value="1.3779">oz/ft²</option>
+        <option value="1" selected>mil</option>
+        <option value="393.7">cm</option>
+        <option value="39.37">mm</option>
+        <option value="0.03937">µm</option>
+        <option value="1000">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Temperature Rise</label>
+    <div class="calc-row full">
+      <select id="temp_rise" onchange="clearResults()">
+        <option value="10" selected>10 °C</option>
+        <option value="20">20 °C</option>
+        <option value="30">30 °C</option>
+        <option value="45">45 °C</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Ambient Temperature</label>
+    <div class="calc-row">
+      <input id="amb_temp" type="number" oninput="clearResults()">
+      <select id="amb_temp_unit" onchange="clearResults()">
+        <option value="1" selected>°C</option>
+        <option value="2">K</option>
+        <option value="3">°F</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Trace Length</label>
+    <div class="calc-row">
+      <input id="length" type="number" oninput="clearResults()">
+      <select id="length_unit" onchange="clearResults()">
+        <option value="0.00254">mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54" selected>inch</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="calculateMicrostripWidth()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card"><div class="result-label">Trace Width</div><div class="result-value" id="widthResult"></div></div>
+  <div class="result-card"><div class="result-label">Trace Temperature</div><div class="result-value" id="tempResult"></div></div>
+  <div class="result-card"><div class="result-label">Resistance</div><div class="result-value" id="resistanceResult"></div></div>
+  <div class="result-card"><div class="result-label">Voltage Drop</div><div class="result-value" id="voltageDropResult"></div></div>
+  <div class="result-card"><div class="result-label">Power Dissipation</div><div class="result-value" id="powerResult"></div></div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Maximum Current</strong>Target current for the top-layer microstrip trace.</div>
+  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness used to derive required trace width.</div>
+  <div class="paramItem"><strong>Temperature Rise</strong>Allowed temperature increase above ambient condition.</div>
+  <div class="paramItem"><strong>Trace Length</strong>Length used for resistance, voltage drop and power loss calculation.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>PCB Power Routing</strong></p><p>Find required top-layer copper width for a selected current and temperature rise.</p></div>
+  <div class="exampleCard"><p><strong>Voltage Drop Check</strong></p><p>Use resistance, voltage drop and power dissipation to verify current capacity and thermal safety.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>A microstrip trace is placed on the top surface of the PCB above a reference plane. Required width increases with current and decreases with thicker copper or higher allowed temperature rise.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Microstrip Wavelength Cross Section Diagram">
+<rect width="620" height="360" fill="#ffffff"></rect>
+
+<style>
+.msDiel{fill:#ffffff;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.msSide{fill:#d1d5db;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+
+.msCopper{
+fill:lightgreen;
+stroke:#111827;
+stroke-width:2.2;
+stroke-linejoin:round
 }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.msCopperDark{
+fill:lightgreen;
+stroke:#111827;
+stroke-width:2.2;
+stroke-linejoin:round
 }
 
-body { 
-  background: ; 
+.msArrow{
+stroke:#111827;
+stroke-width:2;
+fill:none;
+marker-start:url(#msArrStart);
+marker-end:url(#msArrEnd)
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+.msTick{
+stroke:#111827;
+stroke-width:2;
+fill:none;
+stroke-linecap:round
+}
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+.msWave{
+stroke:#2563eb;
+stroke-width:2.5;
+fill:none;
+stroke-linecap:round;
+marker-end:url(#msBlueArr)
+}
+
+.msTxt{
+font-family:Arial,sans-serif;
+font-size:28px;
+font-weight:900;
+fill:#111827
+}
+
+.msSmall{
+font-family:Arial,sans-serif;
+font-size:15px;
+font-weight:800;
+fill:#334155
+}
 </style>
 
+<defs>
+<marker id="msArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"></path>
+</marker>
+
+<marker id="msArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"></path>
+</marker>
+
+<marker id="msBlueArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"></path>
+</marker>
+</defs>
+
+<!-- right side shadow -->
+<path d="M500 140 L590 70 V270 L500 330 Z" class="msSide"></path>
+
+<!-- dielectric -->
+<path d="M80 140 H500 V330 H80 Z" class="msDiel"></path>
+
+<!-- top face -->
+<path d="M80 140 L170 70 H590 L500 140 Z" fill="#ffffff" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"></path>
+
+<!-- bottom ground plane -->
+<path d="M80 300 H500 V330 H80 Z" class="msCopper"></path>
+<path d="M500 300 L590 240 V270 L500 330 Z" class="msCopperDark"></path>
+
+<!-- MICROSTRIP TRACE ON TOP SURFACE -->
+
+<path d="M250 95 H355 V139 H250 Z" class="msCopper"></path>
+
+<path d="M355 95 L445 35 V69 L355 140 Z" class="msCopperDark"></path>
+
+<path d="M250 95 L340 35 H445 L355 95 Z" fill="lightgreen" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"></path>
+
+<!-- H dimension -->
+
+<line x1="45" y1="95" x2="245" y2="95" class="msTick"></line>
+<line x1="45" y1="300" x2="230" y2="300" class="msTick"></line>
+<line x1="45" y1="140" x2="245" y2="140" class="msTick"></line>
+
+<line x1="60" y1="140" x2="60" y2="300" class="msArrow"></line>   H ARROW
+
+<text x="22" y="220" class="msTxt">H</text>
+
+<!-- T dimension -->
+
+<line x1="60" y1="95" x2="60" y2="140" class="msArrow"></line>
+<text x="22" y="127" class="msTxt">T</text>
+
+<!-- W dimension -->
+
+<line x1="250" y1="155" x2="355" y2="155" class="msArrow"></line>
+
+<line x1="250" y1="120" x2="250" y2="160" class="msTick"></line>
+<line x1="355" y1="120" x2="355" y2="160" class="msTick"></line>
+
+<text x="292" y="182" class="msTxt">W</text>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
 
 
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<!-- labels -->
+
+<text x="95" y="323" class="msSmall">Ground Plane</text>
+
+
+
+<text x="110" y="230" class="msSmall">PCB Dielectric</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Step 1: Convert current, thickness and length using selected unit multipliers.</div>
+<div class="formula">Step 2: Required cross section is calculated from the original microstrip polynomial using selected temperature rise and current.</div>
+<div class="formula">Step 3: Trace width = required cross section / copper thickness / selected output width unit.</div>
+<div class="formula">Step 4: Trace temperature = ambient temperature + selected temperature rise.</div>
+<div class="formula">Step 5: Resistance = abs(17e-7 × length_cm / cross_section_cm² × (1 + 0.0039 × (trace_temperature - 25))).</div>
+<div class="formula">Step 6: Voltage drop = resistance × current.</div>
+<div class="formula">Step 7: Power dissipation = voltage drop × current.</div>
+</section>
 
 </div>
-</div>
-<div class="col-sm-4 col-xs-8 form-group">
-<label for="r2" style="font-size:55;" >Current<font face="Arial" size="6"> (Max) </font></label><input type="number" id="current"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="current_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option selected="" value="1">A</option>
-<option value="1e-3">mA</option>
-<option value="1e-6">uA</option>
-</select>
 
-</div>
-<h1 style="font-size:54;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<script>
+function clearResults(){
+  ["widthResult","tempResult","resistanceResult","voltageDropResult","powerResult"].forEach(function(id){
+    document.getElementById(id).innerText="";
+  });
+  document.getElementById("errorBox").style.display="none";
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8 form-group">
-<label for="r2" style="font-size:55;" >Width Unit<font face="Arial" size="6"> (Trace) </font></label>
-<select class="form-control" id="width_unit_select" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:434px;border-radius:4px; border:3px solid #aaa;">
-<option selected="" value="1">mil</option>
-<option value="393.7">cm</option>
-<option value="39.3">mm</option>
-<option value=".00393">um</option>
-<option value="1000">inch</option>
-</select>
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
 
-</div>
+function find_cross(tempRise,current,isStripline){
+  var e;
+  if(isStripline){
+    switch(tempRise){
+      case 10: e=-0.012*Math.pow(current,5)+0.4008*Math.pow(current,4)-4.4272*Math.pow(current,3)+25.218*Math.pow(current,2)+22.072*current; break;
+      case 20: e=-0.0189*Math.pow(current,4)+0.2518*Math.pow(current,3)+3.1502*Math.pow(current,2)+29.816*current; break;
+      case 30: e=0.0029*Math.pow(current,5)-0.0675*Math.pow(current,4)+0.3704*Math.pow(current,3)+2.9039*Math.pow(current,2)+20.508*current; break;
+      case 45: e=0.0015*Math.pow(current,5)-0.0462*Math.pow(current,4)+0.3791*Math.pow(current,3)+1.4026*Math.pow(current,2)+18.58*current; break;
+      default: e=0;
+    }
+  }else{
+    switch(tempRise){
+      case 10: e=0.0076*Math.pow(current,4)-0.3082*Math.pow(current,3)+5.1149*Math.pow(current,2)+12.472*current; break;
+      case 20: e=0.0003*Math.pow(current,4)-0.028*Math.pow(current,3)+1.5033*Math.pow(current,2)+12.522*current; break;
+      case 30: e=0.0001*Math.pow(current,5)-0.0073*Math.pow(current,4)+0.1048*Math.pow(current,3)+0.3891*Math.pow(current,2)+10.814*current; break;
+      case 45: e=0.00007*Math.pow(current,5)-0.0045*Math.pow(current,4)+0.0768*Math.pow(current,3)+0.1738*Math.pow(current,2)+9.5374*current; break;
+      case 60: e=0.00009*Math.pow(current,5)-0.0058*Math.pow(current,4)+0.102*Math.pow(current,3)+0.036*Math.pow(current,2)+7.2743*current; break;
+      case 75: e=0.00005*Math.pow(current,5)-0.0031*Math.pow(current,4)+0.0601*Math.pow(current,3)+0.1117*Math.pow(current,2)+6.5222*current; break;
+      case 100: e=0.00002*Math.pow(current,5)-0.0013*Math.pow(current,4)+0.0234*Math.pow(current,3)+0.3736*Math.pow(current,2)+4.1989*current; break;
+      default: e=0;
+    }
+  }
+  return e;
+}
 
-</div>
-</div><h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+function calculateMicrostripWidth(){
+  if(isMissing("current") || isMissing("thick") || isMissing("amb_temp") || isMissing("length")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8 form-group">
-<label for="r2" style="font-size:55;" >Thickness<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="thick"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="thick_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option value="1.3779">oz/ft^2</option>
-<option selected="selected" value="1">mil</option>
-<option value="393.7">cm</option>
-<option value="39.37">mm</option>
-<option value="0.03937">um</option>
-<option value="1000">inch</option>
-</select>
+  var current=Number(document.getElementById("current").value)*Number(document.getElementById("current_unit").value);
+  var thick=Number(document.getElementById("thick").value)*Number(document.getElementById("thick_unit").value);
+  var tempRise=parseInt(document.getElementById("temp_rise").value);
+  var ambUnit=document.getElementById("amb_temp_unit").value;
+  var ambientRaw=Number(document.getElementById("amb_temp").value);
+  var ambientC=0;
 
-</div>
-<h1 style="font-size:54;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  if(ambUnit==="1"){ambientC=parseInt(ambientRaw);}
+  if(ambUnit==="2"){ambientC=parseInt(ambientRaw-273.15);}
+  if(ambUnit==="3"){ambientC=parseInt(100/180*(ambientRaw-32));}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8 form-group">
-<label for="r2" style="font-size:55;" >Temp.<font face="Arial" size="6"> (Rise) </font></label>
-<select class="form-control" id="temp_rise" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:435px;border-radius:4px; border:3px solid #aaa;">
+  var length=Number(document.getElementById("length").value)*Number(document.getElementById("length_unit").value);
+  var cross=find_cross(tempRise,current,0);
+  var widthMil=cross/thick;
+  var widthUnit=Number(document.getElementById("width_unit_select").value);
+  var widthOut=widthMil/widthUnit;
 
+  var crossCm2=64746e-10*cross;
+  var lengthCm=0.002544*length;
+  var traceTemp=tempRise+ambientC;
+  var copperResistivity=17e-7;
+  var tempCoeff=0.0039;
+  var resistance=Math.abs(copperResistivity*lengthCm/crossCm2*(1+tempCoeff*(traceTemp-25)));
+  var voltageDrop=resistance*current;
+  var power=voltageDrop*current;
 
-<option selected="" value="10">10 ° C</option>
-<option value="20">20 ° C</option>
-<option value="30">30 ° C</option>
-<option value="45">45 ° C</option>
-</select>
-</div>
+  var unitText=document.getElementById("width_unit_select").options[document.getElementById("width_unit_select").selectedIndex].text;
 
-</div>
-</div><h1 style="font-size:47;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8 form-group">
-<label for="r2" style="font-size:55;" >Ambient<font face="Arial" size="6"> (Temp.) </font></label><input type="number" id="amb_temp"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="amb_temp_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option selected="" value="1">° C</option>
-<option value="2">° K</option>
-<option value="3">° F</option>
-</select>
-
-</div>
-<h1 style="font-size:54;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8 form-group">
-<label for="r2" style="font-size:55;" >Length<font face="Arial" size="6"></font></label><input type="number" id="length"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="length_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option selected="" value="2.54">inch</option>
-</select>
-
-</div>
-<h1 style="font-size:50;"></h1>
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-
-
-
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Width</label><font face="Arial" size="7"> (Trace)  </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:385; text-align
-:center;right: 10px;"class="form-control" type="text" />
-
-
-</div>
-</div>
-<h1 style="font-size:53;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Temp.</label><font face="Arial" size="6"> (Trace)  </font><input  id="tool_output2"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 144px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">°C</label>
-
-
-</div>
-</div>
-<h1 style="font-size:53;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Resistance</label><font face="Arial" size="6">   </font><input  id="tool_output3"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-
-
-</div>
-</div>
-
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-<h1 style="font-size:50;"></h1>
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Voltage Drop</label><font face="Arial" size="7">  </font><input  id="tool_output4"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-
-
-
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Power</label><font face="Arial" size="6"> (Dissipation)  </font><input  maxlength="4" id="tool_output5"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;    position: absolute;right: 10px;font-size:59px;   height:68.5px;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">W</label>
-
-
-</div>
-</div>
-<h1 style="font-size:30;"></h1>
-<script type="text/javascript">
-var _0xfa9b=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x63\x75\x72\x72\x65\x6E\x74","\x23\x63\x75\x72\x72\x65\x6E\x74\x5F\x75\x6E\x69\x74","\x23\x74\x68\x69\x63\x6B","\x23\x74\x68\x69\x63\x6B\x5F\x75\x6E\x69\x74","\x23\x74\x65\x6D\x70\x5F\x72\x69\x73\x65","\x23\x61\x6D\x62\x5F\x74\x65\x6D\x70\x5F\x75\x6E\x69\x74","\x23\x61\x6D\x62\x5F\x74\x65\x6D\x70","\x31","\x32","\x33","\x23\x6C\x65\x6E\x67\x74\x68","\x23\x6C\x65\x6E\x67\x74\x68\x5F\x75\x6E\x69\x74","\x66\x69\x6E\x64\x5F\x63\x72\x6F\x73\x73","\x23\x77\x69\x64\x74\x68\x5F\x75\x6E\x69\x74\x5F\x73\x65\x6C\x65\x63\x74","\x61\x62\x73","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x20\xB0\x43","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x32","\x20\x6F\x68\x6D\x73","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x33","\x20\x76\x6F\x6C\x74\x73","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x34","\x20\x77\x61\x74\x74\x73","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x35","\x70\x6F\x77","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];!function(_0xfdafx1){_0xfa9b[0];var _0xfdafx2={calculate:function(){var _0xfdafx3=0,_0xfdafx4=_0xfdafx1(_0xfa9b[2])[_0xfa9b[1]]()* _0xfdafx1(_0xfa9b[3])[_0xfa9b[1]](),_0xfdafx5=_0xfdafx1(_0xfa9b[4])[_0xfa9b[1]]()* _0xfdafx1(_0xfa9b[5])[_0xfa9b[1]](),_0xfdafx6=parseInt(_0xfdafx1(_0xfa9b[6])[_0xfa9b[1]]()),_0xfdafx7=_0xfdafx1(_0xfa9b[7])[_0xfa9b[1]](),_0xfdafx8=0,_0xfdafx9=_0xfdafx1(_0xfa9b[8])[_0xfa9b[1]]();switch(_0xfdafx7){case _0xfa9b[9]:_0xfdafx8= parseInt(_0xfdafx9);break;case _0xfa9b[10]:_0xfdafx8= parseInt(_0xfdafx9- 273.15);break;case _0xfa9b[11]:_0xfdafx8= parseInt(100/ 180* (_0xfdafx9- 32))};var _0xfdafxa=_0xfdafx1(_0xfa9b[12])[_0xfa9b[1]]()* _0xfdafx1(_0xfa9b[13])[_0xfa9b[1]](),_0xfdafxb=_0xfdafx2[_0xfa9b[14]](_0xfdafx6,_0xfdafx4,_0xfdafx3),_0xfdafxc=_0xfdafxb/ _0xfdafx5,_0xfdafxd=_0xfdafx1(_0xfa9b[15])[_0xfa9b[1]](),_0xfdafxe=_0xfdafxc/ _0xfdafxd,_0xfdafxf=64746e-10* _0xfdafxb,_0xfdafx10=0.002544* _0xfdafxa,_0xfdafx11=_0xfdafx6+ _0xfdafx8,_0xfdafx12=17e-7,_0xfdafx13=0.0039,_0xfdafx14=Math[_0xfa9b[16]](_0xfdafx12* _0xfdafx10/ _0xfdafxf* (1+ _0xfdafx13* (_0xfdafx11- 25))),_0xfdafx15=_0xfdafx14* _0xfdafx4,_0xfdafx16=_0xfdafx15* _0xfdafx4;_0xfdafx1(_0xfa9b[15])[_0xfa9b[1]]();_0xfdafx1(_0xfa9b[18])[_0xfa9b[1]](_0xfdafxe[_0xfa9b[17]](3)),_0xfdafx1(_0xfa9b[20])[_0xfa9b[1]](_0xfdafx11[_0xfa9b[17]](3)+ _0xfa9b[19]),_0xfdafx1(_0xfa9b[22])[_0xfa9b[1]](_0xfdafx14[_0xfa9b[17]](3)+ _0xfa9b[21]),_0xfdafx1(_0xfa9b[24])[_0xfa9b[1]](_0xfdafx15[_0xfa9b[17]](3)+ _0xfa9b[23]),_0xfdafx1(_0xfa9b[26])[_0xfa9b[1]](_0xfdafx16[_0xfa9b[17]](3)+ _0xfa9b[25])},find_cross:function(_0xfdafx1,_0xfdafx2,_0xfdafx3){var _0xfdafx4;if(_0xfdafx3){switch(_0xfdafx1){case 10:_0xfdafx4= -0.012* Math[_0xfa9b[27]](_0xfdafx2,5)+ 0.4008* Math[_0xfa9b[27]](_0xfdafx2,4)+ -4.4272* Math[_0xfa9b[27]](_0xfdafx2,3)+ 25.218* Math[_0xfa9b[27]](_0xfdafx2,2)+ 22.072* _0xfdafx2;break;case 20:_0xfdafx4= -0.0189* Math[_0xfa9b[27]](_0xfdafx2,4)+ 0.2518* Math[_0xfa9b[27]](_0xfdafx2,3)+ 3.1502* Math[_0xfa9b[27]](_0xfdafx2,2)+ 29.816* _0xfdafx2;break;case 30:_0xfdafx4= 0.0029* Math[_0xfa9b[27]](_0xfdafx2,5)+ -0.0675* Math[_0xfa9b[27]](_0xfdafx2,4)+ 0.3704* Math[_0xfa9b[27]](_0xfdafx2,3)+ 2.9039* Math[_0xfa9b[27]](_0xfdafx2,2)+ 20.508* _0xfdafx2;break;case 45:_0xfdafx4= 0.0015* Math[_0xfa9b[27]](_0xfdafx2,5)+ -0.0462* Math[_0xfa9b[27]](_0xfdafx2,4)+ 0.3791* Math[_0xfa9b[27]](_0xfdafx2,3)+ 1.4026* Math[_0xfa9b[27]](_0xfdafx2,2)+ 18.58* _0xfdafx2;break;default:_0xfdafx4= 0}}else {switch(_0xfdafx1){case 10:_0xfdafx4= 0.0076* Math[_0xfa9b[27]](_0xfdafx2,4)+ -0.3082* Math[_0xfa9b[27]](_0xfdafx2,3)+ 5.1149* Math[_0xfa9b[27]](_0xfdafx2,2)+ 12.472* _0xfdafx2;break;case 20:_0xfdafx4= 3e-4* Math[_0xfa9b[27]](_0xfdafx2,4)+ -0.028* Math[_0xfa9b[27]](_0xfdafx2,3)+ 1.5033* Math[_0xfa9b[27]](_0xfdafx2,2)+ 12.522* _0xfdafx2;break;case 30:_0xfdafx4= 1e-4* Math[_0xfa9b[27]](_0xfdafx2,5)+ -0.0073* Math[_0xfa9b[27]](_0xfdafx2,4)+ 0.1048* Math[_0xfa9b[27]](_0xfdafx2,3)+ 0.3891* Math[_0xfa9b[27]](_0xfdafx2,2)+ 10.814* _0xfdafx2;break;case 45:_0xfdafx4= 7e-5* Math[_0xfa9b[27]](_0xfdafx2,5)+ -0.0045* Math[_0xfa9b[27]](_0xfdafx2,4)+ 0.0768* Math[_0xfa9b[27]](_0xfdafx2,3)+ 0.1738* Math[_0xfa9b[27]](_0xfdafx2,2)+ 9.5374* _0xfdafx2;break;case 60:_0xfdafx4= 9e-5* Math[_0xfa9b[27]](_0xfdafx2,5)+ -0.0058* Math[_0xfa9b[27]](_0xfdafx2,4)+ 0.102* Math[_0xfa9b[27]](_0xfdafx2,3)+ 0.036* Math[_0xfa9b[27]](_0xfdafx2,2)+ 7.2743* _0xfdafx2;break;case 75:_0xfdafx4= 5e-5* Math[_0xfa9b[27]](_0xfdafx2,5)+ -0.0031* Math[_0xfa9b[27]](_0xfdafx2,4)+ 0.0601* Math[_0xfa9b[27]](_0xfdafx2,3)+ 0.1117* Math[_0xfa9b[27]](_0xfdafx2,2)+ 6.5222* _0xfdafx2;break;case 100:_0xfdafx4= 2e-5* Math[_0xfa9b[27]](_0xfdafx2,5)+ -0.0013* Math[_0xfa9b[27]](_0xfdafx2,4)+ 0.0234* Math[_0xfa9b[27]](_0xfdafx2,3)+ 0.3736* Math[_0xfa9b[27]](_0xfdafx2,2)+ 4.1989* _0xfdafx2;break;default:_0xfdafx4= 0}};return _0xfdafx4}};_0xfdafx1(_0xfa9b[30])[_0xfa9b[35]](function(){var _0xfdafx2=!1;_0xfdafx1(_0xfa9b[30])[_0xfa9b[29]](function(){_0xfa9b[28]== _0xfdafx1(this)[_0xfa9b[1]]()&& (_0xfdafx2=  !0)}),_0xfdafx2?_0xfdafx1(_0xfa9b[33])[_0xfa9b[32]](_0xfa9b[31],_0xfa9b[31]):_0xfdafx1(_0xfa9b[33])[_0xfa9b[34]](_0xfa9b[31])}),_0xfdafx1(_0xfa9b[33])[_0xfa9b[39]](_0xfa9b[36],function(_0xfdafx1){_0xfdafx1[_0xfa9b[37]](),_0xfdafx2[_0xfa9b[38]]()})}(jQuery)
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("widthResult").innerText=widthOut.toPrecision(3)+" "+unitText;
+  document.getElementById("tempResult").innerText=traceTemp.toPrecision(3)+" °C";
+  document.getElementById("resistanceResult").innerText=resistance.toPrecision(3)+" Ω";
+  document.getElementById("voltageDropResult").innerText=voltageDrop.toPrecision(3)+" V";
+  document.getElementById("powerResult").innerText=power.toPrecision(3)+" W";
+}
 </script>
-</div>
+
 </body>
 </html>
