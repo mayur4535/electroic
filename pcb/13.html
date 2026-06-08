@@ -1,250 +1,358 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Broadside Coupled Stripline Impedance Calculator</title>
+<meta name="description" content="Calculate broadside coupled stripline odd, even, common and differential impedance from trace width, spacing, thickness, height and dielectric constant.">
+<meta name="keywords" content="broadside coupled stripline impedance calculator, coupled stripline calculator, odd mode impedance, even mode impedance, differential impedance calculator, PCB impedance calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#bc-stripline-calc,#bc-stripline-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#bc-stripline-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.calc-row.full{grid-template-columns:1fr}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
+.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
+.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
+.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="bc-stripline-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Trace Thickness</label>
+    <div class="calc-row">
+      <input id="thick" type="number" oninput="clearResults()">
+      <select id="thick_unit" onchange="clearResults()">
+        <option value="0.0035">oz/ft²</option>
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Substrate Height</label>
+    <div class="calc-row">
+      <input id="sub_height" type="number" oninput="clearResults()">
+      <select id="sub_height_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+  <div>
+    <label class="calc-label">Trace Width</label>
+    <div class="calc-row">
+      <input id="width" type="number" oninput="clearResults()">
+      <select id="width_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Trace Spacing</label>
+    <div class="calc-row">
+      <input id="space" type="number" oninput="clearResults()">
+      <select id="space_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Dielectric Constant</label>
+    <div class="calc-row full">
+      <input id="er" type="number" oninput="clearResults()">
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="calculateBCS()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card"><div class="result-label">Odd Impedance</div><div class="result-value" id="oddResult"></div></div>
+  <div class="result-card"><div class="result-label">Even Impedance</div><div class="result-value" id="evenResult"></div></div>
+  <div class="result-card"><div class="result-label">Common Impedance</div><div class="result-value" id="commonResult"></div></div>
+  <div class="result-card"><div class="result-label">Differential Impedance</div><div class="result-value" id="diffResult"></div></div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness of each broadside coupled stripline conductor.</div>
+  <div class="paramItem"><strong>Substrate Height</strong>Dielectric height between the reference planes.</div>
+  <div class="paramItem"><strong>Trace Width</strong>Width of the stacked broadside traces.</div>
+  <div class="paramItem"><strong>Trace Spacing</strong>Vertical separation between the two broadside coupled traces.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Differential Pair Stackup</strong></p><p>Estimate broadside coupled stripline odd/even mode impedance in multilayer PCB designs.</p></div>
+  <div class="exampleCard"><p><strong>Controlled Impedance</strong></p><p>Adjust width, spacing, height and dielectric constant to target differential impedance.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Broadside coupled stripline uses two conductors stacked vertically inside the dielectric between reference planes. Coupling is mainly controlled by vertical spacing and trace width.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 390" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Broadside coupled stripline impedance diagram">
+<rect width="620" height="390" fill="#ffffff"/>
+
+<style>
+.bcDiel{fill:#ffffff;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.bcSide{fill:#d1d5db;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.bcCopper{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.bcCopperDark{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.bcArrow{stroke:#111827;stroke-width:2;fill:none;marker-start:url(#bcArrStart);marker-end:url(#bcArrEnd)}
+.bcTick{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round}
+.bcCouple{stroke:#2563eb;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-dasharray:6 5;marker-end:url(#bcBlueArr)}
+.bcTxt{font-family:Arial,sans-serif;font-size:25px;font-weight:900;fill:#111827}
+.bcSmall{font-family:Arial,sans-serif;font-size:14px;font-weight:800;fill:#334155}
+.bcBlue{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#2563eb}
 </style>
 
+<defs>
+<marker id="bcArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="bcArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+<marker id="bcBlueArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
+</marker>
+</defs>
+
+<!-- 3D side shadow -->
+<path d="M500 105 L590 25 L590 275 L500 355 Z" class="bcSide"/>
+
+<!-- dielectric body -->
+<path d="M80 105 H500 V355 H80 Z" class="bcDiel"/>
+<path d="M80 105 L170 25 H590 L500 105 Z" fill="#ffffff" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/>
+
+<!-- top and bottom ground planes -->
+<path d="M80 105 H500 V130 H80 Z" class="bcCopper"/>
+<path d="M500 105 L590 25 V50 L500 130 Z" class="bcCopperDark"/>
+<path d="M80 330 H500 V355 H80 Z" class="bcCopper"/>
+<path d="M500 330 L590 250 V275 L500 355 Z" class="bcCopperDark"/>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+<!-- coupling arrows -->
+<path d="M300 195 C285 210,285 222,300 235" class="bcCouple"/>
+<path d="M350 195 C365 210,365 222,350 235" class="bcCouple"/>
 
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
+<!-- TRACE 2 - placed below Trace 1 -->
+<path d="M210 235 H325 V260 H210 Z" class="bcCopper"/> FRONT
+<path d="M325 225 L500 124 V152 L325 260 Z" class="bcCopperDark"/> SIDE
+<path d="M210 235 L388 130 H495 L325 235 Z" fill="WHITE" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/> TOP
+
+<!-- TRACE 1 - moved down, not touching top plane -->
+<path d="M210 165 H325 V190 H210 Z" class="bcCopper"/>  FRONT
+<path d="M325 165 L391 130 V152 L325 190 Z" class="bcCopperDark"/> SIDE 
+<path d="M210 165 L300 130 H390 L325 165 Z" fill="WHITE" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/> TOP
+
+<!-- H dimension -->
+<line x1="42" y1="130" x2="220" y2="130" class="bcTick"/>
+<line x1="42" y1="330" x2="220" y2="330" class="bcTick"/>
+<line x1="60" y1="130" x2="60" y2="330" class="bcArrow"/>
+<text x="22" y="238" class="bcTxt">B</text>
+
+<!-- W dimension -->
+<line x1="210" y1="287" x2="325" y2="287" class="bcArrow"/>
+<line x1="210" y1="265" x2="210" y2="300" class="bcTick"/>
+<line x1="325" y1="265" x2="325" y2="300" class="bcTick"/>
+<text x="252" y="320" class="bcTxt">W</text>
+
+<!-- S spacing dimension -->
+<line x1="200" y1="190" x2="200" y2="235" class="bcArrow"/>
+<line x1="225" y1="190" x2="195" y2="190" class="bcTick"/>
+<line x1="225" y1="235" x2="195" y2="235" class="bcTick"/>
+<text x="172" y="222" class="bcTxt">S</text>
+
+<!-- T dimension -->
+<line x1="200" y1="165" x2="200" y2="190" class="bcArrow"/>
+<line x1="225" y1="165" x2="195" y2="165" class="bcTick"/>
+<text x="172" y="186" class="bcTxt">T</text>
+
+<!-- labels -->
+<text x="100" y="125" class="bcSmall">Top Ground Plane</text>
 
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">The calculator preserves the supplied broadside coupled stripline impedance JavaScript formula and unit multipliers.</div>
+<div class="formula">Outputs: Odd impedance, Even impedance, Common impedance = Even / 2, Differential impedance = 2 × Odd.</div>
+</section>
 
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Thickness<font face="Arial" size="6"> (Trace)  </font></label><input type="number" id="thick"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="thick_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option value="0.0035">oz/ft^2</option>
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Height<font face="Arial" size="6"> (Substrate) </font></label><input type="number" id="sub_height"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="sub_height_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<script>
+function clearResults(){
+  ["oddResult","evenResult","commonResult","diffResult"].forEach(function(id){
+    document.getElementById(id).innerText="";
+  });
+  document.getElementById("errorBox").style.display="none";
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Width<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="width"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="width_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Spacing<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="space"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="space_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+function inv_tanh(x){
+  return 0.5*Math.log((1+x)/(1-x));
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" > Dielectric<font face="Arial" size="6"> (Substrate) </font></label><input type="number" id="er"   class="intro"  style="position: absolute;   text-align
-:center;width:435; right: 10px;"class="form-control"  />
+function bang(x){
+  var r=1;
+  if(x===0 || x===-1){return r;}
+  for(var n=x/2,i=0;n>i;i++){
+    r*=x;
+    x-=2;
+  }
+  return r;
+}
 
-</div>
-<div class="col-sm-4 col-xs-4">&nbsp;</div>
-</div>
-</div>
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+function elliptical(k){
+  var s=1;
+  for(var i=1;i<=20;i++){
+    var a=2*i-1;
+    var b=2*i;
+    s+=Math.pow(bang(a)/bang(b),2)*Math.pow(k,b);
+  }
+  return Math.PI*s/2;
+}
 
+function findk(w,h,s){
+  var k=0.005;
+  var bestDiff=100;
+  var bestK=100;
+  var steps=1000;
+  var inc=1/steps;
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+  for(var i=1;i<=steps;i++){
+    var a=Math.sqrt((k*h/s-1)/(h/(k*s)-1));
+    var target=w/h;
+    var calc=1/Math.PI*(Math.log((1+a)/(1-a))-s/h*Math.log((1+a/k)/(1-a/k)));
+    var diff=Math.abs(target-calc);
 
+    if(bestDiff>diff){
+      bestK=k;
+      bestDiff=diff;
+    }
+    k+=inc;
+  }
+  return bestK;
+}
 
-<h3>Outputs</h3></div></legend>
+function BCS_o(h,s,er,k){
+  return 293.9/Math.sqrt(er)*(s/h)*(1/inv_tanh(k));
+}
 
+function BCS_e(er,k){
+  var kp=Math.sqrt(1-Math.pow(k,2));
+  return 377/Math.sqrt(er)*(elliptical(kp)/elliptical(k));
+}
 
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+function bc_stripline_calc(w,t,s,h,er){
+  var k=findk(w,h,s);
+  var odd=BCS_o(h,s,er,k);
+  var even=BCS_e(er,k);
+  return {
+    zo_odd:odd,
+    zo_even:even,
+    zo_common:even/2,
+    zo_diff:2*odd
+  };
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Odd</label><font face="Arial" size="7">  </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
+function calculateBCS(){
+  if(isMissing("thick") || isMissing("sub_height") || isMissing("width") || isMissing("space") || isMissing("er")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  var t=parseFloat(document.getElementById("thick").value)*Number(document.getElementById("thick_unit").value);
+  var h=parseFloat(document.getElementById("sub_height").value)*Number(document.getElementById("sub_height_unit").value);
+  var w=parseFloat(document.getElementById("width").value)*Number(document.getElementById("width_unit").value);
+  var s=parseFloat(document.getElementById("space").value)*Number(document.getElementById("space_unit").value);
+  var er=parseFloat(document.getElementById("er").value);
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Even</label><font face="Arial" size="7">  </font><input  id="tool_output2"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
+  var r=bc_stripline_calc(w,t,s,h,er);
 
-
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Common</label><font face="Arial" size="7">  </font><input  id="tool_output3"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Differential</label><font face="Arial" size="7">  </font><input  id="tool_output4"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<script type="text/javascript">
-var _0xafc4=["\x76\x61\x6C","\x23\x74\x68\x69\x63\x6B","\x23\x74\x68\x69\x63\x6B\x5F\x75\x6E\x69\x74","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74\x5F\x75\x6E\x69\x74","\x23\x77\x69\x64\x74\x68","\x23\x77\x69\x64\x74\x68\x5F\x75\x6E\x69\x74","\x23\x73\x70\x61\x63\x65","\x23\x73\x70\x61\x63\x65\x5F\x75\x6E\x69\x74","\x23\x65\x72","\x62\x63\x5F\x73\x74\x72\x69\x70\x6C\x69\x6E\x65\x5F\x63\x61\x6C\x63","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x7A\x6F\x5F\x6F\x64\x64","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x7A\x6F\x5F\x65\x76\x65\x6E","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x32","\x7A\x6F\x5F\x63\x6F\x6D\x6D\x6F\x6E","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x33","\x7A\x6F\x5F\x64\x69\x66\x66","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x34","\x66\x69\x6E\x64\x6B","\x73\x71\x72\x74","\x50\x49","\x6C\x6F\x67","\x61\x62\x73","\x69\x6E\x76\x5F\x74\x61\x6E\x68","\x70\x6F\x77","\x65\x6C\x69\x70\x74\x69\x63\x61\x6C","\x62\x61\x6E\x67","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];!function(_0xccbax1){var _0xccbax2={calculate:function(){var _0xccbax3=parseFloat(_0xccbax1(_0xafc4[1])[_0xafc4[0]]())* _0xccbax1(_0xafc4[2])[_0xafc4[0]](),_0xccbax4=parseFloat(_0xccbax1(_0xafc4[3])[_0xafc4[0]]())* _0xccbax1(_0xafc4[4])[_0xafc4[0]](),_0xccbax5=parseFloat(_0xccbax1(_0xafc4[5])[_0xafc4[0]]())* _0xccbax1(_0xafc4[6])[_0xafc4[0]](),_0xccbax6=parseFloat(_0xccbax1(_0xafc4[7])[_0xafc4[0]]())* _0xccbax1(_0xafc4[8])[_0xafc4[0]](),_0xccbax7=parseFloat(_0xccbax1(_0xafc4[9])[_0xafc4[0]]()),_0xccbax8=_0xccbax2[_0xafc4[10]](_0xccbax5,_0xccbax3,_0xccbax6,_0xccbax4,_0xccbax7);_0xccbax1(_0xafc4[13])[_0xafc4[0]](_0xccbax8[_0xafc4[12]][_0xafc4[11]](3)),_0xccbax1(_0xafc4[15])[_0xafc4[0]](_0xccbax8[_0xafc4[14]][_0xafc4[11]](3)),_0xccbax1(_0xafc4[17])[_0xafc4[0]](_0xccbax8[_0xafc4[16]][_0xafc4[11]](3)),_0xccbax1(_0xafc4[19])[_0xafc4[0]](_0xccbax8[_0xafc4[18]][_0xafc4[11]](3))},bc_stripline_calc:function(_0xccbax9,_0xccbaxa,_0xccbax5,_0xccbax8,_0xccbax3){var _0xccbax6=_0xccbax2[_0xafc4[20]](_0xccbax9,_0xccbax8,_0xccbax5),_0xccbax4=_0xccbax2.BCS_o(_0xccbax8,_0xccbax5,_0xccbax3,_0xccbax6),_0xccbaxb=_0xccbax2.BCS_e(_0xccbax3,_0xccbax6),_0xccbaxc=_0xccbaxb/ 2,_0xccbaxd=2* _0xccbax4;return {zo_odd:_0xccbax4,zo_even:_0xccbaxb,zo_common:_0xccbaxc,zo_diff:_0xccbaxd}},findk:function(_0xccbaxe,_0xccbax5,_0xccbaxb){for(var _0xccbax6=0.005,_0xccbax4=100,_0xccbax3=100,_0xccbax8=1000,_0xccbaxc=1/ _0xccbax8,_0xccbaxf=1;_0xccbax8>= _0xccbaxf;_0xccbaxf+= 1){var _0xccbaxa=Math[_0xafc4[21]]((_0xccbax6* _0xccbax5/ _0xccbaxb- 1)/ (_0xccbax5/ (_0xccbax6* _0xccbaxb)- 1)),_0xccbax10=_0xccbaxe/ _0xccbax5,_0xccbax9=1/ Math[_0xafc4[22]]* (Math[_0xafc4[23]]((1+ _0xccbaxa)/ (1- _0xccbaxa))- _0xccbaxb/ _0xccbax5* Math[_0xafc4[23]]((1+ _0xccbaxa/ _0xccbax6)/ (1- _0xccbaxa/ _0xccbax6))),_0xccbax11=Math[_0xafc4[24]](_0xccbax10- _0xccbax9);_0xccbax4> _0xccbax11&& (_0xccbax3= _0xccbax6,_0xccbax4= _0xccbax11),_0xccbax6+= _0xccbaxc};return _0xccbax3},inv_tanh:function(_0xccbax7){var _0xccbax3=0.5* Math[_0xafc4[23]]((1+ _0xccbax7)/ (1- _0xccbax7));return _0xccbax3},BCS_o:function(_0xccbax12,_0xccbax7,_0xccbax6,_0xccbax3){var _0xccbax5=293.9/ Math[_0xafc4[21]](_0xccbax6)* (_0xccbax7/ _0xccbax12)* (1/ _0xccbax2[_0xafc4[25]](_0xccbax3));return _0xccbax5},BCS_e:function(_0xccbax12,_0xccbax7){var _0xccbax5=Math[_0xafc4[21]](1- Math[_0xafc4[26]](_0xccbax7,2)),_0xccbax3=377/ Math[_0xafc4[21]](_0xccbax12)* (_0xccbax2[_0xafc4[27]](_0xccbax5)/ _0xccbax2[_0xafc4[27]](_0xccbax7));return _0xccbax3},eliptical:function(_0xccbax8){for(var _0xccbax3=1,_0xccbaxa=1;20>= _0xccbaxa;_0xccbaxa+= 1){var _0xccbax6=2* _0xccbaxa- 1,_0xccbax4=2* _0xccbaxa,_0xccbax7=_0xccbax2[_0xafc4[28]](_0xccbax6),_0xccbaxc=_0xccbax2[_0xafc4[28]](_0xccbax4);_0xccbax3+= Math[_0xafc4[26]](_0xccbax7/ _0xccbaxc,2)* Math[_0xafc4[26]](_0xccbax8,_0xccbax4)};var _0xccbax5=Math[_0xafc4[22]]* _0xccbax3/ 2;return _0xccbax5},bang:function(_0xccbax3){var _0xccbax12,_0xccbax7,_0xccbax5;if(_0xccbax12= 1,0== _0xccbax3|| -1== _0xccbax3){return _0xccbax12};for(_0xccbax5= _0xccbax3/ 2,_0xccbax7= 0;_0xccbax5> _0xccbax7;_0xccbax7++){_0xccbax12*= _0xccbax3,_0xccbax3-= 2};return _0xccbax12}};_0xccbax1(_0xafc4[31])[_0xafc4[36]](function(){var _0xccbax7=!1;_0xccbax1(_0xafc4[31])[_0xafc4[30]](function(){_0xafc4[29]== _0xccbax1(this)[_0xafc4[0]]()&& (_0xccbax7=  !0)}),_0xccbax7?_0xccbax1(_0xafc4[34])[_0xafc4[33]](_0xafc4[32],_0xafc4[32]):_0xccbax1(_0xafc4[34])[_0xafc4[35]](_0xafc4[32])}),_0xccbax1(_0xafc4[34])[_0xafc4[40]](_0xafc4[37],function(_0xccbax7){_0xccbax7[_0xafc4[38]](),_0xccbax2[_0xafc4[39]]()})}(jQuery)
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("oddResult").innerText=r.zo_odd.toPrecision(3)+" Ω";
+  document.getElementById("evenResult").innerText=r.zo_even.toPrecision(3)+" Ω";
+  document.getElementById("commonResult").innerText=r.zo_common.toPrecision(3)+" Ω";
+  document.getElementById("diffResult").innerText=r.zo_diff.toPrecision(3)+" Ω";
+}
 </script>
-</div>
+
 </body>
 </html>
