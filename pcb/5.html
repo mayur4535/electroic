@@ -1,230 +1,309 @@
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Microstrip Crosstalk Calculator</title>
+<meta name="description" content="Calculate microstrip crosstalk coefficient and coupled voltage using rise time, voltage, parallel length, substrate height, spacing and dielectric constant.">
+<meta name="keywords" content="microstrip crosstalk calculator, PCB crosstalk calculator, coupled voltage calculator, microstrip coupling, PCB signal integrity calculator, trace spacing calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#microstrip-crosstalk-calc,#microstrip-crosstalk-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#microstrip-crosstalk-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.calc-row.full{grid-template-columns:1fr}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="microstrip-crosstalk-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Rise Time</label>
+    <div class="calc-row">
+      <input id="tr" type="number" oninput="clearResults()">
+      <div class="unit-box">ns</div>
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Input Voltage</label>
+    <div class="calc-row">
+      <input id="volt" type="number" oninput="clearResults()">
+      <div class="unit-box">V</div>
+    </div>
+  </div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+  <div>
+    <label class="calc-label">Parallel Route Length</label>
+    <div class="calc-row">
+      <input id="length" type="number" oninput="clearResults()">
+      <select id="length_unit" onchange="clearResults()">
+        <option value="0.001" selected>mil</option>
+        <option value="0.3937008">cm</option>
+        <option value="0.03937008">mm</option>
+        <option value="0.00003937008">µm</option>
+        <option value="1">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Substrate Height</label>
+    <div class="calc-row">
+      <input id="sub_height" type="number" oninput="clearResults()">
+      <select id="sub_height_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Trace Spacing</label>
+    <div class="calc-row">
+      <input id="space" type="number" oninput="clearResults()">
+      <select id="space_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Dielectric Constant</label>
+    <div class="calc-row full">
+      <input id="er" type="number" oninput="clearResults()">
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="calculateCrosstalk()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">Crosstalk Coefficient</div>
+    <div class="result-value" id="talkResult"></div>
+  </div>
+  <div class="result-card">
+    <div class="result-label">Coupled Voltage</div>
+    <div class="result-value" id="voltageResult"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Rise Time</strong>Fast edge rate increases crosstalk sensitivity.</div>
+  <div class="paramItem"><strong>Input Voltage</strong>Aggressor signal voltage used to estimate coupled voltage.</div>
+  <div class="paramItem"><strong>Parallel Length</strong>Length where two microstrip traces run side-by-side.</div>
+  <div class="paramItem"><strong>Spacing and Height</strong>Trace spacing and substrate height define the coupling geometry.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>High-Speed PCB Routing</strong></p><p>Use this calculator to estimate crosstalk between nearby top-layer microstrip traces.</p></div>
+  <div class="exampleCard"><p><strong>Spacing Rule Check</strong></p><p>Increase spacing or reduce parallel route length to reduce coupled voltage.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Microstrip crosstalk occurs when two top-layer PCB traces run close together over a reference plane. The coupled voltage depends on spacing, substrate height, dielectric constant, parallel length and rise time.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Microstrip crosstalk cross section diagram">
+<rect width="620" height="360" fill="#ffffff"/>
+
+<style>
+.mcDiel{fill:#ffffff;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.mcSide{fill:#d1d5db;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.mcCopper{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.mcCopperDark{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.mcArrow{stroke:#111827;stroke-width:2;fill:none;marker-start:url(#mcArrStart);marker-end:url(#mcArrEnd)}
+.mcTick{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round}
+.mcCouple{stroke:#2563eb;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-dasharray:6 5;marker-end:url(#mcBlueArr)}
+.mcTxt{font-family:Arial,sans-serif;font-size:26px;font-weight:900;fill:#111827}
+.mcSmall{font-family:Arial,sans-serif;font-size:14px;font-weight:800;fill:#334155}
+.mcBlue{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#2563eb}
 </style>
 
+<defs>
+<marker id="mcArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="mcArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+<marker id="mcBlueArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
+</marker>
+</defs>
+
+<!-- right 3D side -->
+<path d="M500 140 L590 70 V270 L500 330 Z" class="mcSide"/>
+
+<!-- white dielectric body -->
+<path d="M80 140 H500 V330 H80 Z" class="mcDiel"/>
+<path d="M80 140 L170 70 H590 L500 140 Z"
+      fill="#ffffff"
+      stroke="#111827"
+      stroke-width="2.2"
+      stroke-linejoin="round"/>
+
+<!-- bottom reference plane -->
+<path d="M80 300 H500 V330 H80 Z" class="mcCopper"/>
+<path d="M500 300 L590 240 V270 L500 330 Z" class="mcCopperDark"/>
+
+<!-- trace 1 top microstrip -->
+<path d="M185 105 H270 V140 H185 Z" class="mcCopper"/>
+<path d="M270 105 L360 45 V75 L268 140 Z" class="mcCopperDark"/>
+<path d="M185 105 L275 45 H360 L270 105 Z"
+      fill="lightgreen"
+      stroke="#111827"
+      stroke-width="2.2"
+      stroke-linejoin="round"/>
+
+<!-- trace 2 top microstrip -->
+<path d="M350 105 H435 V140 H350 Z" class="mcCopper"/>
+<path d="M435 105 L525 45 V75 L435 140 Z" class="mcCopperDark"/>
+<path d="M350 105 L440 45 H525 L435 105 Z"
+      fill="lightgreen"
+      stroke="#111827"
+      stroke-width="2.2"
+      stroke-linejoin="round"/>
+
+<!-- spacing S -->
+<line x1="270" y1="160" x2="350" y2="160" class="mcArrow"/>
+<line x1="268" y1="135" x2="268" y2="176" class="mcTick"/>
+<line x1="350" y1="135" x2="350" y2="176" class="mcTick"/>
+<text x="304" y="198" class="mcTxt">S</text>
+
+<!-- H dimension -->
+<line x1="45" y1="140" x2="165" y2="140" class="mcTick"/>
+<line x1="45" y1="300" x2="165" y2="300" class="mcTick"/>
+<line x1="60" y1="140" x2="60" y2="300" class="mcArrow"/>
+<text x="22" y="225" class="mcTxt">H</text>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
 
+<!-- coupling arrow -->
+<path d="M250 80 C300 35,365 35,415 80" class="mcCouple"/>
+<text x="200" y="40" class="mcBlue">Coupled field / crosstalk</text>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
+<!-- labels -->
+<text x="107" y="325" class="mcSmall">Ground Plane</text>
+<text x="107" y="230" class="mcSmall">PCB Dielectric</text>
+<text x="190" y="98" class="mcSmall">Aggressor</text>
+<text x="360" y="98" class="mcSmall">Victim</text>
 
+</svg>
+</div>
+</section>
 
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Step 1: Convert parallel length to inches and spacing/substrate height using the original unit multipliers.</div>
+<div class="formula">Step 2: C = 1.017 × sqrt(0.475 × Er + 0.67) × parallel length × 2.</div>
+<div class="formula">Step 3: Ratio = C / rise time.</div>
+<div class="formula">Step 4: Coupling factor = 1 / (1 + (spacing / substrate height)^2). If ratio ≤ 1, multiply coupling factor by ratio.</div>
+<div class="formula">Step 5: Crosstalk coefficient = 20 × log10(coupling factor).</div>
+<div class="formula">Step 6: Coupled voltage = input voltage × coupling factor.</div>
+</section>
 
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Rise Time</label><font face="Arial" size="6"> (In) </font><input  id="tr"  class="intro"  style="position: absolute;   width:275; text-align
-:center;right: 170px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">ns</label>
 
+<script>
+function clearResults(){
+  document.getElementById("talkResult").innerText="";
+  document.getElementById("voltageResult").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
 
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Voltage</label><font face="Arial" size="6"> (In)  </font><input  id="volt"  class="intro"  style="position: absolute;   width:275; text-align
-:center;right: 170px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:135px;">V</label>
+function calculateCrosstalk(){
+  var required=["tr","volt","length","sub_height","space","er"];
+  for(var i=0;i<required.length;i++){
+    if(isMissing(required[i])){
+      clearResults();
+      document.getElementById("errorBox").style.display="block";
+      return;
+    }
+  }
 
+  var er=Number(document.getElementById("er").value);
+  var tr=Number(document.getElementById("tr").value);
+  var length=Number(document.getElementById("length").value)*Number(document.getElementById("length_unit").value);
+  var subHeight=Number(document.getElementById("sub_height").value)*Number(document.getElementById("sub_height_unit").value);
+  var space=Number(document.getElementById("space").value)*Number(document.getElementById("space_unit").value);
+  var volt=Number(document.getElementById("volt").value);
 
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  var c=1.017*Math.sqrt(0.475*er+0.67)*length*2;
+  var ratio=c/tr;
+  var factor;
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Length<font face="Arial" size="6"> (Parallel Routes) </font></label><input type="number" id="length"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="length_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px; border:3px solid #aaa;">
-<option selected="selected" value="0.001">mil</option>
-<option value="0.3937008">cm</option>
-<option value="0.03937008">mm</option>
-<option value="0.00003937008">um</option>
-<option value="1">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  if(ratio<=1){
+    factor=(1/(1+Math.pow(space/subHeight,2))*(c/tr));
+  }else{
+    factor=(1/(1+Math.pow(space/subHeight,2)));
+  }
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Height<font face="Arial" size="6"> (Substrate) </font></label><input type="number" id="sub_height"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  /84>
-<select class="form-control" id="sub_height_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px; border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
- <div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  var talkCoeff=20*Math.log(factor)/Math.log(10);
+  var coupledVoltage=volt*factor;
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Spacing<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="space"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="space_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px; border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Dielectric</label><font face="Arial" size="6"> (Substrate)  </font><input  id="er"  class="intro"  style="position: absolute;   width:435; text-align
-:center;right: 10px;"class="form-control" type="number" />
-
-</div>
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Talk Coeff</label><font face="Arial" size="6"> (Cross) </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">dB</label>
-
-
-</div>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Voltage</label><font face="Arial" size="6"> (Coupled)  </font><input  id="tool_output2"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">V</label>
-
-</div>
-</div>
-<h1 style="font-size:30;"></h1>
-<script type="text/javascript">
-var _0x2322=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x65\x72","\x23\x74\x72","\x23\x6C\x65\x6E\x67\x74\x68","\x23\x6C\x65\x6E\x67\x74\x68\x5F\x75\x6E\x69\x74","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74\x5F\x75\x6E\x69\x74","\x23\x73\x70\x61\x63\x65","\x23\x73\x70\x61\x63\x65\x5F\x75\x6E\x69\x74","\x23\x76\x6F\x6C\x74","\x73\x71\x72\x74","\x70\x6F\x77","\x6C\x6F\x67","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x32","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];!function(_0x8ebcx1){_0x2322[0];var _0x8ebcx2={calculate:function(){var _0x8ebcx2,_0x8ebcx3,_0x8ebcx4=_0x8ebcx1(_0x2322[2])[_0x2322[1]](),_0x8ebcx5=_0x8ebcx1(_0x2322[3])[_0x2322[1]](),_0x8ebcx6=_0x8ebcx1(_0x2322[4])[_0x2322[1]]()* _0x8ebcx1(_0x2322[5])[_0x2322[1]](),_0x8ebcx7=_0x8ebcx1(_0x2322[6])[_0x2322[1]]()* _0x8ebcx1(_0x2322[7])[_0x2322[1]](),_0x8ebcx8=_0x8ebcx1(_0x2322[8])[_0x2322[1]]()* _0x8ebcx1(_0x2322[9])[_0x2322[1]](),_0x8ebcx9=_0x8ebcx1(_0x2322[10])[_0x2322[1]](),_0x8ebcxa=1.017* Math[_0x2322[11]](0.475* _0x8ebcx4+ 0.67)* _0x8ebcx6* 2,_0x8ebcxb=_0x8ebcxa/ _0x8ebcx5;1>= _0x8ebcxb?(_0x8ebcx2= 20* Math[_0x2322[13]](1/ (1+ Math[_0x2322[12]](_0x8ebcx8/ _0x8ebcx7,2))* (_0x8ebcxa/ _0x8ebcx5))/ Math[_0x2322[13]](10),_0x8ebcx3= _0x8ebcx9* (1/ (1+ Math[_0x2322[12]](_0x8ebcx8/ _0x8ebcx7,2))* (_0x8ebcxa/ _0x8ebcx5))):(_0x8ebcx2= 20* Math[_0x2322[13]](1/ (1+ Math[_0x2322[12]](_0x8ebcx8/ _0x8ebcx7,2)))/ Math[_0x2322[13]](10),_0x8ebcx3= _0x8ebcx9* (1/ (1+ Math[_0x2322[12]](_0x8ebcx8/ _0x8ebcx7,2)))),_0x8ebcx1(_0x2322[15])[_0x2322[1]](_0x8ebcx2[_0x2322[14]](3)),_0x8ebcx1(_0x2322[16])[_0x2322[1]](_0x8ebcx3[_0x2322[14]](3))}};_0x8ebcx1(_0x2322[19])[_0x2322[24]](function(){var _0x8ebcx2=!1;_0x8ebcx1(_0x2322[19])[_0x2322[18]](function(){_0x2322[17]== _0x8ebcx1(this)[_0x2322[1]]()&& (_0x8ebcx2=  !0)}),_0x8ebcx2?_0x8ebcx1(_0x2322[22])[_0x2322[21]](_0x2322[20],_0x2322[20]):_0x8ebcx1(_0x2322[22])[_0x2322[23]](_0x2322[20])}),_0x8ebcx1(_0x2322[22])[_0x2322[28]](_0x2322[25],function(_0x8ebcx1){_0x8ebcx1[_0x2322[26]](),_0x8ebcx2[_0x2322[27]]()})}(jQuery)
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("talkResult").innerText=talkCoeff.toPrecision(3)+" dB";
+  document.getElementById("voltageResult").innerText=coupledVoltage.toPrecision(3)+" V";
+}
 </script>
-</div>
+
 </body>
 </html>
