@@ -1,202 +1,308 @@
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Asymmetric Stripline Impedance Calculator</title>
+<meta name="description" content="Calculate asymmetric stripline impedance from trace thickness, H1, H2, trace width and dielectric constant for PCB RF stackup design.">
+<meta name="keywords" content="asymmetric stripline impedance calculator, PCB impedance calculator, stripline impedance, RF PCB calculator, controlled impedance calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#asym-stripline-calc,#asym-stripline-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#asym-stripline-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.calc-row.full{grid-template-columns:1fr}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="asym-stripline-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Trace Thickness</label>
+    <div class="calc-row">
+      <input id="thick" type="number" oninput="clearResults()">
+      <select id="thick_unit" onchange="clearResults()">
+        <option value="0.0035">oz/ft²</option>
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Height 1</label>
+    <div class="calc-row">
+      <input id="sub_height1" type="number" oninput="clearResults()">
+      <select id="sub_height1_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+  <div>
+    <label class="calc-label">Height 2</label>
+    <div class="calc-row">
+      <input id="sub_height2" type="number" oninput="clearResults()">
+      <select id="sub_height2_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Trace Width</label>
+    <div class="calc-row">
+      <input id="width" type="number" oninput="clearResults()">
+      <select id="width_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Dielectric Constant</label>
+    <div class="calc-row full">
+      <input id="er" type="number" oninput="clearResults()">
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="calculateAsymmetricStripline()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">Impedance</div>
+    <div class="result-value" id="impedanceResult"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness of the embedded trace.</div>
+  <div class="paramItem"><strong>Height 1</strong>Distance from trace to lower reference plane.</div>
+  <div class="paramItem"><strong>Height 2</strong>Distance from trace to upper reference plane.</div>
+  <div class="paramItem"><strong>Trace Width</strong>Width of the asymmetric stripline conductor.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Multilayer PCB Stackup</strong></p><p>Estimate impedance when the stripline trace is not centered between planes.</p></div>
+  <div class="exampleCard"><p><strong>Controlled Impedance</strong></p><p>Change H1, H2, width and dielectric constant to tune target impedance.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>An asymmetric stripline has a trace located closer to one reference plane than the other. Because H1 and H2 are different, impedance shifts compared with a symmetric stripline.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 700 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Asymmetric stripline impedance diagram">
+<rect width="700" height="430" fill="#ffffff"/>
+
+<style>
+.asDiel{fill:#ffffff;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+.asSide{fill:#d1d5db;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+.asCopper{fill:lightgreen;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+.asCopperDark{fill:lightgreen;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+.asArrow{stroke:#111827;stroke-width:2.3;fill:none;marker-start:url(#asArrStart);marker-end:url(#asArrEnd)}
+.asTick{stroke:#111827;stroke-width:2.2;fill:none;stroke-linecap:round}
+.asTxt{font-family:Arial,sans-serif;font-size:24px;font-weight:900;fill:#111827}
+.asSmall{font-family:Arial,sans-serif;font-size:14px;font-weight:800;fill:#334155}
 </style>
 
+<defs>
+<marker id="asArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="asArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+</defs>
+
+<!-- PCB body -->
+<path d="M109 120 L210 20 H680 L550 150 H80 Z" class="asDiel"/>
+<path d="M80 150 H550 V360 H80 Z" class="asDiel"/>
+<path d="M550 150 L680 20 V235 L550 360 Z" class="asSide"/>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
 
+<!-- Bottom ground plane -->
+<path d="M80 330 H550 V360 H80 Z" class="asCopper"/>
+<path d="M550 330 L680 205 V235 L550 360 Z" class="asCopperDark"/>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><form id="tool">
+<!-- Asymmetric trace inside -->
+<path d="M300 240 H385 V270 H300 Z" class="asCopper"/>
+<path d="M385 240 L475 155 V185 L385 270 Z" class="asCopperDark"/>
+<path d="M300 240 L390 155 H475 L385 240 Z"
+      fill="lightgreen"
+      stroke="#111827"
+      stroke-width="2.5"
+      stroke-linejoin="round"/>
 
+<!-- H2 dimension from top plane to trace -->
+<line x1="60" y1="180" x2="285" y2="180" class="asTick"/>
+<line x1="60" y1="240" x2="285" y2="240" class="asTick"/>
+<line x1="55" y1="180" x2="55" y2="240" class="asArrow"/>
+<text x="10" y="215" class="asTxt">H2</text>
 
+<!-- H1 dimension from trace to bottom plane -->
+<line x1="60" y1="270" x2="285" y2="270" class="asTick"/>
+<line x1="60" y1="330" x2="285" y2="330" class="asTick"/>
+<line x1="55" y1="270" x2="55" y2="330" class="asArrow"/>
+<text x="10" y="307" class="asTxt">H1</text>
 
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<!-- T dimension -->
+<line x1="250" y1="240" x2="250" y2="270" class="asArrow"/>
+<line x1="235" y1="240" x2="290" y2="240" class="asTick"/>
+<line x1="235" y1="270" x2="290" y2="270" class="asTick"/>
+<text x="220" y="263" class="asTxt">T</text>
+
+<!-- W arrow on trace top -->
+<line x1="300" y1="230" x2="385" y2="230" class="asArrow"/>
+<line x1="300" y1="240" x2="300" y2="220" class="asTick"/>
+<line x1="385" y1="240" x2="385" y2="220" class="asTick"/>
+<text x="337" y="218" class="asTxt">W</text>
+
+<!-- labels -->
+<text x="105" y="173" class="asSmall">Top Ground Plane</text>
+<text x="105" y="353" class="asSmall">Bottom Ground Plane</text>
+
+<!-- Top ground plane -->
+<path d="M80 150 H550 V180 H80 Z" class="asCopper"/>
+<path d="M550 150 L680 20 V50 L550 180 Z" class="asCopperDark"/>
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">The calculator preserves the supplied asymmetric stripline impedance JavaScript logic and unit multipliers.</div>
+<div class="formula">It first evaluates an equivalent symmetric stripline using average height, then applies correction based on H1, H2, trace thickness and trace width.</div>
+<div class="formula">Final impedance is scaled by dielectric constant using the original formula.</div>
+</section>
 
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Thickness<font face="Arial" size="6"> (Trace) </font></label><input type="number" id="thick"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="thick_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option value="0.0035">oz/ft^2</option>
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:54;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Height 1<font face="Arial" size="6"> (Substrate) </font></label><input type="number" id="sub_height1"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="sub_height1_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:54;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<script>
+function clearResults(){
+  document.getElementById("impedanceResult").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" > Height 2<font face="Arial" size="6"> (Substrate) </font></label><input type="number" id="sub_height2"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="sub_height2_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:54;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Trace Width<font face="Arial" size="6"> </font></label><input type="number" id="width"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="width_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; height:84.5px;border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:54;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+function sym_stripline(w,t,h,er){
+  var q=6*h/(3*h+t);
+  var we=w+t/Math.PI*Math.log(
+    Math.exp(1)/Math.sqrt(
+      Math.pow(t/(4*h+t),2)+
+      Math.pow(Math.PI*t/(4*(w+1.1*t)),q)
+    )
+  );
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<label for="r2" style="font-size:55;" >Dielectric<font face="Arial" size="6"> (Substrate) </font></label><input type="number" id="er"   class="intro"  style="position: absolute;   text-align
-:center;width:435; right: 10px;"class="form-control"  />
+  var eta=377;
+  var h2=2*h+t;
 
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+  var a=w/2*(1+t/(Math.PI*w)*(1+Math.log(4*Math.PI*w/t))+0.551*Math.pow(t/w,2));
+  var zo1=60/Math.sqrt(er)*Math.log(4*h2/(Math.PI*a));
 
+  var c=2*h2/(h2-t)*Math.log((2*h2-t)/(h2-t))
+    -t/(h2-t)*Math.log((2*h2*t-Math.pow(t,2))/Math.pow(h2-t,2));
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+  var zo2=94.15/(w/h2/(1-t/h2)+c/Math.PI);
 
+  var zo=(w/h2<0.35 || t/h2<=0.25 || t/w<=0.11) ? zo1 : zo2;
+  return {zo:zo};
+}
 
-<h3>Outputs</h3></div></legend>
+function asym_stripline_calc(w,t,h1,h2,er){
+  var havg=(h1+h2)/2;
+  var zavg=sym_stripline(w,t,havg,1);
+  var z1=sym_stripline(w,t,h1,1);
+  var z2=sym_stripline(w,t,h2,1);
 
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+  var zparallel=2*(z1.zo*z2.zo/(z1.zo+z2.zo));
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Impedance</label><font face="Arial" size="7">  </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px;border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
+  var correction=0.0325*Math.PI*Math.pow(zparallel,2)*
+    Math.pow(Math.abs(0.5-0.5*((2*h1+t)/(h1+h2+t))),2.2)*
+    Math.pow(Math.abs((t+w)/(h1+h2+t)),2.9);
 
-</div>
-</div>
-<h1 style="font-size:30;"></h1>
-<script type="text/javascript">
-var _0x72b4=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x74\x68\x69\x63\x6B","\x23\x74\x68\x69\x63\x6B\x5F\x75\x6E\x69\x74","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74\x31","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74\x31\x5F\x75\x6E\x69\x74","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74\x32","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74\x32\x5F\x75\x6E\x69\x74","\x23\x77\x69\x64\x74\x68","\x23\x77\x69\x64\x74\x68\x5F\x75\x6E\x69\x74","\x23\x65\x72","\x61\x73\x79\x6D\x5F\x73\x74\x72\x69\x70\x6C\x69\x6E\x65\x5F\x63\x61\x6C\x63","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x7A\x6F","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x50\x49","\x65\x78\x70","\x70\x6F\x77","\x73\x71\x72\x74","\x6C\x6F\x67","\x73\x79\x6D\x5F\x73\x74\x72\x69\x70\x6C\x69\x6E\x65","\x61\x62\x73","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];!function(_0xefeex1){_0x72b4[0];var _0xefeex2={calculate:function(){var _0xefeex3=parseFloat(_0xefeex1(_0x72b4[2])[_0x72b4[1]]())* _0xefeex1(_0x72b4[3])[_0x72b4[1]](),_0xefeex4=parseFloat(_0xefeex1(_0x72b4[4])[_0x72b4[1]]())* _0xefeex1(_0x72b4[5])[_0x72b4[1]](),_0xefeex5=parseFloat(_0xefeex1(_0x72b4[6])[_0x72b4[1]]())* _0xefeex1(_0x72b4[7])[_0x72b4[1]](),_0xefeex6=parseFloat(_0xefeex1(_0x72b4[8])[_0x72b4[1]]())* _0xefeex1(_0x72b4[9])[_0x72b4[1]](),_0xefeex7=parseFloat(_0xefeex1(_0x72b4[10])[_0x72b4[1]]()),_0xefeex8=_0xefeex2[_0x72b4[11]](_0xefeex6,_0xefeex3,_0xefeex4,_0xefeex5,_0xefeex7);_0xefeex1(_0x72b4[14])[_0x72b4[1]](_0xefeex8[_0x72b4[13]][_0x72b4[12]](3))},sym_stripline:function(_0xefeex1,_0xefeex2,_0xefeex3,_0xefeex4){var _0xefeex5,_0xefeex6=6* _0xefeex3/ (3* _0xefeex3+ _0xefeex2),_0xefeex7=_0xefeex1+ _0xefeex2/ Math[_0x72b4[15]]* Math[_0x72b4[19]](Math[_0x72b4[16]](1)/ Math[_0x72b4[18]](Math[_0x72b4[17]](_0xefeex2/ (4* _0xefeex3+ _0xefeex2),2)+ Math[_0x72b4[17]](Math[_0x72b4[15]]* _0xefeex2/ (4* (_0xefeex1+ 1.1* _0xefeex2)),_0xefeex6))),_0xefeex8=377,_0xefeex9=(_0xefeex8/ (2* Math[_0x72b4[15]]* Math[_0x72b4[18]](_0xefeex4))* Math[_0x72b4[19]](1+ 8* _0xefeex3/ (Math[_0x72b4[15]]* _0xefeex7)* (16* _0xefeex3/ (Math[_0x72b4[15]]* _0xefeex7)+ Math[_0x72b4[18]](Math[_0x72b4[17]](16* _0xefeex3/ (Math[_0x72b4[15]]* _0xefeex7),2)+ 6.27))),2* _0xefeex3+ _0xefeex2),_0xefeexa=_0xefeex1/ 2* (1+ _0xefeex2/ (Math[_0x72b4[15]]* _0xefeex1)* (1+ Math[_0x72b4[19]](4* Math[_0x72b4[15]]* _0xefeex1/ _0xefeex2))+ 0.551* Math[_0x72b4[17]](_0xefeex2/ _0xefeex1,2)),_0xefeexb=60/ Math[_0x72b4[18]](_0xefeex4)* Math[_0x72b4[19]](4* _0xefeex9/ (Math[_0x72b4[15]]* _0xefeexa)),_0xefeexc=2* _0xefeex9/ (_0xefeex9- _0xefeex2)* Math[_0x72b4[19]]((2* _0xefeex9- _0xefeex2)/ (_0xefeex9- _0xefeex2))- _0xefeex2/ (_0xefeex9- _0xefeex2)* Math[_0x72b4[19]]((2* _0xefeex9* _0xefeex2- Math[_0x72b4[17]](_0xefeex2,2))/ Math[_0x72b4[17]](_0xefeex9- _0xefeex2,2)),_0xefeexd=94.15/ (_0xefeex1/ _0xefeex9/ (1- _0xefeex2/ _0xefeex9)+ _0xefeexc/ Math[_0x72b4[15]]);return _0xefeex5= 0.35> _0xefeex1/ _0xefeex9|| 0.25>= _0xefeex2/ _0xefeex9|| 0.11>= _0xefeex2/ _0xefeex1?_0xefeexb:_0xefeexd,{zo:_0xefeex5}},asym_stripline_calc:function(_0xefeex1,_0xefeex3,_0xefeex4,_0xefeex5,_0xefeex6){var _0xefeex7=(_0xefeex4+ _0xefeex5)/ 2,_0xefeex8=_0xefeex2[_0x72b4[20]](_0xefeex1,_0xefeex3,_0xefeex7,1),_0xefeex9=_0xefeex2[_0x72b4[20]](_0xefeex1,_0xefeex3,_0xefeex4,1),_0xefeexa=_0xefeex2[_0x72b4[20]](_0xefeex1,_0xefeex3,_0xefeex5,1),_0xefeexb=2* (_0xefeex9[_0x72b4[13]]* _0xefeexa[_0x72b4[13]]/ (_0xefeex9[_0x72b4[13]]+ _0xefeexa[_0x72b4[13]])),_0xefeexc=0.0325* Math[_0x72b4[15]]* Math[_0x72b4[17]](_0xefeexb,2)* Math[_0x72b4[17]](Math[_0x72b4[21]](0.5- 0.5* ((2* _0xefeex4+ _0xefeex3)/ (_0xefeex4+ _0xefeex5+ _0xefeex3))),2.2)* Math[_0x72b4[17]](Math[_0x72b4[21]]((_0xefeex3+ _0xefeex1)/ (_0xefeex4+ _0xefeex5+ _0xefeex3)),2.9),_0xefeexd=1/ Math[_0x72b4[18]](_0xefeex6)* (_0xefeex8[_0x72b4[13]]- _0xefeexc);return {zo:_0xefeexd}}};_0xefeex1(_0x72b4[24])[_0x72b4[29]](function(){var _0xefeex2=!1;_0xefeex1(_0x72b4[24])[_0x72b4[23]](function(){_0x72b4[22]== _0xefeex1(this)[_0x72b4[1]]()&& (_0xefeex2=  !0)}),_0xefeex2?_0xefeex1(_0x72b4[27])[_0x72b4[26]](_0x72b4[25],_0x72b4[25]):_0xefeex1(_0x72b4[27])[_0x72b4[28]](_0x72b4[25])}),_0xefeex1(_0x72b4[27])[_0x72b4[33]](_0x72b4[30],function(_0xefeex1){_0xefeex1[_0x72b4[31]](),_0xefeex2[_0x72b4[32]]()})}(jQuery)
+  var zo=(zavg.zo-correction)/Math.sqrt(er);
+  return {zo:zo};
+}
+
+function calculateAsymmetricStripline(){
+  if(isMissing("thick") || isMissing("sub_height1") || isMissing("sub_height2") || isMissing("width") || isMissing("er")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var t=parseFloat(document.getElementById("thick").value)*Number(document.getElementById("thick_unit").value);
+  var h1=parseFloat(document.getElementById("sub_height1").value)*Number(document.getElementById("sub_height1_unit").value);
+  var h2=parseFloat(document.getElementById("sub_height2").value)*Number(document.getElementById("sub_height2_unit").value);
+  var w=parseFloat(document.getElementById("width").value)*Number(document.getElementById("width_unit").value);
+  var er=parseFloat(document.getElementById("er").value);
+
+  var result=asym_stripline_calc(w,t,h1,h2,er);
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("impedanceResult").innerText=result.zo.toPrecision(3)+" Ω";
+}
 </script>
-</div>
+
 </body>
 </html>
