@@ -1,176 +1,242 @@
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wire Stripline Impedance Calculator</title>
+<meta name="description" content="Calculate wire stripline impedance from wire diameter, substrate height and dielectric constant for RF PCB and transmission line design.">
+<meta name="keywords" content="wire stripline impedance calculator, PCB wire stripline calculator, RF impedance calculator, transmission line impedance, stripline calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#wire-stripline-calc,#wire-stripline-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#wire-stripline-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.calc-row.full{grid-template-columns:1fr}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="wire-stripline-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Wire Diameter</label>
+    <div class="calc-row">
+      <input id="thick" type="number" oninput="clearResults()">
+      <select id="thick_unit" onchange="clearResults()">
+        <option value="0.0035">oz/ft²</option>
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Substrate Height</label>
+    <div class="calc-row">
+      <input id="sub_height" type="number" oninput="clearResults()">
+      <select id="sub_height_unit" onchange="clearResults()">
+        <option value="0.00254" selected>mil</option>
+        <option value="1">cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">µm</option>
+        <option value="2.54">inch</option>
+      </select>
+    </div>
+  </div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+  <div>
+    <label class="calc-label">Dielectric Constant</label>
+    <div class="calc-row full">
+      <input id="er" type="number" oninput="clearResults()">
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="calculateWireStripline()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">Impedance</div>
+    <div class="result-value" id="impedanceResult"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Wire Diameter</strong>Round conductor diameter used in the wire stripline impedance equation.</div>
+  <div class="paramItem"><strong>Substrate Height</strong>Distance between the wire conductor region and reference plane geometry.</div>
+  <div class="paramItem"><strong>Dielectric Constant</strong>Relative permittivity of the PCB dielectric material.</div>
+  <div class="paramItem"><strong>Output</strong>Characteristic impedance in ohms.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>RF Interconnect</strong></p><p>Estimate impedance for round wire style stripline structures in RF layouts.</p></div>
+  <div class="exampleCard"><p><strong>Stackup Check</strong></p><p>Change wire diameter, dielectric height or material Er to tune impedance.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>A wire stripline uses a round conductor inside a dielectric region with reference planes. Impedance depends strongly on conductor diameter, height and dielectric constant.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wire stripline impedance diagram">
+<rect width="620" height="380" fill="#ffffff"/>
+
+<style>
+.wsDiel{fill:#ffffff;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.wsSide{fill:#d1d5db;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.wsCopper{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.wsCopperDark{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.wsArrow{stroke:#111827;stroke-width:2;fill:none;marker-start:url(#wsArrStart);marker-end:url(#wsArrEnd)}
+.wsTick{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round}
+.wsField{stroke:#2563eb;stroke-width:2;fill:none;stroke-linecap:round;stroke-dasharray:5 5}
+.wsTxt{font-family:Arial,sans-serif;font-size:26px;font-weight:900;fill:#111827}
+.wsSmall{font-family:Arial,sans-serif;font-size:14px;font-weight:800;fill:#334155}
+.wsBlue{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#2563eb}
 </style>
 
+<defs>
+<marker id="wsArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="wsArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+</defs>
+
+<!-- right/back grey shadow -->
+<path d="M500 105 L590 25 L590 255 L500 335 Z" class="wsSide"/>
+
+<!-- dielectric body -->
+<path d="M80 105 H500 V335 H80 Z" class="wsDiel"/>
+<path d="M80 105 L170 25 H590 L500 105 Z"
+      fill="#ffffff"
+      stroke="#111827"
+      stroke-width="2.2"
+      stroke-linejoin="round"/>
+
+<!-- top ground plane -->
+<path d="M80 105 H500 V130 H80 Z" class="wsCopper"/>
+<path d="M500 105 L590 25 V50 L500 130 Z" class="wsCopperDark"/>
+
+<!-- bottom ground plane -->
+<path d="M80 310 H500 V335 H80 Z" class="wsCopper"/>
+<path d="M500 310 L590 230 V255 L500 335 Z" class="wsCopperDark"/>
+
+<!-- round wire conductor in center -->
+<line x1="266" y1="187" x2="380" y2="120" class="wsTick"/>
+<line x1="298" y1="239" x2="466" y2="130" class="wsTick"/>
+
+      class="wsCopperDark"/>
+<ellipse cx="290" cy="208" rx="30" ry="30"
+      fill="lightgreen"
+      stroke="#111827"
+      stroke-width="2.2"/>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+
+<!-- H dimension -->
+
+<line x1="150" y1="130" x2="150" y2="210" class="wsArrow"/>
+<line x1="150" y1="211" x2="150" y2="310" class="wsArrow"/>
+<text x="90" y="180" class="wsTxt">H/2</text>
+<text x="90" y="270" class="wsTxt">H/2</text>
+
+<!-- D diameter dimension -->
+<line x1="259" y1="252" x2="320" y2="252" class="wsArrow"/>
+<line x1="260" y1="196" x2="260" y2="258" class="wsTick"/>
+<line x1="320" y1="196" x2="320" y2="258" class="wsTick"/>
+<text x="280" y="280" class="wsTxt">D</text>
+
+<!-- centerline -->
+<line x1="100" y1="212" x2="375" y2="212" stroke="#334155" stroke-width="1.4" stroke-dasharray="5 5"/>
+
+<!-- labels -->
+<text x="100" y="125" class="wsSmall">Top Ground Plane</text>
+<text x="100" y="330" class="wsSmall">Bottom Ground Plane</text>
+<text x="325" y="255" class="wsSmall">Round Wire Conductor</text>
 
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<p><div class="container-fluid">
-<form id="tool">
+</svg>
+</div>
+</section>
 
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Formula used from source code: Z0 = 377 / (2 × π × sqrt(Er)) × log(4 × H / (π × D))</div>
+<div class="formula">Where D = wire diameter, H = substrate height, and Er = dielectric constant.</div>
+<div class="formula">Selected diameter and height units are converted using the original source multipliers before calculation.</div>
+</section>
 
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Diameter<font face="Arial" size="6"> (Wire) </font></label><input type="number" id="thick"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="thick_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px;height:84.5px; height:84.5px; border:3px solid #aaa;">
-<option value="0.0035">oz/ft^2</option>
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Height<font face="Arial" size="6"> (Substrate) </font></label><input type="number" id="sub_height"   class="intro"  style="position: absolute;   text-align
-:center;width:274; right: 170px;"class="form-control"  />
-<select class="form-control" id="sub_height_unit" style="padding: 5px ;  position: absolute;right: 10px;font-size:58px;margin:8px 0;width:151px;border-radius:4px; border:3px solid #aaa;">
-<option selected="selected" value="0.00254">mil</option>
-<option value="1">cm</option>
-<option value="0.1">mm</option>
-<option value="0.0001">um</option>
-<option value="2.54">inch</option>
-</select>
-</div>
-<h1 style="font-size:50;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
+<script>
+function clearResults(){
+  document.getElementById("impedanceResult").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="r2" style="font-size:55;" >Dielectric<font face="Arial" size="6"> (Substrate) </font></label><input type="number" id="er"   class="intro"  style="position: absolute;   text-align
-:center;width:435; right: 10px;"class="form-control"  />
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
 
-</div>
+function calculateWireStripline(){
+  if(isMissing("thick") || isMissing("sub_height") || isMissing("er")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-</div>
-</div>
-<div class="row">
-<div class="col-sm-12">
+  var d=parseFloat(document.getElementById("thick").value)*Number(document.getElementById("thick_unit").value);
+  var h=parseFloat(document.getElementById("sub_height").value)*Number(document.getElementById("sub_height_unit").value);
+  var er=parseFloat(document.getElementById("er").value);
 
-<div class="col-sm-4">
-</form></fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="tool_submit" class="btn btn-theme" value="CALCULATE"  style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+  var zo=377/(2*Math.PI*Math.sqrt(er))*Math.log(4*h/(Math.PI*d));
 
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-<div class="row clearfix">
-<div class="col-sm-12 col-xs-12">
-<div class="col-sm-4 col-xs-12">
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div id="tool_output_container" class="form-group">
-<label for="r2" style="font-size:55;" >Impedance</label><font face="Arial" size="7">  </font><input  id="tool_output1"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 145px;"class="form-control" type="text" /><label align="middle"style="padding: 5px ;  position: absolute;right: 10px;font-size:59px;   height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">&Omega;</label>
-
-
-</div>
-</div>
-<h1 style="font-size:30;"></h1>
-<script type="text/javascript">
-var _0x60fb=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x76\x61\x6C","\x23\x74\x68\x69\x63\x6B","\x23\x74\x68\x69\x63\x6B\x5F\x75\x6E\x69\x74","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74","\x23\x73\x75\x62\x5F\x68\x65\x69\x67\x68\x74\x5F\x75\x6E\x69\x74","\x23\x65\x72","\x77\x69\x72\x65\x5F\x73\x74\x72\x69\x70\x6C\x69\x6E\x65\x5F\x63\x61\x6C\x63","\x74\x6F\x50\x72\x65\x63\x69\x73\x69\x6F\x6E","\x7A\x6F","\x23\x74\x6F\x6F\x6C\x5F\x6F\x75\x74\x70\x75\x74\x31","\x50\x49","\x73\x71\x72\x74","\x6C\x6F\x67","","\x65\x61\x63\x68","\x23\x74\x6F\x6F\x6C\x20\x3A\x69\x6E\x70\x75\x74","\x64\x69\x73\x61\x62\x6C\x65\x64","\x61\x74\x74\x72","\x23\x74\x6F\x6F\x6C\x5F\x73\x75\x62\x6D\x69\x74","\x72\x65\x6D\x6F\x76\x65\x41\x74\x74\x72","\x6B\x65\x79\x75\x70","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x63\x61\x6C\x63\x75\x6C\x61\x74\x65","\x6F\x6E"];!function(_0x1280x1){_0x60fb[0];var _0x1280x2={calculate:function(){var _0x1280x3=parseFloat(_0x1280x1(_0x60fb[2])[_0x60fb[1]]())* _0x1280x1(_0x60fb[3])[_0x60fb[1]](),_0x1280x4=parseFloat(_0x1280x1(_0x60fb[4])[_0x60fb[1]]())* _0x1280x1(_0x60fb[5])[_0x60fb[1]](),_0x1280x5=parseFloat(_0x1280x1(_0x60fb[6])[_0x60fb[1]]()),_0x1280x6=_0x1280x2[_0x60fb[7]](_0x1280x3,_0x1280x4,_0x1280x5);_0x1280x1(_0x60fb[10])[_0x60fb[1]](_0x1280x6[_0x60fb[9]][_0x60fb[8]](3))},wire_stripline_calc:function(_0x1280x1,_0x1280x2,_0x1280x3){var _0x1280x4=377,_0x1280x5=_0x1280x4/ (2* Math[_0x60fb[11]]* Math[_0x60fb[12]](_0x1280x3))* Math[_0x60fb[13]](4* _0x1280x2/ (Math[_0x60fb[11]]* _0x1280x1));return {zo:_0x1280x5}}};_0x1280x1(_0x60fb[16])[_0x60fb[21]](function(){var _0x1280x2=!1;_0x1280x1(_0x60fb[16])[_0x60fb[15]](function(){_0x60fb[14]== _0x1280x1(this)[_0x60fb[1]]()&& (_0x1280x2=  !0)}),_0x1280x2?_0x1280x1(_0x60fb[19])[_0x60fb[18]](_0x60fb[17],_0x60fb[17]):_0x1280x1(_0x60fb[19])[_0x60fb[20]](_0x60fb[17])}),_0x1280x1(_0x60fb[19])[_0x60fb[25]](_0x60fb[22],function(_0x1280x1){_0x1280x1[_0x60fb[23]](),_0x1280x2[_0x60fb[24]]()})}(jQuery)
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("impedanceResult").innerText=zo.toPrecision(3)+" Ω";
+}
 </script>
-</div>
+
 </body>
 </html>
