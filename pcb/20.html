@@ -1,113 +1,222 @@
-
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-Er=Number(document.calculator.number1.value);
-Fr=Number(document.calculator.number2.value);
-c1= ( (Er+1)/2 );
-lambda=( (3* (Math.pow(10,8)))/(Fr*(Math.pow(10,9))) );
-c2 =  (lambda / (Math.pow(c1,0.5)) );
-document.calculator.effective_dielectric_constant.value=c1;
-document.calculator.guide_wavelength.value=c2;
-}
-</SCRIPT>
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Slotline Calculator</title>
+<meta name="description" content="Calculate slotline effective dielectric constant and guide wavelength from dielectric constant and operating frequency.">
+<meta name="keywords" content="slotline calculator, slotline wavelength calculator, effective dielectric constant calculator, RF slotline calculator, microwave transmission line calculator">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#slotline-calc,#slotline-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#slotline-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.calc-row.full{grid-template-columns:1fr}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
+</style>
+</head>
+<body>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
+<div id="slotline-calc">
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Relative Dielectric Constant εr</label>
+    <div class="calc-row full">
+      <input id="er" type="number" oninput="clearResults()">
+    </div>
+  </div>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+  <div>
+    <label class="calc-label">Operating Frequency</label>
+    <div class="calc-row">
+      <input id="freq" type="number" oninput="clearResults()">
+      <div class="unitBox">GHz</div>
+    </div>
+  </div>
+</div>
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
+<button type="button" onclick="calculateSlotline()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">Effective Dielectric Constant</div>
+    <div class="result-value" id="edcResult"></div>
+  </div>
+  <div class="result-card">
+    <div class="result-label">Guide Wavelength</div>
+    <div class="result-value" id="waveResult"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>εr</strong>Relative dielectric constant of the PCB substrate.</div>
+  <div class="paramItem"><strong>Frequency</strong>Operating frequency in GHz.</div>
+  <div class="paramItem"><strong>Effective Dielectric Constant</strong>Average effective dielectric constant used for slotline wavelength.</div>
+  <div class="paramItem"><strong>Guide Wavelength</strong>Calculated wavelength in meters.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Microwave Slotline</strong></p><p>Estimate guide wavelength for RF and microwave slotline structures.</p></div>
+  <div class="exampleCard"><p><strong>PCB Transmission Line</strong></p><p>Use dielectric constant and frequency to understand propagation length.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>A slotline uses two conductive planes separated by a narrow slot gap on a dielectric substrate. The wave travels along the slot region.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Microstrip crosstalk cross section diagram">
+<rect width="620" height="360" fill="#ffffff"></rect>
+
+<style>
+.mcDiel{fill:#ffffff;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.mcSide{fill:#d1d5db;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.mcCopper{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.mcCopperDark{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.mcArrow{stroke:#111827;stroke-width:2;fill:none;marker-start:url(#mcArrStart);marker-end:url(#mcArrEnd)}
+.mcTick{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round}
+.mcCouple{stroke:#2563eb;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-dasharray:6 5;marker-end:url(#mcBlueArr)}
+.mcTxt{font-family:Arial,sans-serif;font-size:26px;font-weight:900;fill:#111827}
+.mcSmall{font-family:Arial,sans-serif;font-size:14px;font-weight:800;fill:#334155}
+.mcBlue{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#2563eb}
 </style>
 
+<defs>
+<marker id="mcArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"></path>
+</marker>
+<marker id="mcArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"></path>
+</marker>
+<marker id="mcBlueArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"></path>
+</marker>
+</defs>
+
+<!-- right 3D side -->
+<path d="M500 140 L590 70 V270 L500 330 Z" class="mcSide"></path>
+
+<!-- white dielectric body -->
+<path d="M80 140 H500 V330 H80 Z" class="mcDiel"></path>
+<path d="M80 140 L170 70 H590 L500 140 Z" fill="#ffffff" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"></path>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+
+<!-- trace 1 top microstrip -->
+<path d="M185 105 H270 V140 H185 Z" class="mcCopper"></path>
+<path d="M270 105 L360 45 V75 L268 140 Z" class="mcCopperDark"></path>
+<path d="M185 105 L275 45 H360 L270 105 Z" fill="lightgreen" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"></path>
+
+<!-- trace 2 top microstrip -->
+<path d="M350 105 H435 V140 H350 Z" class="mcCopper"></path>
+<path d="M435 105 L525 45 V75 L435 140 Z" class="mcCopperDark"></path>
+<path d="M350 105 L440 45 H525 L435 105 Z" fill="lightgreen" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"></path>
+
+<!-- spacing S -->
+<line x1="270" y1="160" x2="350" y2="160" class="mcArrow"></line>
+<line x1="268" y1="135" x2="268" y2="176" class="mcTick"></line>
+<line x1="350" y1="135" x2="350" y2="176" class="mcTick"></line>
+<text x="295" y="198" class="mcTxt">W</text>
+
+<!-- H dimension -->
+<line x1="45" y1="140" x2="165" y2="140" class="mcTick"></line>
+<line x1="45" y1="330" x2="165" y2="330" class="mcTick"></line>
+<line x1="60" y1="140" x2="60" y2="330" class="mcArrow"></line>
+<text x="22" y="255" class="mcTxt">H</text>
 
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-<FORM name="calculator">
-<label for="r2" style="font-size:72;" >ε<sub>r</sub></label><font face="Arial" size="6"> (Relative Dielectric Constant) </font><input name="number1" class="intro"  style="position: absolute;   width:380; text-align:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:1px;"></h1>	
-<label for="r2" style="font-size:55;" >Frequency</label><font face="Arial" size="6"> (Operation) </font><input name="number2" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:54px; height:68.5px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">GHz</label>
-<h1 style="font-size:50;"></h1>
-</fieldset>
-<h1 style="font-size:80;"></h1>		
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>	
-<fieldset><legend><div colspan="2" align="center" height="19">
 
 
-<h3>Outputs</h3></div></legend>	
-<label for="r2" style="font-size:55;" >E<sub>dc</sub></label><font face="Arial" size="6"> (Effective dielectric constant) </font><input name="effective_dielectric_constant" class="intro"  style="position: absolute;   width:380; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:40;"></h1>	
-<label for="r2" style="font-size:55;" >wavelength</sub></label><font face="Arial" size="7"> (Guide) </font><input name="guide_wavelength" class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ;  height:70;position: absolute;right: 10px;font-size:57px;  height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">mtr</label>
 
-</FORM>
-<h1 style="font-size:50;"></h1>	
+<!-- labels -->
+<text x="160" y="345" class="mcSmall">FIELD CONFIGURATION SLOTLINE</text>
+<text x="107" y="230" class="mcSmall">PCB Dielectric</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Effective dielectric constant = (εr + 1) / 2</div>
+<div class="formula">Free-space wavelength = 3 × 10^8 / (frequency × 10^9)</div>
+<div class="formula">Guide wavelength = free-space wavelength / sqrt(effective dielectric constant)</div>
+</section>
+
+</div>
+
+<script>
+function clearResults(){
+  document.getElementById("edcResult").innerText="";
+  document.getElementById("waveResult").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function isMissing(id){
+  var el=document.getElementById(id);
+  return el.value.trim()==="" || isNaN(Number(el.value));
+}
+
+function calculateSlotline(){
+  if(isMissing("er") || isMissing("freq")){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var Er=Number(document.getElementById("er").value);
+  var Fr=Number(document.getElementById("freq").value);
+
+  var effective=(Er+1)/2;
+  var lambda=(3*Math.pow(10,8))/(Fr*Math.pow(10,9));
+  var guide=lambda/Math.sqrt(effective);
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("edcResult").innerText=effective.toPrecision(6);
+  document.getElementById("waveResult").innerText=guide.toPrecision(6)+" m";
+}
+</script>
+
+</body>
+</html>
