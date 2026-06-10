@@ -2,262 +2,217 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wire Self Inductance Calculator</title>
+<meta name="description" content="Calculate straight wire self inductance from wire diameter and length with a fast RF conductor inductance calculator.">
+<meta name="keywords" content="wire self inductance calculator, straight wire inductance calculator, round conductor inductance, RF wire inductance calculator, wire parasitic inductance calculator, single wire inductance formula">
 <style>
-#wire-self-calc,
-#wire-self-calc *{
-  box-sizing:border-box !important;
-  font-family:Arial,sans-serif !important;
-}
-
-body{
-  background:#f6f8fb;
-  padding:10px;
-}
-
-#wire-self-calc{
-  width:100% !important;
-  max-width:620px !important;
-  margin:auto !important;
-  padding-top:14px !important;
-  background:transparent !important;
-  border:none !important;
-  border-radius:0 !important;
-}
-
-#wire-self-calc .calc-grid{
-  display:grid !important;
-  grid-template-columns:1fr !important;
-  gap:15px !important;
-}
-
-#wire-self-calc .calc-label{
-  display:block !important;
-  font-size:15px !important;
-  font-weight:700 !important;
-  color:#4b5563 !important;
-  margin-bottom:7px !important;
-}
-
-#wire-self-calc .calc-row{
-  width:100% !important;
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) 82px !important;
-  gap:8px !important;
-  align-items:center !important;
-}
-
-#wire-self-calc .calc-row input{
-  width:100% !important;
-  min-width:0 !important;
-  height:43px !important;
-  border:1px solid #cfd6df !important;
-  border-radius:8px !important;
-  padding:0 12px !important;
-  font-size:15px !important;
-  color:#111827 !important;
-  background:#fff !important;
-  outline:none !important;
-}
-
-#wire-self-calc .calc-row select,
-#wire-self-calc .unit-box{
-  width:82px !important;
-  min-width:82px !important;
-  max-width:82px !important;
-  height:43px !important;
-  border:1px solid #cfd6df !important;
-  border-radius:8px !important;
-  padding:0 8px !important;
-  font-size:15px !important;
-  color:#111827 !important;
-  background:#fff !important;
-  outline:none !important;
-}
-
-#wire-self-calc .unit-box{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  font-weight:700 !important;
-  background:#fafafa !important;
-}
-
-#wire-self-calc input:focus,
-#wire-self-calc select:focus{
-  border-color:#ff6a00 !important;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12) !important;
-}
-
-#wire-self-calc button{
-  width:100% !important;
-  height:45px !important;
-  margin-top:24px !important;
-  border:0 !important;
-  border-radius:9px !important;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00) !important;
-  color:#fff !important;
-  font-size:15px !important;
-  font-weight:800 !important;
-  cursor:pointer !important;
-  box-shadow:0 7px 16px rgba(255,91,0,.22) !important;
-}
-
-#wire-self-calc .result-title{
-  margin-top:30px !important;
-  margin-bottom:14px !important;
-  font-size:14px !important;
-  font-weight:800 !important;
-  color:#a7afbd !important;
-  letter-spacing:.5px !important;
-}
-
-#wire-self-calc .result-card{
-  min-height:64px !important;
-  padding:14px !important;
-  border-radius:9px !important;
-  background:#eef5ff !important;
-  border:1px solid #bcd7ff !important;
-}
-
-#wire-self-calc .result-label{
-  font-size:12px !important;
-  font-weight:900 !important;
-  text-transform:uppercase !important;
-  margin-bottom:7px !important;
-  color:#2563eb !important;
-}
-
-#wire-self-calc .result-value{
-  font-size:16px !important;
-  font-weight:900 !important;
-  color:#059669 !important;
-}
-
-#wire-self-calc .formula{
-  margin-top:18px !important;
-  padding:14px !important;
-  border-radius:9px !important;
-  background:#f9fafb !important;
-  border:1px solid #e5e7eb !important;
-  font-size:14px !important;
-  line-height:1.6 !important;
-  color:#667085 !important;
-  font-weight:700 !important;
-}
-
+#wire-self-calc,#wire-self-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#wire-self-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
 @media(max-width:600px){
-
-  body{
-    padding:0 !important;
-  }
-
-  #wire-self-calc{
-    padding-top:12px !important;
-  }
-
-  #wire-self-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px !important;
-    gap:7px !important;
-  }
-
-  #wire-self-calc .calc-row input{
-    font-size:15px !important;
-    padding:0 10px !important;
-  }
-
-  #wire-self-calc .calc-row select,
-  #wire-self-calc .unit-box{
-    width:72px !important;
-    min-width:72px !important;
-    max-width:72px !important;
-    font-size:15px !important;
-    padding:0 6px !important;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="wire-self-calc">
 
-  <div class="calc-grid">
-
-    <div>
-      <label class="calc-label">Wire Diameter (d)</label>
-      <div class="calc-row">
-        <input type="number" id="d">
-        <select id="du">
-          <option value="0.1">mm</option>
-          <option value="1">cm</option>
-          <option value="0.0001">um</option>
-          <option value="2.54">inch</option>
-          <option value="0.00254">mil</option>
-        </select>
-      </div>
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Wire Diameter (d)</label>
+    <div class="calc-row">
+      <input type="number" id="d" oninput="clearResults()">
+      <select id="du" onchange="clearResults()">
+        <option value="0.1">mm</option>
+        <option value="1">cm</option>
+        <option value="0.0001">um</option>
+        <option value="2.54">inch</option>
+        <option value="0.00254">mil</option>
+      </select>
     </div>
-
-    <div>
-      <label class="calc-label">Wire Length (l)</label>
-      <div class="calc-row">
-        <input type="number" id="l">
-        <select id="lu">
-          <option value="1" selected>cm</option>
-          <option value="0.1">mm</option>
-          <option value="0.0001">um</option>
-          <option value="2.54">inch</option>
-          <option value="0.00254">mil</option>
-        </select>
-      </div>
-    </div>
-
   </div>
 
-  <button id="btn">Calculate</button>
+  <div>
+    <label class="calc-label">Wire Length (l)</label>
+    <div class="calc-row">
+      <input type="number" id="l" oninput="clearResults()">
+      <select id="lu" onchange="clearResults()">
+        <option value="1" selected>cm</option>
+        <option value="0.1">mm</option>
+        <option value="0.0001">um</option>
+        <option value="2.54">inch</option>
+        <option value="0.00254">mil</option>
+      </select>
+    </div>
+  </div>
+</div>
 
-  <div class="result-title">RESULTS</div>
+<button id="btn" type="button">CALCULATE</button>
 
+<div id="errorBox">Please enter all required numeric values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
   <div class="result-card">
     <div class="result-label">Inductance</div>
-    <div class="result-value"><span id="o">-</span> nH</div>
+    <div class="result-value"><span id="o"></span> nH</div>
   </div>
+</div>
 
-  <div class="formula">
-    L = 2l [ ln( (2l/d)(1 + √(1 + (d/2l)²)) ) − √(1 + (d/2l)²) + 0.25 + (d/2l) ]
-  </div>
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Wire Diameter d</strong>Round conductor diameter used for straight wire self inductance calculation.</div>
+  <div class="paramItem"><strong>Wire Length l</strong>Total physical length of the single straight conductor.</div>
+  <div class="paramItem"><strong>Unit Selection</strong>Choose mm, cm, um, inch, or mil for quick RF wire inductance conversion.</div>
+  <div class="paramItem"><strong>Output</strong>Self inductance result in nH for circuit parasitic inductance estimation.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>RF Lead Inductance</strong></p><p>Estimate straight conductor inductance for component leads, jumpers, and RF wiring.</p></div>
+  <div class="exampleCard"><p><strong>PCB Prototype Wire</strong></p><p>Change conductor diameter and length to compare parasitic inductance in high-speed layouts.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Wire self inductance depends mainly on conductor length and wire diameter. Longer conductors increase inductance, while thicker conductors reduce it.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wire self inductance diagram">
+<rect width="620" height="360" fill="#ffffff"></rect>
+
+<style>
+.wpWire{fill:lightgreen;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+.wpWireLine{stroke:#111827;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wpArrow{stroke:#111827;stroke-width:2.3;fill:none;marker-start:url(#wpArrStart);marker-end:url(#wpArrEnd)}
+.wpTick{stroke:#111827;stroke-width:2.2;fill:none;stroke-linecap:round}
+.wpTxt{font-family:Arial,sans-serif;font-size:24px;font-weight:900;fill:#111827}
+</style>
+
+<defs>
+<marker id="wpArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"></path>
+</marker>
+<marker id="wpArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"></path>
+</marker>
+</defs>
+
+<g transform="translate(-90,90)">
+<!-- cylinder body -->
+<path d="
+M291 133
+L438 0
+C449 -9 467 -6 477 6
+C487 19 484 37 472 48
+L325 181
+C314 191 296 188 286 175
+C276 162 279 144 291 133
+Z" class="wpWire"></path>
+
+<!-- front round face -->
+<circle cx="308" cy="156" r="29" class="wpWire"></circle>
+
+<!-- cylinder outline connector lines -->
+<path d="M291 133 L438 0" class="wpWireLine"></path>
+<path d="M325 181 L472 48" class="wpWireLine"></path>
+
+<!-- D dimension on front circle -->
+<line x1="400" y1="125" x2="400" y2="185" class="wpArrow"></line>
+<line x1="296" y1="126" x2="410" y2="126" class="wpTick"></line>
+<line x1="296" y1="185" x2="410" y2="185" class="wpTick"></line>
+<text x="410" y="163" class="wpTxt">D</text>
+
+<!-- L dimension -->
+<line x1="430" y1="-20" x2="290" y2="110" class="wpArrow"></line>
+<text x="320" y="40" class="wpTxt">L</text>
+</g>
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Step 1: Convert wire diameter d and wire length l using the selected unit multipliers.</div>
+<div class="formulaBox">Step 2: x = d / (2 × l)</div>
+<div class="formulaBox">Step 3: L = 2 × l × [ ln((2 × l / d) × (1 + sqrt(1 + x²))) - sqrt(1 + x²) + 0.25 + x ]</div>
+<div class="formulaBox">Step 4: Display L in nH with 3 decimal places, preserving the original JavaScript calculation logic.</div>
+</section>
 
 </div>
 
 <script>
+function clearResults(){
+  document.getElementById("o").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function hasMissingOrInvalidRequired(ids){
+  for(let i=0;i<ids.length;i++){
+    const el=document.getElementById(ids[i]);
+    const value=el.value.trim();
+    if(value==="" || isNaN(Number(value))){
+      return true;
+    }
+  }
+  return false;
+}
+
 document.getElementById("btn").onclick=function(){
 
-let d=parseFloat(document.getElementById("d").value),
-l=parseFloat(document.getElementById("l").value),
-du=parseFloat(document.getElementById("du").value),
-lu=parseFloat(document.getElementById("lu").value),
-o=document.getElementById("o");
+  if(hasMissingOrInvalidRequired(["d","l"])){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-if(isNaN(d)||isNaN(l)){
-o.innerText="Enter values";
-return;
-}
+  let d=parseFloat(document.getElementById("d").value),
+      l=parseFloat(document.getElementById("l").value),
+      du=parseFloat(document.getElementById("du").value),
+      lu=parseFloat(document.getElementById("lu").value),
+      o=document.getElementById("o");
 
-d*=du;
-l*=lu;
+  d*=du;
+  l*=lu;
 
-if(d<=0||l<=0){
-o.innerText="Invalid";
-return;
-}
+  let x=d/(2*l);
 
-let x=d/(2*l);
+  let L=2*l*(Math.log((2*l/d)*(1+Math.sqrt(1+x*x))) - Math.sqrt(1+x*x) + 0.25 + x);
 
-let L = 2*l*(Math.log((2*l/d)*(1+Math.sqrt(1+x*x))) - Math.sqrt(1+x*x) + 0.25 + x);
-
-o.innerText=L.toFixed(3);
-
+  document.getElementById("errorBox").style.display="none";
+  o.innerText=L.toFixed(3);
 }
 </script>
 
