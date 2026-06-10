@@ -2,295 +2,285 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wire Size Calculator</title>
+<meta name="description" content="Calculate wire size from voltage, phase, material, current and distance using voltage drop logic for copper and aluminium cable sizing.">
+<meta name="keywords" content="wire size calculator, electrical wire size calculator, copper wire size calculator, aluminium wire size calculator, voltage drop wire size calculator, AWG wire size calculator, cable size calculator, single phase wire size calculator, three phase cable size calculator, wire gauge calculator, MCM cable sizing calculator">
 <style>
-#wire-size-calc,
-#wire-size-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  background:#f6f8fb;
-  padding:10px;
-}
-
-#wire-size-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-  background:transparent;
-  border:none;
-  border-radius:0;
-}
-
-#wire-size-calc .calc-grid{
-  display:grid;
-  gap:15px;
-}
-
-#wire-size-calc .calc-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
-
-#wire-size-calc .calc-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#wire-size-calc input,
-#wire-size-calc select{
-  width:100%;
-  min-width:0;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  color:#111827;
-  background:#fff;
-  outline:none;
-}
-
-#wire-size-calc .unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fafafa;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  font-weight:700;
-  color:#111827;
-}
-
-#wire-size-calc input:focus,
-#wire-size-calc select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#wire-size-calc button{
-  width:100%;
-  height:45px;
-  margin-top:24px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#wire-size-calc .result-title{
-  margin-top:30px;
-  margin-bottom:14px;
-  font-size:14px;
-  font-weight:800;
-  color:#a7afbd;
-  letter-spacing:.5px;
-}
-
-#wire-size-calc .result-card{
-  min-height:64px;
-  padding:14px;
-  border-radius:9px;
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#wire-size-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:7px;
-  color:#2563eb;
-}
-
-#wire-size-calc .result-value{
-  font-size:16px;
-  font-weight:900;
-  color:#059669;
-  word-break:break-word;
-}
-
-#wire-size-calc .formula{
-  margin-top:18px;
-  padding:14px;
-  border-radius:9px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+#wire-size-calc,#wire-size-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#wire-size-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#374151}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
 @media(max-width:600px){
-
-  body{
-    padding:0;
-  }
-
-  #wire-size-calc{
-    padding-top:12px;
-  }
-
-  #wire-size-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #wire-size-calc .unit-box{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:15px;
-  }
-
-  #wire-size-calc input,
-  #wire-size-calc select{
-    font-size:15px;
-    padding:0 10px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="wire-size-calc">
 
-  <div class="calc-grid">
-
-    <div>
-      <label class="calc-label">Source Voltage</label>
-      <div class="calc-row">
-        <select id="vd">
-          <option value="3.6">120</option>
-          <option value="6.2">208</option>
-          <option value="6.6">220</option>
-          <option value="6.9">230</option>
-          <option value="7.2">240</option>
-          <option value="8.3">277</option>
-          <option value="13.2">440</option>
-          <option value="14.4">480</option>
-        </select>
-        <div class="unit-box">V</div>
-      </div>
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Source Voltage</label>
+    <div class="calc-row">
+      <select id="vd" onchange="clearResults()">
+        <option value="3.6">120</option>
+        <option value="6.2">208</option>
+        <option value="6.6">220</option>
+        <option value="6.9">230</option>
+        <option value="7.2">240</option>
+        <option value="8.3">277</option>
+        <option value="13.2">440</option>
+        <option value="14.4">480</option>
+      </select>
+      <div class="unitBox">V</div>
     </div>
-
-    <div>
-      <label class="calc-label">Phase</label>
-      <div class="calc-row">
-        <select id="phs">
-          <option value="2">Single</option>
-          <option value="1.732">Three</option>
-        </select>
-        <div class="unit-box">Ø</div>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">Material</label>
-      <div class="calc-row">
-        <select id="mat">
-          <option value="12.9">Copper</option>
-          <option value="21.2">Aluminium</option>
-        </select>
-        <div class="unit-box">Type</div>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">Current</label>
-      <div class="calc-row">
-        <input type="number" id="amps">
-        <div class="unit-box">A</div>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">Distance</label>
-      <div class="calc-row">
-        <input type="number" id="dist">
-        <div class="unit-box">ft</div>
-      </div>
-    </div>
-
   </div>
 
-  <button id="btn">Calculate</button>
+  <div>
+    <label class="calc-label">Phase</label>
+    <div class="calc-row">
+      <select id="phs" onchange="clearResults()">
+        <option value="2">Single</option>
+        <option value="1.732">Three</option>
+      </select>
+      <div class="unitBox">Ø</div>
+    </div>
+  </div>
 
-  <div class="result-title">RESULTS</div>
+  <div>
+    <label class="calc-label">Material</label>
+    <div class="calc-row">
+      <select id="mat" onchange="clearResults()">
+        <option value="12.9">Copper</option>
+        <option value="21.2">Aluminium</option>
+      </select>
+      <div class="unitBox">Type</div>
+    </div>
+  </div>
 
+  <div>
+    <label class="calc-label">Current</label>
+    <div class="calc-row">
+      <input type="number" id="amps" oninput="clearResults()">
+      <div class="unitBox">A</div>
+    </div>
+  </div>
+
+  <div>
+    <label class="calc-label">Distance</label>
+    <div class="calc-row">
+      <input type="number" id="dist" oninput="clearResults()">
+      <div class="unitBox">ft</div>
+    </div>
+  </div>
+</div>
+
+<button id="btn" type="button">CALCULATE</button>
+
+<div id="errorBox">Please enter all required numeric values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
   <div class="result-card">
     <div class="result-label">Wire Size</div>
-    <div class="result-value"><span id="wire">-</span> AWG</div>
+    <div class="result-value"><span id="wire"></span> AWG</div>
   </div>
+</div>
 
-  <div class="formula">
-    CM = (Phase × K × Distance × Current) / Voltage Drop
-  </div>
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Source Voltage</strong>Select system voltage. The selected value represents allowed voltage drop used by the original calculator logic.</div>
+  <div class="paramItem"><strong>Phase</strong>Choose single phase or three phase for electrical wire size and cable size calculation.</div>
+  <div class="paramItem"><strong>Material</strong>Select copper or aluminium. Material constant K changes the required circular mil wire area.</div>
+  <div class="paramItem"><strong>Current</strong>Load current in amperes used to size the conductor for voltage drop conditions.</div>
+  <div class="paramItem"><strong>Distance</strong>One-way cable run distance in feet for the wire gauge sizing calculation.</div>
+  <div class="paramItem"><strong>Wire Size Output</strong>Recommended AWG or MCM wire size based on the original circular mil lookup table.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Electrical Wiring Design</strong></p><p>Estimate copper wire size for lighting circuits, pumps, motors, panels, inverters, and branch wiring.</p></div>
+  <div class="exampleCard"><p><strong>Long Cable Runs</strong></p><p>Use aluminium or copper material selection to compare wire gauge for distance-based voltage drop sizing.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Wire size selection depends on voltage drop, conductor material, current, phase, and cable run distance. Larger current or longer distance usually requires a larger AWG or MCM conductor.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wire size voltage drop diagram">
+<rect width="700" height="420" fill="#ffffff"/>
+
+<style>
+.wsBox{fill:#f8fafc;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.wsBlue{fill:#dbeafe;stroke:#2563eb;stroke-width:2.2;stroke-linejoin:round}
+.wsGreen{fill:#dcfce7;stroke:#16a34a;stroke-width:2.2;stroke-linejoin:round}
+.wsOrange{fill:#ffedd5;stroke:#f97316;stroke-width:2.2;stroke-linejoin:round}
+.wsPurple{fill:#f5f3ff;stroke:#7c3aed;stroke-width:2.2;stroke-linejoin:round}
+.wsWireCu{stroke:#f97316;stroke-width:13;fill:none;stroke-linecap:round}
+.wsWireAl{stroke:#94a3b8;stroke-width:13;fill:none;stroke-linecap:round}
+.wsWireCore{stroke:#111827;stroke-width:2.2;fill:none;stroke-linecap:round}
+.wsArrow{stroke:#111827;stroke-width:2.2;fill:none;marker-start:url(#wsArrStart);marker-end:url(#wsArrEnd)}
+.wsArrowOne{stroke:#111827;stroke-width:2.2;fill:none;marker-end:url(#wsArrEnd)}
+.wsDash{stroke:#ef4444;stroke-width:2;stroke-dasharray:6 5;fill:none}
+.wsTxt{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#111827}
+.wsSmall{font-family:Arial,sans-serif;font-size:13px;font-weight:800;fill:#334155}
+.wsRed{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#ef4444}
+</style>
+
+<defs>
+<marker id="wsArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="wsArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+</defs>
+
+<!-- source and load -->
+<rect x="45" y="115" width="115" height="105" rx="10" class="wsBlue"/>
+<text x="69" y="150" class="wsTxt">Source</text>
+<text x="75" y="176" class="wsSmall">Voltage</text>
+<text x="67" y="198" class="wsSmall">1Ø / 3Ø</text>
+
+<rect x="540" y="115" width="115" height="105" rx="10" class="wsGreen"/>
+<text x="579" y="150" class="wsTxt">Load</text>
+<text x="576" y="176" class="wsSmall">Current</text>
+<text x="586" y="198" class="wsSmall">A</text>
+
+<!-- conductor run -->
+<path d="M160 146 C245 100,342 105,430 146 C470 166,505 162,540 146" class="wsWireCu"/>
+<path d="M160 190 C245 232,342 230,430 190 C470 170,505 174,540 190" class="wsWireAl"/>
+<path d="M160 146 C245 100,342 105,430 146 C470 166,505 162,540 146" class="wsWireCore"/>
+<path d="M160 190 C245 232,342 230,430 190 C470 170,505 174,540 190" class="wsWireCore"/>
+
+<text x="260" y="95" class="wsSmall">Copper / Aluminium conductor</text>
+
+<!-- distance arrow -->
+<line x1="160" y1="288" x2="540" y2="288" class="wsArrow"/>
+<line x1="160" y1="220" x2="160" y2="303" class="wsWireCore"/>
+<line x1="540" y1="220" x2="540" y2="303" class="wsWireCore"/>
+<text x="350" y="319" text-anchor="middle" class="wsTxt">Distance ft</text>
+
+<!-- voltage drop arc -->
+<path d="M225 62 C315 25,405 25,500 62" class="wsArrowOne"/>
+<text x="310" y="60" class="wsRed">Voltage drop</text>
+<line x1="225" y1="62" x2="225" y2="110" class="wsDash"/>
+<line x1="500" y1="62" x2="500" y2="110" class="wsDash"/>
+
+<!-- result block -->
+<rect x="230" y="340" width="240" height="55" rx="10" class="wsOrange"/>
+<text x="278" y="374" class="wsTxt">AWG / MCM Size</text>
+
+<!-- material constant block -->
+<rect x="45" y="300" width="120" height="65" rx="10" class="wsPurple"/>
+<text x="74" y="328" class="wsTxt">K</text>
+<text x="62" y="350" class="wsSmall">material</text>
+<line x1="165" y1="330" x2="225" y2="365" class="wsArrowOne"/>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Step 1: Read source voltage drop value vp, phase multiplier, material constant K, distance, and current.</div>
+<div class="formulaBox">Step 2: Calculate circular mil area: CM = (Phase × K × Distance × Current) / Voltage Drop.</div>
+<div class="formulaBox">Step 3: Compare CM with the original lookup ranges L and H.</div>
+<div class="formulaBox">Step 4: Return matching AWG or MCM wire size from the original size table.</div>
+</section>
 
 </div>
 
 <script>
+function clearResults(){
+  document.getElementById("wire").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function hasMissingOrInvalidRequired(ids){
+  for(let i=0;i<ids.length;i++){
+    const el=document.getElementById(ids[i]);
+    const value=el.value.trim();
+    if(value==="" || isNaN(Number(value))){
+      return true;
+    }
+  }
+  return false;
+}
+
 document.getElementById("btn").onclick=function(){
 
-let vp=parseFloat(document.getElementById("vd").value),
-phase=parseFloat(document.getElementById("phs").value),
-k=parseFloat(document.getElementById("mat").value),
-l=parseFloat(document.getElementById("dist").value),
-i=parseFloat(document.getElementById("amps").value),
-out=document.getElementById("wire");
+  if(hasMissingOrInvalidRequired(["dist","amps"])){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-if(isNaN(l)||isNaN(i)){
-out.innerText="Enter values";
-return;
-}
+  let vp=parseFloat(document.getElementById("vd").value),
+      phase=parseFloat(document.getElementById("phs").value),
+      k=parseFloat(document.getElementById("mat").value),
+      l=parseFloat(document.getElementById("dist").value),
+      i=parseFloat(document.getElementById("amps").value),
+      out=document.getElementById("wire");
 
-if(l<=0||i<=0){
-out.innerText="Invalid";
-return;
-}
+  let Cm=(phase*k*l*i)/vp;
 
-let Cm=(phase*k*l*i)/vp;
+  let L=[2580,4110,6530,10380,16510,26240,41740,52620,66360,83690,105600,133100,167800,211600,250000,300000,350000,400000,500000,600000,700000,750000,800000,900000,1000000,1250000,1500000,1750000];
 
-let L=[2580,4110,6530,10380,16510,26240,41740,52620,66360,83690,105600,133100,167800,211600,250000,300000,350000,400000,500000,600000,700000,750000,800000,900000,1000000,1250000,1500000,1750000];
+  let H=[4110,6530,10380,16510,26240,41740,52620,66360,83690,105600,133100,167800,211600,250000,300000,350000,400000,500000,600000,700000,750000,800000,900000,1000000,1250000,1500000,1750000,2000000];
 
-let H=[4110,6530,10380,16510,26240,41740,52620,66360,83690,105600,133100,167800,211600,250000,300000,350000,400000,500000,600000,700000,750000,800000,900000,1000000,1250000,1500000,1750000,2000000];
+  let S=["14","12","10","8","6","4","3","2","1","1/0","2/0","3/0","4/0","250 MCM","300 MCM","350 MCM","400 MCM","500 MCM","600 MCM","700 MCM","750 MCM","800 MCM","900 MCM","1000 MCM","1250 MCM","1500 MCM","1750 MCM","2000 MCM"];
 
-let S=["14","12","10","8","6","4","3","2","1","1/0","2/0","3/0","4/0","250 MCM","300 MCM","350 MCM","400 MCM","500 MCM","600 MCM","700 MCM","750 MCM","800 MCM","900 MCM","1000 MCM","1250 MCM","1500 MCM","1750 MCM","2000 MCM"];
+  if(Cm<=L[0]){
+    document.getElementById("errorBox").style.display="none";
+    out.innerText=S[0];
+    return;
+  }
 
-if(Cm<=L[0]){
-out.innerText=S[0];
-return;
-}
+  for(let x=0;x<L.length;x++){
+    if(Cm>L[x] && Cm<=H[x]){
+      document.getElementById("errorBox").style.display="none";
+      out.innerText=S[x];
+      return;
+    }
+  }
 
-for(let x=0;x<L.length;x++){
-if(Cm>L[x] && Cm<=H[x]){
-out.innerText=S[x];
-return;
-}
-}
-
-out.innerText="Out of Range";
+  document.getElementById("errorBox").style.display="none";
+  out.innerText="Out of Range";
 };
 </script>
 
