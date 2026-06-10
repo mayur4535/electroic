@@ -2,290 +2,254 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wire Over Plane Inductance Calculator</title>
+<meta name="description" content="Calculate wire over plane inductance from wire diameter, height above plane, length and relative permeability.">
+<meta name="keywords" content="wire over plane inductance calculator, wire above ground plane inductance, PCB plane inductance calculator, RF wire inductance">
 <style>
-#wire-plane-calc,
-#wire-plane-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  background:#f6f8fb;
-  padding:10px;
-}
-
-#wire-plane-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-  background:transparent;
-  border:none;
-  border-radius:0;
-}
-
-#wire-plane-calc .ej-form{
-  display:grid;
-  gap:15px;
-}
-
-#wire-plane-calc .ej-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
-
-#wire-plane-calc .ej-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#wire-plane-calc input,
-#wire-plane-calc select,
-#wire-plane-calc .unit-box{
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fff;
-  color:#111827;
-  font-size:15px;
-  outline:none;
-}
-
-#wire-plane-calc input{
-  width:100%;
-  min-width:0;
-  padding:0 12px;
-}
-
-#wire-plane-calc select,
-#wire-plane-calc .unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  padding:0 8px;
-}
-
-#wire-plane-calc .unit-box{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  background:#fafafa;
-}
-
-#wire-plane-calc input:focus,
-#wire-plane-calc select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#wire-plane-calc button{
-  width:100%;
-  height:45px;
-  margin-top:24px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#wire-plane-calc .result-title{
-  margin-top:30px;
-  margin-bottom:14px;
-  font-size:14px;
-  font-weight:800;
-  color:#a7afbd;
-  letter-spacing:.5px;
-}
-
-#wire-plane-calc .result-card{
-  min-height:64px;
-  padding:14px;
-  border-radius:9px;
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#wire-plane-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:7px;
-  color:#2563eb;
-}
-
-#wire-plane-calc .result-value{
-  font-size:16px;
-  font-weight:900;
-  color:#059669;
-  word-break:break-word;
-}
-
-#wire-plane-calc .formula{
-  margin-top:18px;
-  padding:14px;
-  border-radius:9px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+#wire-plane-calc,#wire-plane-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#wire-plane-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
 @media(max-width:600px){
-
-  body{
-    padding:0;
-  }
-
-  #wire-plane-calc{
-    padding-top:12px;
-  }
-
-  #wire-plane-calc .ej-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #wire-plane-calc select,
-  #wire-plane-calc .unit-box{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:15px;
-    padding:0 6px;
-  }
-
-  #wire-plane-calc input{
-    font-size:15px;
-    padding:0 10px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
-
 <body>
 
 <div id="wire-plane-calc">
 
-  <div class="ej-form">
-
-    <div>
-      <label class="ej-label">Wire Diameter (d)</label>
-      <div class="ej-row">
-        <input type="number" id="d">
-        <select id="du">
-          <option value="0.001">mm</option>
-          <option value="0.01">cm</option>
-          <option value="0.000001">um</option>
-          <option value="0.0254">inch</option>
-        </select>
-      </div>
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Wire Diameter (d)</label>
+    <div class="calc-row">
+      <input type="number" id="d" oninput="clearResults()">
+      <select id="du" onchange="clearResults()">
+        <option value="0.001">mm</option>
+        <option value="0.01">cm</option>
+        <option value="0.000001">µm</option>
+        <option value="0.0254">inch</option>
+      </select>
     </div>
-
-    <div>
-      <label class="ej-label">Height Above Plane (h)</label>
-      <div class="ej-row">
-        <input type="number" id="h">
-        <select id="hu">
-          <option value="0.001">mm</option>
-          <option value="0.01">cm</option>
-          <option value="0.000001">um</option>
-          <option value="0.0254">inch</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="ej-label">Length (l)</label>
-      <div class="ej-row">
-        <input type="number" id="l">
-        <select id="lu">
-          <option value="0.001">mm</option>
-          <option value="0.01">cm</option>
-          <option value="0.000001">um</option>
-          <option value="0.0254">inch</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="ej-label">Relative Permeability</label>
-      <div class="ej-row">
-        <input type="number" id="ur" value="1">
-        <div class="unit-box">-</div>
-      </div>
-    </div>
-
   </div>
 
-  <button id="btn">Calculate</button>
+  <div>
+    <label class="calc-label">Height Above Plane (h)</label>
+    <div class="calc-row">
+      <input type="number" id="h" oninput="clearResults()">
+      <select id="hu" onchange="clearResults()">
+        <option value="0.001">mm</option>
+        <option value="0.01">cm</option>
+        <option value="0.000001">µm</option>
+        <option value="0.0254">inch</option>
+      </select>
+    </div>
+  </div>
 
-  <div class="result-title">RESULTS</div>
+  <div>
+    <label class="calc-label">Length (l)</label>
+    <div class="calc-row">
+      <input type="number" id="l" oninput="clearResults()">
+      <select id="lu" onchange="clearResults()">
+        <option value="0.001">mm</option>
+        <option value="0.01">cm</option>
+        <option value="0.000001">µm</option>
+        <option value="0.0254">inch</option>
+      </select>
+    </div>
+  </div>
 
+  <div>
+    <label class="calc-label">Relative Permeability</label>
+    <div class="calc-row">
+      <input type="number" id="ur" value="1" oninput="clearResults()">
+      <div class="unitBox">-</div>
+    </div>
+  </div>
+</div>
+
+<button onclick="calculateWirePlane()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required numeric values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
   <div class="result-card">
     <div class="result-label">Inductance</div>
-    <div class="result-value"><span id="o">-</span> H</div>
+    <div class="result-value" id="o"></div>
   </div>
+</div>
 
-  <div class="formula">
-    L = (μ₀ μr / 2π) × l × acosh(2h / d)
-  </div>
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Wire Diameter d</strong>Diameter of the round wire above the reference plane.</div>
+  <div class="paramItem"><strong>Height h</strong>Distance from the plane to the wire center/position.</div>
+  <div class="paramItem"><strong>Length l</strong>Length of wire running above the plane.</div>
+  <div class="paramItem"><strong>Relative Permeability</strong>Use 1 for air or normal non-magnetic material.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Ground Plane Wire</strong></p><p>Estimate inductance of a round wire routed above a conductive reference plane.</p></div>
+  <div class="exampleCard"><p><strong>RF Layout</strong></p><p>Change wire height, diameter and length to see inductance changes.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Wire over plane inductance depends on wire diameter, height above plane, length and magnetic permeability.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wire over plane inductance diagram">
+<rect width="620" height="360" fill="#ffffff"/>
+
+<style>
+.wpPlane{fill:lightgreen;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+.wpPlaneDark{fill:lightgreen;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+.wpTop{fill:#ffffff;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+.wpWire{fill:lightgreen;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+.wpWireLine{stroke:#111827;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wpArrow{stroke:#111827;stroke-width:2.3;fill:none;marker-start:url(#wpArrStart);marker-end:url(#wpArrEnd)}
+.wpTick{stroke:#111827;stroke-width:2.2;fill:none;stroke-linecap:round}
+.wpTxt{font-family:Arial,sans-serif;font-size:24px;font-weight:900;fill:#111827}
+.wpSmall{font-family:Arial,sans-serif;font-size:15px;font-weight:800;fill:#111827}
+</style>
+<g transform="translate(0,30)">
+<defs>
+<marker id="wpArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="wpArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+</defs>
+
+<!-- reference plane -->
+<path d="M70 245 L210 110 H540 L400 245 Z" class="wpTop"/>
+<path d="M70 245 H400 V290 H70 Z" class="wpPlane"/>
+<path d="M400 245 L540 110 V155 L400 290 Z" class="wpPlaneDark"/>
+
+<!-- proper cylinder wire: back first -->
+<circle cx="455" cy="23" r="24" class="wpWire"/>
+
+<!-- cylinder body -->
+<path d="
+M291 133
+L438 0
+C449 -9 467 -6 477 6
+C487 19 484 37 472 48
+L325 181
+C314 191 296 188 286 175
+C276 162 279 144 291 133
+Z" class="wpWire"/>
+
+<!-- front round face -->
+<circle cx="308" cy="156" r="29" class="wpWire"/>
+
+<!-- cylinder outline connector lines -->
+<path d="M291 133 L438 0" class="wpWireLine"/>
+<path d="M325 181 L472 48" class="wpWireLine"/>
+
+<!-- D dimension on front circle -->
+<line x1="400" y1="125" x2="400" y2="185" class="wpArrow"/>
+<line x1="296" y1="126" x2="410" y2="126" class="wpTick"/>
+<line x1="296" y1="185" x2="410" y2="185" class="wpTick"/>
+<text x="410" y="163" class="wpTxt">D</text>
+
+<!-- H dimension -->
+<line x1="250" y1="158" x2="250" y2="245" class="wpArrow"/>
+<line x1="238" y1="158" x2="292" y2="158" class="wpTick"/>
+<line x1="238" y1="245" x2="292" y2="245" class="wpTick"/>
+<text x="220" y="205" class="wpTxt">H</text>
+
+<!-- label -->
+<text x="110" y="282" class="wpSmall">Reference Plane</text>
+</G>
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">L = (μ0 × μr / 2π) × l × acosh(2h / d)</div>
+<div class="formula">acosh(x) = log(x + sqrt(x² - 1))</div>
+<div class="formula">μ0 = 4 × π × 10^-7 H/m</div>
+</section>
 
 </div>
 
 <script>
-document.getElementById("btn").onclick=function(){
-
-let d=parseFloat(document.getElementById("d").value),
-h=parseFloat(document.getElementById("h").value),
-l=parseFloat(document.getElementById("l").value),
-ur=parseFloat(document.getElementById("ur").value),
-du=parseFloat(document.getElementById("du").value),
-hu=parseFloat(document.getElementById("hu").value),
-lu=parseFloat(document.getElementById("lu").value),
-o=document.getElementById("o");
-
-if(isNaN(d)||isNaN(h)||isNaN(l)||isNaN(ur)){
-o.innerText="Enter values";
-return;
+function clearResults(){
+  document.getElementById("o").innerText="";
+  document.getElementById("errorBox").style.display="none";
 }
 
-d*=du;
-h*=hu;
-l*=lu;
-
-if(d<=0||h<=0||l<=0||ur<=0){
-o.innerText="Invalid";
-return;
+function hasMissingOrInvalidRequired(ids){
+  for(let i=0;i<ids.length;i++){
+    const el=document.getElementById(ids[i]);
+    const value=el.value.trim();
+    if(value==="" || isNaN(Number(value))){
+      return true;
+    }
+  }
+  return false;
 }
 
-let x=(2*h)/d;
+function calculateWirePlane(){
+  if(hasMissingOrInvalidRequired(["d","h","l","ur"])){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-if(x<=1){
-o.innerText="Invalid ratio";
-return;
-}
+  let wireDiameter=parseFloat(document.getElementById("d").value);
+  let height=parseFloat(document.getElementById("h").value);
+  let length=parseFloat(document.getElementById("l").value);
+  let ur=parseFloat(document.getElementById("ur").value);
 
-let acosh=Math.log(x+Math.sqrt(x*x-1));
+  let du=parseFloat(document.getElementById("du").value);
+  let hu=parseFloat(document.getElementById("hu").value);
+  let lu=parseFloat(document.getElementById("lu").value);
 
-let L=(4*Math.PI*1e-7)*ur/(2*Math.PI)*l*acosh;
+  wireDiameter*=du;
+  height*=hu;
+  length*=lu;
 
-o.innerText=L.toExponential(3);
+  let x=(2*height)/wireDiameter;
+  let acosh=Math.log(x+Math.sqrt(x*x-1));
+  let L=(4*Math.PI*1e-7)*ur/(2*Math.PI)*length*acosh;
 
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("o").innerText=L.toExponential(3)+" H";
 }
 </script>
 
