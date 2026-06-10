@@ -2,327 +2,215 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Resistance of a Standard Wire Gauge Wire Calculator</title>
+<meta name="description" content="Calculate AWG wire resistance, diameter, area, kcmil, Ω/kft and Ω/km for copper, silver, gold, aluminium and more materials.">
+<meta name="keywords" content="standard wire gauge resistance calculator, AWG wire resistance calculator, copper wire resistance calculator, aluminium wire resistance calculator, wire gauge diameter calculator, AWG to mm calculator, wire cross sectional area calculator, ohms per kilometer wire calculator, ohms per 1000 feet wire calculator, resistivity wire calculator">
 <style>
-#awg-material-calc,
-#awg-material-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  background:#f6f8fb;
-  padding:10px;
-}
-
-#awg-material-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-  background:transparent;
-  border:none;
-  border-radius:0;
-}
-
-#awg-material-calc .calc-grid{
-  display:grid;
-  gap:15px;
-}
-
-#awg-material-calc .calc-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
-
-#awg-material-calc .calc-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#awg-material-calc input,
-#awg-material-calc select{
-  width:100%;
-  min-width:0;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  color:#111827;
-  background:#fff;
-  outline:none;
-}
-
-#awg-material-calc .unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fafafa;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  font-weight:700;
-  color:#111827;
-}
-
-#awg-material-calc input:focus,
-#awg-material-calc select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#awg-material-calc button{
-  width:100%;
-  height:45px;
-  margin-top:24px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#awg-material-calc .result-title{
-  margin-top:30px;
-  margin-bottom:14px;
-  font-size:14px;
-  font-weight:800;
-  color:#a7afbd;
-  letter-spacing:.5px;
-}
-
-#awg-material-calc .result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-#awg-material-calc .result-card{
-  min-height:64px;
-  padding:14px;
-  border-radius:9px;
-}
-
-#awg-material-calc .result-card:nth-child(1),
-#awg-material-calc .result-card:nth-child(5){
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-#awg-material-calc .result-card:nth-child(1) .result-label,
-#awg-material-calc .result-card:nth-child(1) .result-value,
-#awg-material-calc .result-card:nth-child(5) .result-label,
-#awg-material-calc .result-card:nth-child(5) .result-value{
-  color:#2563eb;
-}
-
-#awg-material-calc .result-card:nth-child(2),
-#awg-material-calc .result-card:nth-child(6){
-  background:#ecfdf5;
-  border:1px solid #bbf7d0;
-}
-#awg-material-calc .result-card:nth-child(2) .result-label,
-#awg-material-calc .result-card:nth-child(2) .result-value,
-#awg-material-calc .result-card:nth-child(6) .result-label,
-#awg-material-calc .result-card:nth-child(6) .result-value{
-  color:#059669;
-}
-
-#awg-material-calc .result-card:nth-child(3),
-#awg-material-calc .result-card:nth-child(7){
-  background:#f5f3ff;
-  border:1px solid #ddd6fe;
-}
-#awg-material-calc .result-card:nth-child(3) .result-label,
-#awg-material-calc .result-card:nth-child(3) .result-value,
-#awg-material-calc .result-card:nth-child(7) .result-label,
-#awg-material-calc .result-card:nth-child(7) .result-value{
-  color:#7c3aed;
-}
-
-#awg-material-calc .result-card:nth-child(4){
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-}
-#awg-material-calc .result-card:nth-child(4) .result-label,
-#awg-material-calc .result-card:nth-child(4) .result-value{
-  color:#ea580c;
-}
-
-#awg-material-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:7px;
-}
-
-#awg-material-calc .result-value{
-  font-size:16px;
-  font-weight:900;
-  word-break:break-word;
-}
-
-#awg-material-calc .formula{
-  margin-top:18px;
-  padding:14px;
-  border-radius:9px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+#awg-material-calc,#awg-material-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#awg-material-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#374151}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1),.result-card:nth-child(5){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2),.result-card:nth-child(6){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(3),.result-card:nth-child(7){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value,.result-card:nth-child(5) .result-label,.result-card:nth-child(5) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value,.result-card:nth-child(6) .result-label,.result-card:nth-child(6) .result-value{color:#16a34a}
+.result-card:nth-child(3) .result-label,.result-card:nth-child(3) .result-value,.result-card:nth-child(7) .result-label,.result-card:nth-child(7) .result-value{color:#7c3aed}
+.result-card:nth-child(4) .result-label,.result-card:nth-child(4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
 @media(max-width:600px){
-
-  body{
-    padding:0;
-  }
-
-  #awg-material-calc{
-    padding-top:12px;
-  }
-
-  #awg-material-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #awg-material-calc .unit-box{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:15px;
-  }
-
-  #awg-material-calc input,
-  #awg-material-calc select{
-    font-size:15px;
-    padding:0 10px;
-  }
-
-  #awg-material-calc .result-grid{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  #awg-material-calc .result-card{
-    padding:12px 10px;
-  }
-
-  #awg-material-calc .result-value{
-    font-size:14px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="awg-material-calc">
 
-  <div class="calc-grid">
-
-    <div>
-      <label class="calc-label">Material</label>
-      <div class="calc-row">
-        <select id="mat">
-          <option>Select</option>
-          <option>Copper</option>
-          <option>Silver</option>
-          <option>Gold</option>
-          <option>Aluminium</option>
-          <option>Tungsten</option>
-          <option>Platinum</option>
-          <option>Lead</option>
-          <option>Graphite</option>
-        </select>
-        <div class="unit-box">Type</div>
-      </div>
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Material</label>
+    <div class="calc-row">
+      <select id="mat" onchange="setResistivity();clearResults()">
+        <option>Select</option>
+        <option>Copper</option>
+        <option>Silver</option>
+        <option>Gold</option>
+        <option>Aluminium</option>
+        <option>Tungsten</option>
+        <option>Platinum</option>
+        <option>Lead</option>
+        <option>Graphite</option>
+      </select>
+      <div class="unitBox">Type</div>
     </div>
-
-    <div>
-      <label class="calc-label">Gauge</label>
-      <div class="calc-row">
-        <input id="awg" placeholder="ex: 10 or 4/0">
-        <div class="unit-box">AWG</div>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">Resistivity</label>
-      <div class="calc-row">
-        <input id="res" readonly>
-        <div class="unit-box">Ω·m</div>
-      </div>
-    </div>
-
   </div>
 
-  <button id="btn">Calculate</button>
-
-  <div class="result-title">RESULTS</div>
-
-  <div class="result-grid">
-
-    <div class="result-card">
-      <div class="result-label">Diameter</div>
-      <div class="result-value"><span id="din">-</span> in</div>
+  <div>
+    <label class="calc-label">Gauge</label>
+    <div class="calc-row">
+      <input id="awg" placeholder="ex: 10 or 4/0" oninput="clearResults()">
+      <div class="unitBox">AWG</div>
     </div>
-
-    <div class="result-card">
-      <div class="result-label">Diameter</div>
-      <div class="result-value"><span id="dmm">-</span> mm</div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-label">Resistance</div>
-      <div class="result-value"><span id="rft">-</span> Ω/kft</div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-label">kcmil</div>
-      <div class="result-value"><span id="amil">-</span> kcmil</div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-label">Resistance</div>
-      <div class="result-value"><span id="rm">-</span> Ω/km</div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-label">Area</div>
-      <div class="result-value"><span id="ain">-</span> in²</div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-label">Area</div>
-      <div class="result-value"><span id="amm">-</span> mm²</div>
-    </div>
-
   </div>
 
-  <div class="formula">
-    d(in) = 0.005 × 92^((36 − n)/39)<br>
-    d(mm) = 0.127 × 92^((36 − n)/39)<br>
-    A = (π / 4) × d²<br>
-    R = ρ × Length / Area
+  <div>
+    <label class="calc-label">Resistivity</label>
+    <div class="calc-row">
+      <input id="res" readonly>
+      <div class="unitBox">Ω·m</div>
+    </div>
   </div>
+</div>
+
+<button id="btn" type="button">CALCULATE</button>
+
+<div id="errorBox">Please enter all required numeric values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card"><div class="result-label">Diameter</div><div class="result-value"><span id="din"></span> in</div></div>
+  <div class="result-card"><div class="result-label">Diameter</div><div class="result-value"><span id="dmm"></span> mm</div></div>
+  <div class="result-card"><div class="result-label">Resistance</div><div class="result-value"><span id="rft"></span> Ω/kft</div></div>
+  <div class="result-card"><div class="result-label">kcmil</div><div class="result-value"><span id="amil"></span> kcmil</div></div>
+  <div class="result-card"><div class="result-label">Resistance</div><div class="result-value"><span id="rm"></span> Ω/km</div></div>
+  <div class="result-card"><div class="result-label">Area</div><div class="result-value"><span id="ain"></span> in²</div></div>
+  <div class="result-card"><div class="result-label">Area</div><div class="result-value"><span id="amm"></span> mm²</div></div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Material</strong>Select copper, aluminium, silver, gold, tungsten, platinum, lead, or graphite for resistivity-based wire resistance.</div>
+  <div class="paramItem"><strong>Gauge</strong>Enter AWG number such as 10, 12, 18, or large wire notation such as 4/0, 3/0, 2/0.</div>
+  <div class="paramItem"><strong>Resistivity</strong>Material resistivity in ohm-meter is filled automatically from the selected conductor material.</div>
+  <div class="paramItem"><strong>Outputs</strong>Diameter, area, kcmil, resistance per 1000 feet, and resistance per kilometer are calculated.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Copper Wire Resistance</strong></p><p>Estimate copper conductor resistance for transformer winding, electrical wiring, power cable, and AWG wire selection.</p></div>
+  <div class="exampleCard"><p><strong>Material Comparison</strong></p><p>Compare aluminium, silver, gold, tungsten, platinum, lead, and graphite wire resistance for different conductor designs.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Wire resistance depends on material resistivity, conductor length, and cross-sectional area. A larger AWG conductor has more area and lower resistance, while high-resistivity materials increase resistance.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AWG wire resistance diagram">
+<rect width="700" height="420" fill="#ffffff"/>
+
+<style>
+.awgPanel{fill:#f8fafc;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.awgBlue{fill:#dbeafe;stroke:#2563eb;stroke-width:2.2;stroke-linejoin:round}
+.awgGreen{fill:#dcfce7;stroke:#16a34a;stroke-width:2.2;stroke-linejoin:round}
+.awgOrange{fill:#ffedd5;stroke:#f97316;stroke-width:2.2;stroke-linejoin:round}
+.awgPurple{fill:#f5f3ff;stroke:#7c3aed;stroke-width:2.2;stroke-linejoin:round}
+.awgWire{fill:lightgreen;stroke:#111827;stroke-width:2.5}
+.awgCore{fill:#86efac;stroke:#111827;stroke-width:2}
+.awgArrow{stroke:#111827;stroke-width:2.2;fill:none;marker-start:url(#awgArrStart);marker-end:url(#awgArrEnd)}
+.awgArrowOne{stroke:#111827;stroke-width:2.2;fill:none;marker-end:url(#awgArrEnd)}
+.awgTick{stroke:#111827;stroke-width:2.2;fill:none;stroke-linecap:round}
+.awgTxt{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#111827}
+.awgSmall{font-family:Arial,sans-serif;font-size:13px;font-weight:800;fill:#334155}
+.awgNumber{font-family:Arial,sans-serif;font-size:24px;font-weight:900;fill:#2563eb}
+</style>
+
+<defs>
+<marker id="awgArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="awgArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+</defs>
+
+<!-- material block -->
+<rect x="35" y="60" width="145" height="75" rx="12" class="awgOrange"/>
+<text x="65" y="92" class="awgTxt">Material</text>
+<text x="63" y="115" class="awgSmall">ρ resistivity</text>
+
+<!-- gauge block -->
+<rect x="35" y="165" width="145" height="75" rx="12" class="awgBlue"/>
+<text x="85" y="197" class="awgTxt">AWG</text>
+<text x="70" y="220" class="awgSmall">wire gauge</text>
+
+<!-- arrows to conductor -->
+<line x1="185" y1="98" x2="285" y2="145" class="awgArrowOne"/>
+<line x1="185" y1="205" x2="285" y2="180" class="awgArrowOne"/>
+
+<!-- wire cross section -->
+<circle cx="365" cy="165" r="72" class="awgWire"/>
+<circle cx="365" cy="165" r="43" class="awgCore"/>
+<text x="355" y="170" class="awgNumber">A</text>
+
+<!-- diameter dimension -->
+<line x1="293" y1="270" x2="437" y2="270" class="awgArrow"/>
+<line x1="293" y1="165" x2="293" y2="287" class="awgTick"/>
+<line x1="437" y1="165" x2="437" y2="287" class="awgTick"/>
+<text x="360" y="303" class="awgTxt">d</text>
+<text x="300" y="325" class="awgSmall">diameter and area</text>
+
+<!-- resistance outputs -->
+<rect x="515" y="70" width="145" height="70" rx="10" class="awgGreen"/>
+<text x="565" y="100" class="awgTxt">Ω/kft</text>
+<text x="540" y="122" class="awgSmall">per 1000 feet</text>
+
+<rect x="515" y="165" width="145" height="70" rx="10" class="awgPurple"/>
+<text x="565" y="195" class="awgTxt">Ω/km</text>
+<text x="545" y="217" class="awgSmall">per kilometer</text>
+
+<line x1="440" y1="145" x2="515" y2="105" class="awgArrowOne"/>
+<line x1="440" y1="185" x2="515" y2="200" class="awgArrowOne"/>
+
+<!-- formula strip -->
+<rect x="50" y="350" width="590" height="42" rx="10" class="awgPanel"/>
+<text x="80" y="376" class="awgSmall">Resistance = ρ × Length / Area</text>
+<text x="350" y="376" class="awgSmall">AWG → diameter → area → resistance</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Step 1: Select material. The calculator sets resistivity ρ in ohm-meter from the original material table.</div>
+<div class="formulaBox">Step 2: Convert AWG input. 6/0 becomes -5, 5/0 becomes -4, 4/0 becomes -3, 3/0 becomes -2, 2/0 becomes -1, and normal AWG is used directly.</div>
+<div class="formulaBox">Step 3: Diameter in inches = 0.005 × 92^((36 - n) / 39).</div>
+<div class="formulaBox">Step 4: Diameter in mm = 0.127 × 92^((36 - n) / 39).</div>
+<div class="formulaBox">Step 5: Area = (π / 4) × diameter². kcmil = 1000 × diameter(in)².</div>
+<div class="formulaBox">Step 6: Resistance per 1000 feet and resistance per kilometer are calculated from resistivity and conductor area using the original JavaScript logic.</div>
+</section>
 
 </div>
 
@@ -338,44 +226,60 @@ const m=[
 {r:1.00e-5,c:1.000e5}
 ];
 
-document.getElementById("mat").onchange=function(){
-let i=this.selectedIndex, r=document.getElementById("res");
-if(i<=0){r.value="";return}
-r.value=m[i-1].r.toExponential(3);
-};
-
-document.getElementById("btn").onclick=function(){
-let n=document.getElementById("awg").value.trim(),
-r=parseFloat(document.getElementById("res").value),
-o=["din","dmm","rft","amil","rm","ain","amm"].map(x=>document.getElementById(x));
-
-if(n==="6/0"||n==="000000")n=-5;
-else if(n==="5/0"||n==="00000")n=-4;
-else if(n==="4/0"||n==="0000")n=-3;
-else if(n==="3/0"||n==="000")n=-2;
-else if(n==="2/0"||n==="00")n=-1;
-else n=parseFloat(n);
-
-if(isNaN(n)||isNaN(r)){
-o.forEach(x=>x.innerText="Enter values");
-return;
+function clearResults(){
+  ["din","dmm","rft","amil","rm","ain","amm"].forEach(function(id){
+    document.getElementById(id).innerText="";
+  });
+  document.getElementById("errorBox").style.display="none";
 }
 
-let din=0.005*Math.pow(92,((36-n)/39)),
-dmm=0.127*Math.pow(92,((36-n)/39)),
-amil=1000*din*din,
-ain=Math.PI/4*din*din,
-amm=Math.PI/4*dmm*dmm,
-rft=0.3048e9*r/(25.4*25.4*ain),
-rm=1e9*r/amm;
+function setResistivity(){
+  let i=document.getElementById("mat").selectedIndex;
+  let r=document.getElementById("res");
+  if(i<=0){r.value="";return}
+  r.value=m[i-1].r.toExponential(3);
+}
 
-o[0].innerText=din.toFixed(4);
-o[1].innerText=dmm.toFixed(4);
-o[2].innerText=rft.toFixed(4);
-o[3].innerText=amil.toFixed(4);
-o[4].innerText=rm.toFixed(4);
-o[5].innerText=ain.toFixed(4);
-o[6].innerText=amm.toFixed(4);
+document.getElementById("btn").onclick=function(){
+  let n=document.getElementById("awg").value.trim(),
+      r=parseFloat(document.getElementById("res").value),
+      o=["din","dmm","rft","amil","rm","ain","amm"].map(function(x){return document.getElementById(x);});
+
+  if(n==="" || isNaN(r)){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  if(n==="6/0"||n==="000000")n=-5;
+  else if(n==="5/0"||n==="00000")n=-4;
+  else if(n==="4/0"||n==="0000")n=-3;
+  else if(n==="3/0"||n==="000")n=-2;
+  else if(n==="2/0"||n==="00")n=-1;
+  else n=parseFloat(n);
+
+  if(isNaN(n)){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  let din=0.005*Math.pow(92,((36-n)/39)),
+      dmm=0.127*Math.pow(92,((36-n)/39)),
+      amil=1000*din*din,
+      ain=Math.PI/4*din*din,
+      amm=Math.PI/4*dmm*dmm,
+      rft=0.3048e9*r/(25.4*25.4*ain),
+      rm=1e9*r/amm;
+
+  document.getElementById("errorBox").style.display="none";
+  o[0].innerText=din.toFixed(4);
+  o[1].innerText=dmm.toFixed(4);
+  o[2].innerText=rft.toFixed(4);
+  o[3].innerText=amil.toFixed(4);
+  o[4].innerText=rm.toFixed(4);
+  o[5].innerText=ain.toFixed(4);
+  o[6].innerText=amm.toFixed(4);
 };
 </script>
 
