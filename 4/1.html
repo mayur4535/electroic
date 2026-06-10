@@ -2,277 +2,237 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Parallel Wire Inductance Calculator</title>
+<meta name="description" content="Calculate parallel wire inductance from wire diameter, center spacing, wire length, and relative permeability.">
+<meta name="keywords" content="parallel wire inductance calculator, wire inductance calculator, two wire inductance, transmission line inductance calculator, RF wire inductance">
 <style>
-#parallel-wire-calc,
-#parallel-wire-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  background:#f6f8fb;
-  padding:10px;
-}
-
-#parallel-wire-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  background:transparent;
-  padding:0;
-  border:none;
-  border-radius:0;
-}
-
-#parallel-wire-calc .ej-form{
-  display:grid;
-  gap:15px;
-}
-
-#parallel-wire-calc .ej-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
-
-#parallel-wire-calc .ej-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#parallel-wire-calc input,
-#parallel-wire-calc select{
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fff;
-  color:#111827;
-  font-size:15px;
-  outline:none;
-}
-
-#parallel-wire-calc input{
-  width:100%;
-  min-width:0;
-  padding:0 12px;
-}
-
-#parallel-wire-calc select{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  padding:0 8px;
-}
-
-#parallel-wire-calc input:focus,
-#parallel-wire-calc select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#parallel-wire-calc button{
-  width:100%;
-  height:45px;
-  margin-top:24px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#parallel-wire-calc .result-title{
-  margin-top:30px;
-  margin-bottom:14px;
-  font-size:14px;
-  font-weight:800;
-  color:#a7afbd;
-  letter-spacing:.5px;
-}
-
-#parallel-wire-calc .result-card{
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-  border-radius:9px;
-  padding:15px;
-}
-
-#parallel-wire-calc .result-label{
-  font-size:13px;
-  font-weight:900;
-  color:#2563eb;
-  text-transform:uppercase;
-  margin-bottom:8px;
-}
-
-#parallel-wire-calc .result-value{
-  font-size:17px;
-  font-weight:900;
-  color:#059669;
-}
-
-#parallel-wire-calc .formula{
-  margin-top:18px;
-  padding:14px;
-  border-radius:9px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-  line-height:1.6;
-  color:#667085;
-}
-
+#parallel-wire-calc,#parallel-wire-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#parallel-wire-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
+.result-label{font-size:11px;font-weight:900;color:#2359e8;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;color:#2359e8;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
 @media(max-width:600px){
-  body{
-    padding:0;
-  }
-
-  #parallel-wire-calc .ej-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #parallel-wire-calc select{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:15px;
-    padding:0 6px;
-  }
-
-  #parallel-wire-calc input{
-    font-size:15px;
-    padding:0 10px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
-
 <body>
 
 <div id="parallel-wire-calc">
 
-  <div class="ej-form">
-
-    <div>
-      <label class="ej-label">Wire Diameter (D)</label>
-      <div class="ej-row">
-        <input type="number" id="diameter" placeholder="12">
-        <select id="diameterUnit">
-          <option value="0.001">mm</option>
-          <option value="0.01">cm</option>
-          <option value="1">m</option>
-        </select>
-      </div>
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Wire Diameter (D)</label>
+    <div class="calc-row">
+      <input type="number" id="diameter" placeholder="12" oninput="clearResults()">
+      <select id="diameterUnit" onchange="clearResults()">
+        <option value="0.001">mm</option>
+        <option value="0.01">cm</option>
+        <option value="1">m</option>
+      </select>
     </div>
-
-    <div>
-      <label class="ej-label">Center Spacing (S)</label>
-      <div class="ej-row">
-        <input type="number" id="spacing" placeholder="12">
-        <select id="spacingUnit">
-          <option value="0.001">mm</option>
-          <option value="0.01">cm</option>
-          <option value="1">m</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="ej-label">Wire Length (l)</label>
-      <div class="ej-row">
-        <input type="number" id="length" placeholder="12">
-        <select id="lengthUnit">
-          <option value="0.001">mm</option>
-          <option value="0.01">cm</option>
-          <option value="1" selected>m</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="ej-label">Relative Permeability (μr)</label>
-      <div class="ej-row">
-        <input type="number" id="ur" value="1">
-        <select disabled>
-          <option>-</option>
-        </select>
-      </div>
-    </div>
-
   </div>
 
-  <button onclick="calculate()">Calculate</button>
+  <div>
+    <label class="calc-label">Center Spacing (S)</label>
+    <div class="calc-row">
+      <input type="number" id="spacing" placeholder="12" oninput="clearResults()">
+      <select id="spacingUnit" onchange="clearResults()">
+        <option value="0.001">mm</option>
+        <option value="0.01">cm</option>
+        <option value="1">m</option>
+      </select>
+    </div>
+  </div>
 
-  <div class="result-title">RESULTS</div>
+  <div>
+    <label class="calc-label">Wire Length (L)</label>
+    <div class="calc-row">
+      <input type="number" id="length" placeholder="12" oninput="clearResults()">
+      <select id="lengthUnit" onchange="clearResults()">
+        <option value="0.001">mm</option>
+        <option value="0.01">cm</option>
+        <option value="1" selected>m</option>
+      </select>
+    </div>
+  </div>
 
+  <div>
+    <label class="calc-label">Relative Permeability (μr)</label>
+    <div class="calc-row">
+      <input type="number" id="ur" value="1" oninput="clearResults()">
+      <select disabled><option>-</option></select>
+    </div>
+  </div>
+</div>
+
+<button onclick="calculate()">CALCULATE</button>
+
+<div id="errorBox">Please enter all values. Spacing must be greater than diameter.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
   <div class="result-card">
     <div class="result-label">Inductance</div>
-    <div class="result-value" id="result">-</div>
+    <div class="result-value" id="result"></div>
   </div>
+</div>
 
-  <div class="formula">
-    Formula: L = (μ₀ × μr × l / π) × acosh(S / D)
-  </div>
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Wire Diameter D</strong>Diameter of each parallel wire.</div>
+  <div class="paramItem"><strong>Center Spacing S</strong>Center-to-center distance between both wires.</div>
+  <div class="paramItem"><strong>Wire Length L</strong>Length of the parallel wire pair.</div>
+  <div class="paramItem"><strong>Relative Permeability μr</strong>Use 1 for air or normal non-magnetic material.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Two-Wire Line</strong></p><p>Estimate inductance of parallel conductors in RF and power circuits.</p></div>
+  <div class="exampleCard"><p><strong>Spacing Effect</strong></p><p>Increasing spacing increases inductance; larger wire diameter reduces it.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Parallel wire inductance depends on conductor diameter, center spacing, length, and magnetic permeability.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Parallel wire inductance diagram">
+<rect width="520" height="320" fill="#ffffff"/>
+
+<style>
+.pwWire{fill:lightgreen;stroke:#111827;stroke-width:3;stroke-linejoin:round}
+.pwSide{fill:#d1d5db;stroke:#111827;stroke-width:3;stroke-linejoin:round}
+.pwArrow{stroke:#111827;stroke-width:2.4;fill:none;marker-start:url(#pwArrStart);marker-end:url(#pwArrEnd)}
+.pwTick{stroke:#111827;stroke-width:2.3;fill:none;stroke-linecap:round}
+.pwTxt{font-family:Arial,sans-serif;font-size:27px;font-weight:900;fill:#111827}
+.pwSmall{font-family:Arial,sans-serif;font-size:16px;font-weight:800;fill:#111827}
+</style>
+
+<defs>
+<marker id="pwArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="pwArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+</defs>
+
+<!-- left wire -->
+<path d="M70 210 L255 35
+C270 20,292 22,303 36
+C314 50,311 70,297 84
+L112 258 Z" class="pwWire"/>
+<ellipse cx="88" cy="236" rx="37" ry="32" class="pwWire"/>
+
+<!-- right wire -->
+<path d="M205 210 L390 35
+C405 20,427 22,438 36
+C449 50,446 70,432 84
+L247 258 Z" class="pwWire"/>
+<ellipse cx="223" cy="236" rx="37" ry="32" class="pwWire"/>
+
+<!-- D dimension -->
+<line x1="51" y1="286" x2="125" y2="286" class="pwArrow"/>
+<line x1="51" y1="250" x2="51" y2="302" class="pwTick"/>
+<line x1="125" y1="250" x2="125" y2="302" class="pwTick"/>
+<text x="73" y="316" class="pwTxt">D</text>
+
+<!-- S dimension -->
+<line x1="88" y1="236" x2="223" y2="236" class="pwArrow"/>
+<line x1="88" y1="218" x2="88" y2="252" class="pwTick"/>
+<line x1="223" y1="218" x2="223" y2="252" class="pwTick"/>
+<text x="148" y="272" class="pwTxt">S</text>
+
+<!-- L dimension -->
+<line x1="265" y1="275" x2="466" y2="80" class="pwArrow"/>
+
+<text x="380" y="195" class="pwTxt">L</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Formula: L = (μ0 × μr × l / π) × acosh(S / D)</div>
+<div class="formula">acosh(x) = log(x + sqrt(x² - 1))</div>
+<div class="formula">μ0 = 4 × π × 10^-7 H/m</div>
+</section>
 
 </div>
 
 <script>
+function clearResults(){
+  document.getElementById("result").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
 function calculate(){
+  let D=parseFloat(document.getElementById("diameter").value);
+  let S=parseFloat(document.getElementById("spacing").value);
+  let l=parseFloat(document.getElementById("length").value);
+  let ur=parseFloat(document.getElementById("ur").value);
 
-  let D = parseFloat(document.getElementById("diameter").value);
-  let S = parseFloat(document.getElementById("spacing").value);
-  let l = parseFloat(document.getElementById("length").value);
-  let ur = parseFloat(document.getElementById("ur").value);
+  let DUnit=parseFloat(document.getElementById("diameterUnit").value);
+  let SUnit=parseFloat(document.getElementById("spacingUnit").value);
+  let lUnit=parseFloat(document.getElementById("lengthUnit").value);
 
-  let DUnit = parseFloat(document.getElementById("diameterUnit").value);
-  let SUnit = parseFloat(document.getElementById("spacingUnit").value);
-  let lUnit = parseFloat(document.getElementById("lengthUnit").value);
-
-  if(isNaN(D) || isNaN(S) || isNaN(l) || isNaN(ur)){
-    alert("Enter all values");
+  if(isNaN(D)||isNaN(S)||isNaN(l)||isNaN(ur)){
+    document.getElementById("errorBox").style.display="block";
     return;
   }
 
-  D *= DUnit;
-  S *= SUnit;
-  l *= lUnit;
+  D*=DUnit;
+  S*=SUnit;
+  l*=lUnit;
 
-  if(S <= D){
-    alert("Spacing must be greater than diameter");
+  if(S<=D){
+    document.getElementById("errorBox").style.display="block";
     return;
   }
 
-  const mu0 = 4 * Math.PI * 1e-7;
-
-  let x = S / D;
-  let acosh = Math.log(x + Math.sqrt(x*x - 1));
-
-  let L = (mu0 * ur * l / Math.PI) * acosh;
+  const mu0=4*Math.PI*1e-7;
+  let x=S/D;
+  let acosh=Math.log(x+Math.sqrt(x*x-1));
+  let L=(mu0*ur*l/Math.PI)*acosh;
 
   let output;
+  if(L<1e-6){output=(L*1e9).toFixed(4)+" nH";}
+  else if(L<1e-3){output=(L*1e6).toFixed(4)+" µH";}
+  else if(L<1){output=(L*1e3).toFixed(4)+" mH";}
+  else{output=L.toFixed(6)+" H";}
 
-  if(L < 1e-6){
-    output = (L * 1e9).toFixed(4) + " nH";
-  }else if(L < 1e-3){
-    output = (L * 1e6).toFixed(4) + " µH";
-  }else if(L < 1){
-    output = (L * 1e3).toFixed(4) + " mH";
-  }else{
-    output = L.toFixed(6) + " H";
-  }
-
-  document.getElementById("result").innerText = output;
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("result").innerText=output;
 }
 </script>
 
