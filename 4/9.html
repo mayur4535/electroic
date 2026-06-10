@@ -2,241 +2,220 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Treble Cutoff Frequency Fc of Cable Calculator</title>
+<meta name="description" content="Calculate cable treble cutoff frequency Fc from capacitance per meter, cable length, and source impedance for audio signal loss.">
+<meta name="keywords" content="treble cutoff frequency calculator, cable cutoff frequency calculator, audio cable capacitance calculator, guitar cable treble loss calculator, cable Fc calculator, RC cable low pass calculator, source impedance cable capacitance calculator, cable treble attenuation calculator">
 <style>
-#cutoff-frequency-calc,
-#cutoff-frequency-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  background:#f6f8fb;
-  padding:10px;
-}
-
-#cutoff-frequency-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-  background:transparent;
-  border:none;
-  border-radius:0;
-}
-
-#cutoff-frequency-calc .calc-grid{
-  display:grid;
-  gap:15px;
-}
-
-#cutoff-frequency-calc .calc-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
-
-#cutoff-frequency-calc .calc-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#cutoff-frequency-calc input{
-  width:100%;
-  min-width:0;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  color:#111827;
-  background:#fff;
-  outline:none;
-}
-
-#cutoff-frequency-calc .unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fafafa;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  font-weight:700;
-  color:#111827;
-}
-
-#cutoff-frequency-calc input:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#cutoff-frequency-calc button{
-  width:100%;
-  height:45px;
-  margin-top:24px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#cutoff-frequency-calc .result-title{
-  margin-top:30px;
-  margin-bottom:14px;
-  font-size:14px;
-  font-weight:800;
-  color:#a7afbd;
-  letter-spacing:.5px;
-}
-
-#cutoff-frequency-calc .result-card{
-  min-height:64px;
-  padding:14px;
-  border-radius:9px;
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#cutoff-frequency-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:7px;
-  color:#2563eb;
-}
-
-#cutoff-frequency-calc .result-value{
-  font-size:16px;
-  font-weight:900;
-  color:#059669;
-  word-break:break-word;
-}
-
-#cutoff-frequency-calc .formula{
-  margin-top:18px;
-  padding:14px;
-  border-radius:9px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+#cutoff-frequency-calc,#cutoff-frequency-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#cutoff-frequency-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#374151}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
 @media(max-width:600px){
-
-  body{
-    padding:0;
-  }
-
-  #cutoff-frequency-calc{
-    padding-top:12px;
-  }
-
-  #cutoff-frequency-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #cutoff-frequency-calc input{
-    font-size:15px;
-    padding:0 10px;
-  }
-
-  #cutoff-frequency-calc .unit-box{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:15px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="cutoff-frequency-calc">
 
-  <div class="calc-grid">
-
-    <div>
-      <label class="calc-label">Capacitance per meter</label>
-      <div class="calc-row">
-        <input type="number" id="c">
-        <div class="unit-box">pF/m</div>
-      </div>
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Capacitance per meter</label>
+    <div class="calc-row">
+      <input type="number" id="c" oninput="clearResults()">
+      <div class="unitBox">pF/m</div>
     </div>
-
-    <div>
-      <label class="calc-label">Cable Length</label>
-      <div class="calc-row">
-        <input type="number" id="d">
-        <div class="unit-box">m</div>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">Source Impedance</label>
-      <div class="calc-row">
-        <input type="number" id="r">
-        <div class="unit-box">Ω</div>
-      </div>
-    </div>
-
   </div>
 
-  <button id="btn">Calculate</button>
+  <div>
+    <label class="calc-label">Cable Length</label>
+    <div class="calc-row">
+      <input type="number" id="d" oninput="clearResults()">
+      <div class="unitBox">m</div>
+    </div>
+  </div>
 
-  <div class="result-title">RESULTS</div>
+  <div>
+    <label class="calc-label">Source Impedance</label>
+    <div class="calc-row">
+      <input type="number" id="r" oninput="clearResults()">
+      <div class="unitBox">Ω</div>
+    </div>
+  </div>
+</div>
 
+<button id="btn" type="button">CALCULATE</button>
+
+<div id="errorBox">Please enter all required numeric values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
   <div class="result-card">
     <div class="result-label">Cutoff Frequency</div>
-    <div class="result-value"><span id="o">-</span> Hz</div>
+    <div class="result-value"><span id="o"></span> Hz</div>
   </div>
+</div>
 
-  <div class="formula">
-    f = 1 / (2π × R × C × D)
-  </div>
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Capacitance per meter</strong>Cable capacitance rating in pF/m used for audio cable treble cutoff frequency calculation.</div>
+  <div class="paramItem"><strong>Cable Length</strong>Total cable length in meters, increasing the total cable capacitance.</div>
+  <div class="paramItem"><strong>Source Impedance</strong>Source resistance or output impedance in ohms that forms the RC low-pass response.</div>
+  <div class="paramItem"><strong>Cutoff Frequency Fc</strong>Calculated 3 dB treble cutoff point where high-frequency response starts dropping.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>Audio Cable Treble Loss</strong></p><p>Estimate cutoff frequency for guitar cables, preamp outputs, pedal cables, and long audio leads.</p></div>
+  <div class="exampleCard"><p><strong>Cable Capacitance Comparison</strong></p><p>Compare low-capacitance and high-capacitance cables to reduce treble attenuation and signal dullness.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>A real cable has capacitance along its length. With source impedance, this cable capacitance creates a low-pass filter that reduces treble above the cutoff frequency.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Treble cutoff frequency response diagram">
+<rect width="620" height="360" fill="#ffffff"/>
+
+<style>
+.axis{stroke:#111827;stroke-width:2.2;fill:none;stroke-linecap:round}
+.response{stroke:#2563eb;stroke-width:2.5;fill:none;stroke-linecap:round}
+.dash{stroke:#111827;stroke-width:1.4;stroke-dasharray:5 4;fill:none}
+.arrow{stroke:#9ca3af;stroke-width:2;fill:none;marker-start:url(#arrStart);marker-end:url(#arrEnd)}
+.redArrow{stroke:#ef4444;stroke-width:2;fill:none;marker-end:url(#redArr)}
+.txt{font-family:Arial,sans-serif;font-size:16px;font-weight:700;fill:#111827}
+.small{font-family:Arial,sans-serif;font-size:13px;font-weight:700;fill:#6b7280}
+</style>
+
+<defs>
+<marker id="arrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#9ca3af"/>
+</marker>
+<marker id="arrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#9ca3af"/>
+</marker>
+<marker id="redArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#ef4444"/>
+</marker>
+</defs>
+
+<!-- axes -->
+<line x1="80" y1="285" x2="555" y2="285" class="axis"/>
+<line x1="80" y1="55" x2="80" y2="285" class="axis"/>
+
+<!-- labels -->
+<text x="420" y="300" class="small">Frequency</text>
+<text x="-70" y="50" class="small" transform="rotate(-90 28 60)">R e s p o n s e</text>
+
+<text x="35" y="92" class="txt">0 dB</text>
+<text x="28" y="144" class="txt">-3 dB</text>
+
+<!-- horizontal dashed levels -->
+<line x1="80" y1="95" x2="350" y2="95" class="dash"/>
+<line x1="80" y1="145" x2="490" y2="145" class="dash"/>
+
+<!-- cutoff vertical dashed -->
+<line x1="455" y1="95" x2="455" y2="285" class="dash"/>
+
+<!-- response curve -->
+<path d="
+M125 95
+H375
+C410 95 435 105 450 135
+C468 170 490 215 535 260
+" class="response"/>
+
+<!-- 3dB arrow -->
+<line x1="330" y1="100" x2="330" y2="140" class="arrow"/>
+<text x="345" y="126" class="txt">3dB</text>
+
+<!-- cutoff frequency curved arrow -->
+<path d="M390 205 C425 205 440 240 452 278" class="redArrow"/>
+<text x="340" y="205" class="small">Cut-off</text>
+<text x="330" y="224" class="small">frequency</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Step 1: Read source impedance R in ohms, cable capacitance C in pF/m, and cable length D in meters.</div>
+<div class="formulaBox">Step 2: Convert capacitance from pF/m to F/m by multiplying C by 10^-12.</div>
+<div class="formulaBox">Step 3: Total cable capacitance effect is C × 10^-12 × D.</div>
+<div class="formulaBox">Step 4: Fc = 1 / (2 × 3.141592654 × R × C × 10^-12 × D).</div>
+<div class="formulaBox">Step 5: Display cutoff frequency rounded to the nearest Hz, preserving the original calculation logic.</div>
+</section>
 
 </div>
 
 <script>
+function clearResults(){
+  document.getElementById("o").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
+
+function hasMissingOrInvalidRequired(ids){
+  for(let i=0;i<ids.length;i++){
+    const el=document.getElementById(ids[i]);
+    const value=el.value.trim();
+    if(value==="" || isNaN(Number(value))){
+      return true;
+    }
+  }
+  return false;
+}
+
 document.getElementById("btn").onclick=function(){
+  if(hasMissingOrInvalidRequired(["r","c","d"])){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-let R=parseFloat(document.getElementById("r").value),
-C=parseFloat(document.getElementById("c").value),
-D=parseFloat(document.getElementById("d").value),
-o=document.getElementById("o");
+  let R=parseFloat(document.getElementById("r").value),
+      C=parseFloat(document.getElementById("c").value),
+      D=parseFloat(document.getElementById("d").value),
+      o=document.getElementById("o");
 
-if(isNaN(R)||isNaN(C)||isNaN(D)){
-o.innerText="Enter values";
-return;
-}
+  let F=1/(2*3.141592654*R*C*1e-12*D);
 
-if(R<=0||C<=0||D<=0){
-o.innerText="Invalid";
-return;
-}
-
-let F = 1/(2*3.141592654*R*C*1e-12*D);
-
-o.innerText=Math.round(F);
+  document.getElementById("errorBox").style.display="none";
+  o.innerText=Math.round(F);
 }
 </script>
 
