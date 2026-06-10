@@ -2,317 +2,224 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Twisted-Pair Impedance Calculator</title>
+<meta name="description" content="Calculate twisted-pair impedance, delay, inductance and capacitance from wire diameter, spacing and dielectric constant.">
+<meta name="keywords" content="twisted pair impedance calculator, twisted pair cable calculator, wire impedance calculator, cable delay calculator, capacitance inductance calculator">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-
-body{
-  background:#f6f8fb;
-  padding:10px;
-  color:#1f2937;
-}
-
-.box{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  background:transparent;
-  padding:0;
-  border:none;
-  box-shadow:none;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:15px;
-}
-
-.label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
-
-.row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-.row input,
-.row select,
-.unit-box{
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  color:#111827;
-  background:#fff;
-  outline:none;
-}
-
-.row input{
-  width:100%;
-  min-width:0;
-}
-
-.row select,
-.unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  padding:0 8px;
-}
-
-.unit-box{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  background:#fafafa;
-}
-
-.row input:focus,
-.row select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-button{
-  width:100%;
-  height:45px;
-  margin-top:24px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-.result-title{
-  margin-top:30px;
-  margin-bottom:14px;
-  font-size:14px;
-  font-weight:800;
-  color:#a7afbd;
-  letter-spacing:.5px;
-}
-
-.result{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.result-card{
-  min-height:64px;
-  padding:14px;
-  border-radius:9px;
-}
-
-.result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:7px;
-}
-
-.result-value{
-  font-size:15px;
-  font-weight:900;
-  word-break:break-word;
-}
-
-.blue{
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-.blue .result-label,.blue .result-value{color:#2563eb}
-
-.green{
-  background:#ecfdf5;
-  border:1px solid #bbf7d0;
-}
-.green .result-label,.green .result-value{color:#059669}
-
-.purple{
-  background:#f5f3ff;
-  border:1px solid #ddd6fe;
-}
-.purple .result-label,.purple .result-value{color:#7c3aed}
-
-.orange{
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-}
-.orange .result-label,.orange .result-value{color:#ea580c}
-
-.formula{
-  margin-top:18px;
-  padding:14px;
-  border-radius:9px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+#twisted-pair-calc,#twisted-pair-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#twisted-pair-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
+.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
+.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-card:nth-child(3) .result-label,.result-card:nth-child(3) .result-value{color:#7c3aed}
+.result-card:nth-child(4) .result-label,.result-card:nth-child(4) .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
 @media(max-width:600px){
-  body{
-    padding:0;
-  }
-
-  .row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  .row input{
-    font-size:15px;
-    padding:0 10px;
-  }
-
-  .row select,
-  .unit-box{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:15px;
-    padding:0 6px;
-  }
-
-  .result{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  .result-card{
-    padding:12px 10px;
-  }
-
-  .result-value{
-    font-size:14px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
-
 <body>
 
-<div class="box">
+<div id="twisted-pair-calc">
 
-  <div class="grid">
-
-    <div>
-      <div class="label">Wire Diameter</div>
-      <div class="row">
-        <input type="number" id="a">
-        <select id="b">
-          <option value="0.001">mil</option>
-          <option value="0.03937008">mm</option>
-          <option value="0.3937008">cm</option>
-          <option value="0.00003937008">um</option>
-          <option value="1">inch</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <div class="label">Spacing</div>
-      <div class="row">
-        <input type="number" id="c">
-        <select id="d">
-          <option value="0.001">mil</option>
-          <option value="0.03937008">mm</option>
-          <option value="0.3937008">cm</option>
-          <option value="0.00003937008">um</option>
-          <option value="1">inch</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <div class="label">Dielectric (εr)</div>
-      <div class="row">
-        <input type="number" id="e" value="1">
-        <div class="unit-box">-</div>
-      </div>
-    </div>
-
-  </div>
-
-  <button onclick="q()">Calculate</button>
-
-  <div class="result-title">RESULTS</div>
-
-  <div class="result">
-    <div class="result-card blue">
-      <div class="result-label">Zo</div>
-      <div class="result-value"><span id="r1">-</span> Ω</div>
-    </div>
-
-    <div class="result-card green">
-      <div class="result-label">Delay</div>
-      <div class="result-value"><span id="r2">-</span> ns/in</div>
-    </div>
-
-    <div class="result-card purple">
-      <div class="result-label">Inductance</div>
-      <div class="result-value"><span id="r3">-</span> nH/in</div>
-    </div>
-
-    <div class="result-card orange">
-      <div class="result-label">Capacitance</div>
-      <div class="result-value"><span id="r4">-</span> pF/in</div>
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Wire Diameter</label>
+    <div class="calc-row">
+      <input type="number" id="a" oninput="clearResults()">
+      <select id="b" onchange="clearResults()">
+        <option value="0.001">mil</option>
+        <option value="0.03937008">mm</option>
+        <option value="0.3937008">cm</option>
+        <option value="0.00003937008">µm</option>
+        <option value="1">inch</option>
+      </select>
     </div>
   </div>
 
-  <div class="formula">
-    Zo = (120 / √εr) × ln(2S / D)<br>
-    Delay = 84.72 × 10⁻³ × √εr<br>
-    L = 10.16 × ln(2S / D)<br>
-    C = (0.7065 × εr) / ln(2S / D)
+  <div>
+    <label class="calc-label">Spacing</label>
+    <div class="calc-row">
+      <input type="number" id="c" oninput="clearResults()">
+      <select id="d" onchange="clearResults()">
+        <option value="0.001">mil</option>
+        <option value="0.03937008">mm</option>
+        <option value="0.3937008">cm</option>
+        <option value="0.00003937008">µm</option>
+        <option value="1">inch</option>
+      </select>
+    </div>
   </div>
+
+  <div>
+    <label class="calc-label">Dielectric Constant εr</label>
+    <div class="calc-row">
+      <input type="number" id="e" value="1" oninput="clearResults()">
+      <div class="unitBox">-</div>
+    </div>
+  </div>
+</div>
+
+<button onclick="q()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required numeric values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card"><div class="result-label">Zo</div><div class="result-value"><span id="r1"></span> Ω</div></div>
+  <div class="result-card"><div class="result-label">Delay</div><div class="result-value"><span id="r2"></span> ns/in</div></div>
+  <div class="result-card"><div class="result-label">Inductance</div><div class="result-value"><span id="r3"></span> nH/in</div></div>
+  <div class="result-card"><div class="result-label">Capacitance</div><div class="result-value"><span id="r4"></span> pF/in</div></div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Wire Diameter D</strong>Diameter of each conductor in the twisted pair.</div>
+  <div class="paramItem"><strong>Spacing S</strong>Center-to-center spacing between the two conductors.</div>
+  <div class="paramItem"><strong>Dielectric εr</strong>Insulation dielectric constant around the pair.</div>
+  <div class="paramItem"><strong>Outputs</strong>Zo, delay, inductance and capacitance per inch.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>A twisted pair is made from two insulated conductors. Impedance depends mainly on conductor spacing, wire diameter and dielectric material.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 390" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Twisted pair cross section diagram">
+<rect width="620" height="390" fill="#ffffff"/>
+
+<style>
+.tpTitle{font-family:Arial,sans-serif;font-size:48px;font-weight:900;fill:#000}
+.tpOuter{fill:#ffffff;stroke:#111;stroke-width:2.4}
+.tpCore{fill:LIGHTGREEN;stroke:#111;stroke-width:2}
+.tpArrow{stroke:#111;stroke-width:2.4;fill:none;marker-start:url(#tpArrStart);marker-end:url(#tpArrEnd)}
+.tpLine{stroke:#111;stroke-width:2.4;fill:none;stroke-linecap:round}
+.tpTxt{font-family:Arial,sans-serif;font-size:34px;font-weight:900;fill:#000;font-style:italic}
+</style>
+
+<defs>
+<marker id="tpArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111"/>
+</marker>
+<marker id="tpArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111"/>
+</marker>
+</defs>
+
+<!-- title -->
+<text x="310" y="58" text-anchor="middle" class="tpTitle">Twisted Pair</text>
+
+<!-- two wire cross sections -->
+<circle cx="227" cy="185" r="78" class="tpOuter"/>
+<circle cx="385" cy="185" r="78" class="tpOuter"/>
+
+<!-- inner conductors -->
+<circle cx="227" cy="185" r="45" class="tpCore"/>
+<circle cx="385" cy="185" r="45" class="tpCore"/>
+
+<!-- D vertical measurement -->
+<line x1="90" y1="140" x2="90" y2="230" class="tpArrow"/>
+<line x1="78" y1="140" x2="220" y2="140" class="tpLine"/>
+<line x1="78" y1="230" x2="220" y2="230" class="tpLine"/>
+<text x="50" y="197" class="tpTxt">D</text>
+
+<!-- S center spacing measurement -->
+<line x1="223" y1="320" x2="385" y2="320" class="tpArrow"/>
+<line x1="224" y1="268" x2="224" y2="335" class="tpLine"/>
+<line x1="385" y1="268" x2="385" y2="335" class="tpLine"/>
+<text x="300" y="305" text-anchor="middle" class="tpTxt">S</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Zo = (120 / sqrt(εr)) × ln(2S / D)</div>
+<div class="formula">Delay = 84.72 × 10^-3 × sqrt(εr)</div>
+<div class="formula">Inductance = 10.16 × ln(2S / D)</div>
+<div class="formula">Capacitance = (0.7065 × εr) / ln(2S / D)</div>
+</section>
 
 </div>
 
 <script>
-function q(){
-  let x=parseFloat(a.value),
-      y=parseFloat(c.value),
-      z=parseFloat(e.value),
-      u=parseFloat(b.value),
-      v=parseFloat(d.value);
+function clearResults(){
+  document.getElementById("r1").innerText="";
+  document.getElementById("r2").innerText="";
+  document.getElementById("r3").innerText="";
+  document.getElementById("r4").innerText="";
+  document.getElementById("errorBox").style.display="none";
+}
 
-  if(isNaN(x)||isNaN(y)||isNaN(z))return alert("Enter all values");
+function hasMissingOrInvalidRequired(ids){
+  for(let i=0;i<ids.length;i++){
+    const el=document.getElementById(ids[i]);
+    const value=el.value.trim();
+    if(value==="" || isNaN(Number(value))){
+      return true;
+    }
+  }
+  return false;
+}
+
+function q(){
+  if(hasMissingOrInvalidRequired(["a","c","e"])){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  let x=parseFloat(document.getElementById("a").value);
+  let y=parseFloat(document.getElementById("c").value);
+  let z=parseFloat(document.getElementById("e").value);
+  let u=parseFloat(document.getElementById("b").value);
+  let v=parseFloat(document.getElementById("d").value);
 
   x*=u;
   y*=v;
 
-  if(x<=0||y<=0||z<=0)return alert("Invalid value");
-
   let n=2*y/x;
-
-  if(n<=1)return alert("Spacing must be greater than diameter");
-
   let m=Math.log(n);
 
-  r1.innerText=(120/Math.sqrt(z)*m).toFixed(3);
-  r2.innerText=(.08472*Math.sqrt(z)).toFixed(3);
-  r3.innerText=(10.16*m).toFixed(3);
-  r4.innerText=(.7065*z/m).toFixed(3);
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("r1").innerText=(120/Math.sqrt(z)*m).toFixed(3);
+  document.getElementById("r2").innerText=(.08472*Math.sqrt(z)).toFixed(3);
+  document.getElementById("r3").innerText=(10.16*m).toFixed(3);
+  document.getElementById("r4").innerText=(.7065*z/m).toFixed(3);
 }
 </script>
 
