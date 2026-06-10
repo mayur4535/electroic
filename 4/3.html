@@ -2,274 +2,227 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wire Loop Inductance Calculator</title>
+<meta name="description" content="Calculate wire loop inductance from wire diameter, loop diameter and relative permeability.">
+<meta name="keywords" content="wire loop inductance calculator, loop inductance calculator, circular wire loop inductance, RF loop calculator, coil loop inductance">
 <style>
-#loop-inductance-calc,
-#loop-inductance-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  background:#f6f8fb;
-  padding:10px;
-}
-
-#loop-inductance-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-  background:transparent;
-  border:none;
-  border-radius:0;
-}
-
-#loop-inductance-calc .ej-form{
-  display:grid;
-  gap:15px;
-}
-
-#loop-inductance-calc .ej-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
-
-#loop-inductance-calc .ej-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#loop-inductance-calc input,
-#loop-inductance-calc select,
-#loop-inductance-calc .unit-box{
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fff;
-  color:#111827;
-  font-size:15px;
-  outline:none;
-}
-
-#loop-inductance-calc input{
-  width:100%;
-  min-width:0;
-  padding:0 12px;
-}
-
-#loop-inductance-calc select,
-#loop-inductance-calc .unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  padding:0 8px;
-}
-
-#loop-inductance-calc .unit-box{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  background:#fafafa;
-}
-
-#loop-inductance-calc input:focus,
-#loop-inductance-calc select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#loop-inductance-calc button{
-  width:100%;
-  height:45px;
-  margin-top:24px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#loop-inductance-calc .result-title{
-  margin-top:30px;
-  margin-bottom:14px;
-  font-size:14px;
-  font-weight:800;
-  color:#a7afbd;
-  letter-spacing:.5px;
-}
-
-#loop-inductance-calc .result{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:12px;
-}
-
-#loop-inductance-calc .result-card{
-  min-height:64px;
-  padding:14px;
-  border-radius:9px;
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#loop-inductance-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:7px;
-  color:#2563eb;
-}
-
-#loop-inductance-calc .result-value{
-  font-size:16px;
-  font-weight:900;
-  color:#059669;
-  word-break:break-word;
-}
-
-#loop-inductance-calc .formula{
-  margin-top:18px;
-  padding:14px;
-  border-radius:9px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
+#loop-inductance-calc,#loop-inductance-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#loop-inductance-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
 @media(max-width:600px){
-  body{
-    padding:0;
-  }
-
-  #loop-inductance-calc{
-    padding-top:12px;
-  }
-
-  #loop-inductance-calc .ej-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #loop-inductance-calc select,
-  #loop-inductance-calc .unit-box{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:15px;
-    padding:0 6px;
-  }
-
-  #loop-inductance-calc input{
-    font-size:15px;
-    padding:0 10px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
-
 <body>
 
 <div id="loop-inductance-calc">
 
-  <div class="ej-form">
-
-    <div>
-      <label class="ej-label">Wire Diameter (d)</label>
-      <div class="ej-row">
-        <input type="number" id="a">
-        <select id="b">
-          <option value="0.0000254">mil</option>
-          <option value="0.001" selected>mm</option>
-          <option value="0.01">cm</option>
-          <option value="0.000001">um</option>
-          <option value="0.0254">inch</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="ej-label">Loop Diameter (D)</label>
-      <div class="ej-row">
-        <input type="number" id="c">
-        <select id="d">
-          <option value="0.0000254">mil</option>
-          <option value="0.001" selected>mm</option>
-          <option value="0.01">cm</option>
-          <option value="0.000001">um</option>
-          <option value="0.0254">inch</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="ej-label">Relative Permeability (μr)</label>
-      <div class="ej-row">
-        <input type="number" id="e" value="1">
-        <div class="unit-box">-</div>
-      </div>
-    </div>
-
-  </div>
-
-  <button id="btn">Calculate</button>
-
-  <div class="result-title">RESULTS</div>
-
-  <div class="result">
-    <div class="result-card">
-      <div class="result-label">Inductance</div>
-      <div class="result-value"><span id="o">-</span> H</div>
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Wire Diameter (d)</label>
+    <div class="calc-row">
+      <input type="number" id="a" oninput="clearResults()">
+      <select id="b" onchange="clearResults()">
+        <option value="0.0000254">mil</option>
+        <option value="0.001" selected>mm</option>
+        <option value="0.01">cm</option>
+        <option value="0.000001">µm</option>
+        <option value="0.0254">inch</option>
+      </select>
     </div>
   </div>
 
-  <div class="formula">
-    L = μ₀ μr (D / 2) [ ln(8D / d) − 2 ]
+  <div>
+    <label class="calc-label">Loop Diameter (D)</label>
+    <div class="calc-row">
+      <input type="number" id="c" oninput="clearResults()">
+      <select id="d" onchange="clearResults()">
+        <option value="0.0000254">mil</option>
+        <option value="0.001" selected>mm</option>
+        <option value="0.01">cm</option>
+        <option value="0.000001">µm</option>
+        <option value="0.0254">inch</option>
+      </select>
+    </div>
   </div>
+
+  <div>
+    <label class="calc-label">Relative Permeability (μr)</label>
+    <div class="calc-row">
+      <input type="number" id="e" value="1" oninput="clearResults()">
+      <div class="unitBox">-</div>
+    </div>
+  </div>
+</div>
+
+<button id="btn" onclick="calculateLoopInductance()">CALCULATE</button>
+
+<div id="errorBox">Please enter all required numeric values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card">
+    <div class="result-label">Inductance</div>
+    <div class="result-value" id="o"></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Wire Diameter d</strong>Diameter of the round wire used to form the loop.</div>
+  <div class="paramItem"><strong>Loop Diameter D</strong>Main circular loop diameter measured across the loop center.</div>
+  <div class="paramItem"><strong>Relative Permeability μr</strong>Use 1 for air or normal non-magnetic material.</div>
+  <div class="paramItem"><strong>Output</strong>Calculated loop inductance in henries.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard"><p><strong>RF Loop Design</strong></p><p>Estimate inductance of circular wire loops for antennas and RF circuits.</p></div>
+  <div class="exampleCard"><p><strong>Coil Prototype</strong></p><p>Change loop diameter or wire diameter to see how inductance changes.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>A circular wire loop inductance depends on the main loop diameter, the wire thickness, and the magnetic permeability of the surrounding material.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wire loop inductance diagram">
+<rect width="620" height="360" fill="#ffffff"/>
+
+<style>
+.wlWire{fill:none;stroke:lightgreen;stroke-width:44;stroke-linecap:round;stroke-linejoin:round}
+.wlOutline{fill:none;stroke:#111827;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.wlArrow{stroke:#111827;stroke-width:2.3;fill:none;marker-start:url(#wlArrStart);marker-end:url(#wlArrEnd)}
+.wlTick{stroke:#111827;stroke-width:2.2;fill:none;stroke-linecap:round}
+.wlTxt{font-family:Arial,sans-serif;font-size:24px;font-weight:900;fill:#111827}
+.wlSmall{font-family:Arial,sans-serif;font-size:18px;font-weight:800;fill:#111827}
+</style>
+
+<defs>
+<marker id="wlArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="wlArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+<path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
+</marker>
+</defs>
+
+<!-- perfect circular loop -->
+<circle cx="260" cy="180" r="115" class="wlWire"/>
+<circle cx="260" cy="180" r="137" class="wlOutline"/>
+<circle cx="260" cy="180" r="93" class="wlOutline"/>
+
+<!-- upper tail -->
+<path d="M365 160 H475" class="wlWire"/>
+<path d="M365 160 H475" class="wlOutline"/>
+
+<!-- lower tail -->
+<path d="M365 210 H475" class="wlWire"/>
+<path d="M365 210 H475" class="wlOutline"/>
+
+<!-- perfect center opening -->
+<rect x="350" y="179" width="50" height="12" fill="#ffffff"/>
+
+<!-- wire ends -->
+<circle cx="475" cy="160" r="22" fill="lightgreen" stroke="#111827" stroke-width="2.5"/>
+<circle cx="475" cy="210" r="22" fill="lightgreen" stroke="#111827" stroke-width="2.5"/>
+
+<!-- D vertical arrow -->
+<line x1="260" y1="88" x2="260" y2="272" class="wlArrow"/>
+
+<text x="270" y="188" class="wlTxt">D</text>
+
+<!-- d wire thickness arrow -->
+<line x1="122" y1="180" x2="166" y2="180" class="wlArrow"/>
+
+<text x="138" y="170" class="wlSmall">d</text>
+
+<!-- small internal arrow -->
+
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">L = μ0 × μr × (D / 2) × [ ln(8D / d) - 2 ]</div>
+<div class="formula">μ0 = 4 × π × 10^-7 H/m</div>
+<div class="formula">D = loop diameter, d = wire diameter, μr = relative permeability.</div>
+</section>
 
 </div>
 
 <script>
-document.getElementById("btn").onclick=function(){
-
-let d=parseFloat(document.getElementById("a").value),
-D=parseFloat(document.getElementById("c").value),
-ur=parseFloat(document.getElementById("e").value),
-du=parseFloat(document.getElementById("b").value),
-Du=parseFloat(document.getElementById("d").value);
-
-if(isNaN(d)||isNaN(D)||isNaN(ur)){
-document.getElementById("o").innerText="Enter values";
-return;
+function clearResults(){
+  document.getElementById("o").innerText="";
+  document.getElementById("errorBox").style.display="none";
 }
 
-d*=du;
-D*=Du;
-
-if(d<=0||D<=0||ur<=0){
-document.getElementById("o").innerText="Invalid";
-return;
+function hasMissingOrInvalidRequired(ids){
+  for(let i=0;i<ids.length;i++){
+    const el=document.getElementById(ids[i]);
+    const value=el.value.trim();
+    if(value==="" || isNaN(Number(value))){
+      return true;
+    }
+  }
+  return false;
 }
 
-let mu0=4*Math.PI*1e-7;
-let L=mu0*ur*(D/2)*(Math.log((8*D)/d)-2);
+function calculateLoopInductance(){
+  if(hasMissingOrInvalidRequired(["a","c","e"])){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-document.getElementById("o").innerText=L.toExponential(3);
+  let wireDiameter=parseFloat(document.getElementById("a").value);
+  let loopDiameter=parseFloat(document.getElementById("c").value);
+  let ur=parseFloat(document.getElementById("e").value);
+  let wireUnit=parseFloat(document.getElementById("b").value);
+  let loopUnit=parseFloat(document.getElementById("d").value);
 
+  wireDiameter*=wireUnit;
+  loopDiameter*=loopUnit;
+
+  let mu0=4*Math.PI*1e-7;
+  let L=mu0*ur*(loopDiameter/2)*(Math.log((8*loopDiameter)/wireDiameter)-2);
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("o").innerText=L.toExponential(3)+" H";
 }
 </script>
 
