@@ -2,128 +2,366 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Capacitor Charge and Time Constant Calculator | CalcBoy</title>
+<meta name="description" content="Calculate capacitor stored energy and RC time constant from voltage, capacitance and series resistance using CalcBoy.">
+<meta name="keywords" content="capacitor charge time constant calculator, RC time constant calculator, capacitor energy calculator, capacitor charging calculator, capacitor discharge calculator, capacitance resistance time calculator, CalcBoy">
 <style>
-#capacitor-energy-calc,*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f4f7fb;padding:10px}
-#capacitor-energy-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
-.calc-grid{display:grid;gap:12px}
-.calc-label{display:block;font-size:13px;font-weight:700;color:#344054;margin-bottom:6px}
+#capacitor-energy-calc,#capacitor-energy-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#capacitor-energy-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
-input,select,.unit-box{
-  width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;
-  padding:0 10px;font-size:14px;background:#fff;text-align:center;outline:none;
-}
+input,select,.unit-box{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:14px;background:#fff;text-align:center;outline:none;color:#111827}
 input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-.unit-box{display:flex;align-items:center;justify-content:center;font-weight:900;color:#111827}
+.unit-box{display:flex;align-items:center;justify-content:center;font-weight:900}
 .unit-select{width:82px;min-width:82px;font-size:12px;font-weight:800}
-button{
-  width:100%;height:45px;margin-top:22px;border:0;border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);color:#fff;
-  font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 7px 16px rgba(255,91,0,.22)
-}
+button{width:100%;height:45px;margin-top:22px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:14px;font-weight:900;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
 .result-title{margin-top:26px;margin-bottom:12px;font-size:13px;font-weight:900;color:#98a2b3;letter-spacing:.8px}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.result-card{padding:13px;border-radius:8px}
-.blue{background:#eef5ff;border:1px solid #bcd7ff}
-.green{background:#ecfdf5;border:1px solid #a7f3d0}
+.result-card{padding:13px;border-radius:8px;min-height:64px}
+.blue{background:#eef5ff;border:1px solid #bcd7ff}.green{background:#ecfdf5;border:1px solid #a7f3d0}.purple{background:#f5f3ff;border:1px solid #ddd6fe}.orange{background:#fff7ed;border:1px solid #fed7aa}
 .result-label{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:8px}
-.blue .result-label,.blue .result-value{color:#2563eb}
-.green .result-label,.green .result-value{color:#059669}
-.result-value{font-size:15px;font-weight:900}
-.formula-box{margin-top:14px;padding:14px;border-radius:9px;border:1px solid #e5e7eb;background:#f9fafb;color:#4b5563;font-size:13px;font-weight:700;line-height:1.6}
-
+.blue .result-label,.blue .result-value{color:#2563eb}.green .result-label,.green .result-value{color:#059669}.purple .result-label,.purple .result-value{color:#7c3aed}.orange .result-label,.orange .result-value{color:#ea580c}
+.result-value{font-size:15px;font-weight:900;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.paramGrid,.exampleGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.richAbout{margin-top:16px}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutLead p{margin:0;color:#475467}
+.aboutMiniGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.aboutMiniCard{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px;font-size:12px;font-weight:700;color:#475467;line-height:1.55}
+.aboutMiniCard span{display:block;color:#ea580c;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.aboutFaq{border-top:1px solid #edf2f7;padding-top:10px;margin-top:12px}
+.aboutFaq h3{margin:10px 0 6px;font-size:14px;color:#0f172a}
+.aboutFaq p{margin:0 0 10px}
 @media(max-width:600px){
-  body{padding:0}
-  .calc-row{grid-template-columns:minmax(0,1fr) 72px;gap:7px}
-  .unit-select,.unit-box{width:72px;min-width:72px;font-size:12px}
-  .result-grid{grid-template-columns:1fr 1fr}
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px;gap:7px}
+.unit-select,.unit-box{width:72px;min-width:72px;font-size:12px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
-
 <div id="capacitor-energy-calc">
 <form id="tool">
 
-  <div class="calc-grid">
+<div class="calc-grid">
+<div>
+<label class="calc-label">VIN</label>
+<div class="calc-row">
+<input id="Vc" type="number" step="any" oninput="clearResults()">
+<div class="unit-box">V</div>
+</div>
+</div>
 
-    <div>
-      <label class="calc-label">VIN</label>
-      <div class="calc-row">
-        <input id="Vc" type="number" step="any">
-        <div class="unit-box">V</div>
-      </div>
-    </div>
+<div>
+<label class="calc-label">Capacitance</label>
+<div class="calc-row">
+<input id="C" type="number" step="any" oninput="clearResults()">
+<select id="Cunit" class="unit-select" onchange="clearResults()">
+<option value="1e-6" selected>µF</option>
+<option value="1e-9">nF</option>
+<option value="1e-12">pF</option>
+<option value="1e-3">mF</option>
+<option value="1">F</option>
+</select>
+</div>
+</div>
 
-    <div>
-      <label class="calc-label">Capacitance</label>
-      <div class="calc-row">
-        <input id="C" type="number" step="any">
-        <select id="Cunit" class="unit-select">
-          <option value="1e-6" selected>µF</option>
-          <option value="1e-9">nF</option>
-          <option value="1e-12">pF</option>
-          <option value="1e-3">mF</option>
-          <option value="1">F</option>
-        </select>
-      </div>
-    </div>
+<div>
+<label class="calc-label">Resistance Series</label>
+<div class="calc-row">
+<input id="R" type="number" step="any" oninput="clearResults()">
+<select id="Runit" class="unit-select" onchange="clearResults()">
+<option value="1" selected>Ω</option>
+<option value="1000">kΩ</option>
+<option value="1000000">MΩ</option>
+</select>
+</div>
+</div>
+</div>
 
-    <div>
-      <label class="calc-label">Resistance (Series)</label>
-      <div class="calc-row">
-        <input id="R" type="number" step="any">
-        <select id="Runit" class="unit-select">
-          <option value="1" selected>Ω</option>
-          <option value="1000">kΩ</option>
-          <option value="1000000">MΩ</option>
-        </select>
-      </div>
-    </div>
+<button type="button" id="tool_submit">CALCULATE</button>
 
-  </div>
+<div id="errorBox">Please enter all required numeric values.</div>
 
-  <button type="button" id="tool_submit">Calculate</button>
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+<div class="result-card blue"><div class="result-label">Energy</div><div class="result-value"><span id="energyOut"></span> J</div></div>
+<div class="result-card green"><div class="result-label">Time Constant</div><div class="result-value"><span id="timeOut"></span> Sec</div></div>
+</div>
 
-  <div class="result-title">RESULTS</div>
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>VIN</strong>Charging voltage applied to the capacitor in volts.</div>
+<div class="paramItem"><strong>Capacitance</strong>Capacitor value with selectable µF, nF, pF, mF or F units.</div>
+<div class="paramItem"><strong>Series Resistance</strong>Resistance in the charging path, selected in Ω, kΩ or MΩ.</div>
+<div class="paramItem"><strong>Energy</strong>Stored capacitor energy after charging to the entered voltage.</div>
+<div class="paramItem"><strong>Time Constant</strong>RC time constant showing how quickly the capacitor charges or discharges.</div>
+<div class="paramItem"><strong>Use Case</strong>RC timing, capacitor charging, delay circuits, filters and energy storage checks.</div>
+</div>
+</section>
 
-  <div class="result-grid">
-    <div class="result-card blue">
-      <div class="result-label">Energy</div>
-      <div class="result-value"><span id="energyOut">-</span> J</div>
-    </div>
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>RC Delay Circuit</strong></p><p>Estimate how long a capacitor takes to charge through a resistor in timing and reset circuits.</p></div>
+<div class="exampleCard"><p><strong>Energy Storage Check</strong></p><p>Calculate stored energy for capacitors used in pulse, backup and smoothing applications.</p></div>
+</div>
+</section>
 
-    <div class="result-card green">
-      <div class="result-label">Time Constant</div>
-      <div class="result-value"><span id="timeOut">-</span> Sec</div>
-    </div>
-  </div>
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>This custom SVG recreates the capacitor charging curve with voltage rising toward 100% and current falling toward zero over five time constants.</p>
 
-  <div class="formula-box">
-    Energy = 0.5 × C × V²<br>
-    Time Constant = R × C
-  </div>
+<div class="diagramBox">
+<svg viewBox="0 0 760 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Capacitor charging curve diagram">
+<rect width="760" height="430" fill="#ffffff"/>
+<style>
+.rcAxis{stroke:#111827;stroke-width:2.2;fill:none;marker-end:url(#rcArr)}
+.rcGrid{stroke:#cbd5e1;stroke-width:1}
+.rcV{stroke:#2563eb;stroke-width:3;fill:none}
+.rcI{stroke:#dc2626;stroke-width:3;fill:none}
+.rcTau{stroke:#ef4444;stroke-width:2}
+.rcTxt{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#111827}
+.rcSmall{font-family:Arial,sans-serif;font-size:13px;font-weight:800;fill:#334155}
+.rcBlue{fill:#2563eb}
+.rcRed{fill:#dc2626}
+</style>
+<defs>
+<marker id="rcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+</defs>
+
+
+
+<line x1="85" y1="350" x2="700" y2="350" class="rcAxis"/>
+<line x1="85" y1="350" x2="85" y2="60" class="rcAxis"/>
+
+<!-- grid and percent marks -->
+<g>
+<line x1="85" y1="321" x2="675" y2="321" class="rcGrid"/>
+<line x1="85" y1="292" x2="675" y2="292" class="rcGrid"/>
+<line x1="85" y1="263" x2="675" y2="263" class="rcGrid"/>
+<line x1="85" y1="234" x2="675" y2="234" class="rcGrid"/>
+<line x1="85" y1="205" x2="675" y2="205" class="rcGrid"/>
+<line x1="85" y1="176" x2="675" y2="176" class="rcGrid"/>
+<line x1="85" y1="147" x2="675" y2="147" class="rcGrid"/>
+<line x1="85" y1="118" x2="675" y2="118" class="rcGrid"/>
+<line x1="85" y1="89" x2="675" y2="89" class="rcGrid"/>
+</g>
+
+<g class="rcSmall">
+<text x="30" y="325">10%</text>
+<text x="30" y="296">20%</text>
+<text x="30" y="267">30%</text>
+<text x="30" y="238">40%</text>
+<text x="30" y="209">50%</text>
+<text x="30" y="180">60%</text>
+<text x="30" y="151">70%</text>
+<text x="30" y="122">80%</text>
+<text x="30" y="93">90%</text>
+<text x="20" y="73">100%</text>
+</g>
+
+<!-- tau vertical lines -->
+<line x1="200" y1="70" x2="200" y2="350" class="rcTau"/>
+<line x1="315" y1="70" x2="315" y2="350" class="rcTau"/>
+<line x1="430" y1="70" x2="430" y2="350" class="rcTau"/>
+<line x1="545" y1="70" x2="545" y2="350" class="rcTau"/>
+<line x1="660" y1="70" x2="660" y2="350" class="rcTau"/>
+
+<!-- charging voltage curve -->
+<path d="M85 350 C125 240 165 175 200 145 C245 105 280 90 315 82 C360 72 400 68 430 66 C475 64 515 63 545 62 C590 61 630 61 660 60" class="rcV"/>
+
+<!-- current decay curve -->
+<path d="M85 70 C125 145 165 205 200 235 C245 275 280 300 315 315 C360 333 400 342 430 346 C475 350 515 351 545 351 C590 352 630 352 660 352" class="rcI"/>
+
+<!-- labels -->
+<text x="200" y="378" text-anchor="middle" class="rcSmall rcRed">1τ</text>
+<text x="315" y="378" text-anchor="middle" class="rcSmall rcRed">2τ</text>
+<text x="430" y="378" text-anchor="middle" class="rcSmall rcRed">3τ</text>
+<text x="545" y="378" text-anchor="middle" class="rcSmall rcRed">4τ</text>
+<text x="660" y="378" text-anchor="middle" class="rcSmall rcRed">5τ</text>
+
+<text x="220" y="138" class="rcSmall rcBlue">63%</text>
+<text x="325" y="90" class="rcSmall rcBlue">86%</text>
+<text x="440" y="80" class="rcSmall rcBlue">95%</text>
+<text x="552" y="75" class="rcSmall rcBlue">98%</text>
+<text x="666" y="68" class="rcSmall rcBlue">99%</text>
+
+<text x="575" y="56" class="rcSmall rcBlue">Voltage</text>
+<text x="575" y="312" class="rcSmall rcRed">Current</text>
+<text x="380" y="410" text-anchor="middle" class="rcSmall">Charging curve for a capacitor</text>
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Energy = 0.5 × C × V². This calculates stored energy in joules.</div>
+<div class="formulaBox">Time Constant = R × C. This gives the RC time constant in seconds.</div>
+<div class="formulaBox">At 1τ, capacitor voltage reaches about 63% of final voltage.</div>
+<div class="formulaBox">At 5τ, capacitor voltage reaches about 99% of final voltage.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example values: VIN = 12 V, capacitance = 1000 µF, resistance = 10 kΩ.</div>
+<div class="formulaBox">Convert capacitance: 1000 µF = 0.001 F.</div>
+<div class="formulaBox">Convert resistance: 10 kΩ = 10000 Ω.</div>
+<div class="formulaBox">Energy = 0.5 × 0.001 × 12² = 0.072 J.</div>
+<div class="formulaBox">Time Constant = 10000 × 0.001 = 10 seconds.</div>
+<div class="formulaBox">Practical meaning: after about 50 seconds, the capacitor is nearly fully charged.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+<div class="aboutStep">Enter capacitor charging voltage.</div>
+<div class="aboutStep">Enter capacitance and select the correct unit.</div>
+<div class="aboutStep">Enter series resistance and select Ω, kΩ or MΩ.</div>
+<div class="aboutStep">Click Calculate to get stored energy and RC time constant.</div>
+<div class="aboutStep">Use 5 × time constant as a rough full-charge estimate.</div>
+</div>
+</section>
+
+<section class="infoBox richAbout">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate how much energy a capacitor stores and how fast it charges through a resistor.</strong>
+<p>This CalcBoy calculator finds capacitor energy and RC time constant from voltage, capacitance and resistance.</p>
+</div>
+
+<p>The Capacitor Charge and Time Constant Calculator is useful for RC timing circuits, power supply smoothing, soft-start circuits, reset delay networks, filters and capacitor energy storage checks. A capacitor does not charge instantly through a resistor. Instead, voltage rises gradually toward the supply voltage, while charging current starts high and falls toward zero.</p>
+
+<div class="aboutMiniGrid">
+<div class="aboutMiniCard"><span>Best Use</span>RC delay circuits, timing networks, filters, capacitor charging and energy storage.</div>
+<div class="aboutMiniCard"><span>Key Outputs</span>Stored energy in joules and RC time constant in seconds.</div>
+<div class="aboutMiniCard"><span>Design Benefit</span>Quickly compare capacitor size and resistor value before building the circuit.</div>
+<div class="aboutMiniCard"><span>Practical Reminder</span>Real capacitors have tolerance, leakage, ESR and voltage rating limits.</div>
+</div>
+
+<p>The time constant is the product of resistance and capacitance. One time constant means the capacitor reaches about 63% of the supply voltage. After five time constants, it is usually considered almost fully charged. Stored energy depends strongly on voltage because voltage is squared in the energy formula.</p>
+
+<div class="aboutNote">Quick tip: increasing capacitance or resistance increases charging time, but increasing voltage greatly increases stored energy.</div>
+
+<p>For real designs, check capacitor voltage rating, discharge path, inrush current, resistor wattage, leakage current and polarity. Large capacitors can store enough energy to damage components or cause sparks, so always discharge them safely before handling.</p>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<div class="aboutFaq">
+<h3>What is an RC time constant?</h3>
+<p>It is the product of resistance and capacitance, showing how fast a capacitor charges or discharges.</p>
+<h3>How long does a capacitor take to charge?</h3>
+<p>After one time constant it reaches about 63%, and after five time constants it reaches about 99% of the final voltage.</p>
+<h3>What is capacitor energy?</h3>
+<p>Capacitor energy is the electrical energy stored in the electric field between capacitor plates.</p>
+<h3>Why does voltage affect energy so much?</h3>
+<p>Energy uses voltage squared, so doubling voltage increases stored energy by four times.</p>
+<h3>Can I use this for discharge time?</h3>
+<p>Yes. The same RC time constant applies to capacitor discharging through a resistor.</p>
+<h3>Does this include ESR or leakage?</h3>
+<p>No. It uses ideal formulas. Real capacitors may have ESR, leakage and tolerance effects.</p>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+<div class="linkCard"><strong>Capacitance Calculator</strong>Useful for finding capacitance from charge and voltage.</div>
+<div class="linkCard"><strong>Capacitive Reactance Calculator</strong>Helpful for AC capacitor behavior at frequency.</div>
+<div class="linkCard"><strong>RC Filter Calculator</strong>Related tool for resistor-capacitor filter cutoff frequency.</div>
+<div class="linkCard"><strong>Energy Stored in Capacitor Calculator</strong>Useful for detailed capacitor energy checks.</div>
+</div>
+</section>
 
 </form>
 </div>
 
 <script>
-document.getElementById("tool_submit").addEventListener("click", function(){
-  var Precision = 3;
+var outputIds=["energyOut","timeOut"];
 
-  var Vc = Number(document.getElementById("Vc").value);
-  var C = Number(document.getElementById("C").value) * Number(document.getElementById("Cunit").value);
-  var R = Number(document.getElementById("R").value) * Number(document.getElementById("Runit").value);
+function clearResults(){
+  for(var i=0;i<outputIds.length;i++){
+    document.getElementById(outputIds[i]).innerText="";
+  }
+  document.getElementById("errorBox").style.display="none";
+}
 
-  var timeConstant = R * C;
-  var energy = C * Vc * Vc * 0.5;
+document.getElementById("tool_submit").addEventListener("click",function(){
+  var Precision=3;
 
-  document.getElementById("energyOut").innerText = energy.toPrecision(Precision);
-  document.getElementById("timeOut").innerText = timeConstant.toPrecision(Precision);
+  var VcInput=document.getElementById("Vc").value.trim();
+  var CInput=document.getElementById("C").value.trim();
+  var RInput=document.getElementById("R").value.trim();
+
+  if(VcInput==="" || CInput==="" || RInput==="" || isNaN(Number(VcInput)) || isNaN(Number(CInput)) || isNaN(Number(RInput))){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var Vc=Number(VcInput);
+  var C=Number(CInput)*Number(document.getElementById("Cunit").value);
+  var R=Number(RInput)*Number(document.getElementById("Runit").value);
+
+  var timeConstant=R*C;
+  var energy=C*Vc*Vc*0.5;
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("energyOut").innerText=energy.toPrecision(Precision);
+  document.getElementById("timeOut").innerText=timeConstant.toPrecision(Precision);
 });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"What is an RC time constant?","acceptedAnswer":{"@type":"Answer","text":"It is the product of resistance and capacitance, showing how fast a capacitor charges or discharges."}},
+    {"@type":"Question","name":"How long does a capacitor take to charge?","acceptedAnswer":{"@type":"Answer","text":"After one time constant it reaches about 63%, and after five time constants it reaches about 99% of the final voltage."}},
+    {"@type":"Question","name":"What is capacitor energy?","acceptedAnswer":{"@type":"Answer","text":"Capacitor energy is the electrical energy stored in the electric field between capacitor plates."}},
+    {"@type":"Question","name":"Why does voltage affect energy so much?","acceptedAnswer":{"@type":"Answer","text":"Energy uses voltage squared, so doubling voltage increases stored energy by four times."}},
+    {"@type":"Question","name":"Can I use this for discharge time?","acceptedAnswer":{"@type":"Answer","text":"Yes. The same RC time constant applies to capacitor discharging through a resistor."}},
+    {"@type":"Question","name":"Does this include ESR or leakage?","acceptedAnswer":{"@type":"Answer","text":"No. It uses ideal formulas. Real capacitors may have ESR, leakage and tolerance effects."}}
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+    {"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/electronics-calculators/"},
+    {"@type":"ListItem","position":3,"name":"Capacitor Charge and Time Constant Calculator","item":"https://calcboy.com/tool/capacitor-charge-and-time-constant-calculator"}
+  ]
+}
 </script>
 
 </body>
