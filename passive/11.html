@@ -1,6 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wheatstone Bridge Calculator | CalcBoy</title>
+<meta name="description" content="Calculate Wheatstone bridge output voltage, balanced Rx resistance, bridge status and balance error using R1, R2, R3 and Rx.">
+<meta name="keywords" content="Wheatstone bridge calculator, bridge output voltage calculator, balanced bridge calculator, unknown resistance calculator, strain gauge bridge calculator, resistance bridge calculator, Wheatstone bridge formula, CalcBoy">
+
+<style>
+#wheatstone4,#wheatstone4 *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#wheatstone4{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:14px;background:#fff;text-align:center;color:#111827}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12);outline:none}
+.unit-box,select{font-weight:800;color:#111827}
+button{width:100%;height:45px;margin-top:22px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:14px;font-weight:900;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:26px;margin-bottom:12px;font-size:13px;font-weight:900;color:#98a2b3;letter-spacing:.8px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result-card{min-height:64px;padding:13px;border-radius:8px}
+.blue{background:#eef5ff;border:1px solid #bcd7ff;color:#2563eb}
+.green{background:#ecfdf5;border:1px solid #a7f3d0;color:#059669}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe;color:#7c3aed}
+.orange{background:#fff7ed;border:1px solid #fed7aa;color:#ea580c}
+.result-label{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:8px}
+.result-value{font-size:15px;font-weight:900;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.paramGrid,.exampleGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.richAbout{margin-top:16px}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutLead p{margin:0;color:#475467}
+.aboutMiniGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.aboutMiniCard{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px;font-size:12px;font-weight:700;color:#475467;line-height:1.55}
+.aboutMiniCard span{display:block;color:#ea580c;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.aboutFaq{border-top:1px solid #edf2f7;padding-top:10px;margin-top:12px}
+.aboutFaq h3{margin:10px 0 6px;font-size:14px;color:#0f172a}
+.aboutFaq p{margin:0 0 10px}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-card{padding:12px 10px}
+}
+</style>
+</head>
+
+<body>
+<div id="wheatstone4">
+
+<form name="WheatstoneForm">
+
+<div class="calc-grid">
+<div>
+<label class="calc-label">Input Voltage</label>
+<div class="calc-row">
+<input name="Vin" type="number" step="any" oninput="clearResults()">
+<div class="unit-box">V</div>
+</div>
+</div>
+
+<div>
+<label class="calc-label">R1</label>
+<div class="calc-row">
+<input name="R1" type="number" step="any" oninput="clearResults()">
+<select name="R1Unit" onchange="clearResults()">
+<option value="1">Ω</option>
+<option value="1000">kΩ</option>
+<option value="1000000">MΩ</option>
+</select>
+</div>
+</div>
+
+<div>
+<label class="calc-label">R2</label>
+<div class="calc-row">
+<input name="R2" type="number" step="any" oninput="clearResults()">
+<select name="R2Unit" onchange="clearResults()">
+<option value="1">Ω</option>
+<option value="1000">kΩ</option>
+<option value="1000000">MΩ</option>
+</select>
+</div>
+</div>
+
+<div>
+<label class="calc-label">R3</label>
+<div class="calc-row">
+<input name="R3" type="number" step="any" oninput="clearResults()">
+<select name="R3Unit" onchange="clearResults()">
+<option value="1">Ω</option>
+<option value="1000">kΩ</option>
+<option value="1000000">MΩ</option>
+</select>
+</div>
+</div>
+
+<div>
+<label class="calc-label">Rx / R4</label>
+<div class="calc-row">
+<input name="Rx" type="number" step="any" oninput="clearResults()">
+<select name="RxUnit" onchange="clearResults()">
+<option value="1">Ω</option>
+<option value="1000">kΩ</option>
+<option value="1000000">MΩ</option>
+</select>
+</div>
+</div>
+</div>
+
+<button type="button" onclick="calculateBridge(document.WheatstoneForm)">CALCULATE</button>
+
+<div id="errorBox">Please enter all required numeric values.</div>
+
+<div class="result-title">RESULTS</div>
+
+<div class="result-grid">
+<div class="result-card blue">
+<div class="result-label">Bridge Output</div>
+<div class="result-value"><span id="Vout"></span> V</div>
+</div>
+
+<div class="result-card green">
+<div class="result-label">Balanced Rx</div>
+<div class="result-value"><span id="RxBal"></span> Ω</div>
+</div>
+
+<div class="result-card purple">
+<div class="result-label">Bridge Status</div>
+<div class="result-value"><span id="Status"></span></div>
+</div>
+
+<div class="result-card orange">
+<div class="result-label">Balance Error</div>
+<div class="result-value"><span id="Error"></span> V</div>
+</div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>Input Voltage</strong>Bridge supply voltage applied across the top and bottom bridge nodes.</div>
+<div class="paramItem"><strong>R1</strong>Upper-left bridge resistor in ohms, kilo-ohms or mega-ohms.</div>
+<div class="paramItem"><strong>R2</strong>Lower-left bridge resistor used with R1 to create the left divider node.</div>
+<div class="paramItem"><strong>R3</strong>Upper-right bridge resistor used with Rx to create the right divider node.</div>
+<div class="paramItem"><strong>Rx / R4</strong>Unknown or variable bridge resistor on the lower-right arm.</div>
+<div class="paramItem"><strong>Bridge Output</strong>Differential voltage between left and right bridge midpoint nodes.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>Unknown Resistance Measurement</strong></p><p>Find the balanced Rx value when R1, R2 and R3 are known.</p></div>
+<div class="exampleCard"><p><strong>Sensor Bridge</strong></p><p>Check output voltage for strain gauges, thermistors, pressure sensors or variable resistance elements.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>This custom SVG recreates the Wheatstone bridge layout in a copyright-safe colorful style. R1 and R2 form the left divider, R3 and Rx form the right divider, and Vg measures the bridge imbalance.</p>
+
+<section class="infoBox">
+
+
+<div class="diagramBox">
+<svg viewBox="0 0 760 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Correct Wheatstone bridge diagram">
+<rect width="760" height="560" fill="#ffffff"/>
+
+<style>
+.wbWire{stroke:#111827;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wbRes{stroke:#1238ff;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wbRedLine{stroke:#dc2626;stroke-width:5;fill:none;stroke-linecap:round}
+.wbNode{fill:#111827}
+.wbTxt{font-family:Arial,sans-serif;font-size:28px;font-weight:900;fill:#111827}
+.wbSmall{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#334155}
+.wbRedTxt{font-family:Arial,sans-serif;font-size:24px;font-weight:900;fill:#dc2626}
+.wbGreenTxt{font-family:Arial,sans-serif;font-size:28px;font-weight:900;fill:#047857}
+.wbBattery{stroke:#059669;stroke-width:4;stroke-linecap:round}
+.wbArrow{stroke:#111827;stroke-width:2.5;fill:none;marker-end:url(#wbArr)}
+</style>
+
+<defs>
+<marker id="wbArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+</defs>
+
+
+
+<!-- LEFT SUPPLY LOOP - battery ke beech me wire break rakha hai -->
+<path d="M115 95 H380" class="wbWire"/>
+<path d="M115 95 V250" class="wbWire"/>
+<path d="M115 365 V470" class="wbWire"/>
+<path d="M115 470 H380" class="wbWire"/>
+
+<!-- Battery plates, connected in series with left vertical wire -->
+<line x1="85" y1="250" x2="145" y2="250" class="wbBattery"/>
+<line x1="95" y1="275" x2="135" y2="275" class="wbBattery"/>
+<line x1="85" y1="300" x2="145" y2="300" class="wbBattery"/>
+<line x1="95" y1="325" x2="135" y2="325" class="wbBattery"/>
+
+
+<line x1="115" y1="328" x2="115" y2="365" class="wbWire"/>
+
+<text x="42" y="300" class="wbGreenTxt">V<tspan baseline-shift="sub" font-size="18">S</tspan></text>
+<text x="85" y="238" class="wbRedTxt">+</text>
+<text x="95" y="355" class="wbSmall">−</text>
+
+<!-- Bridge nodes -->
+<circle cx="380" cy="95" r="7" class="wbNode"/>
+<circle cx="380" cy="470" r="7" class="wbNode"/>
+<circle cx="200" cy="280" r="7" class="wbNode"/>
+<circle cx="560" cy="280" r="7" class="wbNode"/>
+
+<text x="370" y="84" class="wbRedTxt">A</text>
+<text x="373" y="497" class="wbRedTxt">B</text>
+<text x="165" y="290" class="wbRedTxt">C</text>
+<text x="575" y="290" class="wbRedTxt">D</text>
+
+<!-- R1: A to C -->
+<path d="M380 95 L320 155" class="wbWire"/>
+<path d="M320 155 L304 145 L300 178 L280 162 L276 195 L256 179 L252 212 L236 202" class="wbRes"/>
+<path d="M236 202 L200 280" class="wbWire"/>
+<text x="240" y="160" class="wbTxt">R₁</text>
+
+<!-- R2: C to B -->
+<path d="M200 280 L236 358" class="wbWire"/>
+<path d="M236 358 L252 348 L256 381 L276 365 L280 398 L300 382 L304 415 L320 405" class="wbRes"/>
+<path d="M320 405 L380 470" class="wbWire"/>
+<text x="240" y="420" class="wbTxt">R₂</text>
+
+<!-- R3: A to D -->
+<path d="M380 95 L440 155" class="wbWire"/>
+<path d="M440 155 L456 145 L460 178 L480 162 L484 195 L504 179 L508 212 L524 202" class="wbRes"/>
+<path d="M524 202 L560 280" class="wbWire"/>
+<text x="500" y="160" class="wbTxt">R₃</text>
+
+<!-- Rx: D to B -->
+<path d="M560 280 L524 358" class="wbWire"/>
+<path d="M524 358 L508 348 L504 381 L484 365 L480 398 L460 382 L456 415 L440 405" class="wbRes"/>
+<path d="M440 405 L380 470" class="wbWire"/>
+<text x="510" y="420" class="wbTxt">Rₓ</text>
+
+<!-- Center Vg line -->
+<line x1="200" y1="280" x2="315" y2="280" class="wbRedLine"/>
+<line x1="445" y1="280" x2="560" y2="280" class="wbRedLine"/>
+<circle cx="380" cy="280" r="43" fill="#ffffff" stroke="#dc2626" stroke-width="6"/>
+<text x="380" y="290" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" font-weight="900" fill="#dc2626">Vg</text>
+<text x="340" y="342" class="wbSmall">Vc − Vd</text>
+
+<!-- Current arrows - reference jaisa clean -->
+<path d="M318 185 L284 225" class="wbArrow"/>
+<text x="315" y="215" class="wbSmall">i₁</text>
+
+<path d="M286 330 L320 370" class="wbArrow"/>
+<text x="315" y="340" class="wbSmall">i₁</text>
+
+
+<path d="M416 165 L560 190" class="wbArrow"/>
+<path d="M442 185 L476 225" class="wbArrow"/>
+<text x="435" y="215" class="wbSmall">i₂</text>
+
+<path d="M474 330 L440 370" class="wbArrow"/>
+<text x="435" y="340" class="wbSmall">i₂</text>
+
+<!-- Notes -->
+<text x="500" y="455" class="wbSmall">R1 & R2 = Fixed Resistors</text>
+<text x="500" y="480" class="wbSmall">R3 = Variable Resistor</text>
+<text x="500" y="505" class="wbSmall">Rx = Unknown Value</text>
+
+</svg>
+</div>
+</section>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Bridge output: Vout = Vin × (Rx / (R3 + Rx) - R2 / (R1 + R2)). This calculates the voltage difference between the two bridge midpoint nodes.</div>
+<div class="formulaBox">Balanced unknown resistance: Rx = R2 × R3 / R1. This is the Rx value that makes the bridge output approximately zero.</div>
+<div class="formulaBox">Bridge status: if the absolute output voltage is very close to zero, the calculator marks the bridge as balanced.</div>
+<div class="formulaBox">Balance error: Error = absolute value of Vout. This shows how far the bridge is from balance in volts.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example values: Vin = 5 V, R1 = 1 kΩ, R2 = 2 kΩ, R3 = 1 kΩ, Rx = 2 kΩ.</div>
+<div class="formulaBox">Left divider ratio: R2 / (R1 + R2) = 2000 / (1000 + 2000) = 0.6667.</div>
+<div class="formulaBox">Right divider ratio: Rx / (R3 + Rx) = 2000 / (1000 + 2000) = 0.6667.</div>
+<div class="formulaBox">Vout = 5 × (0.6667 - 0.6667) = 0 V.</div>
+<div class="formulaBox">Balanced Rx = R2 × R3 / R1 = 2000 × 1000 / 1000 = 2000 Ω.</div>
+<div class="formulaBox">Practical meaning: when the bridge is balanced, the detector voltage becomes zero and Rx matches the ratio condition.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+<div class="aboutStep">Enter the bridge supply voltage.</div>
+<div class="aboutStep">Enter R1, R2, R3 and Rx values with the correct units.</div>
+<div class="aboutStep">Click Calculate to get bridge output voltage and balanced Rx value.</div>
+<div class="aboutStep">Check the bridge status to see whether it is balanced or unbalanced.</div>
+<div class="aboutStep">Use balance error to estimate how far the bridge is from null condition.</div>
+</div>
+</section>
+
+<section class="infoBox richAbout">
+<h2>About This Calculator</h2>
+
+<div class="aboutLead">
+<strong>Find bridge output voltage and the unknown resistor value for a Wheatstone bridge.</strong>
+<p>This CalcBoy calculator helps analyze balanced and unbalanced Wheatstone bridge circuits using R1, R2, R3, Rx and input voltage.</p>
+</div>
+
+<p>A Wheatstone bridge is one of the most useful resistor networks for measuring unknown resistance and detecting very small resistance changes. It uses two voltage divider branches connected across the same supply. The bridge output is measured between the middle nodes of the two dividers. When the ratios are equal, the output voltage becomes zero and the bridge is balanced.</p>
+
+<div class="aboutMiniGrid">
+<div class="aboutMiniCard"><span>Best Use</span>Unknown resistance measurement, strain gauges, sensor bridges and precision resistor comparison.</div>
+<div class="aboutMiniCard"><span>Key Outputs</span>Bridge output voltage, balanced Rx value, bridge status and balance error.</div>
+<div class="aboutMiniCard"><span>Design Benefit</span>Quickly compare resistor ratios and predict whether the bridge is balanced.</div>
+<div class="aboutMiniCard"><span>Practical Reminder</span>Real circuits also depend on resistor tolerance, wiring resistance and detector input impedance.</div>
+</div>
+
+<p>This calculator is helpful for electronics students, sensor designers, instrumentation circuits and troubleshooting. Wheatstone bridges are commonly used with strain gauges, load cells, pressure sensors, thermistors and resistance transducers. A tiny resistance change can create a small differential output voltage, which is often amplified by an instrumentation amplifier.</p>
+
+<div class="aboutNote">Quick tip: use precision resistors and stable excitation voltage when measuring very small bridge output signals.</div>
+
+<p>For practical bridge circuits, also consider temperature drift, self-heating, resistor matching, amplifier offset, input bias current, lead resistance and noise. The calculator gives the ideal bridge output and balance point, then real hardware should be verified with measurement and calibration.</p>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<div class="aboutFaq">
+<h3>What is a Wheatstone bridge?</h3>
+<p>It is a four-resistor bridge circuit used to measure unknown resistance or detect small resistance changes.</p>
+
+<h3>When is a Wheatstone bridge balanced?</h3>
+<p>The bridge is balanced when the midpoint voltages are equal and bridge output voltage is approximately zero.</p>
+
+<h3>How is unknown Rx calculated?</h3>
+<p>For balance, Rx = R2 × R3 / R1.</p>
+
+<h3>Can this be used for strain gauges?</h3>
+<p>Yes. Wheatstone bridges are commonly used in strain gauge, load cell and pressure sensor circuits.</p>
+
+<h3>Why is bridge output sometimes negative?</h3>
+<p>A negative output means the right midpoint voltage is lower than the left midpoint voltage according to the selected formula sign.</p>
+
+<h3>Does this include amplifier gain?</h3>
+<p>No. This calculator gives raw bridge output voltage before any instrumentation amplifier gain.</p>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+<div class="linkCard"><strong>Voltage Divider Calculator</strong>Helpful for understanding each bridge branch divider ratio.</div>
+<div class="linkCard"><strong>Parallel Resistor Calculator</strong>Useful for equivalent resistance network checks.</div>
+<div class="linkCard"><strong>Instrumentation Amplifier Calculator</strong>Related tool for amplifying small bridge output voltages.</div>
+<div class="linkCard"><strong>Ohm’s Law Calculator</strong>Useful for voltage, current and resistance calculations.</div>
+</div>
+</section>
+
+</form>
+</div>
+
 <script>
 function getR(value, unit){
   return Number(value) * Number(unit);
+}
+
+var outputIds=["Vout","RxBal","Status","Error"];
+
+function clearResults(){
+  for(var i=0;i<outputIds.length;i++){
+    document.getElementById(outputIds[i]).innerText="";
+  }
+  document.getElementById("errorBox").style.display="none";
 }
 
 function calculateBridge(form){
@@ -12,17 +403,16 @@ function calculateBridge(form){
   var R3 = getR(form.R3.value, form.R3Unit.value);
   var Rx = getR(form.Rx.value, form.RxUnit.value);
 
-  if(!Vin || !R1 || !R2 || !R3 || !Rx){
-    document.getElementById("Vout").innerText = "Enter values";
-    document.getElementById("RxBal").innerText = "Enter values";
-    document.getElementById("Status").innerText = "Enter values";
-    document.getElementById("Error").innerText = "Enter values";
+  if(form.Vin.value.trim()==="" || form.R1.value.trim()==="" || form.R2.value.trim()==="" || form.R3.value.trim()==="" || form.Rx.value.trim()==="" || isNaN(Vin) || isNaN(R1) || isNaN(R2) || isNaN(R3) || isNaN(Rx)){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
     return;
   }
 
   var Vout = Vin * ((Rx / (R3 + Rx)) - (R2 / (R1 + R2)));
   var RxBalanced = (R2 * R3) / R1;
 
+  document.getElementById("errorBox").style.display="none";
   document.getElementById("Vout").innerText = Vout.toPrecision(Precision);
   document.getElementById("RxBal").innerText = RxBalanced.toPrecision(Precision);
   document.getElementById("Status").innerText = Math.abs(Vout) < 0.000001 ? "Balanced" : "Unbalanced";
@@ -30,121 +420,32 @@ function calculateBridge(form){
 }
 </script>
 
-<style>
-#wheatstone4,*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f4f7fb;padding:10px}
-#wheatstone4{width:100%;max-width:620px;margin:auto;padding-top:14px}
-.calc-grid{display:grid;gap:12px}
-.calc-label{display:block;font-size:13px;font-weight:700;color:#344054;margin-bottom:6px}
-.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px}
-input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:14px;background:#fff;text-align:center}
-input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12);outline:none}
-.unit-box,select{font-weight:800;color:#111827}
-button{width:100%;height:45px;margin-top:22px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff3d00);color:#fff;font-size:14px;font-weight:900;cursor:pointer}
-.result-title{margin-top:26px;margin-bottom:12px;font-size:13px;font-weight:900;color:#98a2b3;letter-spacing:.8px}
-.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.result-card{min-height:64px;padding:13px;border-radius:8px}
-.blue{background:#eef5ff;border:1px solid #bcd7ff;color:#2563eb}
-.green{background:#ecfdf5;border:1px solid #a7f3d0;color:#059669}
-.purple{background:#f5f3ff;border:1px solid #ddd6fe;color:#7c3aed}
-.orange{background:#fff7ed;border:1px solid #fed7aa;color:#ea580c}
-.result-label{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:8px}
-.result-value{font-size:15px;font-weight:900}
-.formula-box{margin-top:14px;padding:14px;border-radius:9px;border:1px solid #e5e7eb;background:#f9fafb;color:#4b5563;font-size:13px;font-weight:700;line-height:1.6}
-@media(max-width:600px){body{padding:0}.calc-row{grid-template-columns:minmax(0,1fr) 72px}.result-grid{grid-template-columns:1fr 1fr}}
-</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"What is a Wheatstone bridge?","acceptedAnswer":{"@type":"Answer","text":"It is a four-resistor bridge circuit used to measure unknown resistance or detect small resistance changes."}},
+    {"@type":"Question","name":"When is a Wheatstone bridge balanced?","acceptedAnswer":{"@type":"Answer","text":"The bridge is balanced when the midpoint voltages are equal and bridge output voltage is approximately zero."}},
+    {"@type":"Question","name":"How is unknown Rx calculated?","acceptedAnswer":{"@type":"Answer","text":"For balance, Rx = R2 × R3 / R1."}},
+    {"@type":"Question","name":"Can this be used for strain gauges?","acceptedAnswer":{"@type":"Answer","text":"Yes. Wheatstone bridges are commonly used in strain gauge, load cell and pressure sensor circuits."}},
+    {"@type":"Question","name":"Why is bridge output sometimes negative?","acceptedAnswer":{"@type":"Answer","text":"A negative output means the right midpoint voltage is lower than the left midpoint voltage according to the selected formula sign."}},
+    {"@type":"Question","name":"Does this include amplifier gain?","acceptedAnswer":{"@type":"Answer","text":"No. This calculator gives raw bridge output voltage before any instrumentation amplifier gain."}}
+  ]
+}
+</script>
 
-<div id="wheatstone4">
-<form name="WheatstoneForm">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+    {"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/electronics-calculators/"},
+    {"@type":"ListItem","position":3,"name":"Wheatstone Bridge Calculator","item":"https://calcboy.com/tool/wheatstone-bridge-calculator"}
+  ]
+}
+</script>
 
-  <div class="calc-grid">
-    <div>
-      <label class="calc-label">Input Voltage</label>
-      <div class="calc-row">
-        <input name="Vin" type="number" step="any">
-        <div class="unit-box">V</div>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">R1</label>
-      <div class="calc-row">
-        <input name="R1" type="number" step="any">
-        <select name="R1Unit">
-          <option value="1">Ω</option>
-          <option value="1000">kΩ</option>
-          <option value="1000000">MΩ</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">R2</label>
-      <div class="calc-row">
-        <input name="R2" type="number" step="any">
-        <select name="R2Unit">
-          <option value="1">Ω</option>
-          <option value="1000">kΩ</option>
-          <option value="1000000">MΩ</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">R3</label>
-      <div class="calc-row">
-        <input name="R3" type="number" step="any">
-        <select name="R3Unit">
-          <option value="1">Ω</option>
-          <option value="1000">kΩ</option>
-          <option value="1000000">MΩ</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">Rx / R4</label>
-      <div class="calc-row">
-        <input name="Rx" type="number" step="any">
-        <select name="RxUnit">
-          <option value="1">Ω</option>
-          <option value="1000">kΩ</option>
-          <option value="1000000">MΩ</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <button type="button" onclick="calculateBridge(document.WheatstoneForm)">Calculate</button>
-
-  <div class="result-title">RESULTS</div>
-
-  <div class="result-grid">
-    <div class="result-card blue">
-      <div class="result-label">Bridge Output</div>
-      <div class="result-value"><span id="Vout">-</span> V</div>
-    </div>
-
-    <div class="result-card green">
-      <div class="result-label">Balanced Rx</div>
-      <div class="result-value"><span id="RxBal">-</span> Ω</div>
-    </div>
-
-    <div class="result-card purple">
-      <div class="result-label">Bridge Status</div>
-      <div class="result-value"><span id="Status">-</span></div>
-    </div>
-
-    <div class="result-card orange">
-      <div class="result-label">Balance Error</div>
-      <div class="result-value"><span id="Error">-</span> V</div>
-    </div>
-  </div>
-
-  <div class="formula-box">
-    Vout = Vin × (Rx / (R3 + Rx) − R2 / (R1 + R2))<br>
-    Balanced Rx = R2 × R3 / R1
-  </div>
-
-</form>
-</div>
+</body>
+</html>
