@@ -2,284 +2,418 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Capacitor Impedance Calculator | CalcBoy</title>
+<meta name="description" content="Calculate capacitor impedance and capacitive reactance from capacitance and frequency using Xc = 1/(2πfC).">
+<meta name="keywords" content="capacitor impedance calculator, capacitive reactance calculator, capacitor reactance calculator, Xc calculator, capacitor AC impedance calculator, frequency capacitance impedance calculator, CalcBoy">
 <style>
-#capacitive-reactance-calc,
-#capacitive-reactance-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  margin:0;
-  background:#f4f7fb;
-  padding:10px;
-}
-
-#capacitive-reactance-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-  background:transparent;
-  border:none;
-}
-
-#capacitive-reactance-calc .calc-grid{
-  display:grid;
-  gap:12px;
-}
-
-#capacitive-reactance-calc .calc-label{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  color:#344054;
-  margin-bottom:6px;
-}
-
-#capacitive-reactance-calc .calc-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#capacitive-reactance-calc input,
-#capacitive-reactance-calc select{
-  width:100%;
-  min-width:0;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 10px;
-  font-size:14px;
-  color:#111827;
-  background:#fff;
-  outline:none;
-  text-align:center;
-  text-align-last:center;
-}
-
-#capacitive-reactance-calc input:focus,
-#capacitive-reactance-calc select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#capacitive-reactance-calc .unit-select{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  height:43px;
-  font-size:12px;
-  font-weight:800;
-  padding:0 3px;
-}
-
-#capacitive-reactance-calc button{
-  width:100%;
-  height:45px;
-  margin-top:22px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:14px;
-  font-weight:900;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#capacitive-reactance-calc .result-title{
-  margin-top:26px;
-  margin-bottom:12px;
-  font-size:13px;
-  font-weight:900;
-  color:#98a2b3;
-  letter-spacing:.8px;
-}
-
-#capacitive-reactance-calc .result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-#capacitive-reactance-calc .result-card{
-  min-height:64px;
-  padding:13px;
-  border-radius:8px;
-}
-
-#capacitive-reactance-calc .blue{
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#capacitive-reactance-calc .green{
-  background:#ecfdf5;
-  border:1px solid #a7f3d0;
-}
-
-#capacitive-reactance-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:8px;
-}
-
-#capacitive-reactance-calc .blue .result-label,
-#capacitive-reactance-calc .blue .result-value{
-  color:#2563eb;
-}
-
-#capacitive-reactance-calc .green .result-label,
-#capacitive-reactance-calc .green .result-value{
-  color:#059669;
-}
-
-#capacitive-reactance-calc .result-value{
-  font-size:15px;
-  font-weight:900;
-  word-break:break-word;
-}
-
-#capacitive-reactance-calc .formula-box{
-  margin-top:14px;
-  padding:14px;
-  border-radius:9px;
-  border:1px solid #e5e7eb;
-  background:#f9fafb;
-  color:#4b5563;
-  font-size:13px;
-  font-weight:700;
-  line-height:1.6;
-}
-
+#capacitive-reactance-calc,#capacitive-reactance-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#capacitive-reactance-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px;text-align:center;text-align-last:center}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-select{width:82px;min-width:82px;max-width:82px;height:43px;font-size:12px;font-weight:800;padding:0 3px}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:15px;font-weight:900;min-height:22px;word-break:break-word}
+.blue{background:#eef5ff;border:1px solid #bcd7ff}.blue .result-label,.blue .result-value{color:#2563eb}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}.green .result-label,.green .result-value{color:#059669}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe}.purple .result-label,.purple .result-value{color:#7c3aed}
+.orange{background:#fff7ed;border:1px solid #fed7aa}.orange .result-label,.orange .result-value{color:#ea580c}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.paramGrid,.exampleGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.richAbout{margin-top:16px}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutLead p{margin:0;color:#475467}
+.aboutMiniGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.aboutMiniCard{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px;font-size:12px;font-weight:700;color:#475467;line-height:1.55}
+.aboutMiniCard span{display:block;color:#ea580c;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.aboutFaq{border-top:1px solid #edf2f7;padding-top:10px;margin-top:12px}
+.aboutFaq h3{margin:10px 0 6px;font-size:14px;color:#0f172a}
+.aboutFaq p{margin:0 0 10px}
 @media(max-width:600px){
-  body{
-    padding:0;
-  }
-
-  #capacitive-reactance-calc{
-    padding-top:12px;
-  }
-
-  #capacitive-reactance-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #capacitive-reactance-calc .unit-select{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:11px;
-  }
-
-  #capacitive-reactance-calc input,
-  #capacitive-reactance-calc select{
-    font-size:14px;
-    padding:0 8px;
-  }
-
-  #capacitive-reactance-calc .result-grid{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  #capacitive-reactance-calc .result-card{
-    padding:12px 10px;
-  }
-
-  #capacitive-reactance-calc .result-value{
-    font-size:14px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-select{width:72px;min-width:72px;max-width:72px;font-size:11px}
+.result-grid{grid-template-columns:1fr 1fr;gap:10px}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-card{padding:12px 10px}
+.result-value{font-size:14px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="capacitive-reactance-calc">
 
 <form id="tool-form">
+<div class="calc-grid">
 
-  <div class="calc-grid">
+<div>
+<label class="calc-label">Capacitance</label>
+<div class="calc-row">
+<input type="number" id="capacitance" step="any" oninput="clearResults()">
+<select id="farad" class="unit-select" onchange="clearResults()">
+<option value="1" selected>F</option>
+<option value="0.000001">µF</option>
+<option value="0.000000001">nF</option>
+<option value="0.000000000001">pF</option>
+</select>
+</div>
+</div>
 
-    <div>
-      <label class="calc-label">Capacitance</label>
-      <div class="calc-row">
-        <input type="number" id="capacitance" step="any">
-        <select id="farad" class="unit-select">
-          <option value="1" selected>F</option>
-          <option value="0.000001">µF</option>
-          <option value="0.000000001">nF</option>
-          <option value="0.000000000001">pF</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">Frequency</label>
-      <div class="calc-row">
-        <input type="number" id="frequency" step="any">
-        <select id="hertz" class="unit-select">
-          <option value="1" selected>Hz</option>
-          <option value="1000">kHz</option>
-          <option value="1000000">MHz</option>
-          <option value="1000000000">GHz</option>
-        </select>
-      </div>
-    </div>
-
-  </div>
-
-  <button type="button" id="calculate">Calculate</button>
-
-  <div class="result-title">RESULTS</div>
-
-  <div class="result-grid">
-
-    <div class="result-card blue">
-      <div class="result-label">Capacitive Reactance</div>
-      <div class="result-value"><span id="answer">-</span> Ω</div>
-    </div>
-
-    <div class="result-card green">
-      <div class="result-label">Formula</div>
-      <div class="result-value">Xc = 1 / 2πfC</div>
-    </div>
-
-  </div>
-
-  <div class="formula-box">
-    Xc = 1 / (2 × π × f × C)<br>
-    C is converted to farads using selected unit.<br>
-    f is converted to hertz using selected unit.
-  </div>
-
-</form>
+<div>
+<label class="calc-label">Frequency</label>
+<div class="calc-row">
+<input type="number" id="frequency" step="any" oninput="clearResults()">
+<select id="hertz" class="unit-select" onchange="clearResults()">
+<option value="1" selected>Hz</option>
+<option value="1000">kHz</option>
+<option value="1000000">MHz</option>
+<option value="1000000000">GHz</option>
+</select>
+</div>
+</div>
 
 </div>
 
+<button type="button" id="calculate">CALCULATE</button>
+
+<div id="errorBox">Please enter all required numeric values.</div>
+
+<div class="result-title">RESULTS</div>
+
+<div class="result-grid">
+<div class="result-card blue">
+<div class="result-label">Capacitive Reactance</div>
+<div class="result-value"><span id="answer"></span> Ω</div>
+</div>
+
+<div class="result-card green">
+<div class="result-label">Formula</div>
+<div class="result-value">Xc = 1 / 2πfC</div>
+</div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>Capacitance</strong>Capacitor value entered in F, µF, nF or pF.</div>
+<div class="paramItem"><strong>Frequency</strong>Operating AC frequency entered in Hz, kHz, MHz or GHz.</div>
+<div class="paramItem"><strong>Capacitive Reactance</strong>Opposition offered by the capacitor to AC signal flow.</div>
+<div class="paramItem"><strong>Unit Conversion</strong>Capacitance is converted into farads and frequency into hertz before calculation.</div>
+<div class="paramItem"><strong>Use Case</strong>Useful for AC circuits, RC filters, coupling capacitors, RF networks and impedance checks.</div>
+<div class="paramItem"><strong>Result Unit</strong>Reactance result is shown in ohms.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>RC Filter Design</strong></p><p>Estimate capacitor reactance at cutoff or operating frequency before selecting filter values.</p></div>
+<div class="exampleCard"><p><strong>Audio & RF Coupling</strong></p><p>Check whether a coupling capacitor has low enough impedance at the signal frequency.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>These custom SVG diagrams show the two requested concepts: capacitor impedance behavior versus frequency and a capacitor in an AC circuit. Formula text is intentionally not placed inside the diagram image area.</p>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>These corrected custom SVG diagrams show capacitor impedance behavior as a V-shaped curve and a real capacitor plate structure in an AC circuit. Formula text is not added inside the diagram area.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 760 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Correct capacitor impedance V curve and capacitor plate circuit">
+<rect width="760" height="620" fill="#ffffff"/>
+
+<defs>
+<marker id="arrDark" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+</marker>
+<marker id="arrBlue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
+</marker>
+<linearGradient id="plateTop" x1="0" x2="1">
+<stop offset="0" stop-color="#f8fafc"/>
+<stop offset="1" stop-color="#cbd5e1"/>
+</linearGradient>
+<linearGradient id="dielectric" x1="0" x2="1">
+<stop offset="0" stop-color="#dbeafe"/>
+<stop offset="1" stop-color="#60a5fa"/>
+</linearGradient>
+</defs>
+
+<style>
+.zAxis{stroke:#111827;stroke-width:2.3;fill:none;marker-end:url(#arrDark)}
+.zGrid{stroke:#dbeafe;stroke-width:1}
+.zCurve{stroke:#2563eb;stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.zDash{stroke:#2563eb;stroke-width:2.5;fill:none;stroke-dasharray:8 7}
+.zResLine{stroke:#ea580c;stroke-width:2.5;fill:none;stroke-dasharray:7 6}
+.zTau{stroke:#2563eb;stroke-width:2.5;fill:none;marker-end:url(#arrBlue)}
+.zTxt{font-family:Arial,sans-serif;font-size:19px;font-weight:900;fill:#111827}
+.zSmall{font-family:Arial,sans-serif;font-size:13px;font-weight:800;fill:#334155}
+.zBlue{fill:#2563eb}
+.zOrange{fill:#ea580c}
+.cWire{stroke:#111827;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cSource{fill:#fff7ed;stroke:#f97316;stroke-width:2.5}
+.cPlateTop{fill:url(#plateTop);stroke:#111827;stroke-width:2}
+.cPlateSide{fill:#94a3b8;stroke:#111827;stroke-width:2}
+.cDie{fill:url(#dielectric);stroke:#2563eb;stroke-width:2}
+.cArrow{stroke:#2563eb;stroke-width:2.8;fill:none;marker-end:url(#arrBlue)}
+.cTxt{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#111827}
+.cSmall{font-family:Arial,sans-serif;font-size:13px;font-weight:800;fill:#334155}
+</style>
+
+<!-- TOP GRAPH -->
+<text x="380" y="32" text-anchor="middle" class="zTxt">Capacitor impedance and resonance behavior</text>
+
+<line x1="80" y1="300" x2="700" y2="300" class="zAxis"/>
+<line x1="80" y1="300" x2="80" y2="65" class="zAxis"/>
+
+<line x1="160" y1="75" x2="160" y2="300" class="zGrid"/>
+<line x1="240" y1="75" x2="240" y2="300" class="zGrid"/>
+<line x1="320" y1="75" x2="320" y2="300" class="zGrid"/>
+<line x1="400" y1="75" x2="400" y2="300" class="zGrid"/>
+<line x1="480" y1="75" x2="480" y2="300" class="zGrid"/>
+<line x1="560" y1="75" x2="560" y2="300" class="zGrid"/>
+<line x1="640" y1="75" x2="640" y2="300" class="zGrid"/>
+<line x1="80" y1="110" x2="690" y2="110" class="zGrid"/>
+<line x1="80" y1="155" x2="690" y2="155" class="zGrid"/>
+<line x1="80" y1="200" x2="690" y2="200" class="zGrid"/>
+<line x1="80" y1="245" x2="690" y2="245" class="zGrid"/>
+
+<path d="M190 80 C250 145 310 215 355 260 C375 280 395 288 415 288 C435 288 455 280 475 260 C520 215 580 145 640 80" class="zCurve"/>
+<path d="M155 60 L410 315 L665 60" class="zDash"/>
+
+<line x1="340" y1="288" x2="490" y2="288" class="zResLine"/>
+<text x="315" y="292" class="zTxt zOrange">R</text>
+
+<line x1="407" y1="370" x2="407" y2="315" class="zTau"/>
+<text x="300" y="390" class="zTxt">Resonant frequency</text>
+
+<text x="18" y="90" class="zTxt">log Z</text>
+<text x="620" y="335" class="zTxt">Frequency</text>
+<text x="642" y="360" class="zSmall">log f (Hz)</text>
+<text x="150" y="200" class="zSmall zBlue">capacitive region</text>
+<text x="545" y="200" class="zSmall zBlue">parasitic inductive region</text>
+
+
+
+
+<!-- BIG GAP BETWEEN TWO IMAGES -->
+
+
+
+<!-- AC source lower/left -->
+<circle cx="150" cy="545" r="38" class="cSource"/>
+<path d="M128 545 C140 510 162 580 176 545" stroke="#111827" stroke-width="3" fill="none"/>
+<text x="20" y="550" class="cSmall">AC source</text>
+
+
+
+<!-- capacitor plates -->
+<polygon points="340,500 545,500 600,462 395,462" class="cPlateTop"/>
+<polygon points="340,575 545,575 600,537 395,537" class="cPlateTop"/>
+
+<polygon points="355,520 530,520 585,485 410,485" class="cDie"/>
+<polygon points="355,520 530,520 530,562 355,562" class="cDie" opacity=".7"/>
+<polygon points="530,520 585,485 585,527 530,562" class="cDie" opacity=".9"/>
+
+<polygon points="340,500 545,500 545,516 340,516" class="cPlateSide"/>
+<polygon points="545,500 600,462 600,478 545,516" class="cPlateSide"/>
+<polygon points="340,575 545,575 545,591 340,591" class="cPlateSide"/>
+<polygon points="545,575 600,537 600,553 545,591" class="cPlateSide"/>
+
+
+
+<!-- AC source top connection goes to TOP plate -->
+<line x1="150" y1="507" x2="150" y2="445" class="cWire"/>
+<line x1="150" y1="445" x2="445" y2="445" class="cWire"/>
+<line x1="445" y1="445" x2="445" y2="480" class="cWire"/>
+
+<!-- bottom return connection goes to bottom plate -->
+<line x1="150" y1="583" x2="150" y2="605" class="cWire"/>
+<line x1="150" y1="605" x2="450" y2="605" class="cWire"/>
+<line x1="450" y1="605" x2="450" y2="591" class="cWire"/>
+
+<path d="M205 445 H315" class="cArrow"/>
+<text x="220" y="432" class="cSmall">current leads</text>
+
+<text x="490" y="480" class="cTxt">C</text>
+<text x="413" y="552" class="cSmall">dielectric</text>
+<text x="485" y="448" class="cSmall">top plate</text>
+<text x="485" y="610" class="cSmall">bottom plate</text>
+
+</svg>
+</div>
+</section>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Main formula: Xc = 1 / (2 × π × f × C). This gives capacitive reactance in ohms.</div>
+<div class="formulaBox">Capacitance conversion: F stays F, µF is multiplied by 0.000001, nF by 0.000000001, and pF by 0.000000000001.</div>
+<div class="formulaBox">Frequency conversion: Hz stays Hz, kHz is multiplied by 1000, MHz by 1000000, and GHz by 1000000000.</div>
+<div class="formulaBox">Practical meaning: capacitive reactance decreases as frequency or capacitance increases.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example values: capacitance = 1 µF, frequency = 1 kHz.</div>
+<div class="formulaBox">Convert capacitance: 1 µF = 0.000001 F.</div>
+<div class="formulaBox">Convert frequency: 1 kHz = 1000 Hz.</div>
+<div class="formulaBox">Xc = 1 / (2 × π × 1000 × 0.000001).</div>
+<div class="formulaBox">Xc = about 159.1549 Ω.</div>
+<div class="formulaBox">Practical meaning: at 1 kHz, a 1 µF capacitor behaves like about 159 Ω of capacitive reactance.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+<div class="aboutStep">Enter capacitor value.</div>
+<div class="aboutStep">Select the capacitance unit: F, µF, nF or pF.</div>
+<div class="aboutStep">Enter operating frequency.</div>
+<div class="aboutStep">Select the frequency unit: Hz, kHz, MHz or GHz.</div>
+<div class="aboutStep">Click Calculate to get capacitive reactance in ohms.</div>
+</div>
+</section>
+
+<section class="infoBox richAbout">
+<h2>About This Calculator</h2>
+
+<div class="aboutLead">
+<strong>Find how much a capacitor resists AC signal flow at any frequency.</strong>
+<p>This CalcBoy calculator converts capacitance and frequency into capacitive reactance, also called capacitor impedance magnitude.</p>
+</div>
+
+<p>The Capacitor Impedance Calculator is useful for AC circuit design, RC filters, coupling capacitors, bypass capacitors, audio circuits, RF networks and power electronics. In DC steady state, an ideal capacitor blocks current. In AC circuits, it allows current to flow depending on frequency and capacitance. This opposition to AC is called capacitive reactance.</p>
+
+<div class="aboutMiniGrid">
+<div class="aboutMiniCard"><span>Best Use</span>RC filters, audio coupling, AC analysis, RF circuits and impedance checks.</div>
+<div class="aboutMiniCard"><span>Key Inputs</span>Capacitance and frequency with practical unit selectors.</div>
+<div class="aboutMiniCard"><span>Design Benefit</span>Quickly check whether a capacitor is high or low impedance at a target frequency.</div>
+<div class="aboutMiniCard"><span>Practical Reminder</span>Real capacitors also have ESR, ESL, leakage and self-resonant frequency.</div>
+</div>
+
+<p>Capacitive reactance is inversely proportional to both frequency and capacitance. A larger capacitor gives lower reactance at the same frequency. A higher frequency also lowers reactance. This is why capacitors are often used for AC coupling, high-frequency bypassing, and filtering.</p>
+
+<div class="aboutNote">Quick tip: for bypass work, choose a capacitor whose reactance is low at the unwanted noise frequency, but also check ESR and self-resonance.</div>
+
+<p>Real capacitor impedance is not only Xc. At high frequency, equivalent series resistance and inductance can dominate. Ceramic, film, electrolytic and RF capacitors behave differently, so use this calculator for the ideal reactance estimate, then confirm final performance with datasheet impedance curves when accuracy matters.</p>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<div class="aboutFaq">
+<h3>What is capacitive reactance?</h3>
+<p>Capacitive reactance is the opposition a capacitor gives to AC current, measured in ohms.</p>
+<h3>Does capacitor impedance decrease with frequency?</h3>
+<p>Yes. Ideal capacitive reactance decreases when frequency increases.</p>
+<h3>What is the formula for capacitor impedance?</h3>
+<p>For ideal capacitive reactance magnitude, Xc = 1 / (2 × π × f × C).</p>
+<h3>Can I use this for RF circuits?</h3>
+<p>Yes, for ideal reactance estimates. RF designs should also consider ESR, ESL and self-resonant frequency.</p>
+<h3>Why is DC blocked by a capacitor?</h3>
+<p>At zero frequency, ideal capacitive reactance becomes extremely high, so DC steady-state current is blocked.</p>
+<h3>What units does this calculator use?</h3>
+<p>It converts capacitance into farads and frequency into hertz, then outputs reactance in ohms.</p>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+<div class="linkCard"><strong>Capacitance Calculator</strong>Useful for finding capacitance from charge and voltage.</div>
+<div class="linkCard"><strong>RC Time Constant Calculator</strong>Helpful for resistor-capacitor timing circuits.</div>
+<div class="linkCard"><strong>RC Filter Calculator</strong>Related tool for cutoff frequency and filter design.</div>
+<div class="linkCard"><strong>Series Parallel Impedance Calculator</strong>Useful for equivalent AC impedance conversion.</div>
+</div>
+</section>
+
+</form>
+</div>
+
 <script>
-document.getElementById("calculate").addEventListener("click", function(e){
+var outputIds=["answer"];
+
+function clearResults(){
+  for(var i=0;i<outputIds.length;i++){
+    document.getElementById(outputIds[i]).innerText="";
+  }
+  document.getElementById("errorBox").style.display="none";
+}
+
+document.getElementById("calculate").addEventListener("click",function(e){
   e.preventDefault();
 
-  var c = Number(document.getElementById("capacitance").value);
-  var f = Number(document.getElementById("frequency").value);
+  var cInput=document.getElementById("capacitance").value.trim();
+  var fInput=document.getElementById("frequency").value.trim();
 
-  c = c * Number(document.getElementById("farad").value);
-  f = f * Number(document.getElementById("hertz").value);
+  if(cInput==="" || fInput==="" || isNaN(Number(cInput)) || isNaN(Number(fInput))){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-  var result = 1 / (2 * Math.PI * f * c);
+  var c=Number(cInput);
+  var f=Number(fInput);
 
-  document.getElementById("answer").innerText = result.toFixed(4);
+  c=c*Number(document.getElementById("farad").value);
+  f=f*Number(document.getElementById("hertz").value);
+
+  var result=1/(2*Math.PI*f*c);
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("answer").innerText=result.toFixed(4);
 });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"What is capacitive reactance?","acceptedAnswer":{"@type":"Answer","text":"Capacitive reactance is the opposition a capacitor gives to AC current, measured in ohms."}},
+    {"@type":"Question","name":"Does capacitor impedance decrease with frequency?","acceptedAnswer":{"@type":"Answer","text":"Yes. Ideal capacitive reactance decreases when frequency increases."}},
+    {"@type":"Question","name":"What is the formula for capacitor impedance?","acceptedAnswer":{"@type":"Answer","text":"For ideal capacitive reactance magnitude, Xc = 1 / (2 × π × f × C)."}},
+    {"@type":"Question","name":"Can I use this for RF circuits?","acceptedAnswer":{"@type":"Answer","text":"Yes, for ideal reactance estimates. RF designs should also consider ESR, ESL and self-resonant frequency."}},
+    {"@type":"Question","name":"Why is DC blocked by a capacitor?","acceptedAnswer":{"@type":"Answer","text":"At zero frequency, ideal capacitive reactance becomes extremely high, so DC steady-state current is blocked."}},
+    {"@type":"Question","name":"What units does this calculator use?","acceptedAnswer":{"@type":"Answer","text":"It converts capacitance into farads and frequency into hertz, then outputs reactance in ohms."}}
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+    {"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/electronics-calculators/"},
+    {"@type":"ListItem","position":3,"name":"Capacitor Impedance Calculator","item":"https://calcboy.com/tool/capacitor-impedance-calculator"}
+  ]
+}
 </script>
 
 </body>
