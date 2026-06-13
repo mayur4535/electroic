@@ -2,302 +2,363 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Thermal Noise Calculator | CalcBoy</title>
+<meta name="description" content="Calculate resistor thermal noise voltage and noise level in dBv from temperature, resistance and bandwidth with CalcBoy.">
+<meta name="keywords" content="thermal noise calculator, resistor noise calculator, Johnson noise calculator, Nyquist noise calculator, noise voltage calculator, RMS noise calculator, bandwidth noise calculator, resistor thermal noise voltage, CalcBoy noise calculator">
 
 <style>
-#resistor-noise-calc,
-#resistor-noise-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  margin:0;
-  background:#f4f7fb;
-  padding:10px;
-}
-
-#resistor-noise-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-  background:transparent;
-  border:none;
-}
-
-#resistor-noise-calc .calc-grid{
-  display:grid;
-  gap:12px;
-}
-
-#resistor-noise-calc .calc-label{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  color:#344054;
-  margin-bottom:6px;
-}
-
-#resistor-noise-calc .calc-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#resistor-noise-calc input{
-  width:100%;
-  min-width:0;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:14px;
-  color:#111827;
-  background:#fff;
-  outline:none;
-  text-align:center;
-}
-
-#resistor-noise-calc input:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#resistor-noise-calc .unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:13px;
-  font-weight:800;
-  color:#111827;
-}
-
-#resistor-noise-calc button{
-  width:100%;
-  height:45px;
-  margin-top:22px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:14px;
-  font-weight:900;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#resistor-noise-calc .result-title{
-  margin-top:26px;
-  margin-bottom:12px;
-  font-size:13px;
-  font-weight:900;
-  color:#98a2b3;
-  letter-spacing:.8px;
-}
-
-#resistor-noise-calc .result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-#resistor-noise-calc .result-card{
-  min-height:64px;
-  padding:13px;
-  border-radius:8px;
-}
-
-#resistor-noise-calc .blue{
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#resistor-noise-calc .green{
-  background:#ecfdf5;
-  border:1px solid #a7f3d0;
-}
-
-#resistor-noise-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:8px;
-}
-
-#resistor-noise-calc .blue .result-label,
-#resistor-noise-calc .blue .result-value{
-  color:#2563eb;
-}
-
-#resistor-noise-calc .green .result-label,
-#resistor-noise-calc .green .result-value{
-  color:#059669;
-}
-
-#resistor-noise-calc .result-value{
-  font-size:15px;
-  font-weight:900;
-  word-break:break-word;
-}
-
-#resistor-noise-calc .formula-box{
-  margin-top:14px;
-  padding:14px;
-  border-radius:9px;
-  border:1px solid #e5e7eb;
-  background:#f9fafb;
-  color:#4b5563;
-  font-size:13px;
-  font-weight:700;
-  line-height:1.6;
-}
-
+#resistor-noise-calc,#resistor-noise-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#resistor-noise-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px;text-align:center}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#374151}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:15px;font-weight:900;min-height:22px;word-break:break-word}
+.blue{background:#eef5ff;border:1px solid #bcd7ff}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe}
+.orange{background:#fff7ed;border:1px solid #fed7aa}
+.blue .result-label,.blue .result-value{color:#2563eb}
+.green .result-label,.green .result-value{color:#059669}
+.purple .result-label,.purple .result-value{color:#7c3aed}
+.orange .result-label,.orange .result-value{color:#ea580c}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.paramGrid,.exampleGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.richAbout{margin-top:16px}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutLead p{margin:0;color:#475467}
+.aboutMiniGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.aboutMiniCard{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px;font-size:12px;font-weight:700;color:#475467;line-height:1.55}
+.aboutMiniCard span{display:block;color:#ea580c;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.aboutFaq{border-top:1px solid #edf2f7;padding-top:10px;margin-top:12px}
+.aboutFaq h3{margin:10px 0 6px;font-size:14px;color:#0f172a}
+.aboutFaq p{margin:0 0 10px}
 @media(max-width:600px){
-  body{
-    padding:0;
-  }
-
-  #resistor-noise-calc{
-    padding-top:12px;
-  }
-
-  #resistor-noise-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #resistor-noise-calc .unit-box{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:12px;
-  }
-
-  #resistor-noise-calc input{
-    font-size:14px;
-    padding:0 10px;
-  }
-
-  #resistor-noise-calc .result-grid{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  #resistor-noise-calc .result-card{
-    padding:12px 10px;
-  }
-
-  #resistor-noise-calc .result-value{
-    font-size:14px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr;gap:10px}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-card{padding:12px 10px}
+.result-value{font-size:14px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="resistor-noise-calc">
 
-  <form name="ParamForm">
+<div class="calc-grid">
+<div>
+<label class="calc-label">Temperature</label>
+<div class="calc-row">
+<input id="T" type="number" step="any" oninput="clearResults()">
+<div class="unitBox">°C</div>
+</div>
+</div>
 
-    <div class="calc-grid">
+<div>
+<label class="calc-label">Resistance</label>
+<div class="calc-row">
+<input id="R" type="number" step="any" oninput="clearResults()">
+<div class="unitBox">Ω</div>
+</div>
+</div>
 
-      <div>
-        <label class="calc-label">Temperature</label>
-        <div class="calc-row">
-          <input name="T" type="number" step="any">
-          <div class="unit-box">°C</div>
-        </div>
-      </div>
+<div>
+<label class="calc-label">Bandwidth (F₂ − F₁)</label>
+<div class="calc-row">
+<input id="dF" type="number" step="any" oninput="clearResults()">
+<div class="unitBox">Hz</div>
+</div>
+</div>
+</div>
 
-      <div>
-        <label class="calc-label">Resistance</label>
-        <div class="calc-row">
-          <input name="R" type="number" step="any">
-          <div class="unit-box">Ω</div>
-        </div>
-      </div>
+<button type="button" onclick="Compute()">CALCULATE</button>
 
-      <div>
-        <label class="calc-label">Bandwidth (F₂ − F₁)</label>
-        <div class="calc-row">
-          <input name="dF" type="number" step="any">
-          <div class="unit-box">Hz</div>
-        </div>
-      </div>
+<div id="errorBox">Please enter all required numeric values.</div>
 
-    </div>
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+<div class="result-card blue">
+<div class="result-label">Vn RMS</div>
+<div class="result-value"><span id="Vnout"></span> µV</div>
+</div>
 
-    <button type="button" name="B1" onclick="Compute(document.ParamForm);">Calculate</button>
+<div class="result-card green">
+<div class="result-label">Noise Level</div>
+<div class="result-value"><span id="Lvout"></span> dBv</div>
+</div>
+</div>
 
-    <div class="result-title">RESULTS</div>
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>Temperature</strong>Resistor temperature in Celsius. Higher temperature increases thermal agitation and noise voltage.</div>
+<div class="paramItem"><strong>Resistance</strong>Resistor value in ohms. Higher resistance produces more Johnson-Nyquist noise for the same bandwidth.</div>
+<div class="paramItem"><strong>Bandwidth</strong>Noise bandwidth in hertz. Wider bandwidth captures more random noise energy.</div>
+<div class="paramItem"><strong>Vn RMS</strong>Calculated RMS thermal noise voltage in microvolts.</div>
+<div class="paramItem"><strong>Noise Level</strong>Noise voltage converted to dBv using 20 × log10(Vn).</div>
+<div class="paramItem"><strong>Use Case</strong>Helpful for low-noise amplifier, sensor, audio, RF and measurement circuit design.</div>
+</div>
+</section>
 
-    <div class="result-grid">
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>Low-Noise Amplifier</strong></p><p>Estimate resistor noise before selecting feedback resistors or input bias networks.</p></div>
+<div class="exampleCard"><p><strong>Audio & Sensor Circuits</strong></p><p>Check how resistance and bandwidth contribute to the noise floor in precision circuits.</p></div>
+</div>
+</section>
 
-      <div class="result-card blue">
-        <div class="result-label">Vn RMS</div>
-        <div class="result-value"><span id="Vnout">-</span> µV</div>
-      </div>
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>The diagram shows random thermal noise in the time domain and a bell-shaped noise distribution. Thermal noise is random, but its RMS value can be estimated from resistance, temperature and bandwidth.</p>
 
-      <div class="result-card green">
-        <div class="result-label">Noise Level</div>
-        <div class="result-value"><span id="Lvout">-</span> dBv</div>
-      </div>
+<div class="diagramBox">
+<svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Thermal noise time domain and distribution diagram">
+<rect width="760" height="360" fill="#ffffff"/>
+<style>
+.nGrid{stroke:#cbd5e1;stroke-width:1}
+.nAxis{stroke:#111827;stroke-width:2}
+.nWave{fill:none;stroke:#dc2626;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.nCurve{fill:none;stroke:#dc2626;stroke-width:3;stroke-linecap:round}
+.nTxt{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#111827}
+.nSmall{font-family:Arial,sans-serif;font-size:12px;font-weight:800;fill:#334155}
+.nBlue{fill:#2563eb}
+.nGreen{fill:#059669}
+</style>
 
-    </div>
+<text x="265" y="28" text-anchor="middle" class="nTxt">Time-Domain Noise</text>
+<rect x="50" y="50" width="455" height="250" fill="#f8fafc" stroke="#cbd5e1"/>
 
-    <input name="Vn" type="hidden">
-    <input name="Lv" type="hidden">
+<g>
+<line x1="50" y1="100" x2="505" y2="100" class="nGrid"/>
+<line x1="50" y1="150" x2="505" y2="150" class="nGrid"/>
+<line x1="50" y1="200" x2="505" y2="200" class="nGrid"/>
+<line x1="50" y1="250" x2="505" y2="250" class="nGrid"/>
+<line x1="100" y1="50" x2="100" y2="300" class="nGrid"/>
+<line x1="150" y1="50" x2="150" y2="300" class="nGrid"/>
+<line x1="200" y1="50" x2="200" y2="300" class="nGrid"/>
+<line x1="250" y1="50" x2="250" y2="300" class="nGrid"/>
+<line x1="300" y1="50" x2="300" y2="300" class="nGrid"/>
+<line x1="350" y1="50" x2="350" y2="300" class="nGrid"/>
+<line x1="400" y1="50" x2="400" y2="300" class="nGrid"/>
+<line x1="450" y1="50" x2="450" y2="300" class="nGrid"/>
+</g>
 
-    <div class="formula-box">
-      Vn = √(4 × Kb × R × T × ΔF)<br>
-      Vn(µV) = Vn × 1,000,000<br>
-      Lv = 20 × log₁₀(Vn)<br>
-      Kb = 1.3806505 × 10⁻²³
-    </div>
+<path class="nWave" d="M50 178 L56 104 L62 233 L68 151 L74 250 L80 137 L86 198 L92 169 L98 186 L104 116 L110 204 L116 142 L122 194 L128 159 L134 225 L140 133 L146 180 L152 174 L158 121 L164 219 L170 153 L176 202 L182 166 L188 188 L194 109 L200 196 L206 170 L212 238 L218 144 L224 207 L230 165 L236 190 L242 130 L248 179 L254 213 L260 121 L266 187 L272 170 L278 233 L284 151 L290 198 L296 116 L302 184 L308 209 L314 164 L320 193 L326 143 L332 222 L338 171 L344 247 L350 154 L356 190 L362 132 L368 214 L374 172 L380 185 L386 138 L392 200 L398 107 L404 214 L410 166 L416 241 L422 158 L428 196 L434 125 L440 227 L446 164 L452 189 L458 151 L464 236 L470 168 L476 210 L482 134 L488 194 L494 160 L500 220"/>
 
-  </form>
+<line x1="50" y1="300" x2="505" y2="300" class="nAxis"/>
+<line x1="50" y1="50" x2="50" y2="300" class="nAxis"/>
+<text x="278" y="333" text-anchor="middle" class="nSmall">Time</text>
+<text x="18" y="180" text-anchor="middle" class="nSmall" transform="rotate(-90 18 180)">Voltage</text>
+<text x="50" y="318" class="nSmall">0</text>
+<text x="490" y="318" class="nSmall">500 ms</text>
+
+<text x="635" y="28" text-anchor="middle" class="nTxt">Noise Distribution</text>
+<rect x="545" y="50" width="165" height="250" fill="#f8fafc" stroke="#cbd5e1"/>
+<line x1="545" y1="100" x2="710" y2="100" class="nGrid"/>
+<line x1="545" y1="150" x2="710" y2="150" class="nGrid"/>
+<line x1="545" y1="200" x2="710" y2="200" class="nGrid"/>
+<line x1="545" y1="250" x2="710" y2="250" class="nGrid"/>
+<line x1="585" y1="50" x2="585" y2="300" class="nGrid"/>
+<line x1="625" y1="50" x2="625" y2="300" class="nGrid"/>
+<line x1="665" y1="50" x2="665" y2="300" class="nGrid"/>
+<line x1="545" y1="300" x2="710" y2="300" class="nAxis"/>
+<line x1="545" y1="50" x2="545" y2="300" class="nAxis"/>
+
+<path class="nCurve" d="M548 300 C560 260 590 230 650 206 C690 190 705 176 705 175 C705 174 690 160 650 144 C590 120 560 90 548 50"/>
+<text x="627" y="333" text-anchor="middle" class="nSmall"># of Samples</text>
+<text x="738" y="180" text-anchor="middle" class="nSmall" transform="rotate(-90 738 180)">Voltage</text>
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Step 1: Convert temperature to Kelvin: T(K) = T(°C) + 273. This gives the absolute temperature used by the thermal noise formula.</div>
+<div class="formulaBox">Step 2: Thermal noise voltage: Vn = √(4 × Kb × R × T × ΔF). This estimates RMS Johnson-Nyquist noise voltage.</div>
+<div class="formulaBox">Step 3: Microvolt conversion: Vn(µV) = Vn × 1000000. This makes very small noise values easier to read.</div>
+<div class="formulaBox">Step 4: Noise level: Lv = 20 × log10(Vn). This converts RMS noise voltage into dBv.</div>
+<div class="formulaBox">Constant: Kb = 1.3806505 × 10^-23. This is Boltzmann’s constant used in the original calculation.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example values: temperature = 25 °C, resistance = 1000 Ω, bandwidth = 20000 Hz.</div>
+<div class="formulaBox">Convert temperature: T = 25 + 273 = 298 K.</div>
+<div class="formulaBox">Vn = √(4 × 1.3806505e-23 × 1000 × 298 × 20000).</div>
+<div class="formulaBox">Vn = 0.000000573 V = about 0.573 µV RMS.</div>
+<div class="formulaBox">Lv = 20 × log10(0.000000573) = about -124.84 dBv.</div>
+<div class="formulaBox">Practical meaning: even a simple resistor creates measurable noise, and wide bandwidth increases the total noise voltage.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+<div class="aboutStep">Enter resistor temperature in Celsius.</div>
+<div class="aboutStep">Enter resistance value in ohms.</div>
+<div class="aboutStep">Enter noise bandwidth in hertz.</div>
+<div class="aboutStep">Click Calculate to get RMS noise voltage and dBv noise level.</div>
+<div class="aboutStep">Use the result when checking low-noise amplifier, sensor, audio or RF circuit noise floor.</div>
+</div>
+</section>
+
+<section class="infoBox richAbout">
+<h2>About This Calculator</h2>
+
+<div class="aboutLead">
+<strong>Estimate the tiny random voltage every resistor creates just by being warm.</strong>
+<p>This CalcBoy thermal noise calculator finds RMS noise voltage and dBv level from temperature, resistance and bandwidth.</p>
+</div>
+
+<p>The Thermal Noise Calculator is useful for low-noise electronics, RF receivers, audio preamps, precision sensor interfaces, measurement systems and analog circuit design. Thermal noise, also known as Johnson noise or Johnson-Nyquist noise, is created by random motion of charge carriers inside a resistor. It exists even when no signal is applied and becomes part of the circuit’s noise floor.</p>
+
+<div class="aboutMiniGrid">
+<div class="aboutMiniCard"><span>Best Use</span>Low-noise amplifiers, audio circuits, RF receivers, sensor inputs and precision analog design.</div>
+<div class="aboutMiniCard"><span>Key Inputs</span>Temperature, resistance and measurement bandwidth.</div>
+<div class="aboutMiniCard"><span>Design Benefit</span>Quickly compare resistor noise contribution before final component selection.</div>
+<div class="aboutMiniCard"><span>Practical Reminder</span>Noise increases with resistance, temperature and bandwidth.</div>
+</div>
+
+<p>The calculator uses the classic thermal noise equation. Higher resistance produces more noise voltage. Higher temperature increases random carrier energy. Wider bandwidth includes more noise power, so the total RMS noise rises with the square root of bandwidth. This is why a wideband amplifier can appear noisier than a narrowband filtered system even when both use the same resistor value.</p>
+
+<div class="aboutNote">Quick tip: in sensitive circuits, reduce unnecessary bandwidth and avoid very high resistor values at critical low-noise input nodes.</div>
+
+<p>For real circuit design, thermal noise is only one part of the total noise picture. Op-amp voltage noise, current noise, flicker noise, ADC quantization noise, PCB leakage, shielding, grounding and source impedance also matter. Still, resistor thermal noise is a fundamental starting point because it sets a physical lower limit that cannot be removed by better layout or cleaner power supplies.</p>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<div class="aboutFaq">
+<h3>What is thermal noise?</h3>
+<p>Thermal noise is random electrical noise produced by charge carrier motion inside a resistor or conductor due to temperature.</p>
+
+<h3>Is thermal noise the same as Johnson noise?</h3>
+<p>Yes. Thermal noise is also called Johnson noise or Johnson-Nyquist noise.</p>
+
+<h3>Why does bandwidth affect noise?</h3>
+<p>Thermal noise is spread over frequency, so a wider bandwidth includes more noise power and increases RMS noise voltage.</p>
+
+<h3>Does a higher resistor value create more noise?</h3>
+<p>Yes. RMS thermal noise voltage increases with resistance for the same temperature and bandwidth.</p>
+
+<h3>Can thermal noise be completely removed?</h3>
+<p>No. It is a physical noise source, but filtering and careful circuit design can reduce how much noise appears in the signal band.</p>
+
+<h3>What is dBv noise level?</h3>
+<p>dBv expresses voltage level relative to 1 volt using 20 × log10(V).</p>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+<div class="linkCard"><strong>Op Amp Noise Calculator</strong>Useful for total amplifier input noise estimation.</div>
+<div class="linkCard"><strong>Resistor Calculator</strong>Helpful for resistance selection and circuit design.</div>
+<div class="linkCard"><strong>Bandwidth Calculator</strong>Related tool for filter and signal bandwidth checks.</div>
+<div class="linkCard"><strong>Signal-to-Noise Ratio Calculator</strong>Useful for comparing signal level against noise floor.</div>
+</div>
+</section>
 
 </div>
 
 <script>
-function Log10(x){
-return Math.log(x) / Math.log(10);
+var outputIds=["Vnout","Lvout"];
+
+function clearResults(){
+  for(var i=0;i<outputIds.length;i++){
+    document.getElementById(outputIds[i]).innerText="";
+  }
+  document.getElementById("errorBox").style.display="none";
 }
 
-function Compute(form) {
-	with(Math) {
-		var T= Number(form.T.value)+273;
-		var R= Number(form.R.value);
-		var dF= Number(form.dF.value);
-		var Kb= 1.3806505E-23;
-		var Precision= 6;
-		var MEG= 1000000;
-		
-		var Lv;
-		
-		
-		Vn= sqrt(4*Kb*R*T*dF);
-		Vnu= Vn*MEG;
-		Lv= 20*Log10(Vn);
+function Log10(x){
+  return Math.log(x) / Math.log(10);
+}
 
-		
-		form.Vn.value= Vnu.toPrecision(Precision);		
-		form.Lv.value= Lv.toPrecision(Precision);
+function hasMissingOrInvalidRequired(ids){
+  for(var i=0;i<ids.length;i++){
+    var el=document.getElementById(ids[i]);
+    var value=el.value.trim();
+    if(value==="" || isNaN(Number(value))){
+      return true;
+    }
+  }
+  return false;
+}
 
-    document.getElementById("Vnout").innerText = form.Vn.value;
-    document.getElementById("Lvout").innerText = form.Lv.value;
-	}
+function Compute(){
+  if(hasMissingOrInvalidRequired(["T","R","dF"])){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var T=Number(document.getElementById("T").value)+273;
+  var R=Number(document.getElementById("R").value);
+  var dF=Number(document.getElementById("dF").value);
+  var Kb=1.3806505E-23;
+  var Precision=6;
+  var MEG=1000000;
+
+  var Vn=Math.sqrt(4*Kb*R*T*dF);
+  var Vnu=Vn*MEG;
+  var Lv=20*Log10(Vn);
+
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("Vnout").innerText=Vnu.toPrecision(Precision);
+  document.getElementById("Lvout").innerText=Lv.toPrecision(Precision);
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"What is thermal noise?","acceptedAnswer":{"@type":"Answer","text":"Thermal noise is random electrical noise produced by charge carrier motion inside a resistor or conductor due to temperature."}},
+    {"@type":"Question","name":"Is thermal noise the same as Johnson noise?","acceptedAnswer":{"@type":"Answer","text":"Yes. Thermal noise is also called Johnson noise or Johnson-Nyquist noise."}},
+    {"@type":"Question","name":"Why does bandwidth affect noise?","acceptedAnswer":{"@type":"Answer","text":"Thermal noise is spread over frequency, so a wider bandwidth includes more noise power and increases RMS noise voltage."}},
+    {"@type":"Question","name":"Does a higher resistor value create more noise?","acceptedAnswer":{"@type":"Answer","text":"Yes. RMS thermal noise voltage increases with resistance for the same temperature and bandwidth."}},
+    {"@type":"Question","name":"Can thermal noise be completely removed?","acceptedAnswer":{"@type":"Answer","text":"No. It is a physical noise source, but filtering and careful circuit design can reduce how much noise appears in the signal band."}},
+    {"@type":"Question","name":"What is dBv noise level?","acceptedAnswer":{"@type":"Answer","text":"dBv expresses voltage level relative to 1 volt using 20 × log10(V)."}}
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+    {"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/electronics-calculators/"},
+    {"@type":"ListItem","position":3,"name":"Thermal Noise Calculator","item":"https://calcboy.com/tool/thermal-noise-calculator"}
+  ]
 }
 </script>
 
