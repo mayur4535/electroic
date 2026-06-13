@@ -2,448 +2,373 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Steinhart-Hart Thermistor Calculator | CalcBoy</title>
+<meta name="description" content="Calculate thermistor temperature using Steinhart-Hart coefficients A, B, C, D, reference resistance and measured resistance.">
+<meta name="keywords" content="Steinhart Hart thermistor calculator, NTC thermistor calculator, thermistor temperature calculator, thermistor resistance calculator, NTC temperature calculator, voltage divider thermistor calculator, CalcBoy thermistor calculator">
 
 <style>
-#steinhart-thermistor-calc,
-#steinhart-thermistor-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  margin:0;
-  background:#f4f7fb;
-  padding:10px;
-}
-
-#steinhart-thermistor-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-  background:transparent;
-  border:none;
-}
-
-#steinhart-thermistor-calc .calc-grid{
-  display:grid;
-  gap:12px;
-}
-
-#steinhart-thermistor-calc .calc-label{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  color:#344054;
-  margin-bottom:6px;
-}
-
-#steinhart-thermistor-calc .calc-row{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#steinhart-thermistor-calc .full-row{
-  grid-template-columns:1fr;
-}
-
-#steinhart-thermistor-calc input{
-  width:100%;
-  min-width:0;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:14px;
-  color:#111827;
-  background:#fff;
-  outline:none;
-  text-align:center;
-}
-
-#steinhart-thermistor-calc input:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#steinhart-thermistor-calc .unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:13px;
-  font-weight:800;
-  color:#111827;
-}
-
-#steinhart-thermistor-calc button{
-  width:100%;
-  height:45px;
-  margin-top:22px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:14px;
-  font-weight:900;
-  cursor:pointer;
-  box-shadow:0 7px 16px rgba(255,91,0,.22);
-}
-
-#steinhart-thermistor-calc .result-title{
-  margin-top:26px;
-  margin-bottom:12px;
-  font-size:13px;
-  font-weight:900;
-  color:#98a2b3;
-  letter-spacing:.8px;
-}
-
-#steinhart-thermistor-calc .result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-#steinhart-thermistor-calc .result-card{
-  min-height:64px;
-  padding:13px;
-  border-radius:8px;
-}
-
-#steinhart-thermistor-calc .blue{
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#steinhart-thermistor-calc .green{
-  background:#ecfdf5;
-  border:1px solid #a7f3d0;
-}
-
-#steinhart-thermistor-calc .purple{
-  background:#f5f3ff;
-  border:1px solid #ddd6fe;
-}
-
-#steinhart-thermistor-calc .orange{
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-}
-
-#steinhart-thermistor-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:8px;
-}
-
-#steinhart-thermistor-calc .blue .result-label,
-#steinhart-thermistor-calc .blue .result-value{
-  color:#2563eb;
-}
-
-#steinhart-thermistor-calc .green .result-label,
-#steinhart-thermistor-calc .green .result-value{
-  color:#059669;
-}
-
-#steinhart-thermistor-calc .purple .result-label,
-#steinhart-thermistor-calc .purple .result-value{
-  color:#7c3aed;
-}
-
-#steinhart-thermistor-calc .orange .result-label,
-#steinhart-thermistor-calc .orange .result-value{
-  color:#ea580c;
-}
-
-#steinhart-thermistor-calc .result-value{
-  font-size:15px;
-  font-weight:900;
-  word-break:break-word;
-}
-
-#steinhart-thermistor-calc .formula-box{
-  margin-top:14px;
-  padding:14px;
-  border-radius:9px;
-  border:1px solid #e5e7eb;
-  background:#f9fafb;
-  color:#4b5563;
-  font-size:13px;
-  font-weight:700;
-  line-height:1.6;
-}
-
+#steinhart-thermistor-calc,#steinhart-thermistor-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#steinhart-thermistor-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.full-row{grid-template-columns:1fr}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;color:#111827;font-size:15px;outline:none;padding:0 10px;text-align:center}
+input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#374151}
+button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:15px;font-weight:900;min-height:22px;word-break:break-word}
+.blue{background:#eef5ff;border:1px solid #bcd7ff}
+.green{background:#ecfdf5;border:1px solid #bbf7d0}
+.purple{background:#f5f3ff;border:1px solid #ddd6fe}
+.orange{background:#fff7ed;border:1px solid #fed7aa}
+.blue .result-label,.blue .result-value{color:#2563eb}
+.green .result-label,.green .result-value{color:#059669}
+.purple .result-label,.purple .result-value{color:#7c3aed}
+.orange .result-label,.orange .result-value{color:#ea580c}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.paramGrid,.exampleGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
+.paramItem strong,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px}
+.diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center}
+.diagramBox svg{width:100%;max-width:420px;height:auto;display:block}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.richAbout{margin-top:16px}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutLead p{margin:0;color:#475467}
+.aboutMiniGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.aboutMiniCard{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px;font-size:12px;font-weight:700;color:#475467;line-height:1.55}
+.aboutMiniCard span{display:block;color:#ea580c;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.aboutFaq{border-top:1px solid #edf2f7;padding-top:10px;margin-top:12px}
+.aboutFaq h3{margin:10px 0 6px;font-size:14px;color:#0f172a}
+.aboutFaq p{margin:0 0 10px}
 @media(max-width:600px){
-  body{
-    padding:0;
-  }
-
-  #steinhart-thermistor-calc{
-    padding-top:12px;
-  }
-
-  #steinhart-thermistor-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-    gap:7px;
-  }
-
-  #steinhart-thermistor-calc .full-row{
-    grid-template-columns:1fr;
-  }
-
-  #steinhart-thermistor-calc .unit-box{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-    font-size:12px;
-  }
-
-  #steinhart-thermistor-calc input{
-    font-size:14px;
-    padding:0 10px;
-  }
-
-  #steinhart-thermistor-calc .result-grid{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  #steinhart-thermistor-calc .result-card{
-    padding:12px 10px;
-  }
-
-  #steinhart-thermistor-calc .result-value{
-    font-size:14px;
-  }
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.full-row{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr;gap:10px}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-card{padding:12px 10px}
+.result-value{font-size:14px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="steinhart-thermistor-calc">
 
-  <form method="POST" name="ParamForm1">
+<div class="calc-grid">
+<div>
+<label class="calc-label">Coefficient A</label>
+<div class="calc-row full-row">
+<input id="A" type="number" step="any" oninput="clearResults()">
+</div>
+</div>
 
-    <div class="calc-grid">
+<div>
+<label class="calc-label">Coefficient B</label>
+<div class="calc-row full-row">
+<input id="B" type="number" step="any" oninput="clearResults()">
+</div>
+</div>
 
-      <div>
-        <label class="calc-label">Coefficient A</label>
-        <div class="calc-row full-row">
-          <input name="A" type="number" step="any">
-        </div>
-      </div>
+<div>
+<label class="calc-label">Coefficient C</label>
+<div class="calc-row full-row">
+<input id="C" type="number" step="any" oninput="clearResults()">
+</div>
+</div>
 
-      <div>
-        <label class="calc-label">Coefficient B</label>
-        <div class="calc-row full-row">
-          <input name="B" type="number" step="any">
-        </div>
-      </div>
+<div>
+<label class="calc-label">Coefficient D</label>
+<div class="calc-row full-row">
+<input id="D" type="number" step="any" oninput="clearResults()">
+</div>
+</div>
 
-      <div>
-        <label class="calc-label">Coefficient C</label>
-        <div class="calc-row full-row">
-          <input name="C" type="number" step="any">
-        </div>
-      </div>
+<div>
+<label class="calc-label">Rt Resistance at Ambient Temp.</label>
+<div class="calc-row">
+<input id="Rt" type="number" step="any" oninput="clearResults()">
+<div class="unitBox">Ω</div>
+</div>
+</div>
 
-      <div>
-        <label class="calc-label">Coefficient D</label>
-        <div class="calc-row full-row">
-          <input name="D" type="number" step="any">
-        </div>
-      </div>
+<div>
+<label class="calc-label">Measured Resistance</label>
+<div class="calc-row">
+<input id="R" type="number" step="any" oninput="clearResults()">
+<div class="unitBox">Ω</div>
+</div>
+</div>
+</div>
 
-      <div>
-        <label class="calc-label">Rt (Resistance at Ambient Temp.)</label>
-        <div class="calc-row">
-          <input name="Rt" type="number" step="any">
-          <div class="unit-box">Ω</div>
-        </div>
-      </div>
+<button type="button" onclick="ComputeT()">CALCULATE</button>
 
-      <div>
-        <label class="calc-label">Measured Resistance</label>
-        <div class="calc-row">
-          <input name="R" type="number" step="any">
-          <div class="unit-box">Ω</div>
-        </div>
-      </div>
+<div id="errorBox">Please enter all required numeric values.</div>
 
-    </div>
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+<div class="result-card blue">
+<div class="result-label">Temperature</div>
+<div class="result-value"><span id="Tout"></span> °C</div>
+</div>
+</div>
 
-    <button type="button" name="B2" onclick="ComputeT(document.ParamForm1);">Calculate</button>
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>Coefficient A</strong>Steinhart-Hart coefficient A used in the temperature equation.</div>
+<div class="paramItem"><strong>Coefficient B</strong>Coefficient B controls the logarithmic resistance-temperature curve slope.</div>
+<div class="paramItem"><strong>Coefficient C</strong>Coefficient C supports higher accuracy curve fitting for thermistor behavior.</div>
+<div class="paramItem"><strong>Coefficient D</strong>Coefficient D is the cubic logarithmic term in this extended formula.</div>
+<div class="paramItem"><strong>Rt Reference Resistance</strong>Reference resistance at the chosen ambient or calibration temperature.</div>
+<div class="paramItem"><strong>Measured Resistance</strong>Actual thermistor resistance measured from the voltage divider or multimeter.</div>
+</div>
+</section>
 
-    <div class="result-title">RESULTS</div>
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>NTC Temperature Sensor</strong></p><p>Convert measured thermistor resistance into temperature for embedded sensors, Arduino projects and control circuits.</p></div>
+<div class="exampleCard"><p><strong>Voltage Divider Measurement</strong></p><p>Use ADC voltage to calculate thermistor resistance first, then enter resistance here to estimate temperature.</p></div>
+</div>
+</section>
 
-    <div class="result-grid">
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>The diagram shows a common NTC thermistor voltage divider. A fixed resistor connects to Vcc, the NTC goes to ground, and the output voltage changes as temperature changes.</p>
 
-      <div class="result-card blue">
-        <div class="result-label">Temperature</div>
-        <div class="result-value"><span id="Tout">-</span> °C</div>
-      </div>
+<div class="diagramBox">
+<svg viewBox="0 0 360 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Colorful NTC thermistor voltage divider circuit">
+<rect width="360" height="520" fill="#ffffff"/>
+<style>
+.tWire{stroke:#111827;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tThin{stroke:#64748b;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tNode{fill:#111827}
+.tResBody{fill:#fff7ed;stroke:#ea580c;stroke-width:3}
+.tNtcBody{fill:#dbeafe;stroke:#2563eb;stroke-width:3}
+.tTherm{stroke:#dc2626;stroke-width:3;fill:none;stroke-linecap:round}
+.tGround{stroke:#059669;stroke-width:3;stroke-linecap:round}
+.tArrow{stroke:#059669;stroke-width:2.5;fill:none;marker-end:url(#tArr)}
+.tTxt{font-family:Arial,sans-serif;font-size:22px;font-weight:900;fill:#111827}
+.tSmall{font-family:Arial,sans-serif;font-size:16px;font-weight:800;fill:#334155}
+.tBlue{fill:#2563eb}
+.tOrange{fill:#ea580c}
+.tGreen{fill:#059669}
+</style>
+<defs>
+<marker id="tArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#059669"/>
+</marker>
+</defs>
 
-    </div>
+<text x="164" y="18" text-anchor="middle" class="tSmall">Vcc</text>
+<path d="M164 30 V70" class="tWire"/>
+<path d="M154 38 L164 22 L174 38" class="tThin"/>
 
-    <input name="T" type="hidden">
+<rect x="132" y="70" width="64" height="108" class="tResBody"/>
+<text x="210" y="132" class="tSmall">10k</text>
+<path d="M164 178 V220" class="tWire"/>
+<circle cx="164" cy="220" r="7" class="tNode"/>
 
-    <div class="formula-box">
-      lr = ln(R / Rt)<br>
-      T(K) = 1 / (A + B × lr + C × lr² + D × lr³)<br>
-      T(°C) = T(K) − 273.15
-    </div>
+<path d="M164 220 H285" class="tWire"/>
+<path d="M285 220 L273 212 M285 220 L273 228" class="tThin"/>
+<text x="296" y="227" class="tSmall">Vo</text>
 
-  </form>
+<path d="M164 220 V260" class="tWire"/>
+<rect x="132" y="260" width="64" height="108" class="tNtcBody"/>
+<path d="M120 245 L205 378" class="tTherm"/>
+<text x="210" y="302" class="tSmall">NTC</text>
+<text x="210" y="324" class="tSmall">10k</text>
+
+<path d="M164 368 V432" class="tWire"/>
+<line x1="124" y1="432" x2="204" y2="432" class="tGround"/>
+<line x1="136" y1="448" x2="192" y2="448" class="tGround"/>
+<line x1="150" y1="464" x2="178" y2="464" class="tGround"/>
+
+<path d="M74 360 V282" class="tArrow"/>
+<path d="M92 282 V360" class="tArrow"/>
+<text x="42" y="330" class="tTxt tGreen">T</text>
+
+<text x="1" y="125" class="tSmall tOrange">Fixed resistor</text>
+<text x="1" y="500" class="tSmall tBlue">NTC resistance changes with temperature</text>
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Step 1: Resistance ratio: lr = ln(R / Rt). This compares measured thermistor resistance with reference resistance.</div>
+<div class="formulaBox">Step 2: Kelvin temperature: T(K) = 1 / (A + B × lr + C × lr² + D × lr³).</div>
+<div class="formulaBox">Step 3: Celsius conversion: T(°C) = T(K) - 273.15.</div>
+<div class="formulaBox">Practical meaning: the formula converts the nonlinear NTC thermistor resistance curve into temperature.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example values: A = 0.003354016, B = 0.000256985, C = 0.000002620, D = 0.00000006383, Rt = 10000 Ω, R = 10000 Ω.</div>
+<div class="formulaBox">Resistance ratio: lr = ln(10000 / 10000) = 0.</div>
+<div class="formulaBox">T(K) = 1 / (A + B × 0 + C × 0² + D × 0³).</div>
+<div class="formulaBox">T(K) = 1 / 0.003354016 = about 298.15 K.</div>
+<div class="formulaBox">T(°C) = 298.15 - 273.15 = about 25 °C.</div>
+<div class="formulaBox">Practical meaning: when measured resistance equals a 10k reference thermistor value, the temperature is often near 25 °C depending on coefficients.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+<div class="aboutStep">Enter Steinhart-Hart coefficients A, B, C and D from the thermistor datasheet or calibration.</div>
+<div class="aboutStep">Enter Rt reference resistance in ohms.</div>
+<div class="aboutStep">Enter measured thermistor resistance in ohms.</div>
+<div class="aboutStep">Click Calculate to get temperature in Celsius.</div>
+<div class="aboutStep">Compare the result with your sensor circuit calibration and ADC measurement accuracy.</div>
+</div>
+</section>
+
+<section class="infoBox richAbout">
+<h2>About This Calculator</h2>
+
+<div class="aboutLead">
+<strong>Turn a nonlinear NTC thermistor resistance reading into a usable temperature value.</strong>
+<p>This CalcBoy calculator uses the Steinhart-Hart equation to estimate temperature from thermistor resistance and curve coefficients.</p>
+</div>
+
+<p>The Steinhart-Hart Thermistor Calculator is useful when working with NTC temperature sensors, voltage divider circuits, ADC measurements, battery temperature monitoring, HVAC controls, 3D printer thermistors and embedded temperature sensing. NTC thermistors are popular because they are small, low-cost and sensitive, but their resistance does not change linearly with temperature. That is why a curve-fit equation is needed.</p>
+
+<div class="aboutMiniGrid">
+<div class="aboutMiniCard"><span>Best Use</span>NTC thermistors, temperature sensing, ADC projects, Arduino circuits and sensor calibration.</div>
+<div class="aboutMiniCard"><span>Key Inputs</span>A, B, C, D coefficients, reference resistance and measured thermistor resistance.</div>
+<div class="aboutMiniCard"><span>Design Benefit</span>Convert resistance readings into temperature without manually solving the nonlinear curve.</div>
+<div class="aboutMiniCard"><span>Practical Reminder</span>Accuracy depends on real thermistor coefficients, resistor tolerance and ADC calibration.</div>
+</div>
+
+<p>In many circuits, the thermistor is connected as a voltage divider with a fixed resistor. The microcontroller reads output voltage, then the circuit converts that voltage into thermistor resistance. After resistance is known, the Steinhart-Hart equation converts it into temperature. This calculator handles the resistance-to-temperature part.</p>
+
+<div class="aboutNote">Quick tip: for best accuracy, use coefficients from the thermistor datasheet or calculate them from measured calibration points instead of guessing generic values.</div>
+
+<p>Real temperature measurement also depends on self-heating, lead resistance, ADC reference voltage, fixed resistor tolerance, thermal contact, sensor placement and airflow. For precision systems, calibrate the thermistor at known temperatures and use stable resistors in the voltage divider. For basic electronics projects, this calculator gives a fast way to check whether a measured resistance value matches the expected temperature range.</p>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<div class="aboutFaq">
+<h3>What is the Steinhart-Hart equation?</h3>
+<p>It is a curve-fit equation used to convert thermistor resistance into temperature over a nonlinear resistance-temperature curve.</p>
+
+<h3>What is an NTC thermistor?</h3>
+<p>An NTC thermistor is a temperature sensor whose resistance decreases as temperature increases.</p>
+
+<h3>Where do I get A, B, C and D coefficients?</h3>
+<p>Use the thermistor datasheet, manufacturer curve table or calibration data measured at known temperatures.</p>
+
+<h3>Why do I need Rt?</h3>
+<p>Rt is the reference resistance used in the resistance ratio term ln(R / Rt).</p>
+
+<h3>Can I use this with Arduino?</h3>
+<p>Yes. First calculate thermistor resistance from the ADC voltage divider, then enter the resistance into this calculator.</p>
+
+<h3>Does this calculator convert voltage directly?</h3>
+<p>No. It calculates temperature from resistance. Use a voltage divider equation first to convert measured voltage into resistance.</p>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+<div class="linkCard"><strong>Voltage Divider Calculator</strong>Useful for thermistor ADC divider circuits.</div>
+<div class="linkCard"><strong>NTC Beta Calculator</strong>Helpful for beta parameter thermistor temperature estimates.</div>
+<div class="linkCard"><strong>Resistance Temperature Calculator</strong>Related tool for sensor resistance-temperature conversion.</div>
+<div class="linkCard"><strong>Ohm’s Law Calculator</strong>Useful for basic voltage, current and resistance checks.</div>
+</div>
+</section>
 
 </div>
 
 <script>
-function ComputeT(form) { 	
-	with(Math) {
-		var Precision= 5;
-		
-		var A= Number(form.A.value);
-		var B= Number(form.B.value);
-		var C= Number(form.C.value);
-		var D= Number(form.D.value);
-		var R= Number(form.R.value);
-		var Rt= Number(form.Rt.value);
+var outputIds=["Tout"];
 
-		var lr= log(R/Rt);
-		T= 1/(A+ B*lr+ C*lr*lr+ D*lr*lr*lr);
-		T-= 273.15;
-
-		form.T.value= T.toPrecision(Precision);
-    document.getElementById("Tout").innerText = form.T.value;
-	}
+function clearResults(){
+  for(var i=0;i<outputIds.length;i++){
+    document.getElementById(outputIds[i]).innerText="";
+  }
+  document.getElementById("errorBox").style.display="none";
 }
 
-
-function ComputeR(form) { 	
-	with(Math) {
-		var Precision= 5;
-		
-		var A= Number(form.A.value);
-		var B= Number(form.B.value);
-		var C= Number(form.C.value);
-		var D= Number(form.D.value);
-		var T= Number(form.T.value);
-		var Rt= Number(form.Rt.value);
-		var R;
-		
-		T+= 273.15;		// convert to Kelvin
-		
-		if(form.Extended.checked) {
-			R= Rt*exp(A + (B/T)+ (C/(T*T))  + (D/(T*T*T)) );
-		} else {
-			R= Rt*exp(A + (B/T)+ (D/(T*T*T)) );
-		}
-
-		form.R.value= R.toPrecision(Precision);
-	}
+function hasMissingOrInvalidRequired(ids){
+  for(var i=0;i<ids.length;i++){
+    var el=document.getElementById(ids[i]);
+    var value=el.value.trim();
+    if(value==="" || isNaN(Number(value))){
+      return true;
+    }
+  }
+  return false;
 }
 
+function ComputeT(){
+  if(hasMissingOrInvalidRequired(["A","B","C","D","Rt","R"])){
+    clearResults();
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
 
-function ComputeR_Beta(form) { 	
-	with(Math) {
-		var Precision= 5;
-		
-		var B= Number(form.B.value);
-		var T1= Number(form.T1.value)+273.15;
-		var T2= Number(form.T2.value)+273.15;
-		var R1= Number(form.R1.value);
+  var A=Number(document.getElementById("A").value);
+  var B=Number(document.getElementById("B").value);
+  var C=Number(document.getElementById("C").value);
+  var D=Number(document.getElementById("D").value);
+  var R=Number(document.getElementById("R").value);
+  var Rt=Number(document.getElementById("Rt").value);
+  var Precision=5;
 
-		var R2;
+  var lr=Math.log(R/Rt);
+  var T=1/(A+B*lr+C*lr*lr+D*lr*lr*lr);
+  T-=273.15;
 
-		R2 = R1 / (exp(B*( 1/T1 - 1/T2 )));
-
-		form.R2.value= R2.toPrecision(Precision);
-	}
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("Tout").innerText=T.toPrecision(Precision);
 }
+</script>
 
-function ComputeT_Beta(form) { 	
-	with(Math) {
-		var Precision= 5;
-		
-		var B= Number(form.B.value);
-		var T1= Number(form.T1.value)+273.15;
-		var R1= Number(form.R1.value);
-		var R2= Number(form.R2.value);
-		
-		var T2;
-		var X;
-
-		X= B/log(R1/R2);
-		T2= X*T1/(X-T1);
-		
-		T2-= 273.15;
-
-		form.T2.value= T2.toPrecision(Precision);
-	}
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"What is the Steinhart-Hart equation?","acceptedAnswer":{"@type":"Answer","text":"It is a curve-fit equation used to convert thermistor resistance into temperature over a nonlinear resistance-temperature curve."}},
+    {"@type":"Question","name":"What is an NTC thermistor?","acceptedAnswer":{"@type":"Answer","text":"An NTC thermistor is a temperature sensor whose resistance decreases as temperature increases."}},
+    {"@type":"Question","name":"Where do I get A, B, C and D coefficients?","acceptedAnswer":{"@type":"Answer","text":"Use the thermistor datasheet, manufacturer curve table or calibration data measured at known temperatures."}},
+    {"@type":"Question","name":"Why do I need Rt?","acceptedAnswer":{"@type":"Answer","text":"Rt is the reference resistance used in the resistance ratio term ln(R / Rt)."}},
+    {"@type":"Question","name":"Can I use this with Arduino?","acceptedAnswer":{"@type":"Answer","text":"Yes. First calculate thermistor resistance from the ADC voltage divider, then enter the resistance into this calculator."}},
+    {"@type":"Question","name":"Does this calculator convert voltage directly?","acceptedAnswer":{"@type":"Answer","text":"No. It calculates temperature from resistance. Use a voltage divider equation first to convert measured voltage into resistance."}}
+  ]
 }
+</script>
 
-function ComputeBeta(form) { 	
-	with(Math) {
-		var Precision= 5;
-
-		var T1= Number(form.T1.value)  +273.15;		
-		var T2= Number(form.T2.value)  +273.15;
-		var TA=  Number(form.TA.value)  +273.15;
-		var R1= Number(form.R1.value);
-		var R2= Number(form.R2.value);
-		
-		var B;
-		var A;
-		
-		B= T1*T2/(T2-T1)*log(R1/R2);
-		A= -B*100/(TA*TA);
-
-		form.B.value= B.toPrecision(Precision);
-		form.A.value= A.toPrecision(Precision);
-		
-	}
-}
-
-function ComputeDeviation(form) { 	
-	with(Math) {
-		var Precision= 5;
-
-		var TA= Number(form.TA.value) +273.15;		
-		var dB= Number(form.dB.value);		
-		var A= Number(form.A.value);
-		var dR25=  Number(form.dR25.value);
-		var B=  Number(form.B.value);
-				
-		var dR;
-		var dT;
-		var val= form.TA.value;
-		
-		if(Number(form.TA.value)!=0) {
-			A= B/(TA*TA)*100;
-			form.A.value= A.toPrecision(Precision);
-		}
-		
-		dR= ( (1+dB/100)*(1+dR25/100) - 1 )*100;
-		dT= dR/A;
-
-		form.dR.value= dR.toPrecision(Precision);
-		form.dT.value= dT.toPrecision(Precision);
-		
-	}
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+    {"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/electronics-calculators/"},
+    {"@type":"ListItem","position":3,"name":"Steinhart-Hart Thermistor Calculator","item":"https://calcboy.com/tool/steinhart-hart-thermistor-calculator"}
+  ]
 }
 </script>
 
