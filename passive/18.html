@@ -2,76 +2,41 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LED Resistor Calculator | Series LED Current Limiting Resistor</title>
+<meta name="description" content="Calculate LED series resistor value, resistor power and recommended wattage using supply voltage, LED voltage, LED current and LED count.">
+<meta name="keywords" content="LED resistor calculator, LED current limiting resistor calculator, series LED resistor calculator, LED wattage calculator, LED voltage resistor calculator, LED circuit calculator, LED resistance calculator, LED power calculator, CalcBoy">
 
 <style>
 #led-resistor-calc,
-#led-resistor-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
+#led-resistor-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:10px;
-}
+body{margin:0;background:#f6f8fb;padding:10px;color:#111827}
 
-#led-resistor-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-}
+#led-resistor-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 
-#led-resistor-calc .calc-grid{
-  display:grid;
-  gap:15px;
-}
+#led-resistor-calc .calc-grid{display:grid;gap:15px}
 
-#led-resistor-calc .calc-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
+#led-resistor-calc .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 
-#led-resistor-calc .calc-row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-}
+#led-resistor-calc .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
 
 #led-resistor-calc input,
 #led-resistor-calc select{
   width:100%;
+  min-width:0;
   height:43px;
   border:1px solid #cfd6df;
   border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
+  padding:0 10px;
+  font-size:14px;
   background:#fff;
+  color:#111827;
   outline:none;
-}
-
-#led-resistor-calc select{
   text-align:center;
-  font-weight:700;
 }
 
-#led-resistor-calc .unit-box{
-  width:82px;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fafafa;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  font-weight:700;
-}
+#led-resistor-calc select{font-weight:800;padding:0 4px}
 
 #led-resistor-calc input:focus,
 #led-resistor-calc select:focus{
@@ -79,9 +44,23 @@ body{
   box-shadow:0 0 0 3px rgba(255,106,0,.12);
 }
 
-#customVoltageBox{
-  display:none;
+#led-resistor-calc .unit-box{
+  width:82px;
+  min-width:82px;
+  max-width:82px;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:800;
+  color:#111827;
 }
+
+#customVoltageBox{display:none}
 
 #led-resistor-calc button{
   width:100%;
@@ -89,19 +68,35 @@ body{
   margin-top:24px;
   border:0;
   border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
+  background:linear-gradient(90deg,#ff7a18,#ff4b00);
   color:#fff;
   font-size:15px;
-  font-weight:800;
+  font-weight:900;
   cursor:pointer;
+  box-shadow:0 7px 16px rgba(255,91,0,.22);
+}
+
+#errorBox{
+  display:none;
+  margin-top:14px;
+  margin-bottom:6px;
+  color:#dc2626;
+  font-size:14px;
+  font-weight:900;
+  text-align:center;
+  border:2px solid #dc2626;
+  padding:10px;
+  border-radius:8px;
+  background:#fef2f2;
 }
 
 #led-resistor-calc .result-title{
   margin-top:30px;
   margin-bottom:14px;
-  font-size:14px;
-  font-weight:800;
-  color:#a7afbd;
+  font-size:13px;
+  font-weight:900;
+  color:#7b8794;
+  letter-spacing:1px;
 }
 
 #led-resistor-calc .result-grid{
@@ -111,337 +106,615 @@ body{
 }
 
 #led-resistor-calc .result-card{
-  min-height:64px;
-  padding:14px;
-  border-radius:9px;
-}
-
-#led-resistor-calc .result-card:nth-child(1){
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#led-resistor-calc .result-card:nth-child(2){
-  background:#ecfdf5;
-  border:1px solid #bbf7d0;
-}
-
-#led-resistor-calc .result-card:nth-child(3){
-  background:#f5f3ff;
-  border:1px solid #ddd6fe;
-}
-
-/* FIXED RESULT FONT COLORS */
-
-#led-resistor-calc .result-card:nth-child(1) .result-label,
-#led-resistor-calc .result-card:nth-child(1) .result-value{
-  color:#2563eb;
-}
-
-#led-resistor-calc .result-card:nth-child(2) .result-label,
-#led-resistor-calc .result-card:nth-child(2) .result-value{
-  color:#059669;
-}
-
-#led-resistor-calc .result-card:nth-child(3) .result-label,
-#led-resistor-calc .result-card:nth-child(3) .result-value{
-  color:#7c3aed;
+  min-height:82px;
+  padding:16px;
+  border-radius:12px;
 }
 
 #led-resistor-calc .result-label{
-  font-size:12px;
+  font-size:11px;
   font-weight:900;
   text-transform:uppercase;
-  margin-bottom:7px;
+  margin-bottom:10px;
 }
 
 #led-resistor-calc .result-value{
-  font-size:16px;
+  font-size:15px;
   font-weight:900;
+  word-break:break-word;
 }
 
-#led-resistor-calc .formula{
-  margin-top:18px;
-  padding:14px;
-  border-radius:9px;
-  background:#f9fafb;
+#led-resistor-calc .blue{background:#eef5ff;border:1px solid #bcd7ff}
+#led-resistor-calc .green{background:#ecfdf5;border:1px solid #bbf7d0}
+#led-resistor-calc .purple{background:#f5f3ff;border:1px solid #ddd6fe}
+
+#led-resistor-calc .blue .result-label,
+#led-resistor-calc .blue .result-value{color:#2563eb}
+
+#led-resistor-calc .green .result-label,
+#led-resistor-calc .green .result-value{color:#059669}
+
+#led-resistor-calc .purple .result-label,
+#led-resistor-calc .purple .result-value{color:#7c3aed}
+
+#led-resistor-calc .infoBox{
+  margin-top:16px;
+  padding:16px;
+  background:#fff;
   border:1px solid #e5e7eb;
+  border-radius:12px;
+}
+
+#led-resistor-calc .infoBox h2{
+  margin:0 0 12px;
+  font-size:15px;
+  color:#1e293b;
+  border-bottom:1px solid #edf2f7;
+  padding-bottom:6px;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+#led-resistor-calc .infoBox h3{
   font-size:14px;
+  color:#0f172a;
+  margin:12px 0 7px;
+}
+
+#led-resistor-calc .infoBox p,
+#led-resistor-calc .infoBox li{
+  font-size:13px;
   line-height:1.6;
   color:#667085;
   font-weight:700;
 }
 
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
+#led-resistor-calc .paramGrid,
+#led-resistor-calc .exampleGrid,
+#led-resistor-calc .linkGrid,
+#led-resistor-calc .aboutMiniGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:12px 0;
+}
+
+#led-resistor-calc .paramItem,
+#led-resistor-calc .exampleCard,
+#led-resistor-calc .linkCard,
+#led-resistor-calc .aboutMiniCard{
+  background:#f8fafc;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #e2e8f0;
+  font-size:12px;
+  font-weight:700;
+  color:#475467;
+  line-height:1.55;
+}
+
+#led-resistor-calc .paramItem strong,
+#led-resistor-calc .linkCard strong,
+#led-resistor-calc .aboutMiniCard span{
+  color:#0f172a;
+  display:block;
+  margin-bottom:4px;
+  font-weight:900;
+}
+
+#led-resistor-calc .formulaBox{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:8px;
+  padding:12px;
+  margin:8px 0;
+  font-size:13px;
+  color:#334155;
+  font-weight:700;
+  line-height:1.6;
+}
+
+#led-resistor-calc .diagramBox{
+  background:#fff;
+  padding:16px;
+  margin-top:10px;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  overflow-x:auto;
+  display:flex;
+  justify-content:center;
+}
+
+#led-resistor-calc .diagramBox svg{
+  width:100%;
+  max-width:560px;
+  height:auto;
+  display:block;
+}
+
+#led-resistor-calc .aboutLead{
+  background:linear-gradient(135deg,#eef5ff,#fff7ed);
+  border:1px solid #dbeafe;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:12px;
+}
+
+#led-resistor-calc .aboutLead strong{
+  display:block;
+  font-size:16px;
+  color:#0f172a;
+  margin-bottom:7px;
+}
+
+#led-resistor-calc .aboutNote{
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+  border-left:5px solid #059669;
+  border-radius:10px;
+  padding:12px;
+  margin:12px 0;
+  font-size:13px;
+  font-weight:700;
+  color:#065f46;
+  line-height:1.6;
+}
+
+#led-resistor-calc .aboutSteps{
+  counter-reset:step;
+  display:grid;
+  gap:8px;
+  margin:12px 0;
+}
+
+#led-resistor-calc .aboutStep{
+  position:relative;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:11px 11px 11px 42px;
+  font-size:13px;
+  font-weight:700;
+  color:#475467;
+  line-height:1.55;
+}
+
+#led-resistor-calc .aboutStep:before{
+  counter-increment:step;
+  content:counter(step);
+  position:absolute;
+  left:11px;
+  top:11px;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:#ff7a18;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:900;
 }
 
 @media(max-width:600px){
-
-  body{
-    padding:0;
-  }
-
-  #led-resistor-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-  }
-
-  #led-resistor-calc .unit-box{
-    width:72px;
-  }
-
-  #led-resistor-calc .result-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  #led-resistor-calc .result-value{
-    font-size:14px;
-  }
+  body{padding:10px}
+  #led-resistor-calc{padding-top:12px}
+  #led-resistor-calc .calc-row{grid-template-columns:minmax(0,1fr) 72px;gap:7px}
+  #led-resistor-calc .unit-box{width:72px;min-width:72px;max-width:72px;font-size:12px}
+  #led-resistor-calc .result-grid{grid-template-columns:1fr 1fr;gap:10px}
+  #led-resistor-calc .paramGrid,
+  #led-resistor-calc .exampleGrid,
+  #led-resistor-calc .linkGrid,
+  #led-resistor-calc .aboutMiniGrid{grid-template-columns:1fr}
+  #led-resistor-calc .result-card{padding:12px 10px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="led-resistor-calc">
 
-  <div class="calc-grid">
+<div class="calc-grid">
 
-    <div>
-      <label class="calc-label">VIN</label>
-
-      <div class="calc-row">
-        <input id="sv" type="number" placeholder="Supply voltage">
-        <div class="unit-box">V</div>
-      </div>
+  <div>
+    <label class="calc-label">VIN</label>
+    <div class="calc-row">
+      <input id="sv" type="number" placeholder="Supply voltage" oninput="clearLedResults()">
+      <div class="unit-box">V</div>
     </div>
-
-    <div>
-      <label class="calc-label">LED Voltage</label>
-
-      <div class="calc-row">
-
-        <select id="fv" onchange="toggleCustomVoltage()">
-
-          <option value="2">2 Red</option>
-          <option value="2.1">2.1 Green</option>
-          <option value="3.6">3.6 Blue</option>
-          <option value="3.6">3.6 White</option>
-          <option value="2.1">2.1 Yellow</option>
-          <option value="2.2">2.2 Orange</option>
-          <option value="2.1">2.1 Amber</option>
-          <option value="1.7">1.7 Infrared</option>
-          <option value="2">2 Other</option>
-
-          <option value="custom">Custom</option>
-
-        </select>
-
-        <div class="unit-box">V</div>
-
-      </div>
-    </div>
-
-    <div id="customVoltageBox">
-
-      <label class="calc-label">Custom LED Voltage</label>
-
-      <div class="calc-row">
-        <input id="customVoltage" type="number" placeholder="Custom voltage">
-        <div class="unit-box">V</div>
-      </div>
-
-    </div>
-
-    <div>
-      <label class="calc-label">LED Current</label>
-
-      <div class="calc-row">
-        <input id="fc" type="number" placeholder="LED current">
-        <div class="unit-box">mA</div>
-      </div>
-    </div>
-
-    <div>
-      <label class="calc-label">Number of LED</label>
-
-      <div class="calc-row">
-        <input id="led" type="number" placeholder="LED quantity">
-        <div class="unit-box">PCS</div>
-      </div>
-    </div>
-
   </div>
 
-  <button onclick="calculateLedResistor()">Calculate</button>
-
-  <div id="errorBox"></div>
-
-  <div class="result-title">
-    RESULTS
+  <div>
+    <label class="calc-label">LED Voltage</label>
+    <div class="calc-row">
+      <select id="fv" onchange="toggleCustomVoltage();clearLedResults();">
+        <option value="2">2 Red</option>
+        <option value="2.1">2.1 Green</option>
+        <option value="3.6">3.6 Blue</option>
+        <option value="3.6">3.6 White</option>
+        <option value="2.1">2.1 Yellow</option>
+        <option value="2.2">2.2 Orange</option>
+        <option value="2.1">2.1 Amber</option>
+        <option value="1.7">1.7 Infrared</option>
+        <option value="2">2 Other</option>
+        <option value="custom">Custom</option>
+      </select>
+      <div class="unit-box">V</div>
+    </div>
   </div>
 
-  <div class="result-grid">
-
-    <div class="result-card">
-      <div class="result-label">Resistor</div>
-      <div class="result-value">
-        <span id="a1">-</span> Ω
-      </div>
+  <div id="customVoltageBox">
+    <label class="calc-label">Custom LED Voltage</label>
+    <div class="calc-row">
+      <input id="customVoltage" type="number" placeholder="Custom voltage" oninput="clearLedResults()">
+      <div class="unit-box">V</div>
     </div>
-
-    <div class="result-card">
-      <div class="result-label">Wattage</div>
-      <div class="result-value">
-        <span id="a2">-</span> W
-      </div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-label">Power</div>
-      <div class="result-value">
-        <span id="a3">-</span> W
-      </div>
-    </div>
-
   </div>
 
-  <div class="formula">
+  <div>
+    <label class="calc-label">LED Current</label>
+    <div class="calc-row">
+      <input id="fc" type="number" placeholder="LED current" oninput="clearLedResults()">
+      <div class="unit-box">mA</div>
+    </div>
+  </div>
 
-    Total LED Voltage = LED Voltage × Number of LED<br>
-
-    Resistor = (VIN − Total LED Voltage) / Current<br>
-
-    Power = Voltage × Current
-
+  <div>
+    <label class="calc-label">Number of LED</label>
+    <div class="calc-row">
+      <input id="led" type="number" placeholder="LED quantity" oninput="clearLedResults()">
+      <div class="unit-box">PCS</div>
+    </div>
   </div>
 
 </div>
 
+<button onclick="calculateLedResistor()">Calculate</button>
+<div id="errorBox"></div>
+
+<div class="result-title">RESULTS</div>
+
+<div class="result-grid">
+  <div class="result-card blue">
+    <div class="result-label">Resistor</div>
+    <div class="result-value"><span id="a1"></span> Ω</div>
+  </div>
+
+  <div class="result-card green">
+    <div class="result-label">Wattage</div>
+    <div class="result-value"><span id="a2"></span> W</div>
+  </div>
+
+  <div class="result-card purple">
+    <div class="result-label">Power</div>
+    <div class="result-value"><span id="a3"></span> W</div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>VIN</strong>Supply voltage applied to the LED and resistor series circuit.</div>
+<div class="paramItem"><strong>LED Voltage</strong>Forward voltage of one LED. Select a color preset or enter custom voltage.</div>
+<div class="paramItem"><strong>LED Current</strong>Desired LED current in milliamps. Use LED datasheet current rating.</div>
+<div class="paramItem"><strong>Number of LEDs</strong>Total LEDs connected in series in one string.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>5V Red LED</strong></p><p>VIN = 5V, red LED = 2V, current = 20mA, quantity = 1. Resistor voltage is 3V, so resistor is 150Ω.</p></div>
+<div class="exampleCard"><p><strong>12V LED String</strong></p><p>For three white LEDs at 3.6V each, total LED voltage is 10.8V. The resistor drops the remaining voltage.</p></div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>This colorful SVG is an original redraw of a series LED resistor circuit. It shows supply voltage, current limiting resistor, LED voltage and LED current direction.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 760 430" xmlns="http://www.w3.org/2000/svg">
+<rect width="760" height="430" fill="#ffffff"/>
+
+<style>
+.wire{
+stroke:#111827;
+stroke-width:4;
+fill:none;
+stroke-linecap:square;
+stroke-linejoin:miter;
+}
+.resistor{
+stroke:#f15a24;
+stroke-width:5;
+fill:none;
+stroke-linecap:square;
+stroke-linejoin:miter;
+}
+.battery{
+stroke:#3568d4;
+stroke-width:5;
+stroke-linecap:square;
+}
+.ledFill{
+fill:#1f2937;
+stroke:#111827;
+stroke-width:3;
+}
+.ledBar{
+stroke:#111827;
+stroke-width:4;
+}
+.light{
+stroke:#f97316;
+stroke-width:4;
+fill:none;
+stroke-linecap:round;
+}
+.current{
+stroke:#991b1b;
+stroke-width:4;
+fill:none;
+}
+.txt{
+font-family:Arial,sans-serif;
+font-size:25px;
+font-weight:900;
+fill:#111827;
+}
+.small{
+font-family:Arial,sans-serif;
+font-size:17px;
+font-weight:900;
+fill:#111827;
+}
+</style>
+
+<!-- BATTERY -->
+<text x="86" y="152" class="txt">+</text>
+
+<line x1="108" y1="165" x2="196" y2="165" class="battery"/>
+<line x1="126" y1="208" x2="178" y2="208" class="battery"/>
+
+<text x="56" y="204" class="txt">V</text>
+<text x="78" y="216" class="small">s</text>
+
+<text x="92" y="228" class="txt">−</text>
+
+<!-- CIRCUIT WIRES -->
+<path d="M152 165 V90" class="wire"/>
+<path d="M152 208 V330" class="wire"/>
+
+<path d="M152 90 H330" class="wire"/>
+
+<!-- RESISTOR -->
+<path d="
+M330 90
+L344 66
+L358 114
+L372 66
+L386 114
+L400 66
+L414 114
+L428 66
+L442 90" class="resistor"/>
+
+<text x="387" y="42" text-anchor="middle" class="txt">R</text>
+
+<!-- TOP WIRE -->
+<path d="M442 90 H620" class="wire"/>
+
+<!-- RIGHT SIDE -->
+<path d="M620 90 V172" class="wire"/>
+<path d="M620 246 V330" class="wire"/>
+
+<!-- BOTTOM -->
+<path d="M152 330 H620" class="wire"/>
+
+<!-- CURRENT ARROW -->
+<line x1="665" y1="108" x2="665" y2="152"
+stroke="#991b1b"
+stroke-width="4"/>
+
+<polygon points="655,150 675,150 665,176"
+fill="#991b1b"/>
+
+<text x="688" y="135" class="txt">I</text>
+<text x="710" y="147" class="small">led</text>
+
+<!-- LED -->
+<polygon points="585,176 655,176 620,228"
+class="ledFill"/>
+
+<line x1="585" y1="236"
+x2="655" y2="236"
+class="ledBar"/>
+
+<!-- LED LABEL -->
+<text x="500" y="226" class="txt">V</text>
+<text x="523" y="238" class="small">led</text>
+
+<!-- LIGHT RAYS -->
+<line x1="668" y1="205"
+x2="705" y2="215"
+class="light"/>
+
+<polygon points="695,205 715,217 692,223"
+fill="#f97316"/>
+
+<line x1="662" y1="232"
+x2="700" y2="255"
+class="light"/>
+
+<polygon points="690,244 712,258 687,263"
+fill="#f97316"/>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Total LED Voltage = LED Voltage × Number of LEDs</div>
+<div class="formulaBox">Resistor Voltage = VIN − Total LED Voltage</div>
+<div class="formulaBox">Resistor = Resistor Voltage / Current</div>
+<div class="formulaBox">Power = Resistor Voltage × Current</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: VIN = 5V, red LED voltage = 2V, LED current = 20mA, LED count = 1.</div>
+<div class="formulaBox">Total LED Voltage = 2 × 1 = 2V.</div>
+<div class="formulaBox">Resistor Voltage = 5 − 2 = 3V.</div>
+<div class="formulaBox">Current = 20mA / 1000 = 0.02A.</div>
+<div class="formulaBox">Resistor = 3 / 0.02 = 150Ω. Power = 3 × 0.02 = 0.06W.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+<div class="aboutStep">Enter the supply voltage VIN.</div>
+<div class="aboutStep">Select LED forward voltage by color or choose Custom.</div>
+<div class="aboutStep">Enter LED current in mA.</div>
+<div class="aboutStep">Enter number of LEDs in series.</div>
+<div class="aboutStep">Click Calculate to get resistor value, power and recommended wattage.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Pick the right resistor for safe LED current.</strong>
+<p>This LED Resistor Calculator helps calculate series resistor value, resistor power and recommended wattage for LED circuits.</p>
+</div>
+<p>LEDs are current-driven components. If an LED is connected directly to a voltage source without proper current limiting, it can draw too much current and fail quickly. A series resistor drops the extra voltage and limits current to a safe value. This calculator uses supply voltage, LED forward voltage, LED current and number of series LEDs to estimate the required resistor.</p>
+<div class="aboutMiniGrid">
+<div class="aboutMiniCard"><span>Resistor Value</span>Calculated using the voltage left after LED forward voltage drop.</div>
+<div class="aboutMiniCard"><span>Power</span>Shows resistor power dissipation so the resistor does not overheat.</div>
+<div class="aboutMiniCard"><span>Wattage</span>Suggests a practical resistor wattage rating based on calculated power.</div>
+<div class="aboutMiniCard"><span>LED Safety</span>Always stay within datasheet current and voltage limits.</div>
+</div>
+<div class="aboutNote">Tip: Choose a resistor wattage rating higher than calculated power for safe operation, especially in enclosed circuits or warm environments.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>Why does an LED need a resistor?</h3><p>An LED needs a resistor to limit current. Without current limiting, the LED may overheat and fail.</p>
+<h3>What is LED forward voltage?</h3><p>Forward voltage is the voltage drop across the LED when it is conducting current.</p>
+<h3>What current should I use?</h3><p>Use the LED datasheet current rating. Many small indicator LEDs are commonly used around 10mA to 20mA.</p>
+<h3>Can I connect multiple LEDs in series?</h3><p>Yes, but total LED voltage must stay lower than VIN so the resistor can drop the remaining voltage.</p>
+<h3>Why does the calculator show VIN must be higher?</h3><p>If total LED voltage is equal to or higher than VIN, there is no voltage left for the resistor to control current.</p>
+<h3>What wattage resistor should I choose?</h3><p>Choose the suggested wattage or a higher standard value for better safety margin.</p>
+<h3>Can I use this for high-power LEDs?</h3><p>For high-power LEDs, a constant-current driver is usually better than a simple resistor.</p>
+<h3>Does LED color affect resistor value?</h3><p>Yes. Different LED colors have different forward voltages, which changes resistor voltage drop.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+<div class="linkCard"><strong>Ohm’s Law Calculator</strong>Calculate voltage, current, resistance and power.</div>
+<div class="linkCard"><strong>LED Series Resistor Calculator</strong>Useful for LED string resistor selection.</div>
+<div class="linkCard"><strong>Battery Life Calculator</strong>Estimate battery runtime for LED projects.</div>
+<div class="linkCard"><strong>MCD to Lumens Converter</strong>Convert LED intensity and beam angle into lumens.</div>
+</div>
+</section>
+
+</div>
+
 <script>
-
 function toggleCustomVoltage(){
+  const box=document.getElementById("customVoltageBox");
+  box.style.display=document.getElementById("fv").value==="custom" ? "block" : "none";
+}
 
-  const box =
-    document.getElementById("customVoltageBox");
-
-  box.style.display =
-    document.getElementById("fv").value === "custom"
-    ? "block"
-    : "none";
+function clearLedResults(){
+  const errorBox=document.getElementById("errorBox");
+  errorBox.style.display="none";
+  errorBox.innerText="";
+  document.getElementById("a1").innerText="";
+  document.getElementById("a2").innerText="";
+  document.getElementById("a3").innerText="";
 }
 
 function calculateLedResistor(){
+  const vin=parseFloat(document.getElementById("sv").value);
+  const fvSelect=document.getElementById("fv").value;
+  const customV=parseFloat(document.getElementById("customVoltage").value);
+  const ledVoltage=fvSelect==="custom" ? customV : parseFloat(fvSelect);
+  const currentmA=parseFloat(document.getElementById("fc").value);
+  const ledCount=parseFloat(document.getElementById("led").value);
+  const errorBox=document.getElementById("errorBox");
 
-  const vin =
-    parseFloat(document.getElementById("sv").value);
-
-  const fvSelect =
-    document.getElementById("fv").value;
-
-  const customV =
-    parseFloat(document.getElementById("customVoltage").value);
-
-  const ledVoltage =
-    fvSelect === "custom"
-    ? customV
-    : parseFloat(fvSelect);
-
-  const currentmA =
-    parseFloat(document.getElementById("fc").value);
-
-  const ledCount =
-    parseFloat(document.getElementById("led").value);
-
-  const errorBox =
-    document.getElementById("errorBox");
-
-  document.getElementById("a1").innerText = "-";
-  document.getElementById("a2").innerText = "-";
-  document.getElementById("a3").innerText = "-";
+  document.getElementById("a1").innerText="";
+  document.getElementById("a2").innerText="";
+  document.getElementById("a3").innerText="";
 
   if(
     Number.isNaN(vin) ||
     Number.isNaN(ledVoltage) ||
     Number.isNaN(currentmA) ||
     Number.isNaN(ledCount) ||
-    vin <= 0 ||
-    ledVoltage <= 0 ||
-    currentmA <= 0 ||
-    ledCount <= 0
+    vin<=0 ||
+    ledVoltage<=0 ||
+    currentmA<=0 ||
+    ledCount<=0
   ){
-
-    errorBox.innerText =
-      "Please enter all valid positive values.";
-
-    errorBox.style.display = "block";
-
+    errorBox.innerText="Please enter all valid positive values.";
+    errorBox.style.display="block";
     return;
   }
 
-  const totalLedVoltage =
-    ledVoltage * ledCount;
+  const totalLedVoltage=ledVoltage*ledCount;
+  const resistorVoltage=vin-totalLedVoltage;
 
-  const resistorVoltage =
-    vin - totalLedVoltage;
-
-  if(resistorVoltage <= 0){
-
-    errorBox.innerText =
-      "VIN must be higher than total LED voltage.";
-
-    errorBox.style.display = "block";
-
-    document.getElementById("a1").innerText = "NA";
-    document.getElementById("a2").innerText = "NA";
-    document.getElementById("a3").innerText = "NA";
-
+  if(resistorVoltage<=0){
+    errorBox.innerText="VIN must be higher than total LED voltage.";
+    errorBox.style.display="block";
+    document.getElementById("a1").innerText="NA";
+    document.getElementById("a2").innerText="NA";
+    document.getElementById("a3").innerText="NA";
     return;
   }
 
-  errorBox.style.display = "none";
+  errorBox.style.display="none";
 
-  const currentA =
-    currentmA / 1000;
-
-  const resistor =
-    resistorVoltage / currentA;
-
-  const power =
-    resistorVoltage * currentA;
+  const currentA=currentmA/1000;
+  const resistor=resistorVoltage/currentA;
+  const power=resistorVoltage*currentA;
 
   let wattage;
+  if(power<=0.125){wattage="0.125";}
+  else if(power<=0.25){wattage="0.25";}
+  else if(power<=0.5){wattage="0.5";}
+  else if(power<=1){wattage="1";}
+  else if(power<=2){wattage="2";}
+  else if(power<=3){wattage="3";}
+  else{wattage=">3";}
 
-  if(power <= 0.125){
-    wattage = "0.125";
-  }else if(power <= 0.25){
-    wattage = "0.25";
-  }else if(power <= 0.5){
-    wattage = "0.5";
-  }else if(power <= 1){
-    wattage = "1";
-  }else if(power <= 2){
-    wattage = "2";
-  }else if(power <= 3){
-    wattage = "3";
-  }else{
-    wattage = ">3";
-  }
-
-  document.getElementById("a1").innerText =
-    Math.round(resistor);
-
-  document.getElementById("a3").innerText =
-    power.toFixed(4);
-
-  document.getElementById("a2").innerText =
-    wattage;
+  document.getElementById("a1").innerText=Math.round(resistor);
+  document.getElementById("a3").innerText=power.toFixed(4);
+  document.getElementById("a2").innerText=wattage;
 }
+</script>
 
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Why does an LED need a resistor?","acceptedAnswer":{"@type":"Answer","text":"An LED needs a resistor to limit current. Without current limiting, the LED may overheat and fail."}},
+{"@type":"Question","name":"What is LED forward voltage?","acceptedAnswer":{"@type":"Answer","text":"Forward voltage is the voltage drop across the LED when it is conducting current."}},
+{"@type":"Question","name":"What current should I use?","acceptedAnswer":{"@type":"Answer","text":"Use the LED datasheet current rating. Many small indicator LEDs are commonly used around 10mA to 20mA."}},
+{"@type":"Question","name":"Can I connect multiple LEDs in series?","acceptedAnswer":{"@type":"Answer","text":"Yes, but total LED voltage must stay lower than VIN so the resistor can drop the remaining voltage."}},
+{"@type":"Question","name":"What wattage resistor should I choose?","acceptedAnswer":{"@type":"Answer","text":"Choose the suggested wattage or a higher standard value for better safety margin."}}
+]}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"LED Calculators","item":"https://calcboy.com/category/led-calculators/"},
+{"@type":"ListItem","position":3,"name":"LED Resistor Calculator","item":"https://calcboy.com/tool/led-resistor-calculator"}
+]}
 </script>
 
 </body>
