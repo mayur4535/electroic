@@ -2,283 +2,491 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Voltage Divider Calculator | With Load & Without Load</title>
+<meta name="description" content="Calculate voltage divider output with optional load resistance, divider current, resistor power, ratio, Rtotal and Thevenin resistance.">
+<meta name="keywords" content="voltage divider calculator, loaded voltage divider calculator, resistor divider calculator, voltage divider with load, voltage divider without load, R2 parallel Rload calculator, ADC voltage divider calculator, CalcBoy">
 
 <style>
-#voltage-divider-calc,
-#voltage-divider-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:10px;
-}
-
-#voltage-divider-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-}
-
-#voltage-divider-calc .calc-grid{
-  display:grid;
-  gap:15px;
-}
-
-#voltage-divider-calc .calc-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
-
-#voltage-divider-calc .calc-row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#voltage-divider-calc input,
-#voltage-divider-calc select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-#voltage-divider-calc select{
-  text-align:center;
-  font-weight:700;
-  padding:0 6px;
-}
-
-#voltage-divider-calc input:focus,
-#voltage-divider-calc select:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#voltage-divider-calc .unit-box,
-#voltage-divider-calc .unit-select{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  height:43px;
-}
-
-#voltage-divider-calc .unit-box{
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#fafafa;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  font-weight:700;
-  color:#111827;
-}
-
-#voltage-divider-calc button{
-  width:100%;
-  height:45px;
-  margin-top:24px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-#voltage-divider-calc .result-title{
-  margin-top:30px;
-  margin-bottom:14px;
-  font-size:14px;
-  font-weight:800;
-  color:#a7afbd;
-  letter-spacing:.5px;
-}
-
-#voltage-divider-calc .result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-#voltage-divider-calc .result-card{
-  min-height:64px;
-  padding:14px;
-  border-radius:9px;
-}
-
-#voltage-divider-calc .result-card:nth-child(1){
-  background:#eef5ff;
-  border:1px solid #bcd7ff;
-}
-
-#voltage-divider-calc .result-card:nth-child(1) .result-label,
-#voltage-divider-calc .result-card:nth-child(1) .result-value{
-  color:#2563eb;
-}
-
-#voltage-divider-calc .result-label{
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:7px;
-}
-
-#voltage-divider-calc .result-value{
-  font-size:16px;
-  font-weight:900;
-  word-break:break-word;
-}
-
-#voltage-divider-calc .formula{
-  margin-top:18px;
-  padding:14px;
-  border-radius:9px;
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-  line-height:1.6;
-  color:#667085;
-  font-weight:700;
-}
-
-#errorBox{
-  display:none;
-  margin-top:12px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-}
-
+#voltage-divider-calc,#voltage-divider-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#111827}
+#voltage-divider-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+#voltage-divider-calc .calc-grid{display:grid;gap:15px}
+#voltage-divider-calc .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+#voltage-divider-calc .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+#voltage-divider-calc input,#voltage-divider-calc select{width:100%;min-width:0;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:14px;background:#fff;color:#111827;outline:none;text-align:center}
+#voltage-divider-calc select{font-weight:800;padding:0 4px}
+#voltage-divider-calc input:focus,#voltage-divider-calc select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+#voltage-divider-calc .unit-box,#voltage-divider-calc .unit-select{width:82px;min-width:82px;max-width:82px;height:43px}
+#voltage-divider-calc .unit-box{border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#111827}
+#voltage-divider-calc .load-toggle{display:flex;align-items:center;gap:10px;padding:13px;border:1px solid #e5e7eb;border-radius:10px;background:#fff7ed;font-weight:900;color:#111827}
+#voltage-divider-calc .load-toggle input{width:20px;height:20px;accent-color:#ff4b00}
+#loadInputBox{display:none}
+#voltage-divider-calc button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 7px 16px rgba(255,91,0,.22)}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:900;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+#voltage-divider-calc .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:900;color:#7b8794;letter-spacing:1px}
+#voltage-divider-calc .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#voltage-divider-calc .result-card{min-height:82px;padding:16px;border-radius:12px}
+#voltage-divider-calc .blue{background:#eef5ff;border:1px solid #bcd7ff}
+#voltage-divider-calc .green{background:#ecfdf5;border:1px solid #bbf7d0}
+#voltage-divider-calc .purple{background:#f5f3ff;border:1px solid #ddd6fe}
+#voltage-divider-calc .orange{background:#fff7ed;border:1px solid #fed7aa}
+#voltage-divider-calc .blue .result-label,#voltage-divider-calc .blue .result-value{color:#2563eb}
+#voltage-divider-calc .green .result-label,#voltage-divider-calc .green .result-value{color:#059669}
+#voltage-divider-calc .purple .result-label,#voltage-divider-calc .purple .result-value{color:#7c3aed}
+#voltage-divider-calc .orange .result-label,#voltage-divider-calc .orange .result-value{color:#ea580c}
+#voltage-divider-calc .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px}
+#voltage-divider-calc .result-value{font-size:15px;font-weight:900;word-break:break-word}
+#loadResultBox{display:none}
+#voltage-divider-calc .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+#voltage-divider-calc .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:900;text-transform:uppercase}
+#voltage-divider-calc .infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+#voltage-divider-calc .infoBox p,#voltage-divider-calc .infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+#voltage-divider-calc .paramGrid,#voltage-divider-calc .exampleGrid,#voltage-divider-calc .linkGrid,#voltage-divider-calc .aboutMiniGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+#voltage-divider-calc .paramItem,#voltage-divider-calc .exampleCard,#voltage-divider-calc .linkCard,#voltage-divider-calc .aboutMiniCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:700;color:#475467;line-height:1.55}
+#voltage-divider-calc .paramItem strong,#voltage-divider-calc .linkCard strong,#voltage-divider-calc .aboutMiniCard span{color:#0f172a;display:block;margin-bottom:4px;font-weight:900}
+#voltage-divider-calc .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+#voltage-divider-calc .diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center}
+#voltage-divider-calc .diagramBox svg{width:100%;max-width:560px;height:auto;display:block}
+#voltage-divider-calc .aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+#voltage-divider-calc .aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+#voltage-divider-calc .aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+#voltage-divider-calc .aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+#voltage-divider-calc .aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+#voltage-divider-calc .aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
-
-  body{
-    padding:0;
-  }
-
-  #voltage-divider-calc .calc-row{
-    grid-template-columns:minmax(0,1fr) 72px;
-  }
-
-  #voltage-divider-calc .unit-box,
-  #voltage-divider-calc .unit-select{
-    width:72px;
-    min-width:72px;
-    max-width:72px;
-  }
-
-  #voltage-divider-calc .result-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  #voltage-divider-calc .result-value{
-    font-size:14px;
-  }
+body{padding:10px}
+#voltage-divider-calc .calc-row{grid-template-columns:minmax(0,1fr) 72px}
+#voltage-divider-calc .unit-box,#voltage-divider-calc .unit-select{width:72px;min-width:72px;max-width:72px;font-size:12px}
+#voltage-divider-calc .result-grid{grid-template-columns:1fr 1fr;gap:10px}
+#voltage-divider-calc .paramGrid,#voltage-divider-calc .exampleGrid,#voltage-divider-calc .linkGrid,#voltage-divider-calc .aboutMiniGrid{grid-template-columns:1fr}
+#voltage-divider-calc .result-card{padding:12px 10px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="voltage-divider-calc">
 
-  <div class="calc-grid">
+<div class="calc-grid">
 
-    <div>
-      <label class="calc-label">V<sub>IN</sub></label>
-      <div class="calc-row">
-        <input id="tool_voltage_source" type="number" placeholder="Enter input voltage">
-        <div class="unit-box">V</div>
-      </div>
-    </div>
+<div>
+<label class="calc-label">V<sub>IN</sub></label>
+<div class="calc-row">
+<input id="tool_voltage_source" type="number" placeholder="Enter input voltage" oninput="clearVDResults()">
+<div class="unit-box">V</div>
+</div>
+</div>
 
-    <div>
-      <label class="calc-label">R<sub>1</sub></label>
-      <div class="calc-row">
-        <input id="tool_resistance_1" type="number" placeholder="Enter R1">
-        <select id="tool_resistance_1_unit" class="unit-select">
-          <option value="1">Ω</option>
-          <option value="1000">kΩ</option>
-          <option value="1000000">MΩ</option>
-        </select>
-      </div>
-    </div>
+<div>
+<label class="calc-label">R<sub>1</sub></label>
+<div class="calc-row">
+<input id="tool_resistance_1" type="number" placeholder="Enter R1" oninput="clearVDResults()">
+<select id="tool_resistance_1_unit" class="unit-select" onchange="clearVDResults()">
+<option value="1">Ω</option>
+<option value="1000">kΩ</option>
+<option value="1000000">MΩ</option>
+</select>
+</div>
+</div>
 
-    <div>
-      <label class="calc-label">R<sub>2</sub></label>
-      <div class="calc-row">
-        <input id="tool_resistance_2" type="number" placeholder="Enter R2">
-        <select id="tool_resistance_2_unit" class="unit-select">
-          <option value="1">Ω</option>
-          <option value="1000">kΩ</option>
-          <option value="1000000">MΩ</option>
-        </select>
-      </div>
-    </div>
+<div>
+<label class="calc-label">R<sub>2</sub></label>
+<div class="calc-row">
+<input id="tool_resistance_2" type="number" placeholder="Enter R2" oninput="clearVDResults()">
+<select id="tool_resistance_2_unit" class="unit-select" onchange="clearVDResults()">
+<option value="1">Ω</option>
+<option value="1000">kΩ</option>
+<option value="1000000">MΩ</option>
+</select>
+</div>
+</div>
 
-  </div>
+<label class="load-toggle">
+<input type="checkbox" id="enable_load" onchange="toggleLoadMode()">
+Enable load resistance
+</label>
 
-  <button onclick="calculateVoltageDivider()">Calculate</button>
+<div id="loadInputBox">
+<label class="calc-label">R<sub>LOAD</sub></label>
+<div class="calc-row">
+<input id="tool_load_resistance" type="number" placeholder="Enter Rload" oninput="clearVDResults()">
+<select id="tool_load_resistance_unit" class="unit-select" onchange="clearVDResults()">
+<option value="1">Ω</option>
+<option value="1000">kΩ</option>
+<option value="1000000">MΩ</option>
+</select>
+</div>
+</div>
 
-  <div id="errorBox">Please enter valid values.</div>
+</div>
 
-  <div class="result-title">RESULTS</div>
+<button onclick="calculateVoltageDivider()">Calculate</button>
+<div id="errorBox">Please enter all valid positive values.</div>
 
-  <div class="result-grid">
-    <div class="result-card">
-      <div class="result-label">Vout</div>
-      <div class="result-value"><span id="tool_voltage_output">-</span> V</div>
-    </div>
-  </div>
+<div class="result-title">RESULTS</div>
 
-  <div class="formula">
-    Vout = VIN × R2 / (R1 + R2)
-  </div>
+<div class="result-grid">
+<div class="result-card blue">
+<div class="result-label">Vout Ideal</div>
+<div class="result-value"><span id="vout_ideal"></span> V</div>
+</div>
+
+<div class="result-card green">
+<div class="result-label">Divider Current</div>
+<div class="result-value"><span id="divider_current"></span> A</div>
+</div>
+
+<div class="result-card purple">
+<div class="result-label">Power in R1</div>
+<div class="result-value"><span id="power_r1"></span> W</div>
+</div>
+
+<div class="result-card orange">
+<div class="result-label">Power in R2</div>
+<div class="result-value"><span id="power_r2"></span> W</div>
+</div>
+
+<div class="result-card blue">
+<div class="result-label">Ratio</div>
+<div class="result-value"><span id="divider_ratio"></span></div>
+</div>
+
+<div class="result-card green">
+<div class="result-label">Rtotal</div>
+<div class="result-value"><span id="r_total"></span> Ω</div>
+</div>
+
+<div class="result-card purple">
+<div class="result-label">Thevenin R</div>
+<div class="result-value"><span id="r_thevenin"></span> Ω</div>
+</div>
+</div>
+
+<div id="loadResultBox">
+<div class="result-title">WITH LOAD</div>
+<div class="result-grid">
+<div class="result-card blue">
+<div class="result-label">R2 || Rload</div>
+<div class="result-value"><span id="r_parallel"></span> Ω</div>
+</div>
+
+<div class="result-card green">
+<div class="result-label">Vout Loaded</div>
+<div class="result-value"><span id="vout_loaded"></span> V</div>
+</div>
+
+<div class="result-card purple">
+<div class="result-label">Loading Ratio</div>
+<div class="result-value"><span id="loading_ratio"></span></div>
+</div>
+
+<div class="result-card orange">
+<div class="result-label">Load Current</div>
+<div class="result-value"><span id="load_current"></span> A</div>
+</div>
+</div>
+</div>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Custom SVG diagrams show ideal divider and loaded divider. Load section appears only when the checkbox is enabled.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 760 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Voltage divider diagrams without load and with load">
+<rect width="760" height="620" fill="#ffffff"/>
+
+<style>
+.vdPanel{fill:#f8fafc;stroke:#e5e7eb;stroke-width:2}
+.vdWire{stroke:#111827;stroke-width:4;fill:none;stroke-linecap:square;stroke-linejoin:miter}
+.vdRes{stroke:#f97316;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.vdLoadRes{stroke:#7c3aed;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.vdNode{fill:#111827}
+.vdBatP{stroke:#2563eb;stroke-width:5;stroke-linecap:square}
+.vdBatN{stroke:#f97316;stroke-width:5;stroke-linecap:square}
+.vdTxt{font-family:Arial,sans-serif;font-size:22px;font-weight:900;fill:#111827}
+.vdSmall{font-family:Arial,sans-serif;font-size:15px;font-weight:800;fill:#334155}
+.vdBlue{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#2563eb}
+.vdGreen{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#059669}
+.vdOrange{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#ea580c}
+.vdPurple{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#7c3aed}
+</style>
+
+<!-- ================= WITHOUT LOAD ================= -->
+<rect x="35" y="35" width="320" height="525" rx="16" class="vdPanel"/>
+<text x="195" y="70" text-anchor="middle" class="vdTxt">Without Load</text>
+
+<!-- main circuit wires -->
+<path d="M120 130 H230" class="vdWire"/>
+<path d="M230 130 V175" class="vdWire"/>
+<path d="M230 280 V320" class="vdWire"/>
+<path d="M230 320 V345" class="vdWire"/>
+<path d="M230 450 V500 H120" class="vdWire"/>
+<path d="M120 130 V285" class="vdWire"/>
+<path d="M120 335 V500" class="vdWire"/>
+
+<!-- battery open symbol -->
+<line x1="88" y1="285" x2="152" y2="285" class="vdBatP"/>
+<line x1="102" y1="335" x2="138" y2="335" class="vdBatN"/>
+<text x="67" y="322" class="vdTxt">Vin</text>
+
+<!-- R1 -->
+<path d="M230 175
+L210 190
+L250 205
+L210 220
+L250 235
+L210 250
+L250 265
+L230 280" class="vdRes"/>
+<text x="260" y="230" class="vdOrange">R1</text>
+
+<!-- R2 -->
+<path d="M230 345
+L210 360
+L250 375
+L210 390
+L250 405
+L210 420
+L250 435
+L230 450" class="vdRes"/>
+<text x="260" y="400" class="vdOrange">R2</text>
+
+<!-- output node -->
+<circle cx="230" cy="320" r="7" class="vdNode"/>
+<path d="M230 320 H310" class="vdWire"/>
+<text x="260" y="310" class="vdGreen">Vout</text>
+
+<text x="80" y="525" class="vdGreen">Vout = Vin × R2/(R1+R2)</text>
+
+<!-- ================= WITH LOAD ================= -->
+<rect x="405" y="35" width="320" height="525" rx="16" class="vdPanel"/>
+<text x="565" y="70" text-anchor="middle" class="vdTxt">With Load</text>
+
+<!-- main circuit wires -->
+<path d="M490 130 H600" class="vdWire"/>
+<path d="M600 130 V175" class="vdWire"/>
+<path d="M600 280 V320" class="vdWire"/>
+<path d="M600 320 V345" class="vdWire"/>
+<path d="M600 450 V500 H490" class="vdWire"/>
+<path d="M490 130 V285" class="vdWire"/>
+<path d="M490 335 V500" class="vdWire"/>
+
+<!-- battery open symbol -->
+<line x1="458" y1="285" x2="522" y2="285" class="vdBatP"/>
+<line x1="472" y1="335" x2="508" y2="335" class="vdBatN"/>
+<text x="435" y="322" class="vdTxt">Vin</text>
+
+<!-- R1 -->
+<path d="M600 175
+L580 190
+L620 205
+L580 220
+L620 235
+L580 250
+L620 265
+L600 280" class="vdRes"/>
+<text x="540" y="230" class="vdOrange">R1</text>
+
+<!-- R2 -->
+<path d="M600 345
+L580 360
+L620 375
+L580 390
+L620 405
+L580 420
+L620 435
+L600 450" class="vdRes"/>
+<text x="540" y="400" class="vdOrange">R2</text>
+
+<!-- Vout node and load branch -->
+<circle cx="600" cy="320" r="7" class="vdNode"/>
+<text x="632" y="310" class="vdGreen">Vout</text>
+
+<!-- separate load branch wire: no line through resistor body -->
+<path d="M600 320 H690" class="vdWire"/>
+<path d="M690 320 V345" class="vdWire"/>
+<path d="M690 450 H600" class="vdWire"/>
+
+<!-- load resistor with clear gaps above and below -->
+<path d="M690 345
+L670 360
+L710 375
+L670 390
+L710 405
+L670 420
+L710 435
+L690 450" class="vdLoadRes"/>
+
+<text x="640" y="400" class="vdPurple">RL</text>
+
+<text x="407" y="525" class="vdGreen">Loaded: R2 becomes R2 || Rload</text>
+
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Vout Ideal = Vin × R2 / (R1 + R2)</div>
+<div class="formulaBox">Divider Current = Vin / (R1 + R2)</div>
+<div class="formulaBox">Power in R1 = I² × R1</div>
+<div class="formulaBox">Power in R2 = I² × R2</div>
+<div class="formulaBox">Rth = R1 || R2</div>
+<div class="formulaBox">With load: Rp = R2 × Rload / (R2 + Rload)</div>
+<div class="formulaBox">Vout Loaded = Vin × Rp / (R1 + Rp)</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+<div class="aboutStep">Enter Vin, R1 and R2.</div>
+<div class="aboutStep">Keep load unchecked for ideal divider output.</div>
+<div class="aboutStep">Tick Enable load resistance to enter Rload.</div>
+<div class="aboutStep">Click Calculate to show ideal and optional loaded results.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Voltage divider calculator with optional loading effect.</strong>
+<p>This tool calculates ideal voltage divider output and optional loaded output when a real circuit is connected to Vout.</p>
+</div>
+<p>A voltage divider uses two resistors to scale an input voltage down. Without load, output depends only on R1 and R2. With a load connected, the load appears in parallel with R2 and usually reduces output voltage. This matters for ADC inputs, sensor dividers, logic-level scaling, battery sensing and microcontroller input circuits.</p>
+<div class="aboutMiniGrid">
+<div class="aboutMiniCard"><span>Ideal Output</span>Uses only R1 and R2.</div>
+<div class="aboutMiniCard"><span>Loaded Output</span>Uses R2 parallel with Rload.</div>
+<div class="aboutMiniCard"><span>Rth</span>Thevenin resistance for RC and ADC settling checks.</div>
+<div class="aboutMiniCard"><span>Power</span>Checks resistor dissipation.</div>
+</div>
+<div class="aboutNote">Tip: For accurate ADC readings, keep input/load impedance much higher than R2 or use a buffer.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is a voltage divider?</h3><p>A voltage divider is a two-resistor circuit that creates a lower output voltage from a higher input voltage.</p>
+<h3>What does load resistance do?</h3><p>Load resistance connects across the output and acts in parallel with R2, changing the divider ratio.</p>
+<h3>Why is loaded Vout lower?</h3><p>Because R2 parallel Rload is smaller than R2 alone, so the output node is pulled down.</p>
+<h3>What is Thevenin resistance?</h3><p>It is R1 parallel R2 and helps estimate ADC settling and RC filtering behavior.</p>
+<h3>Can this be used for ADC scaling?</h3><p>Yes, but check input impedance, sampling capacitor requirements and divider current.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+<div class="linkCard"><strong>Ohm’s Law Calculator</strong>Calculate voltage, current, resistance and power.</div>
+<div class="linkCard"><strong>Parallel Resistor Calculator</strong>Find equivalent parallel resistance.</div>
+<div class="linkCard"><strong>LED Resistor Calculator</strong>Calculate LED current-limiting resistors.</div>
+<div class="linkCard"><strong>ADC Voltage Calculator</strong>Useful for microcontroller analog input scaling.</div>
+</div>
+</section>
 
 </div>
 
 <script>
+function fmtVD(x){
+  if(!isFinite(x)) return "";
+  if(Math.abs(x)>=1000) return x.toFixed(2);
+  if(Math.abs(x)>=1) return x.toFixed(6);
+  return x.toPrecision(6);
+}
+
+function getOhm(id,unitId){
+  return parseFloat(document.getElementById(id).value)*parseFloat(document.getElementById(unitId).value);
+}
+
+function toggleLoadMode(){
+  var on=document.getElementById("enable_load").checked;
+  document.getElementById("loadInputBox").style.display=on?"block":"none";
+  document.getElementById("loadResultBox").style.display=on?"block":"none";
+  clearVDResults();
+}
+
+function clearVDResults(){
+  document.getElementById("errorBox").style.display="none";
+  ["vout_ideal","divider_current","power_r1","power_r2","divider_ratio","r_total","r_thevenin","r_parallel","vout_loaded","loading_ratio","load_current"].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.innerText="";
+  });
+}
+
 function calculateVoltageDivider(){
+  var vin=parseFloat(document.getElementById("tool_voltage_source").value);
+  var r1=getOhm("tool_resistance_1","tool_resistance_1_unit");
+  var r2=getOhm("tool_resistance_2","tool_resistance_2_unit");
+  var loadOn=document.getElementById("enable_load").checked;
+  var errorBox=document.getElementById("errorBox");
 
-  let vin = parseFloat(document.getElementById("tool_voltage_source").value);
-
-  let r1 =
-    parseFloat(document.getElementById("tool_resistance_1").value) *
-    parseFloat(document.getElementById("tool_resistance_1_unit").value);
-
-  let r2 =
-    parseFloat(document.getElementById("tool_resistance_2").value) *
-    parseFloat(document.getElementById("tool_resistance_2_unit").value);
-
-  let errorBox = document.getElementById("errorBox");
-
-  if(isNaN(vin) || isNaN(r1) || isNaN(r2)){
-    errorBox.style.display = "block";
-    document.getElementById("tool_voltage_output").innerText = "-";
+  if(isNaN(vin)||isNaN(r1)||isNaN(r2)||vin<=0||r1<=0||r2<=0){
+    errorBox.style.display="block";
+    clearVDResults();
+    errorBox.style.display="block";
     return;
   }
 
-  errorBox.style.display = "none";
+  var voutIdeal=vin*r2/(r1+r2);
+  var dividerCurrent=vin/(r1+r2);
+  var p1=dividerCurrent*dividerCurrent*r1;
+  var p2=dividerCurrent*dividerCurrent*r2;
+  var ratio=voutIdeal/vin;
+  var rTotal=r1+r2;
+  var rth=(r1*r2)/(r1+r2);
 
-  let vout = vin * r2 / (r1 + r2);
+  document.getElementById("vout_ideal").innerText=fmtVD(voutIdeal);
+  document.getElementById("divider_current").innerText=fmtVD(dividerCurrent);
+  document.getElementById("power_r1").innerText=fmtVD(p1);
+  document.getElementById("power_r2").innerText=fmtVD(p2);
+  document.getElementById("divider_ratio").innerText=fmtVD(ratio);
+  document.getElementById("r_total").innerText=fmtVD(rTotal);
+  document.getElementById("r_thevenin").innerText=fmtVD(rth);
 
-  document.getElementById("tool_voltage_output").innerText = vout;
+  if(!loadOn){
+    errorBox.style.display="none";
+    return;
+  }
+
+  var rload=getOhm("tool_load_resistance","tool_load_resistance_unit");
+
+  if(isNaN(rload)||rload<=0){
+    errorBox.style.display="block";
+    document.getElementById("r_parallel").innerText="";
+    document.getElementById("vout_loaded").innerText="";
+    document.getElementById("loading_ratio").innerText="";
+    document.getElementById("load_current").innerText="";
+    return;
+  }
+
+  var rp=(r2*rload)/(r2+rload);
+  var voutLoaded=vin*rp/(r1+rp);
+  var loadCurrent=voutLoaded/rload;
+  var loadingRatio=rload/r2;
+
+  document.getElementById("r_parallel").innerText=fmtVD(rp);
+  document.getElementById("vout_loaded").innerText=fmtVD(voutLoaded);
+  document.getElementById("loading_ratio").innerText=fmtVD(loadingRatio);
+  document.getElementById("load_current").innerText=fmtVD(loadCurrent);
+
+  errorBox.style.display="none";
 }
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is a voltage divider?","acceptedAnswer":{"@type":"Answer","text":"A voltage divider is a two-resistor circuit that creates a lower output voltage from a higher input voltage."}},
+{"@type":"Question","name":"What does load resistance do?","acceptedAnswer":{"@type":"Answer","text":"Load resistance connects across the output and acts in parallel with R2, changing the divider ratio."}},
+{"@type":"Question","name":"Why is loaded Vout lower?","acceptedAnswer":{"@type":"Answer","text":"Because R2 parallel Rload is smaller than R2 alone, so the output node is pulled down."}},
+{"@type":"Question","name":"What is Thevenin resistance?","acceptedAnswer":{"@type":"Answer","text":"It is R1 parallel R2 and helps estimate ADC settling and RC filtering behavior."}},
+{"@type":"Question","name":"Can this be used for ADC scaling?","acceptedAnswer":{"@type":"Answer","text":"Yes, but check input impedance, sampling capacitor requirements and divider current."}}
+]}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Voltage Divider Calculator","item":"https://calcboy.com/tool/voltage-divider-calculator"}
+]}
 </script>
 
 </body>
