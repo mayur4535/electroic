@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Stripline Trace Width Calculator</title>
-<meta name="description" content="Calculate stripline PCB trace width, trace temperature, resistance, voltage drop and power dissipation from current, copper thickness and length.">
-<meta name="keywords" content="stripline trace width calculator, PCB trace width calculator, stripline current calculator, PCB current capacity calculator, copper trace width calculator, trace resistance calculator, voltage drop PCB trace, PCB power dissipation calculator">
+<title>Stripline Trace Width Calculator | PCB Stripline Width Calculator - CalcBoy</title>
+<meta name="description" content="Calculate stripline PCB trace width, resistance, voltage drop, temperature and power dissipation from current, copper thickness and length.">
+<meta name="keywords" content="stripline trace width calculator, PCB stripline trace width calculator, stripline current calculator, PCB current capacity calculator, copper trace width calculator, embedded trace width calculator, PCB trace resistance calculator, stripline voltage drop calculator, PCB power dissipation calculator, internal PCB trace width calculator, copper thickness trace width calculator, stripline PCB calculator, PCB conductor width calculator, CalcBoy">
 <style>
 #stripline-calc,#stripline-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#stripline-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#stripline-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -21,30 +21,37 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
-.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
-.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
-.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
-.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
-.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
-.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
 .result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -139,34 +146,38 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card"><div class="result-label">Trace Width</div><div class="result-value" id="widthResult"></div></div>
-  <div class="result-card"><div class="result-label">Trace Temperature</div><div class="result-value" id="tempResult"></div></div>
-  <div class="result-card"><div class="result-label">Resistance</div><div class="result-value" id="resistanceResult"></div></div>
-  <div class="result-card"><div class="result-label">Voltage Drop</div><div class="result-value" id="voltageDropResult"></div></div>
-  <div class="result-card"><div class="result-label">Power Dissipation</div><div class="result-value" id="powerResult"></div></div>
+  <div class="result-card blue"><div class="result-label">Trace Width</div><div class="result-value" id="widthResult"></div></div>
+  <div class="result-card green"><div class="result-label">Trace Temperature</div><div class="result-value" id="tempResult"></div></div>
+  <div class="result-card purple"><div class="result-label">Resistance</div><div class="result-value" id="resistanceResult"></div></div>
+  <div class="result-card orange"><div class="result-label">Voltage Drop</div><div class="result-value" id="voltageDropResult"></div></div>
+  <div class="result-card blue"><div class="result-label">Power Dissipation</div><div class="result-value" id="powerResult"></div></div>
 </div>
 
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Current</strong>Maximum current through the stripline trace.</div>
-  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness used for cross-sectional area.</div>
-  <div class="paramItem"><strong>Temperature Rise</strong>Allowed trace heating above ambient temperature.</div>
-  <div class="paramItem"><strong>Trace Length</strong>Conductor length used for resistance and voltage drop calculation.</div>
+  <div class="paramItem"><strong>Maximum Current</strong>Enter the highest current expected through the embedded stripline trace. Higher current requires a larger PCB conductor width to keep heating under control.</div>
+  <div class="paramItem"><strong>Output Width Unit</strong>Select the unit used for the calculated stripline width result, such as mil, mm, cm, µm or inch.</div>
+  <div class="paramItem"><strong>Trace Thickness</strong>Enter copper thickness used for the internal PCB layer. Thicker copper increases cross-sectional area and reduces resistance.</div>
+  <div class="paramItem"><strong>Temperature Rise</strong>Select allowed heating above ambient temperature. Lower allowed temperature rise usually requires a wider trace.</div>
+  <div class="paramItem"><strong>Ambient Temperature</strong>Enter board operating ambient temperature in °C, K or °F. This combines with temperature rise to estimate final trace temperature.</div>
+  <div class="paramItem"><strong>Trace Length</strong>Enter conductor length used for resistance, voltage drop and power dissipation calculation.</div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Practical Operational Examples</h2>
 <div class="exampleGrid">
-  <div class="exampleCard"><p><strong>PCB Current Capacity</strong></p><p>Find required stripline width for a target current and copper thickness.</p></div>
-  <div class="exampleCard"><p><strong>Voltage Drop Check</strong></p><p>Estimate trace resistance, voltage drop and power dissipation for board reliability.</p></div>
+  <div class="exampleCard"><p><strong>PCB Current Capacity</strong></p><p>Find required embedded stripline width for a target current and copper thickness in power boards, motor controllers and DC distribution PCBs.</p></div>
+  <div class="exampleCard"><p><strong>Voltage Drop Check</strong></p><p>Estimate trace resistance, voltage drop and power dissipation so the load receives proper voltage across the internal PCB current path.</p></div>
+  <div class="exampleCard"><p><strong>Internal Layer Routing</strong></p><p>Use this calculator when a high-current net is routed as a stripline between reference planes instead of an external PCB trace.</p></div>
+  <div class="exampleCard"><p><strong>Thermal Margin</strong></p><p>Compare 10 °C, 20 °C, 30 °C and 45 °C rise options to choose a practical trace width for long-term board reliability.</p></div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Diagrams & Theory</h2>
-<p>A stripline trace is embedded between dielectric layers and reference planes. Wider and thicker copper reduces resistance, voltage drop and heating.</p>
+<p>A stripline trace is embedded between dielectric layers and reference planes. Wider and thicker copper reduces resistance, voltage drop and heating. Because the conductor is inside the PCB stack-up, thermal behavior is different from an external trace, so temperature rise selection is important.</p>
 
 <div class="diagramBox">
 <svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stripline trace width cross section diagram">
@@ -193,66 +204,119 @@ body{padding:10px}
 </marker>
 </defs>
 
-<!-- back/right 3D side -->
 <path d="M490 115 L590 35 L590 250 L490 330 Z" class="side"/>
-
-<!-- dielectric body -->
 <path d="M70 115 H490 V330 H70 Z" class="diel"/>
 <path d="M70 115 L170 35 H590 L490 115 Z" fill="#ffffff" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/>
 
-<!-- top copper plane -->
 <path d="M70 115 H490 V140 H70 Z" class="copper"/>
 <path d="M490 115 L590 35 V60 L490 140 Z" class="copperDark"/>
 
-<!-- bottom copper plane -->
 <path d="M70 305 H490 V330 H70 Z" class="copper"/>
 <path d="M490 305 L590 225 V250 L490 330 Z" class="copperDark"/>
 
-<!-- embedded stripline trace -->
 <path d="M240 205 H342 V255 H240 Z" class="copper"/>
 <path d="M342 205 L430 142 L430 175 L342 255 Z" class="copperDark"/>
 <path d="M240 205 L338 140 H430 L342 205 Z" fill="lightgreen" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/>
 
-<!-- internal reference center lines for H arrows -->
 <line x1="35" y1="140" x2="225" y2="140" class="tick"/>
 <line x1="35" y1="205" x2="225" y2="205" class="tick"/>
 <line x1="35" y1="255" x2="225" y2="255" class="tick"/>
 <line x1="35" y1="305" x2="225" y2="305" class="tick"/>
 
-<!-- H arrows left -->
 <line x1="55" y1="140" x2="55" y2="205" class="arrow"/>
 <text x="18" y="180" class="txt">H</text>
 
 <line x1="55" y1="255" x2="55" y2="305" class="arrow"/>
-<text x="18" y="290" class="txt">H</text>rrrrrrr
+<text x="18" y="290" class="txt">H</text>
 
-<!-- W arrow below trace -->
 <line x1="240" y1="275" x2="342" y2="275" class="arrow"/>
 <line x1="240" y1="260" x2="240" y2="290" class="tick"/>
 <line x1="342" y1="260" x2="342" y2="290" class="tick"/>
 <text x="280" y="298" class="txt">W</text>
 
-<!-- T thickness mark -->
 <text x="28" y="240" class="txt">T</text>
-
-<!-- labels -->
-
 <text x="95" y="135" class="small">Ground plane</text>
 <text x="95" y="325" class="small">Ground plane</text>
-
 </svg>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">Step 1: Convert current to amperes, thickness to mils, ambient temperature to Celsius and length to centimeters.</div>
-<div class="formula">Step 2: Cross section is estimated using the selected temperature rise and current polynomial from the original calculator logic.</div>
-<div class="formula">Step 3: Trace width = cross section / thickness / selected output width unit.</div>
-<div class="formula">Step 4: Trace temperature = temperature rise + ambient temperature.</div>
-<div class="formula">Step 5: Resistance = abs(17e-7 × length_cm / cross_section_cm² × (1 + 0.0039 × (trace_temperature - 25))).</div>
-<div class="formula">Step 6: Voltage drop = resistance × current.</div>
-<div class="formula">Step 7: Power dissipation = voltage drop × current.</div>
+<div class="formulaBox">Step 1: Convert current to amperes, thickness to mils, ambient temperature to Celsius and length to centimeters.</div>
+<div class="formulaBox">Step 2: Cross section is estimated using the selected temperature rise and current polynomial from the original calculator logic.</div>
+<div class="formulaBox">Step 3: Trace width = cross section / thickness / selected output width unit.</div>
+<div class="formulaBox">Step 4: Trace temperature = temperature rise + ambient temperature.</div>
+<div class="formulaBox">Step 5: Resistance = abs(17e-7 × length_cm / cross_section_cm² × (1 + 0.0039 × (trace_temperature - 25))).</div>
+<div class="formulaBox">Step 6: Voltage drop = resistance × current.</div>
+<div class="formulaBox">Step 7: Power dissipation = voltage drop × current.</div>
+<div class="formulaBox">Practical meaning: higher current or lower allowed temperature rise increases required stripline width, while longer traces increase resistance, voltage drop and power loss.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: maximum current = 2 A, trace thickness = 1 mil, temperature rise = 10 °C, ambient temperature = 25 °C, trace length = 2 inch.</div>
+<div class="formulaBox">The calculator first converts current, copper thickness, ambient temperature and trace length into the units used by the original calculation logic.</div>
+<div class="formulaBox">The selected 10 °C temperature rise is used to estimate the needed copper cross section for an internal stripline trace.</div>
+<div class="formulaBox">Trace width is calculated from cross section divided by copper thickness.</div>
+<div class="formulaBox">Trace temperature is calculated as ambient temperature plus selected temperature rise.</div>
+<div class="formulaBox">Resistance, voltage drop and power dissipation are calculated from the estimated stripline geometry and current.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter the maximum current expected through the stripline trace.</div>
+  <div class="aboutStep">Choose the output unit for the calculated trace width.</div>
+  <div class="aboutStep">Enter copper thickness and select the correct thickness unit.</div>
+  <div class="aboutStep">Select the allowed temperature rise for the internal PCB trace.</div>
+  <div class="aboutStep">Enter ambient temperature in °C, K or °F.</div>
+  <div class="aboutStep">Enter trace length, then click Calculate to see width, temperature, resistance, voltage drop and power loss.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Size embedded PCB traces for current, heat and voltage drop.</strong>
+<p>The CalcBoy Stripline Trace Width Calculator estimates internal PCB trace width, trace temperature, resistance, voltage drop and power dissipation from current, copper thickness, temperature rise and trace length.</p>
+</div>
+<p>In multilayer PCB design, a stripline trace is routed inside the board between reference planes. This structure is common in controlled-impedance layouts, power distribution, compact embedded electronics and high-reliability PCB routing. Even though the trace is made from copper, it still has resistance, and that resistance can create heating, voltage loss and power dissipation when current flows through it.</p>
+<p>This calculator is useful when checking internal PCB current paths for power supplies, motor drivers, LED drivers, battery circuits, embedded controllers and industrial electronics. A trace that works on the surface layer may not behave the same when placed inside the stack-up because heat spreads differently. That is why temperature rise and copper thickness are important inputs.</p>
+<p>Use the result as an early design guide before final PCB review. For high-current designs, also check via current, connector rating, copper pours, thermal reliefs, manufacturing limits and IPC-style design margins.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Internal stripline width checks for multilayer PCB current paths.</div>
+  <div class="aboutMiniCard"><span>Supported Outputs</span>Trace width, temperature, resistance, voltage drop and power dissipation.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>SMPS boards, motor controllers, LED drivers, battery circuits and embedded power routing.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Lower temperature rise and higher current usually require wider copper.</div>
+</div>
+<div class="aboutNote">Tip: For production PCBs, keep enough design margin. Internal traces can be harder to cool than external copper, especially when high-current nets are surrounded by dielectric material.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is a stripline trace?</h3>
+<p>A stripline trace is a PCB conductor embedded inside the board between dielectric layers and reference planes.</p>
+<h3>Why is stripline width important?</h3>
+<p>Trace width affects current capacity, resistance, voltage drop and copper heating. A narrow stripline may run hotter at the same current.</p>
+<h3>Does copper thickness reduce required width?</h3>
+<p>Yes. Thicker copper increases cross-sectional area, so the same current can often be carried with less width.</p>
+<h3>Why does temperature rise matter?</h3>
+<p>Temperature rise defines how much heating is allowed above ambient temperature. Lower temperature rise usually needs a wider trace.</p>
+<h3>Can this replace PCB manufacturer rules?</h3>
+<p>No. It is a design calculator, but final PCB layout should also follow manufacturer limits, IPC guidance, via capacity and safety margin.</p>
+<h3>What outputs does this calculator provide?</h3>
+<p>It provides stripline trace width, final trace temperature, resistance, voltage drop and power dissipation.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>PCB Trace Width Calculator</strong>Estimate external PCB trace width for current and temperature rise.</div>
+  <div class="linkCard"><strong>Trace Resistance Calculator</strong>Calculate PCB copper trace resistance from width, length, thickness and temperature.</div>
+  <div class="linkCard"><strong>Voltage Drop Calculator</strong>Check voltage loss across conductors and copper paths.</div>
+  <div class="linkCard"><strong>Ohm’s Law Calculator</strong>Calculate voltage, current, resistance and power in circuits.</div>
+</div>
 </section>
 
 </div>
@@ -327,6 +391,34 @@ function calculateStripline(){
   document.getElementById("resistanceResult").innerText=resistance.toPrecision(3)+" Ω";
   document.getElementById("voltageDropResult").innerText=voltageDrop.toPrecision(3)+" V";
   document.getElementById("powerResult").innerText=power.toPrecision(3)+" W";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is a stripline trace?","acceptedAnswer":{"@type":"Answer","text":"A stripline trace is a PCB conductor embedded inside the board between dielectric layers and reference planes."}},
+{"@type":"Question","name":"Why is stripline width important?","acceptedAnswer":{"@type":"Answer","text":"Trace width affects current capacity, resistance, voltage drop and copper heating. A narrow stripline may run hotter at the same current."}},
+{"@type":"Question","name":"Does copper thickness reduce required width?","acceptedAnswer":{"@type":"Answer","text":"Yes. Thicker copper increases cross-sectional area, so the same current can often be carried with less width."}},
+{"@type":"Question","name":"Why does temperature rise matter?","acceptedAnswer":{"@type":"Answer","text":"Temperature rise defines how much heating is allowed above ambient temperature. Lower temperature rise usually needs a wider trace."}},
+{"@type":"Question","name":"Can this replace PCB manufacturer rules?","acceptedAnswer":{"@type":"Answer","text":"No. It is a design calculator, but final PCB layout should also follow manufacturer limits, IPC guidance, via capacity and safety margin."}},
+{"@type":"Question","name":"What outputs does this calculator provide?","acceptedAnswer":{"@type":"Answer","text":"It provides stripline trace width, final trace temperature, resistance, voltage drop and power dissipation."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"PCB Calculators","item":"https://calcboy.com/category/pcb-calculators/"},
+{"@type":"ListItem","position":3,"name":"Stripline Trace Width Calculator","item":"https://calcboy.com/tool/stripline-trace-width-calculator"}
+]
 }
 </script>
 
