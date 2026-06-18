@@ -3,44 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Stripline Crosstalk Calculator</title>
-<meta name="description" content="Calculate stripline crosstalk coefficient and coupled voltage from rise time, route length, spacing, substrate height, trace heights and dielectric constant.">
-<meta name="keywords" content="stripline crosstalk calculator, PCB crosstalk calculator, coupled voltage calculator, stripline coupling calculator, PCB signal integrity calculator, trace spacing calculator">
+<title>Stripline Crosstalk Calculator | PCB Signal Integrity Calculator - CalcBoy</title>
+<meta name="description" content="Calculate stripline crosstalk coefficient and coupled voltage from rise time, spacing, route length, dielectric constant and trace geometry.">
+<meta name="keywords" content="stripline crosstalk calculator, PCB crosstalk calculator, coupled voltage calculator, stripline coupling calculator, PCB signal integrity calculator, trace spacing calculator, PCB trace crosstalk calculator, crosstalk coefficient calculator, near end crosstalk calculator, stripline signal coupling calculator, RF PCB crosstalk calculator, high speed PCB routing calculator, dielectric crosstalk calculator, CalcBoy">
 <style>
 #stripline-crosstalk-calc,#stripline-crosstalk-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#stripline-crosstalk-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#stripline-crosstalk-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
 .calc-row.full{grid-template-columns:1fr}
 input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;outline:none}
 input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box select{font-weight:800;color:#374151;text-align:center}
 button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
 #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
-.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
-.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
 .result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -150,11 +162,11 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Crosstalk Coefficient</div>
     <div class="result-value" id="talkResult"></div>
   </div>
-  <div class="result-card">
+  <div class="result-card green">
     <div class="result-label">Coupled Voltage</div>
     <div class="result-value" id="voltageResult"></div>
   </div>
@@ -163,24 +175,28 @@ body{padding:10px}
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Rise Time</strong>Signal edge rise time in nanoseconds.</div>
-  <div class="paramItem"><strong>Input Voltage</strong>Aggressor signal voltage used to estimate coupled voltage.</div>
-  <div class="paramItem"><strong>Parallel Length</strong>Length where two traces run side-by-side.</div>
-  <div class="paramItem"><strong>Spacing and Heights</strong>Trace spacing, trace heights and substrate height define coupling geometry.</div>
+  <div class="paramItem"><strong>Rise Time</strong>Signal edge rise time in nanoseconds. Faster digital edges increase signal integrity risk because coupling happens over a shorter transition interval.</div>
+  <div class="paramItem"><strong>Input Voltage</strong>Aggressor signal voltage used to estimate coupled voltage on the victim stripline trace.</div>
+  <div class="paramItem"><strong>Parallel Route Length</strong>Length where two PCB traces run side-by-side. Longer parallel routing generally increases crosstalk coupling.</div>
+  <div class="paramItem"><strong>Substrate Height</strong>Total stripline substrate height used with trace height values to estimate coupling geometry.</div>
+  <div class="paramItem"><strong>Trace Heights</strong>Trace 1 and Trace 2 height positions inside the stripline structure. Different heights change electric-field coupling distance.</div>
+  <div class="paramItem"><strong>Trace Spacing and Dielectric</strong>Spacing and dielectric constant define how strongly the two embedded traces couple inside the PCB stack-up.</div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Practical Operational Examples</h2>
 <div class="exampleGrid">
-  <div class="exampleCard"><p><strong>Digital PCB Routing</strong></p><p>Estimate crosstalk when fast digital traces run parallel inside stripline layers.</p></div>
-  <div class="exampleCard"><p><strong>Signal Integrity Check</strong></p><p>Increase spacing or reduce parallel length to reduce coupled voltage on victim traces.</p></div>
+  <div class="exampleCard"><p><strong>Digital PCB Routing</strong></p><p>Estimate crosstalk when fast digital traces run parallel inside stripline layers, especially on clocks, memory buses, logic signals and control lines.</p></div>
+  <div class="exampleCard"><p><strong>Signal Integrity Check</strong></p><p>Increase spacing, reduce parallel route length, slow edge rate or adjust layer geometry to reduce coupled voltage on victim traces.</p></div>
+  <div class="exampleCard"><p><strong>High-Speed Layout Review</strong></p><p>Use the crosstalk coefficient before PCB release to catch risky routing where two signals travel together for too long.</p></div>
+  <div class="exampleCard"><p><strong>Noise Margin Estimate</strong></p><p>Compare coupled voltage with receiver logic thresholds to understand whether crosstalk could create false switching or jitter.</p></div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Diagrams & Theory</h2>
-<p>Stripline crosstalk depends on parallel route length, spacing, dielectric constant, trace heights and signal rise time. The coupled voltage increases when traces are closer and parallel for longer distance.</p>
+<p>Stripline crosstalk depends on parallel route length, spacing, dielectric constant, trace heights and signal rise time. The coupled voltage increases when traces are closer and parallel for longer distance. In high-speed PCB design, a small geometry change can make a big difference because the aggressor field couples into the victim trace through the dielectric material.</p>
 
 <div class="diagramBox">
 <svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stripline crosstalk cross section diagram">
@@ -212,35 +228,27 @@ body{padding:10px}
 </marker>
 </defs>
 
-<!-- 3D side shadow -->
 <path d="M500 115 L590 35 L590 250 L500 330 Z" class="ctSide"/>
 
-<!-- dielectric body -->
 <path d="M80 115 H500 V330 H80 Z" class="ctDiel"/>
 <path d="M80 115 L170 35 H590 L500 115 Z" fill="#ffffff" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/>
 
-<!-- top and bottom ground planes -->
 <path d="M80 115 H500 V140 H80 Z" class="ctCopper"/>
 <path d="M500 115 L590 35 V60 L500 140 Z" class="ctCopperDark"/>
 <path d="M80 305 H500 V330 H80 Z" class="ctCopper"/>
 <path d="M500 305 L590 225 V250 L500 330 Z" class="ctCopperDark"/>
 
-<!-- two embedded stripline traces -->
 <path d="M160 205 H240 V252 H160 Z" class="ctCopper"/>
 <path d="M240 140 L390 140 V137 L240 252 Z" class="ctCopperDark"/>
 <path d="M160 205 L252 140 H332 L240 205 Z" fill="lightgreen" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/>
-
-
-
-
 
 <path d="M335 215 H425 V252 H335 Z" class="ctCopper"/>
 <path d="M425 205 L498 140 V187 L425 252 Z" class="ctCopperDark"/>
 <path d="M335 215 L417 140 H497 L420 215 Z" fill="lightgreen" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/>
 
+<path d="M245 210 C275 180 310 180 340 215" class="ctCouple"/>
+<text x="270" y="182" class="ctBlue">coupling field</text>
 
-
-<!-- H dimensions -->
 <line x1="40" y1="140" x2="195" y2="140" class="ctTick"/>
 <line x1="470" y1="230" x2="424" y2="230" class="ctTick"/>
 <line x1="120" y1="230" x2="160" y2="230" class="ctTick"/>
@@ -255,37 +263,101 @@ body{padding:10px}
 <line x1="450" y1="230" x2="450" y2="305" class="ctArrow"/>
 <text x="455" y="275" class="ctTxt">H2</text>
 
-
-
-
-
-<!-- spacing S -->
 <line x1="240" y1="272" x2="335" y2="272" class="ctArrow"/>
 <line x1="240" y1="252" x2="240" y2="285" class="ctTick"/>
 <line x1="335" y1="252" x2="335" y2="285" class="ctTick"/>
 <text x="280" y="300" class="ctTxt">S</text>
 
-
-
-<!-- labels -->
 <text x="100" y="135" class="ctSmall">Ground plane</text>
 <text x="100" y="326" class="ctSmall">Ground plane</text>
-
-
-
+<text x="160" y="200" class="ctSmall">Aggressor</text>
+<text x="340" y="210" class="ctSmall">Victim</text>
 </svg>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">Step 1: Convert route length to inches and substrate/trace dimensions to centimeters using the original unit multipliers.</div>
-<div class="formula">Step 2: C = 1.017 × sqrt(Er) × parallel length × 2.</div>
-<div class="formula">Step 3: D = sqrt(spacing² + (trace2 height - trace1 height)²).</div>
-<div class="formula">Step 4: E1 = T1 × (substrate height - T1) / (T1 + (substrate height - T1)).</div>
-<div class="formula">Step 5: E2 = T2 × (substrate height - T2) / (T2 + (substrate height - T2)).</div>
-<div class="formula">Step 6: Ratio = C / rise time. If ratio ≤ 1, crosstalk uses the extra ratio multiplier. If ratio > 1, it uses the saturated coupling expression.</div>
-<div class="formula">Step 7: Coupled voltage = input voltage × coupling factor.</div>
+<div class="formulaBox">Step 1: Convert route length to inches and substrate/trace dimensions to centimeters using the original unit multipliers.</div>
+<div class="formulaBox">Step 2: C = 1.017 × sqrt(Er) × parallel length × 2.</div>
+<div class="formulaBox">Step 3: D = sqrt(spacing² + (trace2 height - trace1 height)²).</div>
+<div class="formulaBox">Step 4: E1 = T1 × (substrate height - T1) / (T1 + (substrate height - T1)).</div>
+<div class="formulaBox">Step 5: E2 = T2 × (substrate height - T2) / (T2 + (substrate height - T2)).</div>
+<div class="formulaBox">Step 6: Ratio = C / rise time. If ratio ≤ 1, crosstalk uses the extra ratio multiplier. If ratio > 1, it uses the saturated coupling expression.</div>
+<div class="formulaBox">Step 7: Coupling factor is converted to crosstalk coefficient in dB using 20 × log(factor) / log(10).</div>
+<div class="formulaBox">Step 8: Coupled voltage = input voltage × coupling factor.</div>
+<div class="formulaBox">Practical meaning: shorter rise time, closer trace spacing and longer parallel length usually increase crosstalk risk.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: rise time = 1 ns, input voltage = 3.3 V, parallel length = 500 mil, substrate height = 20 mil, trace 1 height = 8 mil, trace 2 height = 8 mil, spacing = 10 mil, dielectric constant = 4.2.</div>
+<div class="formulaBox">The calculator converts length and geometry inputs using the selected unit multipliers.</div>
+<div class="formulaBox">The dielectric constant and parallel length are used to estimate the coupling time factor C.</div>
+<div class="formulaBox">Trace spacing and trace height difference are combined into distance term D.</div>
+<div class="formulaBox">The geometry terms E1 and E2 are calculated from trace positions inside the stripline structure.</div>
+<div class="formulaBox">Finally, crosstalk coefficient in dB and coupled voltage are displayed in the result cards.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter the signal rise time in nanoseconds.</div>
+  <div class="aboutStep">Enter the aggressor input voltage.</div>
+  <div class="aboutStep">Enter the parallel route length where the two traces run side-by-side.</div>
+  <div class="aboutStep">Enter substrate height, trace 1 height, trace 2 height and trace spacing.</div>
+  <div class="aboutStep">Enter the dielectric constant of the PCB material.</div>
+  <div class="aboutStep">Click Calculate to get crosstalk coefficient and coupled voltage.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate stripline crosstalk before a high-speed PCB becomes noisy.</strong>
+<p>The CalcBoy Stripline Crosstalk Calculator estimates crosstalk coefficient and coupled voltage using rise time, aggressor voltage, parallel route length, spacing, trace heights, substrate height and dielectric constant.</p>
+</div>
+<p>In high-speed PCB design, crosstalk is not only a routing inconvenience; it can become a real signal integrity problem. When two stripline traces run close together inside a multilayer PCB, the changing electric field from the aggressor trace can couple energy into the nearby victim trace. This coupled voltage may create noise, timing jitter, false triggering, EMI problems or degraded noise margin.</p>
+<p>This calculator is useful for digital PCB routing, memory bus layout, FPGA boards, clock routing, RF control traces, high-speed logic boards and multilayer PCB stack-up checks. It helps estimate how spacing, parallel length, dielectric constant and trace position affect coupling. If the result looks too high, practical fixes include increasing spacing, reducing parallel length, changing layer routing, adding ground shielding, reducing edge rate or improving return path control.</p>
+<p>Use this tool as an early layout review aid. For final production boards, pair this calculation with stack-up data, impedance control, simulation, return path review and manufacturer design rules.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Stripline crosstalk checks for high-speed PCB routing and signal integrity review.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Rise time, voltage, route length, spacing, trace heights, substrate height and dielectric constant.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>Clock lines, data buses, FPGA boards, memory routing and multilayer PCB design.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>More spacing and shorter parallel length usually reduce coupled voltage.</div>
+</div>
+<div class="aboutNote">Tip: Crosstalk is often fixed in layout, not firmware. Keep fast edges separated, avoid long parallel runs and maintain a clean return path near high-speed traces.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is stripline crosstalk?</h3>
+<p>Stripline crosstalk is unwanted signal coupling between nearby embedded PCB traces running inside a multilayer board.</p>
+
+<h3>What increases PCB crosstalk?</h3>
+<p>Closer spacing, longer parallel route length, faster rise time and certain trace geometries can increase coupled voltage.</p>
+
+<h3>Why does rise time matter?</h3>
+<p>Fast signal edges contain high-frequency energy, so they couple more strongly into nearby traces than slow edges.</p>
+
+<h3>How can I reduce stripline crosstalk?</h3>
+<p>Increase spacing, reduce parallel length, improve return paths, use ground shielding where practical and avoid routing sensitive nets beside noisy aggressor traces.</p>
+
+<h3>What is coupled voltage?</h3>
+<p>Coupled voltage is the estimated unwanted voltage induced on the victim trace by the aggressor signal.</p>
+
+<h3>Is this calculator enough for final high-speed PCB validation?</h3>
+<p>No. It is useful for early design checks, but final validation should also include stack-up review, impedance control, layout inspection and signal integrity simulation when needed.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Stripline Trace Width Calculator</strong>Calculate embedded PCB trace width, resistance, voltage drop and power dissipation.</div>
+  <div class="linkCard"><strong>Microstrip Wavelength Calculator</strong>Calculate guided wavelength and effective dielectric constant for RF PCB traces.</div>
+  <div class="linkCard"><strong>Trace Resistance Calculator</strong>Estimate PCB copper trace resistance from width, length, thickness and temperature.</div>
+  <div class="linkCard"><strong>PCB Trace Width Calculator</strong>Estimate required copper trace width for PCB current carrying.</div>
+</div>
 </section>
 
 </div>
@@ -340,6 +412,34 @@ function calculateCrosstalk(){
   document.getElementById("errorBox").style.display="none";
   document.getElementById("talkResult").innerText=talkCoeff.toPrecision(3)+" dB";
   document.getElementById("voltageResult").innerText=coupledVoltage.toPrecision(3)+" V";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is stripline crosstalk?","acceptedAnswer":{"@type":"Answer","text":"Stripline crosstalk is unwanted signal coupling between nearby embedded PCB traces running inside a multilayer board."}},
+{"@type":"Question","name":"What increases PCB crosstalk?","acceptedAnswer":{"@type":"Answer","text":"Closer spacing, longer parallel route length, faster rise time and certain trace geometries can increase coupled voltage."}},
+{"@type":"Question","name":"Why does rise time matter?","acceptedAnswer":{"@type":"Answer","text":"Fast signal edges contain high-frequency energy, so they couple more strongly into nearby traces than slow edges."}},
+{"@type":"Question","name":"How can I reduce stripline crosstalk?","acceptedAnswer":{"@type":"Answer","text":"Increase spacing, reduce parallel length, improve return paths, use ground shielding where practical and avoid routing sensitive nets beside noisy aggressor traces."}},
+{"@type":"Question","name":"What is coupled voltage?","acceptedAnswer":{"@type":"Answer","text":"Coupled voltage is the estimated unwanted voltage induced on the victim trace by the aggressor signal."}},
+{"@type":"Question","name":"Is this calculator enough for final high-speed PCB validation?","acceptedAnswer":{"@type":"Answer","text":"No. It is useful for early design checks, but final validation should also include stack-up review, impedance control, layout inspection and signal integrity simulation when needed."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"PCB Calculators","item":"https://calcboy.com/category/pcb-calculators/"},
+{"@type":"ListItem","position":3,"name":"Stripline Crosstalk Calculator","item":"https://calcboy.com/tool/stripline-crosstalk-calculator"}
+]
 }
 </script>
 
