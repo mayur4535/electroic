@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Stripline Max Current Calculator</title>
-<meta name="description" content="Calculate maximum stripline trace current, trace temperature, resistance, voltage drop and power dissipation from PCB trace dimensions.">
-<meta name="keywords" content="stripline max current calculator, PCB stripline current calculator, internal trace current capacity, PCB current calculator, trace resistance calculator, voltage drop PCB trace">
+<title>Stripline Max Current Calculator | Internal PCB Trace Current Calculator - CalcBoy</title>
+<meta name="description" content="Calculate stripline maximum current, trace temperature, resistance, voltage drop and power dissipation for internal PCB traces.">
+<meta name="keywords" content="stripline max current calculator, PCB stripline current calculator, internal trace current capacity calculator, PCB current calculator, trace resistance calculator, voltage drop PCB trace calculator, buried PCB trace current, internal copper trace ampacity, stripline power dissipation calculator, CalcBoy">
 <style>
 #stripline-current-calc,#stripline-current-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#stripline-current-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#stripline-current-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -21,30 +21,37 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
-.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
-.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
-.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
-.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
-.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
-.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
 .result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -128,28 +135,32 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card"><div class="result-label">Maximum Current</div><div class="result-value" id="currentResult"></div></div>
-  <div class="result-card"><div class="result-label">Trace Temperature</div><div class="result-value" id="tempResult"></div></div>
-  <div class="result-card"><div class="result-label">Resistance</div><div class="result-value" id="resistanceResult"></div></div>
-  <div class="result-card"><div class="result-label">Voltage Drop</div><div class="result-value" id="voltageDropResult"></div></div>
-  <div class="result-card"><div class="result-label">Power Dissipation</div><div class="result-value" id="powerResult"></div></div>
+  <div class="result-card blue"><div class="result-label">Maximum Current</div><div class="result-value" id="currentResult"></div></div>
+  <div class="result-card green"><div class="result-label">Trace Temperature</div><div class="result-value" id="tempResult"></div></div>
+  <div class="result-card purple"><div class="result-label">Resistance</div><div class="result-value" id="resistanceResult"></div></div>
+  <div class="result-card orange"><div class="result-label">Voltage Drop</div><div class="result-value" id="voltageDropResult"></div></div>
+  <div class="result-card blue"><div class="result-label">Power Dissipation</div><div class="result-value" id="powerResult"></div></div>
 </div>
 
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Trace Width</strong>Internal stripline conductor width. Wider conductors support more current.</div>
-  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness used to calculate cross-sectional area.</div>
-  <div class="paramItem"><strong>Temperature Rise</strong>Allowed rise above ambient temperature.</div>
-  <div class="paramItem"><strong>Trace Length</strong>Used for resistance, voltage drop and power dissipation.</div>
+  <div class="paramItem"><strong>Trace Width</strong>Internal stripline conductor width. Wider buried copper supports more current because cross-sectional area increases.</div>
+  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness used to calculate cross-sectional area. Thicker internal copper improves current capacity and lowers resistance.</div>
+  <div class="paramItem"><strong>Temperature Rise</strong>Allowed rise above ambient temperature. Lower temperature rise normally requires more copper area.</div>
+  <div class="paramItem"><strong>Ambient Temperature</strong>Board operating environment temperature. This combines with selected temperature rise for trace temperature.</div>
+  <div class="paramItem"><strong>Trace Length</strong>Used for resistance, voltage drop and power dissipation. Longer traces create more copper loss.</div>
+  <div class="paramItem"><strong>Outputs</strong>Maximum current, trace temperature, resistance, voltage drop and power dissipation are calculated after input entry.</div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Practical Operational Examples</h2>
 <div class="exampleGrid">
-  <div class="exampleCard"><p><strong>Internal Power Trace</strong></p><p>Estimate current capacity for buried stripline copper layers inside multilayer PCBs.</p></div>
+  <div class="exampleCard"><p><strong>Internal Power Trace</strong></p><p>Estimate current capacity for buried stripline copper layers inside multilayer PCBs used in power distribution and compact electronics.</p></div>
   <div class="exampleCard"><p><strong>Thermal Reliability</strong></p><p>Check trace temperature, voltage drop and power dissipation before final PCB routing.</p></div>
+  <div class="exampleCard"><p><strong>Multilayer PCB Design</strong></p><p>Use this when a current path is routed on an inner layer instead of a top or bottom copper layer.</p></div>
+  <div class="exampleCard"><p><strong>Voltage Loss Check</strong></p><p>Compare resistance and voltage drop to decide whether trace width, copper thickness or routing length needs improvement.</p></div>
 </div>
 </section>
 
@@ -294,13 +305,85 @@ fill:#334155
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">Step 1: Convert trace width and trace thickness using selected unit multipliers.</div>
-<div class="formula">Step 2: Cross-sectional area = width × thickness.</div>
-<div class="formula">Step 3: Maximum current is found by looping current from 0.01 A to 35 A and matching the closest cross-section value using the original stripline polynomial formulas.</div>
-<div class="formula">Step 4: Trace temperature = ambient temperature + selected temperature rise.</div>
-<div class="formula">Step 5: Resistance = abs(17e-7 × length_cm / cross_section_cm² × (1 + 0.0039 × (trace_temperature - 25))).</div>
-<div class="formula">Step 6: Voltage drop = resistance × current.</div>
-<div class="formula">Step 7: Power dissipation = voltage drop × current.</div>
+<div class="formulaBox">Step 1: Convert trace width and trace thickness using selected unit multipliers.</div>
+<div class="formulaBox">Step 2: Cross-sectional area = width × thickness.</div>
+<div class="formulaBox">Step 3: Maximum current is found by looping current from 0.01 A to 35 A and matching the closest cross-section value using the original stripline polynomial formulas.</div>
+<div class="formulaBox">Step 4: Trace temperature = ambient temperature + selected temperature rise.</div>
+<div class="formulaBox">Step 5: Resistance = abs(17e-7 × length_cm / cross_section_cm² × (1 + 0.0039 × (trace_temperature - 25))).</div>
+<div class="formulaBox">Step 6: Voltage drop = resistance × current.</div>
+<div class="formulaBox">Step 7: Power dissipation = voltage drop × current.</div>
+<div class="formulaBox">Practical meaning: internal traces can be harder to cool, so width, thickness and temperature rise margin matter more in compact multilayer boards.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: trace width = 80 mil, trace thickness = 1 mil, temperature rise = 10 °C, ambient temperature = 25 °C, trace length = 2 inch.</div>
+<div class="formulaBox">The calculator converts width and thickness using the selected multipliers.</div>
+<div class="formulaBox">Cross-sectional area is calculated from width × thickness.</div>
+<div class="formulaBox">The original stripline polynomial logic searches for the closest matching current value.</div>
+<div class="formulaBox">Trace temperature is calculated from ambient temperature plus selected rise.</div>
+<div class="formulaBox">Resistance, voltage drop and power dissipation are calculated from trace length, cross-section and estimated current.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter internal stripline trace width and select the correct unit.</div>
+  <div class="aboutStep">Enter copper thickness used on the inner PCB layer.</div>
+  <div class="aboutStep">Select allowable temperature rise.</div>
+  <div class="aboutStep">Enter ambient temperature and trace length.</div>
+  <div class="aboutStep">Click Calculate to get maximum current, trace temperature, resistance, voltage drop and power dissipation.</div>
+  <div class="aboutStep">Use the result to improve internal power routing and thermal margin.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate current capacity for buried PCB stripline conductors.</strong>
+<p>The CalcBoy Stripline Max Current Calculator estimates maximum current, trace temperature, resistance, voltage drop and power dissipation for internal PCB traces.</p>
+</div>
+<p>Stripline traces are routed inside a multilayer PCB between dielectric layers and reference planes. This makes them useful for dense boards and protected routing, but it also means heat may not escape as easily as it does from external copper. When an internal trace carries too much current, the result can be voltage loss, copper heating, reliability problems and long-term board stress.</p>
+<p>This calculator helps PCB designers, repair engineers and hardware developers estimate current capacity for buried copper routes. It is useful for internal power distribution, compact embedded devices, industrial control boards, battery electronics, power modules and multilayer boards where top-layer copper space is limited.</p>
+<p>Use the result as a design estimate, not as the final safety limit. Real PCB temperature depends on copper pours, nearby planes, airflow, resin system, board thickness, via stitching, enclosure temperature and manufacturer process. For production designs, add margin and confirm important current paths with thermal testing or manufacturer guidance.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Internal PCB stripline current capacity checks.</div>
+  <div class="aboutMiniCard"><span>Supported Outputs</span>Maximum current, temperature, resistance, voltage drop and power loss.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>Multilayer PCBs, internal power routing, embedded boards and compact electronics.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Buried copper often needs extra thermal safety margin.</div>
+</div>
+<div class="aboutNote">Tip: For current-heavy internal layers, also check plane spreading, via current, connector rating and thermal path to outside copper.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is stripline maximum current?</h3>
+<p>It is the estimated current an internal PCB stripline trace can carry for a selected temperature rise.</p>
+
+<h3>Is stripline current capacity different from microstrip?</h3>
+<p>Yes. Stripline traces are buried inside the PCB, so thermal behavior can differ from outer-layer microstrip traces.</p>
+
+<h3>Does wider stripline trace increase current capacity?</h3>
+<p>Yes. Wider trace increases copper cross-sectional area and usually supports more current.</p>
+
+<h3>Why does trace thickness matter?</h3>
+<p>Thicker copper lowers resistance and increases the copper area available for current flow.</p>
+
+<h3>Why does trace length affect voltage drop?</h3>
+<p>Longer traces have more resistance, causing higher voltage drop and more power dissipation.</p>
+
+<h3>Can this be used for final PCB safety approval?</h3>
+<p>No. Use it as an estimate and apply extra margin, especially for internal PCB layers that are harder to cool.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Microstrip Max Current Calculator</strong>Calculate current capacity for top-layer PCB traces.</div>
+  <div class="linkCard"><strong>Stripline Trace Width Calculator</strong>Calculate embedded trace width, resistance, voltage drop and power dissipation.</div>
+  <div class="linkCard"><strong>Trace Resistance Calculator</strong>Estimate PCB copper trace resistance from geometry and temperature.</div>
+  <div class="linkCard"><strong>Voltage Drop Calculator</strong>Calculate voltage loss across wire, cable and copper conductors.</div>
+</div>
 </section>
 
 </div>
@@ -394,6 +477,34 @@ function calculateStriplineCurrent(){
   document.getElementById("resistanceResult").innerText=resistance.toPrecision(3)+" Ω";
   document.getElementById("voltageDropResult").innerText=voltageDrop.toPrecision(3)+" V";
   document.getElementById("powerResult").innerText=power.toPrecision(3)+" W";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is stripline maximum current?","acceptedAnswer":{"@type":"Answer","text":"It is the estimated current an internal PCB stripline trace can carry for a selected temperature rise."}},
+{"@type":"Question","name":"Is stripline current capacity different from microstrip?","acceptedAnswer":{"@type":"Answer","text":"Yes. Stripline traces are buried inside the PCB, so thermal behavior can differ from outer-layer microstrip traces."}},
+{"@type":"Question","name":"Does wider stripline trace increase current capacity?","acceptedAnswer":{"@type":"Answer","text":"Yes. Wider trace increases copper cross-sectional area and usually supports more current."}},
+{"@type":"Question","name":"Why does trace thickness matter?","acceptedAnswer":{"@type":"Answer","text":"Thicker copper lowers resistance and increases the copper area available for current flow."}},
+{"@type":"Question","name":"Why does trace length affect voltage drop?","acceptedAnswer":{"@type":"Answer","text":"Longer traces have more resistance, causing higher voltage drop and more power dissipation."}},
+{"@type":"Question","name":"Can this be used for final PCB safety approval?","acceptedAnswer":{"@type":"Answer","text":"No. Use it as an estimate and apply extra margin, especially for internal PCB layers that are harder to cool."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"PCB Calculators","item":"https://calcboy.com/category/pcb-calculators/"},
+{"@type":"ListItem","position":3,"name":"Stripline Max Current Calculator","item":"https://calcboy.com/tool/stripline-max-current-calculator"}
+]
 }
 </script>
 
