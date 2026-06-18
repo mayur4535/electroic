@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Microstrip Inductance Calculator</title>
-<meta name="description" content="Calculate microstrip strip inductance from strip width, strip length and distance using a simple PCB transmission line inductance formula.">
-<meta name="keywords" content="microstrip inductance calculator, PCB trace inductance calculator, strip inductance calculator, microstrip PCB calculator, RF PCB inductance, trace inductance">
+<title>Microstrip Inductance Calculator | PCB Trace Inductance Calculator - CalcBoy</title>
+<meta name="description" content="Calculate microstrip trace inductance from strip width, length and distance for PCB RF, switching and high-speed layout design.">
+<meta name="keywords" content="microstrip inductance calculator, PCB trace inductance calculator, strip inductance calculator, microstrip PCB calculator, RF PCB inductance calculator, trace inductance calculator, PCB parasitic inductance calculator, copper trace inductance, transmission line inductance calculator, CalcBoy">
 <style>
 #microstrip-ind-calc,#microstrip-ind-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#microstrip-ind-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#microstrip-ind-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -20,23 +20,38 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
-.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
-.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -77,7 +92,7 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Inductance</div>
     <div class="result-value" id="inductanceResult"></div>
   </div>
@@ -86,18 +101,20 @@ body{padding:10px}
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Strip Width</strong>Width of the microstrip conductor in inches.</div>
-  <div class="paramItem"><strong>Strip Length</strong>Length of the microstrip conductor in inches.</div>
-  <div class="paramItem"><strong>Distance</strong>Spacing or distance parameter used in the supplied inductance formula.</div>
-  <div class="paramItem"><strong>Output</strong>Calculated inductance in microhenries.</div>
+  <div class="paramItem"><strong>Strip Width</strong>Width of the microstrip conductor in inches. A wider strip generally reduces trace inductance and improves high-frequency current spreading.</div>
+  <div class="paramItem"><strong>Strip Length</strong>Length of the microstrip conductor in inches. Longer PCB traces normally increase parasitic inductance.</div>
+  <div class="paramItem"><strong>Distance</strong>Spacing or distance parameter used in the supplied inductance formula. This affects the magnetic field geometry around the trace.</div>
+  <div class="paramItem"><strong>Output</strong>Calculated microstrip inductance in microhenries, useful for RF PCB and switching layout estimates.</div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Practical Operational Examples</h2>
 <div class="exampleGrid">
-  <div class="exampleCard"><p><strong>RF PCB Layout</strong></p><p>Estimate small parasitic inductance of microstrip traces in RF and high-speed layouts.</p></div>
-  <div class="exampleCard"><p><strong>Power Trace Check</strong></p><p>Use trace inductance to understand switching noise and transient behavior in PCB routing.</p></div>
+  <div class="exampleCard"><p><strong>RF PCB Layout</strong></p><p>Estimate small parasitic inductance of microstrip traces in RF feed lines, matching networks and antenna routing.</p></div>
+  <div class="exampleCard"><p><strong>Power Trace Check</strong></p><p>Use trace inductance to understand switching noise and transient behavior in SMPS, MOSFET and driver PCB routing.</p></div>
+  <div class="exampleCard"><p><strong>High-Speed Digital</strong></p><p>Check how long narrow traces may add inductive effects in fast clock, pulse and edge-sensitive circuits.</p></div>
+  <div class="exampleCard"><p><strong>Ground Return Planning</strong></p><p>Lower inductance is usually achieved with short, wide traces and tight return-current paths near the signal or power route.</p></div>
 </div>
 </section>
 
@@ -246,9 +263,79 @@ fill:#334155
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">Formula used from source code: L = 0.00508 × b × (log(2 × b / (w + h)) + 0.5 + 0.2235 × (w + h) / b)</div>
-<div class="formula">Where b = strip length in inches, w = strip width in inches, h = distance in inches.</div>
-<div class="formula">Output inductance is shown in microhenries.</div>
+<div class="formulaBox">Formula used from source code: L = 0.00508 × b × (log(2 × b / (w + h)) + 0.5 + 0.2235 × (w + h) / b)</div>
+<div class="formulaBox">Where b = strip length in inches, w = strip width in inches, h = distance in inches.</div>
+<div class="formulaBox">Output inductance is shown in microhenries.</div>
+<div class="formulaBox">Practical meaning: increasing strip length raises inductance, while increasing conductor width usually helps reduce the inductive effect.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: strip width = 0.1 in, strip length = 2 in, distance = 0.05 in.</div>
+<div class="formulaBox">The calculator reads all three dimensions directly in inches.</div>
+<div class="formulaBox">The strip length value is used as b in the original formula.</div>
+<div class="formulaBox">The strip width and distance are combined as w + h inside the logarithmic term.</div>
+<div class="formulaBox">The final output is calculated and displayed in microhenries.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter the microstrip conductor width in inches.</div>
+  <div class="aboutStep">Enter the strip length in inches.</div>
+  <div class="aboutStep">Enter the distance parameter in inches.</div>
+  <div class="aboutStep">Click Calculate to get inductance in microhenries.</div>
+  <div class="aboutStep">Use the result to compare layout changes such as shorter traces or wider copper routes.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate PCB microstrip parasitic inductance from simple trace geometry.</strong>
+<p>The CalcBoy Microstrip Inductance Calculator calculates strip inductance from conductor width, strip length and distance using the supplied PCB trace inductance formula.</p>
+</div>
+<p>Every PCB trace has parasitic inductance. In slow DC wiring it may be ignored, but in RF circuits, switching regulators, fast gate-drive paths and pulse circuits, even a small amount of trace inductance can create overshoot, ringing, EMI and unwanted voltage spikes. A long narrow route behaves more inductively than a short wide copper path.</p>
+<p>This calculator is useful for RF PCB layouts, SMPS design, MOSFET gate loops, high-speed digital traces, antenna feeds, matching networks and general PCB troubleshooting. By changing strip width, strip length and distance, you can quickly see how the estimated inductance moves. It is especially helpful when comparing layout options before final routing.</p>
+<p>For practical design, treat this result as an estimate. Real PCB inductance also depends on return path location, ground plane continuity, nearby copper, vias, loop area and frequency-dependent effects. For high-speed or RF production designs, combine this estimate with layout best practices and measurement or simulation where needed.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>PCB trace inductance checks for RF, switching and pulse layouts.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Strip width, strip length and distance in inches.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>SMPS loops, MOSFET gates, RF traces, antenna feeds and high-speed signals.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Shorter, wider traces with tight return paths usually reduce inductance.</div>
+</div>
+<div class="aboutNote">Tip: In switching circuits, reduce loop area first. A short current path with a nearby return plane often matters more than only increasing copper width.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is microstrip inductance?</h3>
+<p>Microstrip inductance is the parasitic inductance of a PCB trace caused by current flow and the magnetic field around the conductor.</p>
+
+<h3>Does a longer PCB trace increase inductance?</h3>
+<p>Yes. Longer conductors generally increase inductance and can create more ringing or voltage spike problems in fast circuits.</p>
+
+<h3>Does wider copper reduce inductance?</h3>
+<p>Usually yes. A wider trace tends to reduce inductance compared with a narrow trace of the same length.</p>
+
+<h3>Why does trace inductance matter in switching circuits?</h3>
+<p>Trace inductance can cause voltage overshoot, ringing, EMI and stress on MOSFETs, diodes and drivers during fast current changes.</p>
+
+<h3>Can this calculator replace RF simulation?</h3>
+<p>No. It gives a simple estimate. Critical RF or high-speed designs should also use simulation, measurement and manufacturer stack-up data.</p>
+
+<h3>What unit is the output?</h3>
+<p>The result is shown in microhenries.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Microstrip Impedance Calculator</strong>Calculate RF PCB trace impedance from width, height, thickness and dielectric constant.</div>
+  <div class="linkCard"><strong>Microstrip Wavelength Calculator</strong>Calculate guided wavelength and effective dielectric constant for RF PCB traces.</div>
+  <div class="linkCard"><strong>Trace Resistance Calculator</strong>Estimate PCB copper trace resistance from geometry and temperature.</div>
+  <div class="linkCard"><strong>PCB Trace Width Calculator</strong>Estimate required copper width for current-carrying PCB traces.</div>
+</div>
 </section>
 
 </div>
@@ -279,6 +366,34 @@ function calculateMicrostripInductance(){
 
   document.getElementById("errorBox").style.display="none";
   document.getElementById("inductanceResult").innerText=L.toFixed(5)+" µH";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is microstrip inductance?","acceptedAnswer":{"@type":"Answer","text":"Microstrip inductance is the parasitic inductance of a PCB trace caused by current flow and the magnetic field around the conductor."}},
+{"@type":"Question","name":"Does a longer PCB trace increase inductance?","acceptedAnswer":{"@type":"Answer","text":"Yes. Longer conductors generally increase inductance and can create more ringing or voltage spike problems in fast circuits."}},
+{"@type":"Question","name":"Does wider copper reduce inductance?","acceptedAnswer":{"@type":"Answer","text":"Usually yes. A wider trace tends to reduce inductance compared with a narrow trace of the same length."}},
+{"@type":"Question","name":"Why does trace inductance matter in switching circuits?","acceptedAnswer":{"@type":"Answer","text":"Trace inductance can cause voltage overshoot, ringing, EMI and stress on MOSFETs, diodes and drivers during fast current changes."}},
+{"@type":"Question","name":"Can this calculator replace RF simulation?","acceptedAnswer":{"@type":"Answer","text":"No. It gives a simple estimate. Critical RF or high-speed designs should also use simulation, measurement and manufacturer stack-up data."}},
+{"@type":"Question","name":"What unit is the output?","acceptedAnswer":{"@type":"Answer","text":"The result is shown in microhenries."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"PCB Calculators","item":"https://calcboy.com/category/pcb-calculators/"},
+{"@type":"ListItem","position":3,"name":"Microstrip Inductance Calculator","item":"https://calcboy.com/tool/microstrip-inductance-calculator"}
+]
 }
 </script>
 
