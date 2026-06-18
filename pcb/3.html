@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Microstrip Wavelength Calculator</title>
-<meta name="description" content="Calculate microstrip wavelength from dielectric constant or velocity of propagation, trace width, substrate height and frequency.">
-<meta name="keywords" content="microstrip wavelength calculator, PCB microstrip calculator, effective dielectric constant calculator, guided wavelength calculator, RF PCB calculator, microstrip trace wavelength">
+<title>Microstrip Wavelength Calculator | RF PCB Guided Wavelength Calculator - CalcBoy</title>
+<meta name="description" content="Calculate microstrip wavelength, effective dielectric constant and guided wavelength for RF PCB design using DC or velocity of propagation.">
+<meta name="keywords" content="microstrip wavelength calculator, PCB microstrip calculator, effective dielectric constant calculator, guided wavelength calculator, RF PCB calculator, microstrip trace wavelength calculator, microstrip guided wavelength calculator, RF wavelength PCB calculator, dielectric constant wavelength calculator, velocity of propagation calculator, PCB antenna wavelength calculator, microstrip transmission line calculator, RF PCB design calculator, CalcBoy">
+
 <style>
 #microstrip-calc,#microstrip-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#microstrip-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#microstrip-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -22,26 +23,37 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
-.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
-.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
 .result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -111,11 +123,11 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Wavelength</div>
     <div class="result-value" id="wavelengthResult"></div>
   </div>
-  <div class="result-card">
+  <div class="result-card green">
     <div class="result-label">Effective Dielectric</div>
     <div class="result-value" id="erEffResult"></div>
   </div>
@@ -124,24 +136,26 @@ body{padding:10px}
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Dielectric Constant</strong>Relative permittivity of PCB substrate. Use this when material dielectric data is known.</div>
-  <div class="paramItem"><strong>Velocity of Propagation</strong>Alternative input used to derive dielectric constant when propagation velocity percentage is known.</div>
-  <div class="paramItem"><strong>Width and Height</strong>Microstrip conductor width and dielectric substrate height used for effective dielectric constant calculation.</div>
-  <div class="paramItem"><strong>Frequency</strong>RF operating frequency used to calculate guided wavelength in millimeters.</div>
+  <div class="paramItem"><strong>Dielectric Constant</strong>Relative permittivity of PCB substrate. Use this when material dielectric data is known, such as FR4, Rogers, ceramic RF laminate or other PCB dielectric material.</div>
+  <div class="paramItem"><strong>Velocity of Propagation</strong>Alternative input used to derive dielectric constant when propagation velocity percentage is known. Enter DC or VP, not both.</div>
+  <div class="paramItem"><strong>Width and Height</strong>Microstrip conductor width and dielectric substrate height are used for effective dielectric constant calculation.</div>
+  <div class="paramItem"><strong>Frequency</strong>RF operating frequency is used to calculate guided wavelength in millimeters for microstrip PCB layout work.</div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Practical Operational Examples</h2>
 <div class="exampleGrid">
-  <div class="exampleCard"><p><strong>RF PCB Design</strong></p><p>Calculate guided wavelength for microstrip antennas, impedance sections, resonators and RF layout tuning.</p></div>
-  <div class="exampleCard"><p><strong>Material Comparison</strong></p><p>Compare wavelength changes when using FR4, Rogers, ceramic or other dielectric materials.</p></div>
+  <div class="exampleCard"><p><strong>RF PCB Design</strong></p><p>Calculate guided wavelength for microstrip antennas, impedance sections, RF feed lines, resonators and matching networks.</p></div>
+  <div class="exampleCard"><p><strong>Material Comparison</strong></p><p>Compare wavelength changes when using FR4, Rogers, ceramic, PTFE or other dielectric materials in high-frequency PCB design.</p></div>
+  <div class="exampleCard"><p><strong>Antenna Layout</strong></p><p>Estimate wavelength on the actual PCB trace before designing quarter-wave lines, patch antennas or RF stubs.</p></div>
+  <div class="exampleCard"><p><strong>Transmission Line Tuning</strong></p><p>Use guided wavelength to understand why physical trace length is shorter than free-space wavelength on a dielectric substrate.</p></div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Diagrams & Theory</h2>
-<p>A microstrip trace sits on top of a dielectric substrate above a ground plane. The guided wavelength is shorter than free-space wavelength because of the effective dielectric constant.</p>
+<p>A microstrip trace sits on top of a dielectric substrate above a ground plane. The guided wavelength is shorter than free-space wavelength because the electromagnetic field partly travels through dielectric material and partly through air. The effective dielectric constant represents this mixed field behavior.</p>
 
 <div class="diagramBox">
 <svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Microstrip Wavelength Cross Section Diagram">
@@ -150,152 +164,143 @@ body{padding:10px}
 <style>
 .msDiel{fill:#ffffff;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
 .msSide{fill:#d1d5db;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
-
-.msCopper{
-fill:lightgreen;
-stroke:#111827;
-stroke-width:2.2;
-stroke-linejoin:round
-}
-
-.msCopperDark{
-fill:lightgreen;
-stroke:#111827;
-stroke-width:2.2;
-stroke-linejoin:round
-}
-
-.msArrow{
-stroke:#111827;
-stroke-width:2;
-fill:none;
-marker-start:url(#msArrStart);
-marker-end:url(#msArrEnd)
-}
-
-.msTick{
-stroke:#111827;
-stroke-width:2;
-fill:none;
-stroke-linecap:round
-}
-
-.msWave{
-stroke:#2563eb;
-stroke-width:2.5;
-fill:none;
-stroke-linecap:round;
-marker-end:url(#msBlueArr)
-}
-
-.msTxt{
-font-family:Arial,sans-serif;
-font-size:28px;
-font-weight:900;
-fill:#111827
-}
-
-.msSmall{
-font-family:Arial,sans-serif;
-font-size:15px;
-font-weight:800;
-fill:#334155
-}
+.msCopper{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.msCopperDark{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.msArrow{stroke:#111827;stroke-width:2;fill:none;marker-start:url(#msArrStart);marker-end:url(#msArrEnd)}
+.msTick{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round}
+.msWave{stroke:#2563eb;stroke-width:2.5;fill:none;stroke-linecap:round;marker-end:url(#msBlueArr)}
+.msTxt{font-family:Arial,sans-serif;font-size:28px;font-weight:900;fill:#111827}
+.msSmall{font-family:Arial,sans-serif;font-size:15px;font-weight:800;fill:#334155}
+.msBlue{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#2563eb}
 </style>
 
 <defs>
 <marker id="msArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
 <path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
 </marker>
-
 <marker id="msArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
 <path d="M8,0 L0,3 L8,6 Z" fill="#111827"/>
 </marker>
-
 <marker id="msBlueArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
 <path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
 </marker>
 </defs>
 
-<!-- right side shadow -->
 <path d="M500 140 L590 70 V270 L500 330 Z" class="msSide"/>
-
-<!-- dielectric -->
 <path d="M80 140 H500 V330 H80 Z" class="msDiel"/>
+<path d="M80 140 L170 70 H590 L500 140 Z" fill="#ffffff" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/>
 
-<!-- top face -->
-<path d="M80 140 L170 70 H590 L500 140 Z"
-      fill="#ffffff"
-      stroke="#111827"
-      stroke-width="2.2"
-      stroke-linejoin="round"/>
-
-<!-- bottom ground plane -->
 <path d="M80 300 H500 V330 H80 Z" class="msCopper"/>
 <path d="M500 300 L590 240 V270 L500 330 Z" class="msCopperDark"/>
 
-<!-- MICROSTRIP TRACE ON TOP SURFACE -->
-
-<path d="M250 95 H355 V139 H250 Z"
-      class="msCopper"/>
-
-<path d="M355 95 L445 35 V69 L355 140 Z"
-      class="msCopperDark"/>
-
-<path d="M250 95 L340 35 H445 L355 95 Z"
-      fill="lightgreen"
-      stroke="#111827"
-      stroke-width="2.2"
-      stroke-linejoin="round"/>
-
-<!-- H dimension -->
+<path d="M250 95 H355 V139 H250 Z" class="msCopper"/>
+<path d="M355 95 L445 35 V69 L355 140 Z" class="msCopperDark"/>
+<path d="M250 95 L340 35 H445 L355 95 Z" fill="lightgreen" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"/>
 
 <line x1="45" y1="95" x2="245" y2="95" class="msTick"/>
 <line x1="45" y1="300" x2="230" y2="300" class="msTick"/>
 <line x1="45" y1="140" x2="245" y2="140" class="msTick"/>
 
-<line x1="60" y1="140" x2="60" y2="300" class="msArrow"/>   H ARROW
-
+<line x1="60" y1="140" x2="60" y2="300" class="msArrow"/>
 <text x="22" y="220" class="msTxt">H</text>
-
-<!-- T dimension -->
 
 <line x1="60" y1="95" x2="60" y2="140" class="msArrow"/>
 <text x="22" y="127" class="msTxt">T</text>
 
-<!-- W dimension -->
-
 <line x1="250" y1="155" x2="355" y2="155" class="msArrow"/>
-
 <line x1="250" y1="120" x2="250" y2="160" class="msTick"/>
 <line x1="355" y1="120" x2="355" y2="160" class="msTick"/>
-
 <text x="292" y="182" class="msTxt">W</text>
 
-
-
-
-
-<!-- labels -->
+<path d="M220 55 C245 30 275 80 305 55 S365 30 395 55 S455 80 485 55" class="msWave"/>
+<text x="358" y="25" text-anchor="middle" class="msBlue">Guided wavelength λg</text>
 
 <text x="95" y="323" class="msSmall">Ground Plane</text>
-
-
-
 <text x="110" y="230" class="msSmall">PCB Dielectric</text>
-
 </svg>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">Step 1: Convert width and height to inches using selected unit multipliers.</div>
-<div class="formula">Step 2: If dielectric constant is entered, use it directly. If dielectric constant is blank and VP is entered, dielectric constant = 1 / (VP / 100)^2.</div>
-<div class="formula">Step 3: Width ratio = width / height.</div>
-<div class="formula">Step 4: If width ratio is less than 1: effective dielectric = (DC + 1) / 2 + (DC - 1) / 2 × (1 / sqrt(1 + 12 × (1 / ratio)) + 0.4 × (1 - ratio)^2).</div>
-<div class="formula">Step 5: If width ratio is 1 or greater: effective dielectric = (DC + 1) / 2 + (DC - 1) / 2 × (1 / sqrt(1 + 12 × (1 / ratio))).</div>
-<div class="formula">Step 6: Wavelength in mm = 299.792458 / (frequency_GHz × sqrt(effective dielectric)).</div>
+<div class="formulaBox">Step 1: Convert width and height to inches using selected unit multipliers.</div>
+<div class="formulaBox">Step 2: If dielectric constant is entered, use it directly. If dielectric constant is blank and VP is entered, dielectric constant = 1 / (VP / 100)^2.</div>
+<div class="formulaBox">Step 3: Width ratio = width / height.</div>
+<div class="formulaBox">Step 4: If width ratio is less than 1: effective dielectric = (DC + 1) / 2 + (DC - 1) / 2 × (1 / sqrt(1 + 12 × (1 / ratio)) + 0.4 × (1 - ratio)^2).</div>
+<div class="formulaBox">Step 5: If width ratio is 1 or greater: effective dielectric = (DC + 1) / 2 + (DC - 1) / 2 × (1 / sqrt(1 + 12 × (1 / ratio))).</div>
+<div class="formulaBox">Step 6: Wavelength in mm = 299.792458 / (frequency_GHz × sqrt(effective dielectric)).</div>
+<div class="formulaBox">Practical meaning: higher dielectric constant or higher frequency makes the guided wavelength shorter on the PCB microstrip line.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: dielectric constant = 4.4, width = 0.08 inch, height = 0.06 inch, frequency = 2.4 GHz.</div>
+<div class="formulaBox">The calculator uses dielectric constant directly because DC is entered and VP is left blank.</div>
+<div class="formulaBox">Width and height are converted using the selected unit multipliers.</div>
+<div class="formulaBox">Width ratio is calculated as width divided by substrate height.</div>
+<div class="formulaBox">Effective dielectric constant is calculated from the microstrip geometry and dielectric constant.</div>
+<div class="formulaBox">Guided wavelength is calculated in millimeters from frequency and effective dielectric constant.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter dielectric constant if PCB material data is known.</div>
+  <div class="aboutStep">Or enter velocity of propagation percentage if that value is available instead.</div>
+  <div class="aboutStep">Enter microstrip trace width and select the correct unit.</div>
+  <div class="aboutStep">Enter substrate height between microstrip trace and ground plane.</div>
+  <div class="aboutStep">Enter RF operating frequency in GHz or MHz.</div>
+  <div class="aboutStep">Click Calculate to get guided wavelength and effective dielectric constant.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Calculate guided wavelength for real RF PCB microstrip layouts.</strong>
+<p>The CalcBoy Microstrip Wavelength Calculator estimates guided wavelength and effective dielectric constant from dielectric constant or velocity of propagation, trace width, substrate height and RF frequency.</p>
+</div>
+<p>In RF PCB design, wavelength on a microstrip trace is not the same as wavelength in free space. A signal travelling on a PCB trace interacts with the dielectric substrate and the air above the trace, so the wave slows down and the guided wavelength becomes shorter. This is why antenna feeds, quarter-wave stubs, resonators, matching networks and RF transmission lines must be calculated using effective dielectric constant instead of only free-space wavelength.</p>
+<p>This calculator is useful for RF layouts, microwave boards, microstrip antennas, impedance sections, PCB filters, wireless modules, 2.4 GHz circuits, GPS boards, Wi-Fi hardware and RF prototyping. It supports two practical input methods: dielectric constant when PCB material data is known, or velocity of propagation when that value is available from cable, laminate or RF documentation.</p>
+<p>The result helps you estimate physical trace length for wavelength-based PCB structures. For final production, also consider copper thickness, solder mask, dispersion, manufacturing tolerance, actual laminate dielectric tolerance and impedance target.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Guided wavelength checks for RF microstrip traces and PCB antennas.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Dielectric constant or velocity of propagation, width, height and frequency.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>RF stubs, matching networks, resonators, antenna feeds and microwave PCB design.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Higher frequency and higher effective dielectric constant reduce wavelength.</div>
+</div>
+<div class="aboutNote">Tip: For FR4 at high frequency, dielectric constant can vary with board supplier, frequency and laminate construction. Use the manufacturer’s RF material data for better accuracy.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is microstrip guided wavelength?</h3>
+<p>It is the wavelength of an RF signal travelling along a microstrip PCB trace. It is shorter than free-space wavelength because the signal interacts with dielectric material.</p>
+
+<h3>What is effective dielectric constant?</h3>
+<p>Effective dielectric constant represents the combined effect of the PCB dielectric and air around the microstrip trace.</p>
+
+<h3>Should I enter dielectric constant or velocity of propagation?</h3>
+<p>Enter dielectric constant if you know the PCB material value. Enter velocity of propagation if that is the available RF data. The calculator clears the other field automatically.</p>
+
+<h3>Why does frequency affect wavelength?</h3>
+<p>Higher frequency means shorter wavelength. This directly affects RF stubs, antennas, resonators and transmission line sections.</p>
+
+<h3>Can this calculator be used for FR4?</h3>
+<p>Yes, but FR4 dielectric constant can vary. For precision RF design, use the actual laminate data from the PCB material manufacturer.</p>
+
+<h3>What output does this calculator provide?</h3>
+<p>It provides guided wavelength in millimeters and calculated effective dielectric constant.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Microstrip Impedance Calculator</strong>Calculate PCB microstrip impedance from trace width, height and dielectric constant.</div>
+  <div class="linkCard"><strong>Stripline Trace Width Calculator</strong>Estimate embedded PCB trace width, resistance and voltage drop.</div>
+  <div class="linkCard"><strong>RF Wavelength Calculator</strong>Calculate free-space wavelength from RF frequency.</div>
+  <div class="linkCard"><strong>PCB Trace Width Calculator</strong>Estimate current-carrying PCB trace width for copper routing.</div>
+</div>
 </section>
 
 </div>
@@ -359,6 +364,34 @@ function calculateMicrostrip(){
   document.getElementById("errorBox").style.display="none";
   document.getElementById("wavelengthResult").innerText=wavelength.toPrecision(4)+" mm";
   document.getElementById("erEffResult").innerText=erEff.toPrecision(4);
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is microstrip guided wavelength?","acceptedAnswer":{"@type":"Answer","text":"It is the wavelength of an RF signal travelling along a microstrip PCB trace. It is shorter than free-space wavelength because the signal interacts with dielectric material."}},
+{"@type":"Question","name":"What is effective dielectric constant?","acceptedAnswer":{"@type":"Answer","text":"Effective dielectric constant represents the combined effect of the PCB dielectric and air around the microstrip trace."}},
+{"@type":"Question","name":"Should I enter dielectric constant or velocity of propagation?","acceptedAnswer":{"@type":"Answer","text":"Enter dielectric constant if you know the PCB material value. Enter velocity of propagation if that is the available RF data. The calculator clears the other field automatically."}},
+{"@type":"Question","name":"Why does frequency affect wavelength?","acceptedAnswer":{"@type":"Answer","text":"Higher frequency means shorter wavelength. This directly affects RF stubs, antennas, resonators and transmission line sections."}},
+{"@type":"Question","name":"Can this calculator be used for FR4?","acceptedAnswer":{"@type":"Answer","text":"Yes, but FR4 dielectric constant can vary. For precision RF design, use the actual laminate data from the PCB material manufacturer."}},
+{"@type":"Question","name":"What output does this calculator provide?","acceptedAnswer":{"@type":"Answer","text":"It provides guided wavelength in millimeters and calculated effective dielectric constant."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"RF Calculators","item":"https://calcboy.com/category/rf-calculators/"},
+{"@type":"ListItem","position":3,"name":"Microstrip Wavelength Calculator","item":"https://calcboy.com/tool/microstrip-wavelength-calculator"}
+]
 }
 </script>
 
