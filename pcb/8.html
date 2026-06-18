@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Microstrip Impedance Calculator</title>
-<meta name="description" content="Calculate microstrip trace impedance from trace thickness, substrate height, trace width and dielectric constant for PCB RF design.">
-<meta name="keywords" content="microstrip impedance calculator, PCB impedance calculator, RF microstrip calculator, microstrip trace impedance, controlled impedance calculator, transmission line calculator">
+<title>Microstrip Impedance Calculator | PCB RF Trace Impedance Calculator - CalcBoy</title>
+<meta name="description" content="Calculate microstrip trace impedance from trace width, copper thickness, substrate height and dielectric constant for RF PCB design.">
+<meta name="keywords" content="microstrip impedance calculator, PCB impedance calculator, RF microstrip calculator, microstrip trace impedance calculator, controlled impedance calculator, transmission line calculator, PCB RF impedance calculator, 50 ohm microstrip calculator, dielectric constant impedance calculator, microstrip PCB calculator, RF trace impedance calculator, CalcBoy">
+
 <style>
 #microstrip-imp-calc,#microstrip-imp-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#microstrip-imp-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#microstrip-imp-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -21,26 +22,37 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
-.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
-.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
 .result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -107,11 +119,11 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Impedance</div>
     <div class="result-value" id="impedanceResult"></div>
   </div>
-  <div class="result-card">
+  <div class="result-card green">
     <div class="result-label">Dielectric Constant</div>
     <div class="result-value" id="erResult"></div>
   </div>
@@ -120,165 +132,164 @@ body{padding:10px}
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Trace Thickness</strong>Copper trace thickness used for effective width correction.</div>
-  <div class="paramItem"><strong>Substrate Height</strong>Dielectric height between the microstrip trace and ground plane.</div>
-  <div class="paramItem"><strong>Trace Width</strong>Top copper conductor width used in impedance calculation.</div>
-  <div class="paramItem"><strong>Dielectric Constant</strong>Relative permittivity of PCB substrate material.</div>
+  <div class="paramItem"><strong>Trace Thickness</strong>Copper trace thickness used for effective width correction. Thicker copper can shift RF microstrip impedance from the ideal thin-conductor estimate.</div>
+  <div class="paramItem"><strong>Substrate Height</strong>Dielectric height between the microstrip trace and ground plane. This is one of the most important PCB stack-up dimensions.</div>
+  <div class="paramItem"><strong>Trace Width</strong>Top copper conductor width used in impedance calculation. Wider microstrip traces usually reduce characteristic impedance.</div>
+  <div class="paramItem"><strong>Dielectric Constant</strong>Relative permittivity of PCB substrate material. FR4, Rogers, PTFE and ceramic laminates can produce different impedance values.</div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Practical Operational Examples</h2>
 <div class="exampleGrid">
-  <div class="exampleCard"><p><strong>50 Ω RF Trace</strong></p><p>Design controlled impedance microstrip routing for RF modules, antennas and high-speed signals.</p></div>
-  <div class="exampleCard"><p><strong>PCB Stackup Check</strong></p><p>Adjust width, height, copper thickness and dielectric constant to match required impedance.</p></div>
+  <div class="exampleCard"><p><strong>50 Ω RF Trace</strong></p><p>Design controlled impedance microstrip routing for RF modules, antennas, filters, matching networks and high-speed signals.</p></div>
+  <div class="exampleCard"><p><strong>PCB Stackup Check</strong></p><p>Adjust width, height, copper thickness and dielectric constant to match required impedance before fabrication.</p></div>
+  <div class="exampleCard"><p><strong>Wireless Hardware</strong></p><p>Estimate trace impedance for Wi-Fi, GPS, Bluetooth, LoRa, RF front-end and microwave PCB routing.</p></div>
+  <div class="exampleCard"><p><strong>Prototype Debugging</strong></p><p>Compare calculated impedance with measured RF performance when a feedline, antenna section or matching network behaves incorrectly.</p></div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Diagrams & Theory</h2>
-<p>A microstrip trace sits on top of the PCB dielectric with a reference ground plane below. Its impedance depends on trace width, copper thickness, substrate height and dielectric constant.</p>
+<p>A microstrip trace sits on top of the PCB dielectric with a reference ground plane below. Its impedance depends on trace width, copper thickness, substrate height and dielectric constant. Because part of the electromagnetic field travels through air and part through dielectric, microstrip impedance is sensitive to PCB material, geometry and manufacturing tolerance.</p>
 
 <div class="diagramBox">
-<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Microstrip Wavelength Cross Section Diagram">
+<svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Microstrip impedance cross section diagram">
 <rect width="620" height="360" fill="#ffffff"></rect>
 
 <style>
 .msDiel{fill:#ffffff;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
 .msSide{fill:#d1d5db;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
-
-.msCopper{
-fill:lightgreen;
-stroke:#111827;
-stroke-width:2.2;
-stroke-linejoin:round
-}
-
-.msCopperDark{
-fill:lightgreen;
-stroke:#111827;
-stroke-width:2.2;
-stroke-linejoin:round
-}
-
-.msArrow{
-stroke:#111827;
-stroke-width:2;
-fill:none;
-marker-start:url(#msArrStart);
-marker-end:url(#msArrEnd)
-}
-
-.msTick{
-stroke:#111827;
-stroke-width:2;
-fill:none;
-stroke-linecap:round
-}
-
-.msWave{
-stroke:#2563eb;
-stroke-width:2.5;
-fill:none;
-stroke-linecap:round;
-marker-end:url(#msBlueArr)
-}
-
-.msTxt{
-font-family:Arial,sans-serif;
-font-size:28px;
-font-weight:900;
-fill:#111827
-}
-
-.msSmall{
-font-family:Arial,sans-serif;
-font-size:15px;
-font-weight:800;
-fill:#334155
-}
+.msCopper{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.msCopperDark{fill:lightgreen;stroke:#111827;stroke-width:2.2;stroke-linejoin:round}
+.msArrow{stroke:#111827;stroke-width:2;fill:none;marker-start:url(#msArrStart);marker-end:url(#msArrEnd)}
+.msTick{stroke:#111827;stroke-width:2;fill:none;stroke-linecap:round}
+.msTxt{font-family:Arial,sans-serif;font-size:28px;font-weight:900;fill:#111827}
+.msSmall{font-family:Arial,sans-serif;font-size:15px;font-weight:800;fill:#334155}
+.msBlue{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#2563eb}
 </style>
 
 <defs>
 <marker id="msArrEnd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
 <path d="M0,0 L8,3 L0,6 Z" fill="#111827"></path>
 </marker>
-
 <marker id="msArrStart" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
 <path d="M8,0 L0,3 L8,6 Z" fill="#111827"></path>
 </marker>
-
-<marker id="msBlueArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-<path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"></path>
-</marker>
 </defs>
 
-<!-- right side shadow -->
 <path d="M500 140 L590 70 V270 L500 330 Z" class="msSide"></path>
-
-<!-- dielectric -->
 <path d="M80 140 H500 V330 H80 Z" class="msDiel"></path>
-
-<!-- top face -->
 <path d="M80 140 L170 70 H590 L500 140 Z" fill="#ffffff" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"></path>
 
-<!-- bottom ground plane -->
 <path d="M80 300 H500 V330 H80 Z" class="msCopper"></path>
 <path d="M500 300 L590 240 V270 L500 330 Z" class="msCopperDark"></path>
 
-<!-- MICROSTRIP TRACE ON TOP SURFACE -->
-
 <path d="M250 95 H355 V139 H250 Z" class="msCopper"></path>
-
 <path d="M355 95 L445 35 V69 L355 140 Z" class="msCopperDark"></path>
-
 <path d="M250 95 L340 35 H445 L355 95 Z" fill="lightgreen" stroke="#111827" stroke-width="2.2" stroke-linejoin="round"></path>
-
-<!-- H dimension -->
 
 <line x1="45" y1="95" x2="245" y2="95" class="msTick"></line>
 <line x1="45" y1="300" x2="230" y2="300" class="msTick"></line>
 <line x1="45" y1="140" x2="245" y2="140" class="msTick"></line>
 
-<line x1="60" y1="140" x2="60" y2="300" class="msArrow"></line>   H ARROW
-
+<line x1="60" y1="140" x2="60" y2="300" class="msArrow"></line>
 <text x="22" y="220" class="msTxt">H</text>
-
-<!-- T dimension -->
 
 <line x1="60" y1="95" x2="60" y2="140" class="msArrow"></line>
 <text x="22" y="127" class="msTxt">T</text>
 
-<!-- W dimension -->
-
 <line x1="250" y1="155" x2="355" y2="155" class="msArrow"></line>
-
 <line x1="250" y1="120" x2="250" y2="160" class="msTick"></line>
 <line x1="355" y1="120" x2="355" y2="160" class="msTick"></line>
-
 <text x="292" y="182" class="msTxt">W</text>
 
-
-
-
-
-<!-- labels -->
-
 <text x="95" y="323" class="msSmall">Ground Plane</text>
-
-
-
 <text x="110" y="230" class="msSmall">PCB Dielectric</text>
-
+<text x="360" y="110" class="msBlue">Microstrip trace</text>
 </svg>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">The calculator preserves your supplied microstrip impedance JavaScript formula and unit multipliers.</div>
-<div class="formula">Effective trace width is corrected using copper thickness, trace width, substrate height and dielectric constant.</div>
-<div class="formula">Impedance is calculated using the microstrip transmission line expression from the original source code.</div>
+<div class="formulaBox">Step 1: Convert trace thickness, substrate height and trace width using the selected unit multipliers.</div>
+<div class="formulaBox">Step 2: The calculator preserves your supplied microstrip impedance JavaScript formula and unit multipliers.</div>
+<div class="formulaBox">Step 3: Effective trace width is corrected using copper thickness, trace width, substrate height and dielectric constant.</div>
+<div class="formulaBox">Step 4: Impedance is calculated using the microstrip transmission line expression from the original source code.</div>
+<div class="formulaBox">Step 5: The result is displayed as impedance in ohms, and the entered dielectric constant is shown for confirmation.</div>
+<div class="formulaBox">Practical meaning: wider traces usually reduce impedance, while taller substrate height usually increases impedance.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: trace thickness = 1 mil, substrate height = 62 mil, trace width = 120 mil, dielectric constant = 4.4.</div>
+<div class="formulaBox">The calculator converts all geometry inputs into the units expected by the original formula.</div>
+<div class="formulaBox">Copper thickness is used to correct the effective trace width.</div>
+<div class="formulaBox">The dielectric constant is applied to the microstrip transmission line equation.</div>
+<div class="formulaBox">The calculated result gives approximate microstrip characteristic impedance in ohms.</div>
+<div class="formulaBox">For RF design, compare this value with the target impedance such as 50 Ω before final PCB routing.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter copper trace thickness and choose the correct unit.</div>
+  <div class="aboutStep">Enter substrate height from trace layer to reference ground plane.</div>
+  <div class="aboutStep">Enter microstrip trace width.</div>
+  <div class="aboutStep">Enter dielectric constant of the PCB material.</div>
+  <div class="aboutStep">Click Calculate to get microstrip impedance and confirm dielectric constant.</div>
+  <div class="aboutStep">Use the result to adjust trace width or stack-up before PCB fabrication.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate microstrip impedance for RF and controlled-impedance PCB routing.</strong>
+<p>The CalcBoy Microstrip Impedance Calculator calculates PCB trace impedance from copper thickness, substrate height, trace width and dielectric constant.</p>
+</div>
+<p>Microstrip routing is one of the most common transmission line structures in RF and high-speed PCB design. A microstrip trace sits on an outer PCB layer with a reference ground plane below it. This geometry is used for RF modules, antenna feeds, matching networks, filters, clock lines, wireless boards and controlled-impedance digital signals.</p>
+<p>The impedance of a microstrip trace depends strongly on trace width, dielectric height, copper thickness and dielectric constant. If the trace is too narrow or too wide, the impedance can move away from the target value such as 50 Ω. That mismatch may cause reflection, poor return loss, reduced RF power transfer, antenna tuning issues or signal integrity problems.</p>
+<p>This calculator is useful for early PCB stack-up planning, RF prototype work, antenna feed routing and impedance comparison. For final production, always confirm results with your PCB manufacturer because solder mask, copper plating, dielectric tolerance, glass weave and laminate variation can shift the real impedance.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Microstrip impedance checks for RF PCB and controlled-impedance routing.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Trace thickness, substrate height, trace width and dielectric constant.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>RF feeds, antennas, filters, Wi-Fi, GPS, Bluetooth, LoRa and high-speed signals.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Use real stack-up data from the PCB manufacturer for final impedance control.</div>
+</div>
+<div class="aboutNote">Tip: For a 50 Ω RF trace, do not guess the width only from old boards. Use the actual dielectric height and material data from your PCB stack-up.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is microstrip impedance?</h3>
+<p>Microstrip impedance is the characteristic impedance of a PCB trace routed on an outer layer over a reference ground plane.</p>
+
+<h3>What affects microstrip impedance?</h3>
+<p>Trace width, copper thickness, substrate height and dielectric constant all affect the calculated impedance.</p>
+
+<h3>Does wider trace lower impedance?</h3>
+<p>Yes. Increasing trace width generally lowers microstrip impedance.</p>
+
+<h3>Can this calculate 50 ohm RF trace width?</h3>
+<p>This calculator calculates impedance from a given width. You can adjust width and recalculate until the result is near 50 Ω.</p>
+
+<h3>Is FR4 dielectric constant fixed?</h3>
+<p>No. FR4 dielectric constant can vary by supplier, frequency and laminate construction, so use real material data when possible.</p>
+
+<h3>Is microstrip the same as stripline?</h3>
+<p>No. Microstrip is on an outer layer above a reference plane, while stripline is embedded between two reference planes.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Microstrip Wavelength Calculator</strong>Calculate guided wavelength and effective dielectric constant for RF PCB traces.</div>
+  <div class="linkCard"><strong>Symmetric Stripline Impedance Calculator</strong>Calculate impedance for centered embedded stripline routing.</div>
+  <div class="linkCard"><strong>Edge Coupled Stripline Impedance Calculator</strong>Calculate odd, even, common and differential impedance.</div>
+  <div class="linkCard"><strong>Trace Resistance Calculator</strong>Estimate PCB trace resistance from copper geometry and temperature.</div>
+</div>
 </section>
 
 </div>
@@ -339,6 +350,34 @@ function calculateMicrostrip(){
   document.getElementById("errorBox").style.display="none";
   document.getElementById("impedanceResult").innerText=result.zo.toPrecision(3)+" Ω";
   document.getElementById("erResult").innerText=result.er.toPrecision(3);
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is microstrip impedance?","acceptedAnswer":{"@type":"Answer","text":"Microstrip impedance is the characteristic impedance of a PCB trace routed on an outer layer over a reference ground plane."}},
+{"@type":"Question","name":"What affects microstrip impedance?","acceptedAnswer":{"@type":"Answer","text":"Trace width, copper thickness, substrate height and dielectric constant all affect the calculated impedance."}},
+{"@type":"Question","name":"Does wider trace lower impedance?","acceptedAnswer":{"@type":"Answer","text":"Yes. Increasing trace width generally lowers microstrip impedance."}},
+{"@type":"Question","name":"Can this calculate 50 ohm RF trace width?","acceptedAnswer":{"@type":"Answer","text":"This calculator calculates impedance from a given width. You can adjust width and recalculate until the result is near 50 Ω."}},
+{"@type":"Question","name":"Is FR4 dielectric constant fixed?","acceptedAnswer":{"@type":"Answer","text":"No. FR4 dielectric constant can vary by supplier, frequency and laminate construction, so use real material data when possible."}},
+{"@type":"Question","name":"Is microstrip the same as stripline?","acceptedAnswer":{"@type":"Answer","text":"No. Microstrip is on an outer layer above a reference plane, while stripline is embedded between two reference planes."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"RF Calculators","item":"https://calcboy.com/category/rf-calculators/"},
+{"@type":"ListItem","position":3,"name":"Microstrip Impedance Calculator","item":"https://calcboy.com/tool/microstrip-impedance-calculator"}
+]
 }
 </script>
 
