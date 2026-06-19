@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Wire Microstrip Impedance Calculator</title>
+<title>Wire Microstrip Impedance Calculator | RF PCB Calculator - CalcBoy</title>
 <meta name="description" content="Calculate wire microstrip impedance from wire diameter, substrate height and dielectric constant for RF PCB transmission line design.">
-<meta name="keywords" content="wire microstrip impedance calculator, PCB wire microstrip calculator, RF impedance calculator, transmission line impedance, microstrip wire calculator">
+<meta name="keywords" content="wire microstrip impedance calculator, PCB wire microstrip calculator, RF impedance calculator, transmission line impedance calculator, microstrip wire calculator, round wire microstrip impedance, RF PCB calculator, dielectric constant impedance calculator, CalcBoy">
+
 <style>
 #wire-microstrip-calc,#wire-microstrip-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#wire-microstrip-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#wire-microstrip-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -20,23 +21,38 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
-.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
-.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -89,7 +105,7 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Impedance</div>
     <div class="result-value" id="impedanceResult"></div>
   </div>
@@ -98,18 +114,20 @@ body{padding:10px}
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Wire Diameter</strong>Round conductor diameter used in the impedance formula.</div>
-  <div class="paramItem"><strong>Substrate Height</strong>Distance from wire conductor to reference plane.</div>
-  <div class="paramItem"><strong>Dielectric Constant</strong>Relative permittivity of PCB dielectric material.</div>
-  <div class="paramItem"><strong>Output</strong>Characteristic impedance in ohms.</div>
+  <div class="paramItem"><strong>Wire Diameter</strong>Round conductor diameter used in the wire microstrip impedance formula. Larger wire diameter normally reduces impedance.</div>
+  <div class="paramItem"><strong>Substrate Height</strong>Distance from the wire conductor to the reference plane. This height strongly affects characteristic impedance.</div>
+  <div class="paramItem"><strong>Dielectric Constant</strong>Relative permittivity of PCB dielectric material. Higher dielectric constant usually lowers impedance.</div>
+  <div class="paramItem"><strong>Output</strong>Characteristic impedance in ohms for RF PCB and wire-over-ground transmission line design.</div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Practical Operational Examples</h2>
 <div class="exampleGrid">
-  <div class="exampleCard"><p><strong>RF Wire Routing</strong></p><p>Estimate impedance for round wire over a PCB ground plane.</p></div>
-  <div class="exampleCard"><p><strong>Stackup Tuning</strong></p><p>Change wire diameter, dielectric height or Er to tune impedance.</p></div>
+  <div class="exampleCard"><p><strong>RF Wire Routing</strong></p><p>Estimate impedance for a round wire running above a PCB ground plane or dielectric substrate.</p></div>
+  <div class="exampleCard"><p><strong>Stackup Tuning</strong></p><p>Change wire diameter, dielectric height or Er to tune impedance toward a practical RF target.</p></div>
+  <div class="exampleCard"><p><strong>Lab Fixture Design</strong></p><p>Useful for simple RF fixtures, jumper-style conductors, prototype transmission lines and test layouts.</p></div>
+  <div class="exampleCard"><p><strong>Material Comparison</strong></p><p>Compare FR4, PTFE, ceramic and other dielectric constants to see how impedance changes.</p></div>
 </div>
 </section>
 
@@ -318,10 +336,81 @@ class="wmCopper"/>
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">Effective Er = (Er + 1) / 2 + (Er - 1) / 2 × correction factor.</div>
-<div class="formula">A = (2 × H + D) / D.</div>
-<div class="formula">Z0 = 377 / (2 × π × sqrt(effective Er)) × log(A + sqrt(A² - 1)).</div>
-<div class="formula">D = wire diameter, H = substrate height, Er = dielectric constant.</div>
+<div class="formulaBox">Effective Er = (Er + 1) / 2 + (Er - 1) / 2 × correction factor.</div>
+<div class="formulaBox">A = (2 × H + D) / D.</div>
+<div class="formulaBox">Z0 = 377 / (2 × π × sqrt(effective Er)) × log(A + sqrt(A² - 1)).</div>
+<div class="formulaBox">D = wire diameter, H = substrate height, Er = dielectric constant.</div>
+<div class="formulaBox">Practical meaning: larger diameter lowers impedance, while larger height above ground increases impedance.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: wire diameter = 10 mil, substrate height = 60 mil, dielectric constant = 4.2.</div>
+<div class="formulaBox">The calculator converts wire diameter and substrate height using the selected unit multipliers.</div>
+<div class="formulaBox">Effective dielectric constant is calculated from Er, diameter and height relationship.</div>
+<div class="formulaBox">A is calculated as (2 × H + D) / D.</div>
+<div class="formulaBox">Impedance is calculated using the logarithmic transmission line expression.</div>
+<div class="formulaBox">The final result is displayed in ohms.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter wire diameter and select the correct unit.</div>
+  <div class="aboutStep">Enter substrate height from the wire to the reference plane.</div>
+  <div class="aboutStep">Enter dielectric constant of the PCB material.</div>
+  <div class="aboutStep">Click Calculate to get wire microstrip impedance.</div>
+  <div class="aboutStep">Compare the result with your RF impedance target such as 50 Ω.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate impedance for round-wire microstrip transmission structures.</strong>
+<p>The CalcBoy Wire Microstrip Impedance Calculator calculates characteristic impedance using wire diameter, substrate height and dielectric constant.</p>
+</div>
+<p>A wire microstrip is a round conductor placed above a dielectric substrate with a reference ground plane below. This type of structure can appear in RF prototypes, jumper-wire experiments, test fixtures, special interconnects, antenna feeds and lab transmission line setups where a normal flat PCB microstrip trace is not the exact geometry.</p>
+<p>The impedance depends mainly on conductor diameter, height above the reference plane and dielectric constant. A larger wire diameter usually reduces impedance because the conductor becomes electrically larger. A greater height above ground usually increases impedance. A higher dielectric constant lowers wave velocity and changes the impedance result.</p>
+<p>This calculator is useful for RF PCB work, microwave prototyping, controlled impedance experiments and quick geometry checks. For critical RF or production designs, validate with field solver results, measured test coupons, PCB manufacturer stack-up data or lab measurement.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Round-wire microstrip impedance estimates for RF and PCB prototypes.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Wire diameter, substrate height and dielectric constant.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>RF fixtures, jumper-wire transmission lines, antenna feeds and lab testing.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Use measured stack-up data for accurate impedance control.</div>
+</div>
+<div class="aboutNote">Tip: For RF work, the return path below the wire matters. Keep the ground reference continuous and close to reduce unexpected impedance changes.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is wire microstrip impedance?</h3>
+<p>It is the characteristic impedance of a round conductor above a dielectric substrate and reference ground plane.</p>
+
+<h3>What inputs are required?</h3>
+<p>The calculator needs wire diameter, substrate height and dielectric constant.</p>
+
+<h3>Does larger wire diameter lower impedance?</h3>
+<p>Generally yes. Increasing wire diameter lowers the calculated impedance in this geometry.</p>
+
+<h3>Why does substrate height matter?</h3>
+<p>Substrate height changes the electric field geometry between the wire and reference plane, which affects impedance.</p>
+
+<h3>Can this be used for 50 ohm RF design?</h3>
+<p>Yes, it can help estimate geometry near 50 Ω, but final RF layouts should be verified with measurement or simulation.</p>
+
+<h3>What unit is the result?</h3>
+<p>The impedance result is displayed in ohms.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Wire Stripline Impedance Calculator</strong>Calculate impedance for round wire stripline structures.</div>
+  <div class="linkCard"><strong>Microstrip Impedance Calculator</strong>Calculate flat PCB microstrip trace impedance.</div>
+  <div class="linkCard"><strong>Microstrip Wavelength Calculator</strong>Calculate guided wavelength and effective dielectric constant.</div>
+  <div class="linkCard"><strong>Symmetric Stripline Impedance Calculator</strong>Calculate embedded stripline impedance for multilayer PCB routing.</div>
+</div>
 </section>
 
 </div>
@@ -357,6 +446,34 @@ function calculateWireMicrostrip(){
 
   document.getElementById("errorBox").style.display="none";
   document.getElementById("impedanceResult").innerText=zo.toPrecision(3)+" Ω";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is wire microstrip impedance?","acceptedAnswer":{"@type":"Answer","text":"It is the characteristic impedance of a round conductor above a dielectric substrate and reference ground plane."}},
+{"@type":"Question","name":"What inputs are required?","acceptedAnswer":{"@type":"Answer","text":"The calculator needs wire diameter, substrate height and dielectric constant."}},
+{"@type":"Question","name":"Does larger wire diameter lower impedance?","acceptedAnswer":{"@type":"Answer","text":"Generally yes. Increasing wire diameter lowers the calculated impedance in this geometry."}},
+{"@type":"Question","name":"Why does substrate height matter?","acceptedAnswer":{"@type":"Answer","text":"Substrate height changes the electric field geometry between the wire and reference plane, which affects impedance."}},
+{"@type":"Question","name":"Can this be used for 50 ohm RF design?","acceptedAnswer":{"@type":"Answer","text":"Yes, it can help estimate geometry near 50 Ω, but final RF layouts should be verified with measurement or simulation."}},
+{"@type":"Question","name":"What unit is the result?","acceptedAnswer":{"@type":"Answer","text":"The impedance result is displayed in ohms."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"RF Calculators","item":"https://calcboy.com/category/rf-calculators/"},
+{"@type":"ListItem","position":3,"name":"Wire Microstrip Impedance Calculator","item":"https://calcboy.com/tool/wire-microstrip-impedance-calculator"}
+]
 }
 </script>
 
