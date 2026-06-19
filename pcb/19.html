@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Embedded Microstrip Impedance Calculator</title>
+<title>Embedded Microstrip Impedance Calculator | PCB RF Calculator - CalcBoy</title>
 <meta name="description" content="Calculate embedded microstrip impedance from trace thickness, H1, H2, width and dielectric constant for controlled impedance PCB design.">
-<meta name="keywords" content="embedded microstrip impedance calculator, PCB impedance calculator, embedded trace impedance, RF PCB calculator, controlled impedance">
+<meta name="keywords" content="embedded microstrip impedance calculator, PCB impedance calculator, embedded trace impedance, RF PCB calculator, controlled impedance calculator, embedded microstrip PCB calculator, multilayer PCB impedance calculator, RF stackup calculator, dielectric constant impedance calculator, CalcBoy">
+
 <style>
 #embedded-microstrip-calc,#embedded-microstrip-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#embedded-microstrip-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#embedded-microstrip-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -20,23 +21,38 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
-.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
-.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -117,7 +133,7 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Impedance</div>
     <div class="result-value" id="impedanceResult"></div>
   </div>
@@ -126,18 +142,22 @@ body{padding:10px}
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness of embedded conductor.</div>
-  <div class="paramItem"><strong>Height 1</strong>Distance from lower plane to trace.</div>
-  <div class="paramItem"><strong>Height 2</strong>Distance from lower plane to upper reference level.</div>
-  <div class="paramItem"><strong>Trace Width</strong>Width of embedded microstrip conductor.</div>
+  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness of the embedded conductor. Thickness changes effective geometry and can shift controlled impedance.</div>
+  <div class="paramItem"><strong>Height 1</strong>Distance from lower plane to trace. This is the base microstrip height used first in the preserved calculation logic.</div>
+  <div class="paramItem"><strong>Height 2</strong>Distance from lower plane to upper reference level. It controls how much dielectric cover exists above the embedded trace.</div>
+  <div class="paramItem"><strong>Trace Width</strong>Width of the embedded microstrip conductor. Wider traces generally reduce impedance.</div>
+  <div class="paramItem"><strong>Dielectric Constant</strong>Relative permittivity of the PCB dielectric material. Higher dielectric constant usually lowers impedance.</div>
+  <div class="paramItem"><strong>Output</strong>Calculated embedded microstrip impedance in ohms for RF PCB and controlled-impedance stackup checks.</div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Practical Operational Examples</h2>
 <div class="exampleGrid">
-  <div class="exampleCard"><p><strong>Controlled Impedance PCB</strong></p><p>Estimate impedance for embedded traces inside multilayer PCB stackups.</p></div>
-  <div class="exampleCard"><p><strong>RF Stackup Design</strong></p><p>Adjust H1, H2, width, thickness and Er to tune the trace impedance.</p></div>
+  <div class="exampleCard"><p><strong>Controlled Impedance PCB</strong></p><p>Estimate impedance for embedded traces inside multilayer PCB stackups used in RF and high-speed routing.</p></div>
+  <div class="exampleCard"><p><strong>RF Stackup Design</strong></p><p>Adjust H1, H2, width, thickness and Er to tune the trace impedance before fabrication.</p></div>
+  <div class="exampleCard"><p><strong>Buried Signal Routing</strong></p><p>Use this when a trace is below the surface dielectric cover instead of exposed like a standard microstrip.</p></div>
+  <div class="exampleCard"><p><strong>Manufacturer Review</strong></p><p>Compare early calculator results with PCB house stackup data before ordering controlled impedance boards.</p></div>
 </div>
 </section>
 
@@ -222,9 +242,84 @@ body{padding:10px}
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">The calculator preserves the supplied embedded microstrip JavaScript formula and unit multipliers.</div>
-<div class="formula">It first calculates microstrip impedance using H1, then applies embedded-height correction using H2 - H1.</div>
-<div class="formula">If H2 is lower than H1, correction becomes zero as in the original source logic.</div>
+<div class="formulaBox">The calculator preserves the supplied embedded microstrip JavaScript formula and unit multipliers.</div>
+<div class="formulaBox">Step 1: Convert trace thickness, H1, H2 and trace width using the selected unit multipliers.</div>
+<div class="formulaBox">Step 2: First calculate normal microstrip impedance using H1, trace width, trace thickness and dielectric constant.</div>
+<div class="formulaBox">Step 3: Cover height = H2 - H1.</div>
+<div class="formulaBox">Step 4: If cover height is lower than zero, impedance becomes zero as in the original source logic.</div>
+<div class="formulaBox">Step 5: If cover height is valid, embedded-height correction is applied using exp(-2 × cover / H1).</div>
+<div class="formulaBox">Step 6: Final impedance is displayed in ohms.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: trace thickness = 1 mil, H1 = 8 mil, H2 = 20 mil, trace width = 10 mil, dielectric constant = 4.2.</div>
+<div class="formulaBox">The calculator converts all geometry values using the selected unit multipliers.</div>
+<div class="formulaBox">A base microstrip impedance is calculated from trace width, thickness, H1 and dielectric constant.</div>
+<div class="formulaBox">Cover height is calculated as H2 - H1.</div>
+<div class="formulaBox">The embedded correction factor is applied to the base impedance.</div>
+<div class="formulaBox">The final embedded microstrip impedance is shown in ohms.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter the copper trace thickness and select the correct unit.</div>
+  <div class="aboutStep">Enter Height 1 from lower reference plane to the embedded trace.</div>
+  <div class="aboutStep">Enter Height 2 from lower plane to upper reference level.</div>
+  <div class="aboutStep">Enter trace width and select the correct unit.</div>
+  <div class="aboutStep">Enter dielectric constant of the PCB material.</div>
+  <div class="aboutStep">Click Calculate to get embedded microstrip impedance.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate impedance for embedded PCB microstrip traces inside a dielectric cover.</strong>
+<p>The CalcBoy Embedded Microstrip Impedance Calculator calculates characteristic impedance from trace thickness, H1, H2, trace width and dielectric constant.</p>
+</div>
+<p>An embedded microstrip is different from a normal surface microstrip because the trace is not fully exposed on the outer layer. It is placed below a dielectric cover while still referenced to a lower plane. This geometry appears in multilayer RF boards, controlled-impedance digital routing, buried signal traces, and PCB stackups where a signal trace is covered by solder mask, prepreg, or another dielectric layer.</p>
+<p>The key difference is that H1 defines the base distance from the trace to the lower reference plane, while H2 defines the upper reference or dielectric cover level. When H2 is greater than H1, the trace behaves like a covered or embedded microstrip, and the impedance is corrected by the original formula logic.</p>
+<p>This calculator is useful for RF PCB routing, microwave layouts, high-speed signals, impedance-controlled stackups, prototype boards and manufacturer discussions. For production controlled impedance, always verify the final value with the PCB manufacturer’s stackup, dielectric tolerance, copper plating, solder mask data and impedance test coupons.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Embedded microstrip impedance checks for multilayer PCB stackups.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Trace thickness, H1, H2, trace width and dielectric constant.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>RF traces, high-speed signals, buried routing and controlled impedance nets.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Use real PCB stackup data for final impedance confirmation.</div>
+</div>
+<div class="aboutNote">Tip: If the trace is covered by dielectric, do not treat it exactly like an open surface microstrip. Embedded cover height can shift impedance noticeably.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is embedded microstrip impedance?</h3>
+<p>It is the characteristic impedance of a PCB trace that behaves like a microstrip but is covered or embedded inside dielectric material.</p>
+
+<h3>What are H1 and H2?</h3>
+<p>H1 is the base height used for the trace-to-reference-plane distance. H2 defines the upper reference or dielectric cover level used for embedded correction.</p>
+
+<h3>Why does dielectric cover affect impedance?</h3>
+<p>Cover dielectric changes the electric field distribution around the trace, which can shift impedance compared with an uncovered microstrip.</p>
+
+<h3>Can I use this for RF PCB design?</h3>
+<p>Yes. It is useful for RF and high-speed PCB stackups where the trace is covered or embedded.</p>
+
+<h3>What happens if H2 is lower than H1?</h3>
+<p>The original source logic sets impedance to zero when cover height becomes negative.</p>
+
+<h3>Can this replace PCB manufacturer impedance control?</h3>
+<p>No. Use it as an estimate and verify final values with your PCB manufacturer’s controlled-impedance stackup.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Microstrip Impedance Calculator</strong>Calculate standard top-layer microstrip impedance.</div>
+  <div class="linkCard"><strong>Asymmetric Stripline Impedance Calculator</strong>Calculate impedance for off-center embedded stripline traces.</div>
+  <div class="linkCard"><strong>Symmetric Stripline Impedance Calculator</strong>Calculate centered stripline impedance for multilayer boards.</div>
+  <div class="linkCard"><strong>Microstrip Wavelength Calculator</strong>Calculate guided wavelength and effective dielectric constant.</div>
+</div>
 </section>
 
 </div>
@@ -300,6 +395,34 @@ function calculateEmbeddedMicrostrip(){
 
   document.getElementById("errorBox").style.display="none";
   document.getElementById("impedanceResult").innerText=result.zo.toPrecision(3)+" Ω";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is embedded microstrip impedance?","acceptedAnswer":{"@type":"Answer","text":"It is the characteristic impedance of a PCB trace that behaves like a microstrip but is covered or embedded inside dielectric material."}},
+{"@type":"Question","name":"What are H1 and H2?","acceptedAnswer":{"@type":"Answer","text":"H1 is the base height used for the trace-to-reference-plane distance. H2 defines the upper reference or dielectric cover level used for embedded correction."}},
+{"@type":"Question","name":"Why does dielectric cover affect impedance?","acceptedAnswer":{"@type":"Answer","text":"Cover dielectric changes the electric field distribution around the trace, which can shift impedance compared with an uncovered microstrip."}},
+{"@type":"Question","name":"Can I use this for RF PCB design?","acceptedAnswer":{"@type":"Answer","text":"Yes. It is useful for RF and high-speed PCB stackups where the trace is covered or embedded."}},
+{"@type":"Question","name":"What happens if H2 is lower than H1?","acceptedAnswer":{"@type":"Answer","text":"The original source logic sets impedance to zero when cover height becomes negative."}},
+{"@type":"Question","name":"Can this replace PCB manufacturer impedance control?","acceptedAnswer":{"@type":"Answer","text":"No. Use it as an estimate and verify final values with your PCB manufacturer’s controlled-impedance stackup."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"RF Calculators","item":"https://calcboy.com/category/rf-calculators/"},
+{"@type":"ListItem","position":3,"name":"Embedded Microstrip Impedance Calculator","item":"https://calcboy.com/tool/embedded-microstrip-impedance-calculator"}
+]
 }
 </script>
 
