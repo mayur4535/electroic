@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Data Logger Battery Life Calculator | Sensor Battery Runtime Tool</title>
+<title>Data Logger Battery Life Calculator | Sensor Runtime Tool - CalcBoy</title>
 <meta name="description" content="Calculate data logger battery life using battery capacity, voltage, sleep power, sensor power, sample rate, on-time and sensor count.">
-<meta name="keywords" content="data logger battery life calculator, sensor battery life calculator, data logger runtime calculator, battery capacity mAh calculator, sensor power consumption calculator, battery energy per day calculator, low power data logger calculator, IoT sensor battery calculator, wireless sensor battery runtime, sample rate battery life calculator">
+<meta name="keywords" content="data logger battery life calculator, sensor battery life calculator, data logger runtime calculator, battery capacity mAh calculator, sensor power consumption calculator, battery energy per day calculator, low power data logger calculator, IoT sensor battery calculator, wireless sensor battery runtime, sample rate battery life calculator, CalcBoy">
 <style>
 #data-logger-battery-calc,#data-logger-battery-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#data-logger-battery-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#data-logger-battery-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -23,10 +23,14 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
-.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
-.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
 .result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
 .batteryWrap{margin-top:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
@@ -38,18 +42,25 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .batteryPercent{margin-top:10px;font-size:14px;font-weight:900;color:#334155;text-align:center}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .unit-box,.unit-select{width:72px;min-width:72px;max-width:72px}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-grid{grid-template-columns:1fr 1fr}
 .result-value{font-size:14px}
 }
@@ -126,12 +137,12 @@ body{padding:10px}
   <div class="result-title">RESULTS</div>
 
   <div class="result-grid">
-    <div class="result-card">
+    <div class="result-card blue">
       <div class="result-label">Energy Usage Per Day</div>
       <div class="result-value"><span id="Ed"></span></div>
     </div>
 
-    <div class="result-card">
+    <div class="result-card green">
       <div class="result-label">Estimated Battery Life</div>
       <div class="result-value"><span id="Days"></span></div>
     </div>
@@ -168,6 +179,14 @@ body{padding:10px}
       <div class="exampleCard">
         <p><strong>Battery Life Check</strong></p>
         <p>Use this calculator for IoT loggers, wireless sensor nodes, environmental monitoring, temperature loggers and remote data collection.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Weather Station</strong></p>
+        <p>Estimate how long a remote weather logger can run when sensors wake up briefly and sleep most of the day.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Industrial Sensor Node</strong></p>
+        <p>Compare sample rate and sensor count to reduce daily mAh drain in battery-powered monitoring systems.</p>
       </div>
     </div>
   </section>
@@ -212,6 +231,76 @@ body{padding:10px}
     <div class="formula">Energy use per day = (Sensor Power × Number of Sensors × Sample Rate × Sensor On Time) / (3600 × Battery Voltage) + 24 × Sleep Power / Battery Voltage</div>
     <div class="formula">Battery Life in Days = Battery Capacity / Energy use per day</div>
     <p>Sensor power and sleep power are treated in mW, battery voltage in V, battery capacity in mAh, on-time in seconds and sample rate as samples per day.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Battery = 2200 mAh, voltage = 3.7 V, sleep power = 0.5 mW, sensor power = 30 mW, on time = 2 sec, sample rate = 144/day, sensors = 2.</div>
+    <div class="formulaBox">Step 1: Sensor daily use = (30 × 2 × 144 × 2) / (3600 × 3.7).</div>
+    <div class="formulaBox">Step 2: Logger sleep daily use = 24 × 0.5 / 3.7.</div>
+    <div class="formulaBox">Step 3: Total energy per day = sensor daily use + sleep daily use.</div>
+    <div class="formulaBox">Step 4: Battery life = 2200 / total mAh per day.</div>
+    <div class="formulaBox">Step 5: Indicator uses 100 days as full-scale visual reference.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter battery capacity in mAh.</div>
+      <div class="aboutStep">Enter battery voltage.</div>
+      <div class="aboutStep">Enter data logger sleep power in mW.</div>
+      <div class="aboutStep">Enter sensor power, sensor on-time, sample rate per day and number of sensors.</div>
+      <div class="aboutStep">Click Calculate to get energy usage per day and estimated battery life.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Estimate battery life for low-power data loggers and sensor nodes.</strong>
+      <p>The CalcBoy Data Logger Battery Life Calculator estimates daily battery drain and runtime from sleep power, sensor power, sample rate and battery capacity.</p>
+    </div>
+    <p>Battery-powered data loggers usually spend most of their time in a sleep state and wake up only for short sensor readings. That makes runtime different from a simple constant-current battery calculation. A tiny sleep power can matter over 24 hours, while high sensor power may still be acceptable if the sensor is active only for a few seconds per sample.</p>
+    <p>This calculator is useful for IoT sensor nodes, wireless data loggers, environmental monitors, temperature/humidity recorders, agriculture sensors, remote industrial monitors and low-power embedded systems. By changing sample rate, sensor count or sensor on-time, you can quickly see which design choice saves the most battery.</p>
+    <p>Real field life can be lower because of cold temperature, battery aging, regulator losses, radio transmission bursts, memory write current, sensor warm-up, leakage and self-discharge. Use the result as a planning estimate, then test the actual logger with real sleep and active current measurements.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Best Use</span>Battery runtime planning for sensor-based data loggers.</div>
+      <div class="aboutMiniCard"><span>Supported Inputs</span>mAh, voltage, sleep power, sensor power, on-time, samples/day and sensor count.</div>
+      <div class="aboutMiniCard"><span>Helpful For</span>IoT nodes, weather stations, environmental monitors and remote sensors.</div>
+      <div class="aboutMiniCard"><span>Design Reminder</span>Measure real sleep current and sensor warm-up current for better accuracy.</div>
+    </div>
+    <div class="aboutNote">Tip: Reducing sample rate often saves more battery than changing battery size, especially when sensors or radios consume high power during short active pulses.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>How is data logger battery life calculated?</h3>
+    <p>It calculates daily mAh usage from sensor active pulses and logger sleep power, then divides battery capacity by daily usage.</p>
+
+    <h3>What is sample rate per day?</h3>
+    <p>It is the number of times the data logger wakes up and takes sensor readings in one day.</p>
+
+    <h3>Why does sleep power matter?</h3>
+    <p>Sleep power runs continuously for 24 hours, so even a small sleep load can drain a battery over long deployments.</p>
+
+    <h3>Does sensor on-time affect battery life?</h3>
+    <p>Yes. Longer sensor on-time increases daily energy use and reduces estimated battery life.</p>
+
+    <h3>Can I use this for IoT devices?</h3>
+    <p>Yes. It is useful for IoT data loggers, wireless sensor nodes, remote monitors and low-power embedded devices.</p>
+
+    <h3>Is this final real-world battery life?</h3>
+    <p>No. Real battery life can be lower due to regulator loss, radio bursts, temperature, battery aging and changing current draw.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Battery Life Calculator</strong>Calculate runtime from battery capacity and device current.</div>
+      <div class="linkCard"><strong>Power Consumption Calculator</strong>Calculate device power from voltage and current.</div>
+      <div class="linkCard"><strong>Battery Capacity Calculator</strong>Estimate required capacity for a target runtime.</div>
+      <div class="linkCard"><strong>Ohm’s Law Calculator</strong>Calculate voltage, current, resistance and power.</div>
+    </div>
   </section>
 
 </div>
@@ -263,6 +352,34 @@ function computeLoggerBattery(){
   var pct=batteryPercentFromDays(Days);
   animateBattery(pct);
   document.getElementById("batteryPercent").innerText=Math.round(pct)+"% battery indicator based on 100-day full scale";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"How is data logger battery life calculated?","acceptedAnswer":{"@type":"Answer","text":"It calculates daily mAh usage from sensor active pulses and logger sleep power, then divides battery capacity by daily usage."}},
+{"@type":"Question","name":"What is sample rate per day?","acceptedAnswer":{"@type":"Answer","text":"It is the number of times the data logger wakes up and takes sensor readings in one day."}},
+{"@type":"Question","name":"Why does sleep power matter?","acceptedAnswer":{"@type":"Answer","text":"Sleep power runs continuously for 24 hours, so even a small sleep load can drain a battery over long deployments."}},
+{"@type":"Question","name":"Does sensor on-time affect battery life?","acceptedAnswer":{"@type":"Answer","text":"Yes. Longer sensor on-time increases daily energy use and reduces estimated battery life."}},
+{"@type":"Question","name":"Can I use this for IoT devices?","acceptedAnswer":{"@type":"Answer","text":"Yes. It is useful for IoT data loggers, wireless sensor nodes, remote monitors and low-power embedded devices."}},
+{"@type":"Question","name":"Is this final real-world battery life?","acceptedAnswer":{"@type":"Answer","text":"No. Real battery life can be lower due to regulator loss, radio bursts, temperature, battery aging and changing current draw."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Data Logger Battery Life Calculator","item":"https://calcboy.com/tool/data-logger-battery-life-calculator"}
+]
 }
 </script>
 
