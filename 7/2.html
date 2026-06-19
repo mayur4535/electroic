@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Battery Run Time Calculator | Battery Life Calculator</title>
-<meta name="description" content="Calculate battery run time from mAh or Ah capacity and device current in mA or A with smooth animated battery level indicator.">
-<meta name="keywords" content="battery run time calculator, battery life calculator, battery mAh calculator, Ah battery runtime calculator, mAh to hours calculator, battery backup calculator, device power consumption calculator, battery duration calculator, DC battery runtime calculator, battery capacity calculator, electronics battery calculator, battery life in hours calculator, battery amp hour calculator">
+<title>Battery Life Calculator | Battery Run Time Calculator - CalcBoy</title>
+<meta name="description" content="Calculate battery life and runtime from mAh or Ah capacity and device current in mA or A with battery level indicator.">
+<meta name="keywords" content="battery life calculator, battery run time calculator, battery mAh calculator, Ah battery runtime calculator, mAh to hours calculator, battery backup calculator, device power consumption calculator, battery duration calculator, DC battery runtime calculator, battery capacity calculator, electronics battery calculator, battery life in hours calculator, battery amp hour calculator, CalcBoy">
 <style>
 #battery-runtime-calc,#battery-runtime-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#battery-runtime-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#battery-runtime-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -24,10 +24,14 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
-.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
-.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
 .result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
 .batteryWrap{margin-top:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
@@ -39,18 +43,25 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .batteryPercent{margin-top:10px;font-size:14px;font-weight:900;color:#334155;text-align:center}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .unit-box,.unit-select{width:72px;min-width:72px;max-width:72px}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-grid{grid-template-columns:1fr 1fr}
 .result-value{font-size:14px}
 }
@@ -106,12 +117,12 @@ body{padding:10px}
   <div class="result-title">RESULTS</div>
 
   <div class="result-grid">
-    <div class="result-card">
+    <div class="result-card blue">
       <div class="result-label">Estimated Battery Life</div>
       <div class="result-value"><span id="runtimeResult"></span></div>
     </div>
 
-    <div class="result-card">
+    <div class="result-card green">
       <div class="result-label">Runtime In Hours</div>
       <div class="result-value"><span id="hourResult"></span></div>
     </div>
@@ -149,6 +160,14 @@ body{padding:10px}
         <p><strong>Power Bank Load</strong></p>
         <p>Battery: 10 Ah<br>Current: 0.5 A<br>Runtime: 20 hours<br>Indicator: 20%</p>
       </div>
+      <div class="exampleCard">
+        <p><strong>Sensor Node Example</strong></p>
+        <p>Battery: 3000 mAh<br>Current: 30 mA<br>Runtime: 100 hours<br>Indicator: 100%</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>DC Fan Load</strong></p>
+        <p>Battery: 12 Ah<br>Current: 1.2 A<br>Runtime: about 10 hours before real-world losses.</p>
+      </div>
     </div>
   </section>
 
@@ -182,6 +201,76 @@ body{padding:10px}
     <div class="formula">Months = Hours / 730</div>
     <div class="formula">Years = Hours / 8760</div>
     <div class="formula">Battery indicator percent = Runtime hours, capped at 100%. So 100 hours = 100% full.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Battery capacity = 5000 mAh and device current = 250 mA.</div>
+    <div class="formulaBox">Step 1: Capacity is already in mAh, so capacity = 5000 mAh.</div>
+    <div class="formulaBox">Step 2: Current is already in mA, so current = 250 mA.</div>
+    <div class="formulaBox">Step 3: Battery life = 5000 / 250 = 20 hours.</div>
+    <div class="formulaBox">Step 4: In days, runtime = 20 / 24 = 0.833 days.</div>
+    <div class="formulaBox">Step 5: Battery indicator displays 20% because the visual scale treats 100 hours as 100%.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter battery capacity and choose mAh or Ah.</div>
+      <div class="aboutStep">Enter device current consumption and choose mA or A.</div>
+      <div class="aboutStep">Choose the time display format: hours, days, weeks, months or years.</div>
+      <div class="aboutStep">Click Calculate to see estimated runtime and runtime in hours.</div>
+      <div class="aboutStep">Use Reset to clear all inputs and results.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Estimate battery backup time for electronics, sensors, lights, motors and DC devices.</strong>
+      <p>The CalcBoy Battery Life Calculator estimates runtime from battery capacity and device current draw using the standard capacity divided by current method.</p>
+    </div>
+    <p>Battery runtime is one of the most common checks in electronics design and repair. Whether you are testing an IoT sensor, LED strip, power bank load, small fan, relay module, Arduino project, ESP32 board or DC backup system, the basic question is the same: how many hours will the battery last? This calculator answers that quickly using capacity in mAh or Ah and load current in mA or A.</p>
+    <p>The calculation is simple, but real-world battery life can be lower. Battery chemistry, cutoff voltage, age, temperature, discharge rate, converter efficiency, cable loss and device current spikes all affect actual runtime. For example, a 5000 mAh battery powering a 250 mA load gives 20 hours ideally, but a boost converter or cold battery can reduce useful time.</p>
+    <p>Use this tool for early planning, rough backup estimates, project sizing and troubleshooting. For final product design, add safety margin and test the real load because many devices do not consume constant current.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Best Use</span>Battery backup and DC runtime estimation.</div>
+      <div class="aboutMiniCard"><span>Supported Inputs</span>Battery capacity in mAh/Ah and current in mA/A.</div>
+      <div class="aboutMiniCard"><span>Helpful For</span>IoT, Arduino, ESP32, LED, fan, power bank and sensor projects.</div>
+      <div class="aboutMiniCard"><span>Design Reminder</span>Real runtime is usually lower than ideal calculation.</div>
+    </div>
+    <div class="aboutNote">Tip: For better accuracy, measure actual device current with a multimeter because sleep mode, startup current and peak load can change runtime a lot.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>How do I calculate battery life?</h3>
+    <p>Battery life in hours is calculated by dividing battery capacity in mAh by device current in mA.</p>
+
+    <h3>What is the formula for battery runtime?</h3>
+    <p>Runtime hours = battery capacity in mAh / load current in mA.</p>
+
+    <h3>Is Ah the same as mAh?</h3>
+    <p>1 Ah equals 1000 mAh. For example, 5 Ah is the same as 5000 mAh.</p>
+
+    <h3>Why is real battery life lower than calculated?</h3>
+    <p>Real runtime can be lower because of battery age, temperature, voltage cutoff, converter loss, internal resistance and changing load current.</p>
+
+    <h3>Can I use this for power banks?</h3>
+    <p>Yes, but power banks have conversion losses, so actual usable runtime may be lower than the ideal result.</p>
+
+    <h3>What does the battery indicator mean?</h3>
+    <p>The indicator uses a simple 100-hour visual scale. 100 hours shows 100%, 50 hours shows 50%, and 20 hours shows 20%.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Ohm’s Law Calculator</strong>Calculate voltage, current, resistance and power.</div>
+      <div class="linkCard"><strong>Battery Capacity Calculator</strong>Estimate battery capacity from current and required runtime.</div>
+      <div class="linkCard"><strong>Power Consumption Calculator</strong>Calculate device power from voltage and current.</div>
+      <div class="linkCard"><strong>Voltage Drop Calculator</strong>Estimate voltage loss across wires and cables.</div>
+    </div>
   </section>
 
 </div>
@@ -267,6 +356,34 @@ function calculateRuntime(){
   lastHours=capacity/current;
 
   updateTimeDisplay();
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"How do I calculate battery life?","acceptedAnswer":{"@type":"Answer","text":"Battery life in hours is calculated by dividing battery capacity in mAh by device current in mA."}},
+{"@type":"Question","name":"What is the formula for battery runtime?","acceptedAnswer":{"@type":"Answer","text":"Runtime hours = battery capacity in mAh / load current in mA."}},
+{"@type":"Question","name":"Is Ah the same as mAh?","acceptedAnswer":{"@type":"Answer","text":"1 Ah equals 1000 mAh. For example, 5 Ah is the same as 5000 mAh."}},
+{"@type":"Question","name":"Why is real battery life lower than calculated?","acceptedAnswer":{"@type":"Answer","text":"Real runtime can be lower because of battery age, temperature, voltage cutoff, converter loss, internal resistance and changing load current."}},
+{"@type":"Question","name":"Can I use this for power banks?","acceptedAnswer":{"@type":"Answer","text":"Yes, but power banks have conversion losses, so actual usable runtime may be lower than the ideal result."}},
+{"@type":"Question","name":"What does the battery indicator mean?","acceptedAnswer":{"@type":"Answer","text":"The indicator uses a simple 100-hour visual scale. 100 hours shows 100%, 50 hours shows 50%, and 20 hours shows 20%."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Battery Life Calculator","item":"https://calcboy.com/tool/battery-life-calculator"}
+]
 }
 </script>
 
