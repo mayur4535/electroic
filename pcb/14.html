@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Edge Coupled Trace Inductance Calculator</title>
-<meta name="description" content="Calculate edge coupled PCB trace inductance from trace width, separation, length and relative permeability using a fast RF trace formula.">
-<meta name="keywords" content="edge coupled trace inductance calculator, PCB trace inductance calculator, coupled trace inductance, RF PCB inductance calculator, parallel trace inductance">
+<title>Edge Coupled Trace Inductance Calculator | PCB Coupled Trace Calculator - CalcBoy</title>
+<meta name="description" content="Calculate edge coupled PCB trace inductance from trace width, separation, length and relative permeability for RF and high-speed layouts.">
+<meta name="keywords" content="edge coupled trace inductance calculator, PCB trace inductance calculator, coupled trace inductance, RF PCB inductance calculator, parallel trace inductance calculator, edge coupled PCB calculator, PCB parasitic inductance calculator, coupled PCB trace calculator, CalcBoy">
 <style>
 #edge-trace-ind-calc,#edge-trace-ind-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#edge-trace-ind-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#edge-trace-ind-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -20,23 +20,38 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
-.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
-.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -102,7 +117,7 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Inductance</div>
     <div class="result-value" id="inductanceResult"></div>
   </div>
@@ -111,10 +126,10 @@ body{padding:10px}
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Trace Width</strong>Width of each coupled PCB trace.</div>
-  <div class="paramItem"><strong>Trace Separation</strong>Distance or spacing between the two edge coupled traces.</div>
-  <div class="paramItem"><strong>Trace Length</strong>Parallel coupled length of the PCB traces.</div>
-  <div class="paramItem"><strong>Relative Permeability</strong>Magnetic permeability ratio. Use 1 for normal PCB dielectric/air.</div>
+  <div class="paramItem"><strong>Trace Width</strong>Width of each coupled PCB trace. Trace width affects magnetic field spacing and coupled trace inductance behavior.</div>
+  <div class="paramItem"><strong>Trace Separation</strong>Distance or spacing between the two edge coupled traces. The source formula uses this spacing directly inside the acosh term.</div>
+  <div class="paramItem"><strong>Trace Length</strong>Parallel coupled length of the PCB traces. This input is kept exactly because it is present in the original source calculator.</div>
+  <div class="paramItem"><strong>Relative Permeability</strong>Magnetic permeability ratio. Use 1 for normal PCB dielectric, FR4 area, air region, and most non-magnetic board materials.</div>
 </div>
 </section>
 
@@ -123,6 +138,8 @@ body{padding:10px}
 <div class="exampleGrid">
   <div class="exampleCard"><p><strong>PCB Coupled Traces</strong></p><p>Estimate inductance between side-by-side traces in RF, pulse and high-speed PCB layouts.</p></div>
   <div class="exampleCard"><p><strong>Layout Optimization</strong></p><p>Change spacing, width or length to see how edge coupling affects inductance.</p></div>
+  <div class="exampleCard"><p><strong>Switching Loop Review</strong></p><p>Check coupled conductor behavior in MOSFET gate routing, pulse lines, current sense paths and compact power PCB layouts.</p></div>
+  <div class="exampleCard"><p><strong>RF Trace Comparison</strong></p><p>Use the result as a quick estimate before deeper RF simulation or lab measurement for critical coupled trace structures.</p></div>
 </div>
 </section>
 
@@ -213,9 +230,82 @@ body{padding:10px}
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">Formula used from source code: L = ((μ0 × μr) / π) × acosh(separation / width)</div>
-<div class="formula">μ0 = 4 × π × 10^-7 H/m. Width and separation are converted to meters using selected units.</div>
-<div class="formula">Note: The supplied source code reads trace length but does not multiply it into the final inductance formula, so this version preserves that original calculation behavior.</div>
+<div class="formulaBox">Formula used from source code: L = ((μ0 × μr) / π) × acosh(separation / width)</div>
+<div class="formulaBox">μ0 = 4 × π × 10^-7 H/m.</div>
+<div class="formulaBox">Width and separation are converted to meters using selected units.</div>
+<div class="formulaBox">Relative permeability μr is entered directly. For common PCB material and air region, μr is usually 1.</div>
+<div class="formulaBox">Note: The supplied source code reads trace length but does not multiply it into the final inductance formula, so this version preserves that original calculation behavior.</div>
+<div class="formulaBox">Practical meaning: separation-to-width ratio is the main driver in the preserved formula. Wider traces or smaller separation change the acosh term.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: trace width = 1 mm, trace separation = 3 mm, trace length = 50 mm, relative permeability = 1.</div>
+<div class="formulaBox">The calculator converts width and separation from millimeters to meters.</div>
+<div class="formulaBox">Relative permeability is multiplied with μ0 in the original source formula.</div>
+<div class="formulaBox">The acosh value is calculated from separation divided by trace width.</div>
+<div class="formulaBox">The final inductance value is displayed in henries.</div>
+<div class="formulaBox">Trace length remains a preserved source input, but the original formula does not use it in the final inductance expression.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter the width of each edge-coupled PCB trace.</div>
+  <div class="aboutStep">Enter the separation between the two coupled traces.</div>
+  <div class="aboutStep">Enter trace length exactly as required by the source calculator input set.</div>
+  <div class="aboutStep">Enter relative permeability. Use 1 for ordinary PCB dielectric and air.</div>
+  <div class="aboutStep">Click Calculate to get edge coupled trace inductance.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate inductive behavior between edge-coupled PCB traces.</strong>
+<p>The CalcBoy Edge Coupled Trace Inductance Calculator estimates coupled trace inductance from trace width, trace separation, trace length and relative permeability while preserving the original source formula.</p>
+</div>
+<p>When two PCB traces run side-by-side, their magnetic fields interact. This coupling can matter in RF routing, fast pulse circuits, switching regulators, gate-drive loops, current-sense lines and high-speed digital layouts. Even when the inductance is small, fast current changes can turn it into ringing, overshoot, EMI or unwanted coupling between nearby nets.</p>
+<p>This calculator is useful for quick layout comparison. You can change trace width, spacing and material permeability to see how the preserved edge-coupled inductance expression responds. For ordinary PCB materials, relative permeability is normally close to 1, so most layout changes come from the trace geometry itself.</p>
+<p>For critical RF, microwave or high-speed boards, treat this result as a first-pass estimate. Real behavior also depends on return path, plane distance, copper thickness, dielectric structure, surrounding copper, vias, loop area and frequency-dependent effects.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Edge-coupled PCB trace inductance estimates.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Trace width, trace separation, trace length and relative permeability.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>RF traces, switching loops, pulse routing and high-speed PCB layouts.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Keep return paths tight to reduce real loop inductance.</div>
+</div>
+<div class="aboutNote">Tip: In real PCB layouts, loop area and return current path often dominate inductive noise. Use short routing and nearby reference planes whenever possible.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is edge coupled trace inductance?</h3>
+<p>It is the inductive effect estimated between two side-by-side PCB traces based on their width, separation and magnetic permeability.</p>
+
+<h3>What relative permeability should I use for PCB material?</h3>
+<p>For normal PCB dielectric and air, use 1 unless you are working with a special magnetic material.</p>
+
+<h3>Does trace spacing affect inductance?</h3>
+<p>Yes. In the preserved formula, separation divided by width is used inside the acosh term, so spacing directly affects the result.</p>
+
+<h3>Why is trace length included?</h3>
+<p>The uploaded source includes trace length as an input. The original calculation reads it but does not multiply it into the final inductance formula, so this version preserves that behavior.</p>
+
+<h3>Can this replace electromagnetic simulation?</h3>
+<p>No. It is a quick calculator for estimation. Critical RF or high-speed designs should use simulation, measurement and stack-up review.</p>
+
+<h3>What unit is the output?</h3>
+<p>The result is displayed in henries.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Microstrip Inductance Calculator</strong>Calculate microstrip trace inductance from strip width, length and distance.</div>
+  <div class="linkCard"><strong>Microstrip Impedance Calculator</strong>Calculate RF PCB trace impedance from width, height and dielectric constant.</div>
+  <div class="linkCard"><strong>Trace Resistance Calculator</strong>Estimate PCB copper trace resistance from geometry and temperature.</div>
+  <div class="linkCard"><strong>Microstrip Crosstalk Calculator</strong>Estimate coupled voltage between nearby top-layer PCB traces.</div>
+</div>
 </section>
 
 </div>
@@ -248,6 +338,34 @@ function calculateEdgeTraceInductance(){
 
   document.getElementById("errorBox").style.display="none";
   document.getElementById("inductanceResult").innerText=L.toPrecision(3)+" H";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is edge coupled trace inductance?","acceptedAnswer":{"@type":"Answer","text":"It is the inductive effect estimated between two side-by-side PCB traces based on their width, separation and magnetic permeability."}},
+{"@type":"Question","name":"What relative permeability should I use for PCB material?","acceptedAnswer":{"@type":"Answer","text":"For normal PCB dielectric and air, use 1 unless you are working with a special magnetic material."}},
+{"@type":"Question","name":"Does trace spacing affect inductance?","acceptedAnswer":{"@type":"Answer","text":"Yes. In the preserved formula, separation divided by width is used inside the acosh term, so spacing directly affects the result."}},
+{"@type":"Question","name":"Why is trace length included?","acceptedAnswer":{"@type":"Answer","text":"The uploaded source includes trace length as an input. The original calculation reads it but does not multiply it into the final inductance formula, so this version preserves that behavior."}},
+{"@type":"Question","name":"Can this replace electromagnetic simulation?","acceptedAnswer":{"@type":"Answer","text":"No. It is a quick calculator for estimation. Critical RF or high-speed designs should use simulation, measurement and stack-up review."}},
+{"@type":"Question","name":"What unit is the output?","acceptedAnswer":{"@type":"Answer","text":"The result is displayed in henries."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"PCB Calculators","item":"https://calcboy.com/category/pcb-calculators/"},
+{"@type":"ListItem","position":3,"name":"Edge Coupled Trace Inductance Calculator","item":"https://calcboy.com/tool/edge-coupled-trace-inductance-calculator"}
+]
 }
 </script>
 
