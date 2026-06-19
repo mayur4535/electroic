@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Asymmetric Stripline Impedance Calculator</title>
-<meta name="description" content="Calculate asymmetric stripline impedance from trace thickness, H1, H2, trace width and dielectric constant for PCB RF stackup design.">
-<meta name="keywords" content="asymmetric stripline impedance calculator, PCB impedance calculator, stripline impedance, RF PCB calculator, controlled impedance calculator">
+<title>Asymmetric Stripline Impedance Calculator | PCB RF Calculator - CalcBoy</title>
+<meta name="description" content="Calculate asymmetric stripline impedance from trace thickness, H1, H2, trace width and dielectric constant for RF PCB stackup design.">
+<meta name="keywords" content="asymmetric stripline impedance calculator, PCB impedance calculator, stripline impedance calculator, RF PCB calculator, controlled impedance calculator, asymmetric PCB stripline calculator, multilayer PCB impedance calculator, RF stackup calculator, dielectric constant impedance calculator, CalcBoy">
+
 <style>
 #asym-stripline-calc,#asym-stripline-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#asym-stripline-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#asym-stripline-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -20,23 +21,38 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #bcd7ff;background:#eef5ff}
-.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;color:#2359e8}
-.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word;color:#2359e8}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox p{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center;align-items:center;text-align:center}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -117,7 +133,7 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Impedance</div>
     <div class="result-value" id="impedanceResult"></div>
   </div>
@@ -126,18 +142,22 @@ body{padding:10px}
 <section class="infoBox">
 <h2>Input Parameters Specification</h2>
 <div class="paramGrid">
-  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness of the embedded trace.</div>
-  <div class="paramItem"><strong>Height 1</strong>Distance from trace to lower reference plane.</div>
-  <div class="paramItem"><strong>Height 2</strong>Distance from trace to upper reference plane.</div>
-  <div class="paramItem"><strong>Trace Width</strong>Width of the asymmetric stripline conductor.</div>
+  <div class="paramItem"><strong>Trace Thickness</strong>Copper thickness of the embedded asymmetric stripline trace. Thickness affects effective conductor geometry and impedance correction.</div>
+  <div class="paramItem"><strong>Height 1</strong>Distance from the trace to one reference plane. This lower or first dielectric height shifts impedance when the trace is off-center.</div>
+  <div class="paramItem"><strong>Height 2</strong>Distance from the trace to the other reference plane. Different H1 and H2 values create asymmetric stripline behavior.</div>
+  <div class="paramItem"><strong>Trace Width</strong>Width of the embedded conductor. Wider traces generally reduce characteristic impedance.</div>
+  <div class="paramItem"><strong>Dielectric Constant</strong>Relative permittivity of the PCB material. Higher dielectric constant normally lowers stripline impedance.</div>
+  <div class="paramItem"><strong>Output</strong>Calculated asymmetric stripline impedance in ohms for RF PCB and controlled-impedance stackup checks.</div>
 </div>
 </section>
 
 <section class="infoBox">
 <h2>Practical Operational Examples</h2>
 <div class="exampleGrid">
-  <div class="exampleCard"><p><strong>Multilayer PCB Stackup</strong></p><p>Estimate impedance when the stripline trace is not centered between planes.</p></div>
-  <div class="exampleCard"><p><strong>Controlled Impedance</strong></p><p>Change H1, H2, width and dielectric constant to tune target impedance.</p></div>
+  <div class="exampleCard"><p><strong>Multilayer PCB Stackup</strong></p><p>Estimate impedance when the stripline trace is not centered between top and bottom reference planes.</p></div>
+  <div class="exampleCard"><p><strong>Controlled Impedance</strong></p><p>Change H1, H2, trace width and dielectric constant to tune a target impedance for RF or high-speed routing.</p></div>
+  <div class="exampleCard"><p><strong>Manufacturing Review</strong></p><p>Use the result as an early estimate before confirming the exact layer geometry with your PCB manufacturer.</p></div>
+  <div class="exampleCard"><p><strong>RF Layout Debugging</strong></p><p>Check how off-center dielectric spacing may shift impedance from a symmetric stripline assumption.</p></div>
 </div>
 </section>
 
@@ -226,9 +246,85 @@ body{padding:10px}
 
 <section class="infoBox">
 <h2>Formulas & Mathematical Logic</h2>
-<div class="formula">The calculator preserves the supplied asymmetric stripline impedance JavaScript logic and unit multipliers.</div>
-<div class="formula">It first evaluates an equivalent symmetric stripline using average height, then applies correction based on H1, H2, trace thickness and trace width.</div>
-<div class="formula">Final impedance is scaled by dielectric constant using the original formula.</div>
+<div class="formulaBox">The calculator preserves the supplied asymmetric stripline impedance JavaScript logic and unit multipliers.</div>
+<div class="formulaBox">Step 1: Convert trace thickness, H1, H2 and trace width using the selected unit multipliers.</div>
+<div class="formulaBox">Step 2: Average height = (H1 + H2) / 2.</div>
+<div class="formulaBox">Step 3: A symmetric stripline estimate is calculated at average height with dielectric constant set to 1.</div>
+<div class="formulaBox">Step 4: Separate symmetric stripline estimates are calculated for H1 and H2.</div>
+<div class="formulaBox">Step 5: Parallel impedance term = 2 × (Z1 × Z2 / (Z1 + Z2)).</div>
+<div class="formulaBox">Step 6: A correction factor is applied based on H1, H2, trace thickness and trace width.</div>
+<div class="formulaBox">Step 7: Final impedance = (average impedance - correction) / sqrt(dielectric constant).</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: trace thickness = 1 mil, H1 = 8 mil, H2 = 20 mil, trace width = 10 mil, dielectric constant = 4.2.</div>
+<div class="formulaBox">The calculator converts all geometric inputs using the selected unit multipliers.</div>
+<div class="formulaBox">It calculates the average of H1 and H2 to build a baseline symmetric stripline value.</div>
+<div class="formulaBox">It separately evaluates the trace relative to H1 and H2.</div>
+<div class="formulaBox">The asymmetry correction is applied using the original source expression.</div>
+<div class="formulaBox">The result is scaled by dielectric constant and displayed as impedance in ohms.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter the embedded trace copper thickness and choose the unit.</div>
+  <div class="aboutStep">Enter Height 1 from the trace to one reference plane.</div>
+  <div class="aboutStep">Enter Height 2 from the trace to the other reference plane.</div>
+  <div class="aboutStep">Enter trace width and select the correct unit.</div>
+  <div class="aboutStep">Enter dielectric constant of the PCB laminate.</div>
+  <div class="aboutStep">Click Calculate to get asymmetric stripline impedance.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate impedance when a stripline trace is not centered between planes.</strong>
+<p>The CalcBoy Asymmetric Stripline Impedance Calculator calculates characteristic impedance from trace thickness, H1, H2, trace width and dielectric constant.</p>
+</div>
+<p>In many multilayer PCB stackups, a stripline trace is not perfectly centered between the two reference planes. One dielectric thickness may be smaller than the other because of available prepreg, core thickness, routing layer choice or manufacturing stackup. That structure is called an asymmetric stripline, and its impedance can be different from a standard centered stripline calculation.</p>
+<p>This calculator is useful for RF PCB routing, microwave boards, high-speed digital nets, controlled impedance traces and stackup planning. Instead of assuming equal distance above and below the trace, it lets you enter H1 and H2 separately, making it more practical for real PCB layer structures.</p>
+<p>Use this result for early design and comparison. For production controlled-impedance work, confirm the final value with your PCB manufacturer because copper plating, dielectric tolerance, resin content, glass weave and lamination process can shift the real impedance.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Off-center stripline impedance checks for multilayer PCB stackups.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Trace thickness, H1, H2, trace width and dielectric constant.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>RF traces, high-speed signals, controlled impedance nets and stackup review.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Use manufacturer stackup data for final impedance control.</div>
+</div>
+<div class="aboutNote">Tip: If H1 and H2 are very different, do not use a symmetric stripline calculator. Use this asymmetric version for a closer estimate.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is asymmetric stripline impedance?</h3>
+<p>It is the characteristic impedance of a stripline trace that is not centered between two reference planes.</p>
+
+<h3>What are H1 and H2?</h3>
+<p>H1 and H2 are the two different dielectric distances from the trace to the reference planes.</p>
+
+<h3>Why does asymmetry change impedance?</h3>
+<p>Because the electromagnetic field is not evenly distributed above and below the trace when the reference plane distances are different.</p>
+
+<h3>Can I use this for RF PCB design?</h3>
+<p>Yes. It is useful for RF and high-speed PCB stackups where the trace is off-center.</p>
+
+<h3>Does dielectric constant affect the result?</h3>
+<p>Yes. Higher dielectric constant generally lowers the impedance value.</p>
+
+<h3>Can this replace PCB manufacturer impedance control?</h3>
+<p>No. Use it as an estimate and verify final values with your PCB manufacturer’s controlled-impedance stackup.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Symmetric Stripline Impedance Calculator</strong>Calculate impedance for a centered stripline trace.</div>
+  <div class="linkCard"><strong>Microstrip Impedance Calculator</strong>Calculate top-layer RF PCB trace impedance.</div>
+  <div class="linkCard"><strong>Edge Coupled Stripline Impedance Calculator</strong>Calculate odd, even, common and differential impedance.</div>
+  <div class="linkCard"><strong>Wire Stripline Impedance Calculator</strong>Calculate impedance for round wire stripline geometry.</div>
+</div>
 </section>
 
 </div>
@@ -301,6 +397,34 @@ function calculateAsymmetricStripline(){
 
   document.getElementById("errorBox").style.display="none";
   document.getElementById("impedanceResult").innerText=result.zo.toPrecision(3)+" Ω";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is asymmetric stripline impedance?","acceptedAnswer":{"@type":"Answer","text":"It is the characteristic impedance of a stripline trace that is not centered between two reference planes."}},
+{"@type":"Question","name":"What are H1 and H2?","acceptedAnswer":{"@type":"Answer","text":"H1 and H2 are the two different dielectric distances from the trace to the reference planes."}},
+{"@type":"Question","name":"Why does asymmetry change impedance?","acceptedAnswer":{"@type":"Answer","text":"Because the electromagnetic field is not evenly distributed above and below the trace when the reference plane distances are different."}},
+{"@type":"Question","name":"Can I use this for RF PCB design?","acceptedAnswer":{"@type":"Answer","text":"Yes. It is useful for RF and high-speed PCB stackups where the trace is off-center."}},
+{"@type":"Question","name":"Does dielectric constant affect the result?","acceptedAnswer":{"@type":"Answer","text":"Yes. Higher dielectric constant generally lowers the impedance value."}},
+{"@type":"Question","name":"Can this replace PCB manufacturer impedance control?","acceptedAnswer":{"@type":"Answer","text":"No. Use it as an estimate and verify final values with your PCB manufacturer’s controlled-impedance stackup."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"RF Calculators","item":"https://calcboy.com/category/rf-calculators/"},
+{"@type":"ListItem","position":3,"name":"Asymmetric Stripline Impedance Calculator","item":"https://calcboy.com/tool/asymmetric-stripline-impedance-calculator"}
+]
 }
 </script>
 
