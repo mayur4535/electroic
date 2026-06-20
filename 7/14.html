@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Flyback Switch Mode Regulator Calculator</title>
-<meta name="description" content="Calculate flyback SMPS duty cycle, on-time, switching frequency, energy, power and currents from transformer and input parameters.">
-<meta name="keywords" content="flyback regulator calculator, flyback SMPS calculator, flyback switch mode regulator, flyback transformer calculator, duty cycle calculator, flyback power calculator, transformer VT product calculator, flyback frequency calculator, isolated power supply calculator">
+<title>Flyback Switch Mode Regulator Calculator | Flyback SMPS Calculator - CalcBoy</title>
+<meta name="description" content="Calculate flyback SMPS duty cycle, on-time, frequency, energy, power and currents from transformer VT, Isat and input values.">
+<meta name="keywords" content="flyback regulator calculator, flyback SMPS calculator, flyback switch mode regulator calculator, flyback transformer calculator, duty cycle calculator, flyback power calculator, transformer VT product calculator, flyback frequency calculator, isolated power supply calculator, flyback converter design calculator, CalcBoy">
+
 <style>
 #flyback-calc,#flyback-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#flyback-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#flyback-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -22,30 +23,37 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
-.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
-.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
-.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
-.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
-.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
-.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
 .result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -111,14 +119,14 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card"><div class="result-label">Ton Max</div><div class="result-value" id="Tonmax"></div></div>
-  <div class="result-card"><div class="result-label">Duty Cycle</div><div class="result-value" id="Duty"></div></div>
-  <div class="result-card"><div class="result-label">Frequency Min</div><div class="result-value" id="Fout"></div></div>
-  <div class="result-card"><div class="result-label">Energy Per Cycle</div><div class="result-value" id="En"></div></div>
-  <div class="result-card"><div class="result-label">Power Max</div><div class="result-value" id="P"></div></div>
-  <div class="result-card"><div class="result-label">Input Current Max</div><div class="result-value" id="Iin"></div></div>
-  <div class="result-card"><div class="result-label">Output Current 1 Max</div><div class="result-value" id="Io1"></div></div>
-  <div class="result-card"><div class="result-label">Calculated Isat / VT</div><div class="result-value" id="calcNote"></div></div>
+  <div class="result-card blue"><div class="result-label">Ton Max</div><div class="result-value" id="Tonmax"></div></div>
+  <div class="result-card green"><div class="result-label">Duty Cycle</div><div class="result-value" id="Duty"></div></div>
+  <div class="result-card purple"><div class="result-label">Frequency Min</div><div class="result-value" id="Fout"></div></div>
+  <div class="result-card orange"><div class="result-label">Energy Per Cycle</div><div class="result-value" id="En"></div></div>
+  <div class="result-card blue"><div class="result-label">Power Max</div><div class="result-value" id="P"></div></div>
+  <div class="result-card green"><div class="result-label">Input Current Max</div><div class="result-value" id="Iin"></div></div>
+  <div class="result-card purple"><div class="result-label">Output Current 1 Max</div><div class="result-value" id="Io1"></div></div>
+  <div class="result-card orange"><div class="result-label">Calculated Isat / VT</div><div class="result-value" id="calcNote"></div></div>
 </div>
 
 <section class="infoBox">
@@ -136,6 +144,8 @@ body{padding:10px}
 <div class="exampleGrid">
   <div class="exampleCard"><p><strong>Flyback SMPS Design</strong></p><p>Estimate switching frequency, duty cycle, on-time, transformer energy and output current for an isolated flyback converter.</p></div>
   <div class="exampleCard"><p><strong>Transformer Saturation Check</strong></p><p>Use VT product or saturation current with primary inductance to verify whether the flyback transformer can safely store energy.</p></div>
+  <div class="exampleCard"><p><strong>Power Supply Repair</strong></p><p>Compare known transformer VT product, input voltage and turns ratio with expected power and current limits.</p></div>
+  <div class="exampleCard"><p><strong>Converter Frequency Planning</strong></p><p>Use calculated minimum frequency to check whether the design can operate without exceeding transformer saturation.</p></div>
 </div>
 </section>
 
@@ -285,6 +295,77 @@ body{padding:10px}
 <div class="formula">Step 8: Output current Io1 = P / Vout1 and input current Iin = P / Vin.</div>
 </section>
 
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: Vin = 24 V, Vout1 = 12 V, Lpri = 100 µH, VT = 120 V·µs, turns ratio N = 2, diode drop = 0.7 V, transistor drop = 0.2 V.</div>
+<div class="formulaBox">Step 1: Convert Lpri = 100 µH = 0.0001 H and VT = 120 V·µs = 0.00012 V·s.</div>
+<div class="formulaBox">Step 2: Isat = VT / Lpri = 0.00012 / 0.0001 = 1.2 A.</div>
+<div class="formulaBox">Step 3: Duty = Vout1 / (Vin × N) = 12 / (24 × 2) = 0.25.</div>
+<div class="formulaBox">Step 4: Tonmax = VT / Vin = 0.00012 / 24 = 5 µs.</div>
+<div class="formulaBox">Step 5: Frequency = Duty / Tonmax = 0.25 / 5 µs = 50 kHz.</div>
+<div class="formulaBox">Step 6: Energy and power are calculated from Lpri, Isat and switching frequency.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter primary voltage Vin and output voltage Vout1.</div>
+  <div class="aboutStep">Enter primary inductance in µH.</div>
+  <div class="aboutStep">Enter either VT Product or Isat. One of these two fields is required.</div>
+  <div class="aboutStep">Enter leakage inductance, turns ratio, diode drop and transistor drop.</div>
+  <div class="aboutStep">Click Calculate to get Ton max, duty cycle, minimum frequency, energy, power and current limits.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Estimate flyback regulator timing, power and transformer current limits.</strong>
+<p>The CalcBoy Flyback Switch Mode Regulator Calculator calculates duty cycle, on-time, minimum frequency, stored energy, maximum power and current from transformer and input parameters.</p>
+</div>
+<p>A flyback switch mode regulator stores energy in the primary magnetizing inductance during switch on-time. When the switch turns off, that stored energy is transferred to the output through the secondary winding and diode. This makes transformer VT product, saturation current, primary inductance and turns ratio critical design values.</p>
+<p>This calculator is useful for isolated flyback SMPS design, small DC-DC converters, auxiliary supplies, transformer checking, repair comparison and early power stage estimation. It lets you enter either VT product or saturation current. If VT is known, the calculator derives Isat. If Isat is known instead, it calculates the matching VT product from Lpri and Isat.</p>
+<p>Use the result as a starting point. Real flyback designs also depend on leakage inductance, snubber design, MOSFET drain voltage, diode recovery, output capacitor ripple, transformer air gap, core saturation, winding resistance, thermal rise, insulation and PCB layout. Always verify final hardware with waveform measurement and component datasheets.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Flyback SMPS timing and transformer energy estimate.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Vin, Vout1, Lpri, VT, Isat, leakage inductance, turns ratio and voltage drops.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>Isolated supplies, auxiliary SMPS, transformer checks and repair analysis.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Check MOSFET drain spike and transformer saturation on real hardware.</div>
+</div>
+<div class="aboutNote">Tip: In flyback designs, leakage inductance can create a large drain voltage spike. Always check the waveform and snubber/clamp rating, not only calculated power.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What does this calculator find?</h3>
+<p>It calculates flyback duty cycle, maximum on-time, minimum frequency, energy per cycle, maximum power and input/output current estimates.</p>
+
+<h3>What is VT product?</h3>
+<p>VT product is volt-second capability. It helps define how long voltage can be applied to the primary before reaching saturation.</p>
+
+<h3>Can I enter Isat instead of VT?</h3>
+<p>Yes. Enter either VT product or saturation current. If one is missing, the calculator derives it from primary inductance.</p>
+
+<h3>What is Ton Max?</h3>
+<p>Ton Max is the maximum switch on-time calculated from VT product and input voltage.</p>
+
+<h3>Does this include leakage inductance effects?</h3>
+<p>Leakage inductance is an input, but the preserved source logic does not directly use it in the displayed output calculations.</p>
+
+<h3>Can this replace full flyback SMPS design?</h3>
+<p>No. It is an estimate. Final design must verify transformer construction, snubber, MOSFET stress, diode rating, ripple and thermal behavior.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Flyback Transformer Power Supply Design Calculator</strong>Estimate flyback winding turns, inductance and currents.</div>
+  <div class="linkCard"><strong>Snubber Circuit Design Calculator</strong>Calculate RC snubber values for flyback voltage spikes.</div>
+  <div class="linkCard"><strong>Inductor Current and Maximum Power Calculator</strong>Check current ramp, saturation and energy storage.</div>
+  <div class="linkCard"><strong>SMPS Duty Cycle Calculator</strong>Estimate duty cycle for switching regulator topologies.</div>
+</div>
+</section>
+
 </div>
 
 <script>
@@ -368,6 +449,34 @@ function Compute(){
     document.getElementById("Io1").innerText=Io1.toPrecision(Precision)+" A";
     document.getElementById("calcNote").innerText="Isat: "+Isat.toPrecision(Precision)+" A, VT: "+VT.toPrecision(Precision)+" V·µs";
   }
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What does this calculator find?","acceptedAnswer":{"@type":"Answer","text":"It calculates flyback duty cycle, maximum on-time, minimum frequency, energy per cycle, maximum power and input/output current estimates."}},
+{"@type":"Question","name":"What is VT product?","acceptedAnswer":{"@type":"Answer","text":"VT product is volt-second capability. It helps define how long voltage can be applied to the primary before reaching saturation."}},
+{"@type":"Question","name":"Can I enter Isat instead of VT?","acceptedAnswer":{"@type":"Answer","text":"Yes. Enter either VT product or saturation current. If one is missing, the calculator derives it from primary inductance."}},
+{"@type":"Question","name":"What is Ton Max?","acceptedAnswer":{"@type":"Answer","text":"Ton Max is the maximum switch on-time calculated from VT product and input voltage."}},
+{"@type":"Question","name":"Does this include leakage inductance effects?","acceptedAnswer":{"@type":"Answer","text":"Leakage inductance is an input, but the preserved source logic does not directly use it in the displayed output calculations."}},
+{"@type":"Question","name":"Can this replace full flyback SMPS design?","acceptedAnswer":{"@type":"Answer","text":"No. It is an estimate. Final design must verify transformer construction, snubber, MOSFET stress, diode rating, ripple and thermal behavior."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Flyback Switch Mode Regulator Calculator","item":"https://calcboy.com/tool/flyback-switch-mode-regulator-calculator"}
+]
 }
 </script>
 
