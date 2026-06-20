@@ -1,166 +1,268 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ACPR Calculator | Adjacent Channel Power Ratio Solver & Formula</title>
-<meta name="description" content="Calculate Adjacent Channel Power Ratio (ACPR) using peak power, average power, input power, and third-order intercept point (IP3) for RF power amplifiers.">
-<meta name="keywords" content="ACPR calculator, adjacent channel power ratio calculator, adjacent channel power ratio formula, adjacent channel power ratio measurement, acpr dbm calculator, rf acpr solver, third order intercept point calculator, crest factor calculator, IP3 calculator, RF linearity solver, spectral regrowth calculator, power amplifier distortion tool, wireless engineering calculator, rf amplifier linearity test, adjacent channel leakage ratio, aclr calculator, adjacent channel power dbe, adjacent channel interference calculator, radio frequency linearity tools, power amplifier power calculator, crest factor optimization rf, spectrum analyzer distortion calculation">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ACPR Calculator | Adjacent Channel Power Ratio Calculator - CalcBoy</title>
+<meta name="description" content="Calculate Adjacent Channel Power Ratio ACPR in dBc using peak power, average power, input power and IP3 for RF amplifier linearity.">
+<meta name="keywords" content="ACPR calculator, adjacent channel power ratio calculator, ACPR dBc calculator, RF ACPR calculator, adjacent channel leakage ratio calculator, ACLR calculator, RF power amplifier linearity calculator, spectral regrowth calculator, IP3 calculator, third order intercept point calculator, crest factor RF calculator, adjacent channel interference calculator, wireless transmitter ACPR calculator, LTE ACPR calculator, 5G ACPR calculator, RF distortion calculator, CalcBoy">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0;color:#333}
-.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
-label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
-.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
-input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+#acpr-calc,#acpr-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#acpr-calc{width:100%;max-width:620px;margin:0 auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
 input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-.unit{height:43px;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #cfd6df;border-radius:8px;font-weight:700;font-size:14px;color:#555}
-.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
-/* Small red error text custom styled above result layout */
-#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:13px;font-weight:700}
-.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
-.resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
-.card{padding:16px;border-radius:12px;min-height:82px}
-.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
-.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
-.cardLine input{background:transparent !important;font-weight:800;color:inherit;border:none !important;padding:0;height:auto;font-size:18px;width:100%;outline:none;box-shadow:none !important}
-.cardLine span{font-weight:800;font-size:14px}
-.blue{background:#eef5ff;border:1px solid #bfd3ff}
-.blue *{color:#2359e8}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
-.infoBox h2{margin:0 0 12px;font-size:16px;color:#2d3748;border-bottom:1px solid #edf2f7;padding-bottom:6px}
-.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
-.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#475467;font-weight:700;overflow-x:auto;line-height:1.6}
-.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
-.waveguide-diagram svg{width:100%;min-width:450px;height:auto;display:block;margin:auto}
-.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
-.exampleCard p{margin:4px 0;font-size:13px;color:#4a5568}
+.unit-box{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:18px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
-  .row{grid-template-columns:minmax(0,1fr) 72px}
-  .exampleGrid{grid-template-columns:1fr}
+body{padding:10px}
+#acpr-calc{max-width:100%;padding-top:14px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
+.infoBox{padding:14px}
+.diagramBox{padding:10px}
 }
-</style></head>
+</style>
+</head>
 <body>
-<main class="calc">
-  <form id="tool">
-    <label for="number1">Peak Power</label>
-    <div class="row">
-      <input id="number1" type="number" placeholder="Example: 15">
-      <div class="unit">dBm</div>
-    </div>
 
-    <label for="number2">Ave. PWR (Average Power)</label>
-    <div class="row">
-      <input id="number2" type="number" placeholder="Example: 10">
-      <div class="unit">dBm</div>
-    </div>
+<div id="acpr-calc">
 
-    <label for="number3">Input Power</label>
-    <div class="row">
-      <input id="number3" type="number" placeholder="Example: -5">
-      <div class="unit">dBm</div>
-    </div>
-
-    <label for="number4">Third Order Intercept Point (IP3)</label>
-    <div class="row">
-      <input id="number4" type="number" placeholder="Example: 30">
-      <div class="unit">dBm</div>
-    </div>
-
-    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
-  </form>
-  
-  <div id="errorBox">Please enter valid values.</div>
-
-  <div class="resultTitle">RESULT</div>
-  <div class="resultGrid">
-    <div class="card blue">
-      <div class="cardLabel">ACPR VALUE</div>
-      <div class="cardLine">
-        <input id="acprValue" type="text" readonly placeholder="-">
-        <span>dBc</span>
-      </div>
+<div class="calc-grid">
+  <div>
+    <label class="calc-label">Peak Power</label>
+    <div class="calc-row">
+      <input id="number1" type="number" placeholder="Example: 15" oninput="clearResults()">
+      <div class="unit-box">dBm</div>
     </div>
   </div>
 
-  <section class="infoBox">
-    <h2>Adjacent Channel Power Ratio Graph</h2>
-    <p>This professional dynamic Adjacent Channel Power Ratio Calculator helps wireless communication engineers analyze intermodulation distortion. ACPR quantifies nonlinear distortion thresholds inside power amplifiers by tracking spectral regrowth leaking directly into localized adjacent transmission sidebands relative against the primary transmission channel matrix block flows. Accurate adjacent channel power ratio measurement is vital for cellular standards like LTE, 5G, and RF transmitter design.</p>
-    <div class="diagramBox">
-      <div class="waveguide-diagram">
-        <svg viewBox="0 0 540 250" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0" y="0" width="540" height="250" fill="#ffffff" stroke="none"/>
-          
-          <line x1="50" y1="210" x2="490" y2="210" stroke="#000000" stroke-width="2"/>
-          <line x1="50" y1="30" x2="50" y2="210" stroke="#000000" stroke-width="2"/>
-          
-          <line x1="50" y1="60" x2="490" y2="60" stroke="#cbd5e1" stroke-width="0.8"/>
-          <line x1="50" y1="110" x2="490" y2="110" stroke="#cbd5e1" stroke-width="0.8"/>
-          <line x1="50" y1="160" x2="490" y2="160" stroke="#cbd5e1" stroke-width="0.8"/>
-          
-          <path d="M 50 200 L 90 200 L 120 180 L 140 180 L 160 150 L 180 150 L 210 60 L 330 60 L 360 150 L 380 150 L 400 180 L 420 180 L 450 200 L 490 200" fill="none" stroke="#000000" stroke-width="2.5"/>
-          
-          <rect x="210" y="50" width="120" height="160" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="4,2"/>
-          <text x="270" y="45" fill="#16a34a" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Main Channel</text>
-          
-          <rect x="120" y="130" width="60" height="80" fill="none" stroke="#ff3b30" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="150" y="123" fill="#ff3b30" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Lower Channel</text>
-          
-          <rect x="360" y="130" width="60" height="80" fill="none" stroke="#ff3b30" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="390" y="123" fill="#ff3b30" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Upper Channel</text>
-          
-          <line x1="270" y1="60" x2="270" y2="150" stroke="#2359e8" stroke-width="1.5"/>
-          <path d="M 270 60 L 266 68 L 274 68 Z" fill="#2359e8"/>
-          <path d="M 270 150 L 266 142 L 274 142 Z" fill="#2359e8"/>
-          <text x="282" y="105" fill="#2359e8" font-size="12" font-family="sans-serif" font-weight="bold">ACPR (dB)</text>
-          
-          <text x="490" y="230" fill="#333333" font-size="11" font-family="sans-serif" font-style="italic" text-anchor="end">Frequency</text>
-          <text x="40" y="30" fill="#333333" font-size="11" font-family="sans-serif" font-style="italic" transform="rotate(-90 40 30)" text-anchor="end">Power Level (dBm)</text>
-        </svg>
-      </div>
+  <div>
+    <label class="calc-label">Ave. PWR (Average Power)</label>
+    <div class="calc-row">
+      <input id="number2" type="number" placeholder="Example: 10" oninput="clearResults()">
+      <div class="unit-box">dBm</div>
     </div>
-  </section>
+  </div>
 
-  <section class="infoBox">
-    <h2>Adjacent Channel Power Ratio Formula & Calculation Logic</h2>
-    <p>Understanding the mathematical theory behind adjacent channel power calculation model helps determine the linearity behavior of wireless transmitters. The core computational system evaluates signal regrowth distortion performance thresholds using basic linearity ratios:</p>
-    <div class="formulaLine">
-      <strong>Crest Factor Computation:</strong><br>
-      Crestfactor = Pmax / Pavg
+  <div>
+    <label class="calc-label">Input Power</label>
+    <div class="calc-row">
+      <input id="number3" type="number" placeholder="Example: -5" oninput="clearResults()">
+      <div class="unit-box">dBm</div>
     </div>
-    <div class="formulaLine">
-      <strong>Adjacent Channel Power Ratio Evaluation (ACPR Formula):</strong><br>
-      ACPR = -20.75 + (1.6 * Crestfactor) + (2 * (Pin - IP3))
-    </div>
-    <p>Where Pmax is peak power in dBm, Pavg is average power in dBm, Pin is input power in dBm, and IP3 is the third order intercept point parameter specifying nonlinear distortion bounds.</p>
-  </section>
+  </div>
 
-  <section class="infoBox">
-    <h2>Practical ACPR Calculation Example</h2>
-    <div class="exampleGrid">
-      <div class="exampleCard">
-        <p><b>Input Parameters</b></p>
-        <p>Peak Power (Pmax): 16.00 dBm</p>
-        <p>Average Power (Pavg): 10.00 dBm</p>
-        <p>Input Power (Pin): -4.00 dBm</p>
-        <p>Intercept Point (IP3): 35.00 dBm</p>
-      </div>
-      <div class="exampleCard">
-        <p><b>Determined Output Data</b></p>
-        <p>Calculated ACPR Ratio: -96.19 dBc</p>
-        <p>Status: Complete Linear Processing</p>
-      </div>
+  <div>
+    <label class="calc-label">Third Order Intercept Point (IP3)</label>
+    <div class="calc-row">
+      <input id="number4" type="number" placeholder="Example: 30" oninput="clearResults()">
+      <div class="unit-box">dBm</div>
     </div>
-  </section>
-</main>
+  </div>
+</div>
+
+<button type="button" onclick="calc()">CALCULATE</button>
+
+<div id="errorBox">Please enter valid numeric values in all required fields.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card blue">
+    <div class="result-label">ACPR Value</div>
+    <div class="result-value"><span id="acprValue"></span></div>
+  </div>
+  <div class="result-card green">
+    <div class="result-label">Result Unit</div>
+    <div class="result-value"><span id="acprUnit"></span></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Peak Power</strong>Maximum RF signal power level in dBm used for crest factor calculation.</div>
+  <div class="paramItem"><strong>Average Power</strong>Average RF carrier or channel power level in dBm used against peak power.</div>
+  <div class="paramItem"><strong>Input Power</strong>RF drive level applied to the amplifier or nonlinear stage.</div>
+  <div class="paramItem"><strong>IP3</strong>Third-order intercept point in dBm, used to estimate amplifier linearity and spectral regrowth.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard">
+    <p><strong>RF Power Amplifier Test</strong></p>
+    <p>Use ACPR to estimate adjacent-channel distortion when an amplifier is driven close to nonlinear operation.</p>
+  </div>
+  <div class="exampleCard">
+    <p><strong>LTE / 5G Transmitter Check</strong></p>
+    <p>Lower ACPR dBc values generally indicate less adjacent channel leakage and better RF linearity.</p>
+  </div>
+  <div class="exampleCard">
+    <p><strong>IP3 Impact</strong></p>
+    <p>Increasing IP3 improves the estimated ACPR result because the amplifier has better third-order linearity.</p>
+  </div>
+  <div class="exampleCard">
+    <p><strong>Crest Factor Review</strong></p>
+    <p>Peak-to-average behavior affects ACPR estimation and spectral regrowth in modulated RF signals.</p>
+  </div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Adjacent Channel Power Ratio compares distortion leakage in nearby channels against the wanted main channel. It is a key RF linearity metric for power amplifiers, transmitters and modulated wireless signals.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 540 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Adjacent Channel Power Ratio Graph">
+<rect x="0" y="0" width="540" height="250" fill="#ffffff" stroke="none"/>
+<line x1="50" y1="210" x2="490" y2="210" stroke="#000000" stroke-width="2"/>
+<line x1="50" y1="30" x2="50" y2="210" stroke="#000000" stroke-width="2"/>
+<line x1="50" y1="60" x2="490" y2="60" stroke="#cbd5e1" stroke-width="0.8"/>
+<line x1="50" y1="110" x2="490" y2="110" stroke="#cbd5e1" stroke-width="0.8"/>
+<line x1="50" y1="160" x2="490" y2="160" stroke="#cbd5e1" stroke-width="0.8"/>
+<path d="M 50 200 L 90 200 L 120 180 L 140 180 L 160 150 L 180 150 L 210 60 L 330 60 L 360 150 L 380 150 L 400 180 L 420 180 L 450 200 L 490 200" fill="none" stroke="#000000" stroke-width="2.5"/>
+<rect x="210" y="50" width="120" height="160" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="4,2"/>
+<text x="270" y="45" fill="#16a34a" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Main Channel</text>
+<rect x="120" y="130" width="60" height="80" fill="none" stroke="#ff3b30" stroke-width="1.5" stroke-dasharray="4,2"/>
+<text x="150" y="123" fill="#ff3b30" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Lower Channel</text>
+<rect x="360" y="130" width="60" height="80" fill="none" stroke="#ff3b30" stroke-width="1.5" stroke-dasharray="4,2"/>
+<text x="390" y="123" fill="#ff3b30" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Upper Channel</text>
+<line x1="270" y1="60" x2="270" y2="150" stroke="#2359e8" stroke-width="1.5"/>
+<path d="M 270 60 L 266 68 L 274 68 Z" fill="#2359e8"/>
+<path d="M 270 150 L 266 142 L 274 142 Z" fill="#2359e8"/>
+<text x="282" y="105" fill="#2359e8" font-size="12" font-family="sans-serif" font-weight="bold">ACPR (dB)</text>
+<text x="490" y="230" fill="#333333" font-size="11" font-family="sans-serif" font-style="italic" text-anchor="end">Frequency</text>
+<text x="40" y="30" fill="#333333" font-size="11" font-family="sans-serif" font-style="italic" transform="rotate(-90 40 30)" text-anchor="end">Power Level (dBm)</text>
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Original formula preserved:</div>
+<div class="formula">Crestfactor = Pmax / Pavg</div>
+<div class="formula">ACPR = -20.75 + (1.6 × Crestfactor) + (2 × (Pin - IP3))</div>
+<div class="formula">Pmax = peak power in dBm.</div>
+<div class="formula">Pavg = average power in dBm.</div>
+<div class="formula">Pin = input power in dBm.</div>
+<div class="formula">IP3 = third-order intercept point in dBm.</div>
+<div class="formula">Final ACPR result is displayed in dBc.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: Peak Power = 16 dBm, Average Power = 10 dBm, Input Power = -4 dBm, IP3 = 35 dBm.</div>
+<div class="formulaBox">Step 1: Crestfactor = Pmax / Pavg = 16 / 10 = 1.6.</div>
+<div class="formulaBox">Step 2: ACPR = -20.75 + (1.6 × 1.6) + (2 × (-4 - 35)).</div>
+<div class="formulaBox">Step 3: ACPR = -20.75 + 2.56 - 78 = -96.19 dBc.</div>
+<div class="formulaBox">Step 4: More negative ACPR means lower adjacent channel leakage in this model.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter peak power in dBm.</div>
+  <div class="aboutStep">Enter average power in dBm.</div>
+  <div class="aboutStep">Enter input power in dBm.</div>
+  <div class="aboutStep">Enter third-order intercept point IP3 in dBm.</div>
+  <div class="aboutStep">Click Calculate to get ACPR in dBc.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Calculate adjacent channel power ratio for RF amplifier linearity checks.</strong>
+<p>The CalcBoy ACPR Calculator estimates Adjacent Channel Power Ratio in dBc using peak power, average power, input power and third-order intercept point.</p>
+</div>
+<p>Adjacent Channel Power Ratio, often written as ACPR, is used in RF and wireless engineering to estimate how much unwanted distortion energy leaks into nearby channels. In practical transmitter systems, poor amplifier linearity creates spectral regrowth around the wanted channel. That leakage can disturb adjacent channels and may cause a transmitter to fail compliance or mask requirements.</p>
+<p>This calculator is useful for RF power amplifier analysis, wireless transmitter design, LTE and 5G linearity review, modulated signal testing, spectrum analyzer interpretation and early distortion estimation. The preserved calculation uses crest factor and IP3-based distortion behavior to produce an ACPR value in dBc.</p>
+<p>Use the result as a design estimate. Real ACPR measurement depends on modulation type, bandwidth, measurement filter, spectrum analyzer settings, amplifier bias, thermal state, digital predistortion, output matching and actual nonlinear device behavior. For final RF validation, always compare calculator estimates with real adjacent channel power measurement.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>RF amplifier ACPR and linearity estimation.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Peak power, average power, input power and IP3 in dBm.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>RF transmitters, LTE, 5G, PA testing and spectral regrowth review.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Actual ACPR must be verified with spectrum analyzer measurement.</div>
+</div>
+<div class="aboutNote">Tip: If ACPR is not good enough, designers usually reduce drive level, improve PA linearity, adjust bias, improve matching or use digital predistortion.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is ACPR?</h3>
+<p>ACPR means Adjacent Channel Power Ratio. It compares unwanted power in an adjacent channel with the wanted main channel power.</p>
+
+<h3>What unit is ACPR shown in?</h3>
+<p>ACPR is commonly shown in dBc, meaning decibels relative to the carrier or main channel.</p>
+
+<h3>Why is ACPR important?</h3>
+<p>It helps evaluate RF transmitter linearity and adjacent channel interference caused by spectral regrowth.</p>
+
+<h3>What is IP3 in this calculator?</h3>
+<p>IP3 is the third-order intercept point, an RF linearity metric used to estimate nonlinear distortion behavior.</p>
+
+<h3>Does this replace spectrum analyzer measurement?</h3>
+<p>No. It provides an estimate. Real ACPR should be measured with correct bandwidth, channel spacing and analyzer settings.</p>
+
+<h3>How can ACPR be improved?</h3>
+<p>ACPR can improve with better amplifier linearity, lower drive level, optimized bias, cleaner matching and digital predistortion.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>RF Power Calculator</strong>Convert RF power between watts, dBm and dBW.</div>
+  <div class="linkCard"><strong>IP3 Calculator</strong>Estimate third-order intercept point and intermodulation behavior.</div>
+  <div class="linkCard"><strong>Crest Factor Calculator</strong>Calculate peak-to-average behavior for RF and AC signals.</div>
+  <div class="linkCard"><strong>RF Link Budget Calculator</strong>Estimate transmitter, path and receiver power levels.</div>
+</div>
+</section>
+
+</div>
 
 <script>
 function clearResults(){
-  document.getElementById("acprValue").value = "";
-  document.getElementById("errorBox").style.display = "none";
+  document.getElementById("acprValue").innerText="";
+  document.getElementById("acprUnit").innerText="";
+  document.getElementById("errorBox").style.display="none";
 }
-
-document.getElementById("number1").addEventListener("input", clearResults);
-document.getElementById("number2").addEventListener("input", clearResults);
-document.getElementById("number3").addEventListener("input", clearResults);
-document.getElementById("number4").addEventListener("input", clearResults);
 
 function calc(){
   var Pmax = Number(document.getElementById("number1").value);
@@ -169,7 +271,6 @@ function calc(){
   var IP3  = Number(document.getElementById("number4").value);
 
   var errorBox = document.getElementById("errorBox");
-  var resultValue = document.getElementById("acprValue");
 
   if(
     isNaN(Pmax) || isNaN(Pavg) || isNaN(Pin) || isNaN(IP3) ||
@@ -180,7 +281,8 @@ function calc(){
     document.getElementById("number4").value === ""
   ){
     errorBox.style.display = "block";
-    resultValue.value = "";
+    document.getElementById("acprValue").innerText="";
+    document.getElementById("acprUnit").innerText="";
     return;
   }
 
@@ -194,7 +296,38 @@ function calc(){
     (1.6 * Crestfactor) +
     (2 * (Pin - IP3));
 
-  resultValue.value = c1.toFixed(4);
+  document.getElementById("acprValue").innerText = c1.toFixed(4);
+  document.getElementById("acprUnit").innerText = "dBc";
 }
 </script>
-</body></html>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is ACPR?","acceptedAnswer":{"@type":"Answer","text":"ACPR means Adjacent Channel Power Ratio. It compares unwanted power in an adjacent channel with the wanted main channel power."}},
+{"@type":"Question","name":"What unit is ACPR shown in?","acceptedAnswer":{"@type":"Answer","text":"ACPR is commonly shown in dBc, meaning decibels relative to the carrier or main channel."}},
+{"@type":"Question","name":"Why is ACPR important?","acceptedAnswer":{"@type":"Answer","text":"It helps evaluate RF transmitter linearity and adjacent channel interference caused by spectral regrowth."}},
+{"@type":"Question","name":"What is IP3 in this calculator?","acceptedAnswer":{"@type":"Answer","text":"IP3 is the third-order intercept point, an RF linearity metric used to estimate nonlinear distortion behavior."}},
+{"@type":"Question","name":"Does this replace spectrum analyzer measurement?","acceptedAnswer":{"@type":"Answer","text":"No. It provides an estimate. Real ACPR should be measured with correct bandwidth, channel spacing and analyzer settings."}},
+{"@type":"Question","name":"How can ACPR be improved?","acceptedAnswer":{"@type":"Answer","text":"ACPR can improve with better amplifier linearity, lower drive level, optimized bias, cleaner matching and digital predistortion."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"RF Calculators","item":"https://calcboy.com/category/rf-calculators/"},
+{"@type":"ListItem","position":3,"name":"ACPR Calculator","item":"https://calcboy.com/tool/acpr-calculator-adjacent-channel-power-ratio"}
+]
+}
+</script>
+
+</body>
+</html>
