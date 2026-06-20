@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Snubber Circuit Design Calculator</title>
-<meta name="description" content="Snubber circuit design calculator for RC snubber capacitor, resistor and power using peak current, rail voltage, rise time, frequency and inductance.">
-<meta name="keywords" content="snubber circuit calculator, RC snubber calculator, snubber capacitor calculator, snubber resistor calculator, snubber power calculator, switching snubber design, MOSFET snubber calculator, diode snubber calculator, switching spike suppression calculator">
+<title>Snubber Circuit Design Calculator | RC Snubber Calculator - CalcBoy</title>
+<meta name="description" content="Design RC snubber capacitor, resistor and power values using rise time or inductance spike method for MOSFET, diode and switching circuits.">
+<meta name="keywords" content="snubber circuit calculator, RC snubber calculator, snubber capacitor calculator, snubber resistor calculator, snubber power calculator, switching snubber design, MOSFET snubber calculator, diode snubber calculator, switching spike suppression calculator, voltage spike snubber calculator, parasitic inductance snubber, CalcBoy">
 <style>
 #snubber-calc,#snubber-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#snubber-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#snubber-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -21,28 +21,37 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
-.result-card:nth-child(3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
-.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
-.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
-.result-card:nth-child(3) .result-label,.result-card:nth-child(3) .result-value{color:#7c3aed}
 .result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -118,15 +127,15 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Snubber Capacitor C</div>
     <div class="result-value" id="C"></div>
   </div>
-  <div class="result-card">
+  <div class="result-card green">
     <div class="result-label">Snubber Resistance R</div>
     <div class="result-value" id="R"></div>
   </div>
-  <div class="result-card">
+  <div class="result-card purple">
     <div class="result-label">Snubber Power P</div>
     <div class="result-value" id="P"></div>
   </div>
@@ -147,6 +156,8 @@ body{padding:10px}
 <div class="exampleGrid">
   <div class="exampleCard"><p><strong>MOSFET Switching Spike</strong></p><p>Use the rise time method when peak current, rail voltage, switching frequency and transition rise time are known.</p></div>
   <div class="exampleCard"><p><strong>Parasitic Inductance Snubber</strong></p><p>Use the inductance method when leakage inductance or wiring inductance creates voltage overshoot across the switch.</p></div>
+  <div class="exampleCard"><p><strong>Flyback / SMPS Clamp</strong></p><p>Estimate capacitor, resistor and dissipation when a fast switching node rings due to leakage inductance.</p></div>
+  <div class="exampleCard"><p><strong>Relay Contact Protection</strong></p><p>Use RC snubber values as a starting point to reduce arcing and ringing in inductive load switching.</p></div>
 </div>
 </section>
 
@@ -278,6 +289,77 @@ body{padding:10px}
 <div class="formula">Power: P = (L × Ipk² / 2) × F.</div>
 </section>
 
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example 1 — Rise Time Method: Ipk = 5 A, Vrail = 48 V, frequency = 100 kHz, rise time = 0.2 µs.</div>
+<div class="formulaBox">Step 1: Convert rise time: 0.2 µs = 0.0000002 s.</div>
+<div class="formulaBox">Step 2: C = 5 × 0.0000002 / 48 = 20.83 nF.</div>
+<div class="formulaBox">Step 3: R = 1 / (100000 × C × 20).</div>
+<div class="formulaBox">Step 4: P = C × 48² × 100000 / 2.</div>
+<div class="formulaBox">Example 2 — Inductance Method: use parasitic inductance and allowed voltage rise when ringing energy is known from layout or transformer leakage.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Select Rise Time Method or Inductance and Voltage Spike Method.</div>
+  <div class="aboutStep">Enter peak current, rail voltage and switching frequency.</div>
+  <div class="aboutStep">For Rise Time Method, enter the switching rise time in microseconds.</div>
+  <div class="aboutStep">For Inductance Method, enter allowed voltage rise and circuit inductance.</div>
+  <div class="aboutStep">Click Calculate to get snubber capacitor, resistance and power dissipation.</div>
+  <div class="aboutStep">Select real capacitor voltage rating and resistor wattage with safety margin.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Design RC snubber values for switching spike and ringing control.</strong>
+<p>The CalcBoy Snubber Circuit Design Calculator estimates RC snubber capacitor, resistor and power values using either a rise-time method or a parasitic inductance voltage-spike method.</p>
+</div>
+<p>Switching circuits often produce voltage overshoot and high-frequency ringing because of leakage inductance, PCB trace inductance, transformer winding leakage, diode reverse recovery and fast MOSFET transitions. An RC snubber gives that unwanted energy a controlled path so the switching node settles faster and the device sees less peak voltage stress.</p>
+<p>This calculator is useful for MOSFET switching circuits, SMPS designs, flyback transformers, buck and boost converters, diode snubbers, relay contact protection, motor drivers and pulse power circuits. The rise-time method is convenient when you know peak current, rail voltage, switching frequency and transition time. The inductance method is better when you know parasitic inductance and the allowed voltage overshoot.</p>
+<p>Snubber design is always a trade-off. More capacitance can reduce spikes but increases dissipation and slows the switching edge. Too low a resistance may create high current pulses, while too high a resistance may not damp ringing well. Use the result as a starting point, then confirm with an oscilloscope, thermal check and real switching waveform.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>RC snubber sizing for switching spikes and ringing.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Peak current, rail voltage, frequency, rise time, dV and inductance.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>MOSFETs, diodes, flyback supplies, relay contacts and power switches.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Snubber resistor wattage can become significant at high frequency.</div>
+</div>
+<div class="aboutNote">Tip: After calculating, always check snubber resistor temperature. A snubber that looks electrically correct can still fail if power dissipation is ignored.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is an RC snubber?</h3>
+<p>An RC snubber is a resistor-capacitor network used to reduce voltage spikes, ringing and switching stress.</p>
+
+<h3>Where is a snubber connected?</h3>
+<p>It is commonly connected across a MOSFET, diode, relay contact, transformer winding or noisy switching node.</p>
+
+<h3>Which method should I use?</h3>
+<p>Use the rise time method when transition time is known. Use the inductance method when parasitic inductance and allowed voltage rise are known.</p>
+
+<h3>Why is snubber power important?</h3>
+<p>The snubber resistor dissipates energy every switching cycle, so high frequency can create noticeable heat.</p>
+
+<h3>Can this replace oscilloscope tuning?</h3>
+<p>No. It gives starting values. Final snubber selection should be verified by measuring ringing and temperature on real hardware.</p>
+
+<h3>What voltage rating should the capacitor have?</h3>
+<p>Use a capacitor voltage rating comfortably above the rail voltage and expected spike voltage, with suitable pulse current capability.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>RC Time Constant Calculator</strong>Calculate resistor-capacitor timing and charging behavior.</div>
+  <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Estimate stored energy in leakage or parasitic inductance.</div>
+  <div class="linkCard"><strong>MOSFET Switching Loss Calculator</strong>Estimate switching loss in power MOSFET circuits.</div>
+  <div class="linkCard"><strong>Flyback Transformer Calculator</strong>Calculate flyback transformer turns, inductance and current values.</div>
+</div>
+</section>
+
 </div>
 
 <script>
@@ -357,6 +439,34 @@ function Compute(){
 }
 
 showMethod();
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is an RC snubber?","acceptedAnswer":{"@type":"Answer","text":"An RC snubber is a resistor-capacitor network used to reduce voltage spikes, ringing and switching stress."}},
+{"@type":"Question","name":"Where is a snubber connected?","acceptedAnswer":{"@type":"Answer","text":"It is commonly connected across a MOSFET, diode, relay contact, transformer winding or noisy switching node."}},
+{"@type":"Question","name":"Which method should I use?","acceptedAnswer":{"@type":"Answer","text":"Use the rise time method when transition time is known. Use the inductance method when parasitic inductance and allowed voltage rise are known."}},
+{"@type":"Question","name":"Why is snubber power important?","acceptedAnswer":{"@type":"Answer","text":"The snubber resistor dissipates energy every switching cycle, so high frequency can create noticeable heat."}},
+{"@type":"Question","name":"Can this replace oscilloscope tuning?","acceptedAnswer":{"@type":"Answer","text":"No. It gives starting values. Final snubber selection should be verified by measuring ringing and temperature on real hardware."}},
+{"@type":"Question","name":"What voltage rating should the capacitor have?","acceptedAnswer":{"@type":"Answer","text":"Use a capacitor voltage rating comfortably above the rail voltage and expected spike voltage, with suitable pulse current capability."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Snubber Circuit Design Calculator","item":"https://calcboy.com/tool/snubber-circuit-design-calculator"}
+]
+}
 </script>
 
 </body>
