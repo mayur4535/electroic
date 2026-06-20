@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Inrush Current Limiting Load Switch Calculator</title>
-<meta name="description" content="Calculate load switch inrush limiting gate resistance and time constant from voltage dip, gate capacitance and optional capacitance.">
-<meta name="keywords" content="inrush current limiting calculator, load switch calculator, gate resistor calculator, mosfet inrush current calculator, load switch gate resistance calculator, voltage dip calculator, power switch soft start calculator, MOSFET soft start calculator, inrush current limiter design, gate capacitance calculator, time constant calculator, RC soft start calculator">
+<title>Inrush Current Limiting Load Switch Calculator | CalcBoy</title>
+<meta name="description" content="Calculate inrush current limiting load switch gate resistance and time constant from gate capacitance, voltage dip and soft-start capacitance.">
+<meta name="keywords" content="inrush current limiting calculator, load switch calculator, gate resistor calculator, mosfet inrush current calculator, load switch gate resistance calculator, voltage dip calculator, power switch soft start calculator, MOSFET soft start calculator, inrush current limiter design, gate capacitance calculator, time constant calculator, RC soft start calculator, CalcBoy">
 <style>
 #inrush-calc,#inrush-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#inrush-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#inrush-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -21,30 +21,37 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(4n+1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(4n+2){background:#ecfdf5;border-color:#bbf7d0}
-.result-card:nth-child(4n+3){background:#f5f3ff;border-color:#ddd6fe}
-.result-card:nth-child(4n+4){background:#fff7ed;border-color:#fed7aa}
-.result-card:nth-child(4n+1) .result-label,.result-card:nth-child(4n+1) .result-value{color:#2359e8}
-.result-card:nth-child(4n+2) .result-label,.result-card:nth-child(4n+2) .result-value{color:#16a34a}
-.result-card:nth-child(4n+3) .result-label,.result-card:nth-child(4n+3) .result-value{color:#7c3aed}
-.result-card:nth-child(4n+4) .result-label,.result-card:nth-child(4n+4) .result-value{color:#ea580c}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
 .result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .unit-box{width:72px;min-width:72px;max-width:72px}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-grid{grid-template-columns:1fr 1fr}
 .result-value{font-size:14px}
 }
@@ -102,11 +109,11 @@ body{padding:10px}
 
   <div class="result-title">RESULTS</div>
   <div class="result-grid">
-    <div class="result-card">
+    <div class="result-card blue">
       <div class="result-label">R3 Gate Resistance</div>
       <div class="result-value"><span id="Rgate"></span></div>
     </div>
-    <div class="result-card">
+    <div class="result-card green">
       <div class="result-label">Time Constant</div>
       <div class="result-value"><span id="TC"></span></div>
     </div>
@@ -132,6 +139,14 @@ body{padding:10px}
       <div class="exampleCard">
         <p><strong>Gate Resistor Selection</strong></p>
         <p>The calculated R3 gate resistance helps slow MOSFET turn-on and reduce inrush current in power distribution circuits.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Hot-Plug Rail Protection</strong></p>
+        <p>Useful when USB rails, battery packs, DC adapters or module supplies dip because a downstream capacitor charges too quickly.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Soft-Start Tuning</strong></p>
+        <p>Increase C1 or Rgate to extend the time constant and reduce sudden startup current through the MOSFET switch.</p>
       </div>
     </div>
   </section>
@@ -238,6 +253,77 @@ body{padding:10px}
     <div class="formula">Step 7: Gate resistance: Rgate = TC / Cpar.</div>
   </section>
 
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Cgate = 2000 pF, C1 = 0.1 µF, Tdip = 50 µs, Vdip = 1 V, desired Vdipmax = 0.25 V.</div>
+    <div class="formulaBox">Step 1: Convert Cgate to farads: 2000 pF = 2e-9 F.</div>
+    <div class="formulaBox">Step 2: Convert C1 to farads: 0.1 µF = 1e-7 F.</div>
+    <div class="formulaBox">Step 3: Total capacitance Cpar = 1e-7 + 2e-9 = 1.02e-7 F.</div>
+    <div class="formulaBox">Step 4: Stretch factor = 1 / 0.25 = 4.</div>
+    <div class="formulaBox">Step 5: TC = 4 × 50 µs = 200 µs = 0.0002 s.</div>
+    <div class="formulaBox">Step 6: Rgate = 0.0002 / 1.02e-7 = about 1961 Ω.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the MOSFET gate capacitance in pF from the datasheet.</div>
+      <div class="aboutStep">Enter optional C1 soft-start capacitance in µF. Use 0 if no external capacitor is added.</div>
+      <div class="aboutStep">Enter the un-mitigated voltage dip duration in microseconds.</div>
+      <div class="aboutStep">Enter original voltage dip magnitude and desired maximum voltage dip.</div>
+      <div class="aboutStep">Click Calculate to get R3 gate resistance and the soft-start time constant.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Design a MOSFET load switch soft-start network to reduce inrush current.</strong>
+      <p>The CalcBoy Inrush Current Limiting Load Switch Calculator estimates gate resistance and time constant from gate capacitance, optional C1, voltage dip duration and desired dip reduction.</p>
+    </div>
+    <p>When a load switch turns on quickly, downstream capacitors can draw a large inrush current. This sudden current can pull down the input rail, reset microcontrollers, trip protection circuits, stress connectors or create EMI problems. A MOSFET soft-start network slows the gate transition so the load capacitor charges more gradually.</p>
+    <p>This calculator is useful for USB power switches, battery-powered circuits, hot-plug modules, sensor boards, DC distribution rails, MOSFET high-side switches and power sequencing circuits. By entering the un-mitigated voltage dip and the desired maximum dip, it estimates how much the turn-on event needs to be stretched. Then it calculates the gate resistance from the total timing capacitance.</p>
+    <p>Use this result as a starting point. Real behavior depends on MOSFET threshold voltage, gate charge, load capacitance, source impedance, PCB layout, output capacitor ESR, current limit behavior and power dissipation during startup. Always verify the final circuit with an oscilloscope and check MOSFET safe operating area during turn-on.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Best Use</span>MOSFET load switch soft-start gate resistor estimates.</div>
+      <div class="aboutMiniCard"><span>Supported Inputs</span>Gate capacitance, C1, voltage dip duration and voltage dip target.</div>
+      <div class="aboutMiniCard"><span>Helpful For</span>USB rails, DC modules, battery boards, hot-plug circuits and power sequencing.</div>
+      <div class="aboutMiniCard"><span>Design Reminder</span>Confirm startup waveform and MOSFET heating on real hardware.</div>
+    </div>
+    <div class="aboutNote">Tip: If the MOSFET gets hot during startup, the soft-start is too slow or the load capacitance is too large. Check safe operating area, not only resistance value.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What is inrush current?</h3>
+    <p>Inrush current is the high startup current that flows when capacitors, motors or loads are first connected to a power rail.</p>
+
+    <h3>How does a gate resistor reduce inrush current?</h3>
+    <p>A gate resistor slows MOSFET turn-on, which limits how quickly the load capacitor charges and reduces voltage dip.</p>
+
+    <h3>What is C1 used for?</h3>
+    <p>C1 adds extra timing capacitance to the MOSFET gate network, increasing the soft-start time constant.</p>
+
+    <h3>What if I do not use C1?</h3>
+    <p>Enter 0 for C1. The calculator then uses only MOSFET gate capacitance for the timing calculation.</p>
+
+    <h3>Can this replace oscilloscope testing?</h3>
+    <p>No. It gives a design estimate. Final voltage dip, gate ramp and MOSFET stress should be measured on hardware.</p>
+
+    <h3>Why is MOSFET safe operating area important?</h3>
+    <p>During soft-start, the MOSFET may operate in its linear region and dissipate heat, so safe operating area must be checked.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>RC Time Constant Calculator</strong>Calculate resistor-capacitor charging and timing behavior.</div>
+      <div class="linkCard"><strong>MOSFET Gate Resistor Calculator</strong>Estimate gate resistor values for switching control.</div>
+      <div class="linkCard"><strong>Capacitor Charge Calculator</strong>Calculate capacitor voltage and charging current over time.</div>
+      <div class="linkCard"><strong>Voltage Drop Calculator</strong>Estimate supply drop across wires, switches and load paths.</div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -279,6 +365,34 @@ function Compute(){
     document.getElementById("Rgate").innerText=Rgate.toPrecision(Precision)+" Ω";
     document.getElementById("TC").innerText=TC.toPrecision(Precision)+" s";
   }
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is inrush current?","acceptedAnswer":{"@type":"Answer","text":"Inrush current is the high startup current that flows when capacitors, motors or loads are first connected to a power rail."}},
+{"@type":"Question","name":"How does a gate resistor reduce inrush current?","acceptedAnswer":{"@type":"Answer","text":"A gate resistor slows MOSFET turn-on, which limits how quickly the load capacitor charges and reduces voltage dip."}},
+{"@type":"Question","name":"What is C1 used for?","acceptedAnswer":{"@type":"Answer","text":"C1 adds extra timing capacitance to the MOSFET gate network, increasing the soft-start time constant."}},
+{"@type":"Question","name":"What if I do not use C1?","acceptedAnswer":{"@type":"Answer","text":"Enter 0 for C1. The calculator then uses only MOSFET gate capacitance for the timing calculation."}},
+{"@type":"Question","name":"Can this replace oscilloscope testing?","acceptedAnswer":{"@type":"Answer","text":"No. It gives a design estimate. Final voltage dip, gate ramp and MOSFET stress should be measured on hardware."}},
+{"@type":"Question","name":"Why is MOSFET safe operating area important?","acceptedAnswer":{"@type":"Answer","text":"During soft-start, the MOSFET may operate in its linear region and dissipate heat, so safe operating area must be checked."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Inrush Current Limiting Load Switch Calculator","item":"https://calcboy.com/tool/inrush-current-limiting-load-switch-calculator"}
+]
 }
 </script>
 
