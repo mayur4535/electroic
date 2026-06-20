@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Peak Voltage Calculator</title>
-<meta name="description" content="Calculate peak voltage and peak-to-peak voltage from peak, RMS, or average voltage with V, mV, and kV input unit selection.">
-<meta name="keywords" content="peak voltage calculator, peak to peak voltage calculator, RMS to peak voltage calculator, average voltage to peak calculator, Vpp calculator, voltage converter, AC voltage calculator, sine wave peak voltage">
+<title>Peak Voltage Calculator | RMS to Peak & Vpp Calculator - CalcBoy</title>
+<meta name="description" content="Calculate peak voltage and peak-to-peak voltage from peak, RMS or average voltage with V, mV and kV input unit selection.">
+<meta name="keywords" content="peak voltage calculator, peak to peak voltage calculator, RMS to peak voltage calculator, average voltage to peak calculator, Vpp calculator, voltage converter, AC voltage calculator, sine wave peak voltage, peak voltage formula, RMS voltage converter, CalcBoy">
+
 <style>
 #peak-voltage-calc,#peak-voltage-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#peak-voltage-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
+#peak-voltage-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
 .calc-grid{display:grid;gap:15px}
 .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
 .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
@@ -21,26 +22,37 @@ button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradi
 .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
-.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
-.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
 .result-value{font-size:16px;font-weight:900;min-height:22px;word-break:break-word}
 .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
 .infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
 .diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
 body{padding:10px}
 .calc-row{grid-template-columns:minmax(0,1fr) 72px}
 .result-grid{grid-template-columns:1fr 1fr}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 .result-value{font-size:14px}
 }
 </style>
@@ -80,11 +92,11 @@ body{padding:10px}
 
 <div class="result-title">RESULTS</div>
 <div class="result-grid">
-  <div class="result-card">
+  <div class="result-card blue">
     <div class="result-label">Peak Voltage</div>
     <div class="result-value" id="peakVoltageResult"></div>
   </div>
-  <div class="result-card">
+  <div class="result-card green">
     <div class="result-label">Peak-to-Peak Voltage</div>
     <div class="result-value" id="peakPeakResult"></div>
   </div>
@@ -105,6 +117,8 @@ body{padding:10px}
 <div class="exampleGrid">
   <div class="exampleCard"><p><strong>RMS to Peak</strong></p><p>Use RMS input to convert AC meter readings into peak voltage for waveform and oscilloscope analysis.</p></div>
   <div class="exampleCard"><p><strong>Peak-to-Peak Check</strong></p><p>Use peak voltage input to calculate Vp-p for signal generator, amplifier, and AC waveform measurement.</p></div>
+  <div class="exampleCard"><p><strong>Average to Peak</strong></p><p>Use average voltage input when working with rectified sine wave estimates and waveform reference calculations.</p></div>
+  <div class="exampleCard"><p><strong>High Voltage Conversion</strong></p><p>Use kV input when converting inverter, transformer, pulse or high-voltage AC waveform values.</p></div>
 </div>
 </section>
 
@@ -157,8 +171,6 @@ body{padding:10px}
 <line x1="70" y1="190" x2="780" y2="190" class="dash"/>
 <line x1="70" y1="215" x2="610" y2="215" class="dash"/>
 
-
-
 <!-- negative peak locator -->
 <line x1="500" y1="300" x2="500" y2="470" class="dash"/>
 
@@ -178,7 +190,6 @@ body{padding:10px}
 <text x="420" y="332" class="smallTxt">180°</text>
 <text x="490" y="332" class="smallTxt">270°</text>
 <text x="745" y="332" class="smallTxt">360°</text>
-
 
 <circle cx="215" cy="90" r="8" fill="#1848ff"/>
 
@@ -224,6 +235,76 @@ body{padding:10px}
 <div class="formula">If input is RMS Voltage: Vp = Vrms × sqrt(2).</div>
 <div class="formula">If input is Average Voltage: Vp-p = Vavg × PI, therefore Vp = Vavg × PI / 2.</div>
 <div class="formula">Peak-to-Peak Voltage: Vp-p = 2 × Vp.</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example 1: input type = RMS voltage, input voltage = 230 V.</div>
+<div class="formulaBox">Step 1: Convert input to volts. Since unit is V, inputVolts = 230 V.</div>
+<div class="formulaBox">Step 2: Peak voltage = 230 × sqrt(2) = 325.27 V.</div>
+<div class="formulaBox">Step 3: Peak-to-peak voltage = 2.8284 × 230 = 650.53 V.</div>
+<div class="formulaBox">Example 2: input type = Peak voltage, input voltage = 10 V.</div>
+<div class="formulaBox">Peak voltage = 10 V and peak-to-peak voltage = 20 V.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Select the known voltage type: peak, RMS or average.</div>
+  <div class="aboutStep">Enter the voltage value.</div>
+  <div class="aboutStep">Select the input unit: V, mV or kV.</div>
+  <div class="aboutStep">Click Calculate to get peak voltage and peak-to-peak voltage.</div>
+  <div class="aboutStep">Use the result for waveform, oscilloscope, AC voltage or signal analysis.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Convert RMS, average or peak voltage into peak and peak-to-peak voltage.</strong>
+<p>The CalcBoy Peak Voltage Calculator converts known peak, RMS or average voltage into peak voltage and peak-to-peak voltage with V, mV and kV input units.</p>
+</div>
+<p>Peak voltage is the highest value a waveform reaches from the zero reference line. Peak-to-peak voltage is the full swing from the positive peak to the negative peak. These values matter in oscilloscope measurements, amplifier headroom, transformer insulation, rectifier diode rating, capacitor voltage rating and AC waveform analysis.</p>
+<p>Many meters show RMS voltage, while oscilloscopes often show peak or peak-to-peak voltage. For a sine wave, RMS voltage and peak voltage are connected by the square-root-of-two relationship. Average voltage is also used in rectified waveform calculations, so this calculator includes an average-to-peak conversion based on the original source logic.</p>
+<p>Use this tool for signal generator setup, inverter output checks, mains waveform study, transformer secondary analysis, audio amplifier voltage swing, rectifier design and high-voltage waveform conversion. Always remember that these formulas assume ideal sine-wave relationships; distorted waveforms can produce different peak, RMS and average ratios.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Peak, RMS and peak-to-peak voltage conversion.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Peak voltage, RMS voltage, average voltage, V, mV and kV.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>Oscilloscope measurements, AC waveforms, rectifiers, inverters and signal generators.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Use proper peak voltage rating for capacitors, diodes and insulation.</div>
+</div>
+<div class="aboutNote">Tip: A 230 V RMS sine wave has about 325 V peak and about 650 V peak-to-peak, so RMS readings can hide much higher instantaneous voltage stress.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is peak voltage?</h3>
+<p>Peak voltage is the maximum voltage level measured from the zero reference line to the waveform peak.</p>
+
+<h3>What is peak-to-peak voltage?</h3>
+<p>Peak-to-peak voltage is the full voltage swing from the positive peak to the negative peak.</p>
+
+<h3>How do I convert RMS to peak voltage?</h3>
+<p>For a sine wave, peak voltage equals RMS voltage multiplied by sqrt(2).</p>
+
+<h3>How do I convert peak to peak-to-peak?</h3>
+<p>For a symmetrical waveform, peak-to-peak voltage equals 2 × peak voltage.</p>
+
+<h3>Why is peak voltage higher than RMS voltage?</h3>
+<p>RMS is an effective heating value, while peak voltage is the highest instantaneous waveform value.</p>
+
+<h3>Can this calculator handle kV?</h3>
+<p>Yes. Select kV as the input unit, and the calculator converts it internally to volts.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>RMS and Average Calculator</strong>Calculate RMS and average values for common waveforms.</div>
+  <div class="linkCard"><strong>Form Factor and Crest Factor Calculator</strong>Calculate waveform form factor and crest factor.</div>
+  <div class="linkCard"><strong>AC Power Calculator</strong>Calculate AC voltage, current, power and power factor.</div>
+  <div class="linkCard"><strong>Rectifier Calculator</strong>Estimate rectifier output voltage and ripple behavior.</div>
+</div>
 </section>
 
 </div>
@@ -278,6 +359,34 @@ function calculatePeakVoltage(){
   document.getElementById("errorBox").style.display="none";
   document.getElementById("peakVoltageResult").innerText=formatValue(peakVoltage)+" V";
   document.getElementById("peakPeakResult").innerText=formatValue(peakPeakVoltage)+" V";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is peak voltage?","acceptedAnswer":{"@type":"Answer","text":"Peak voltage is the maximum voltage level measured from the zero reference line to the waveform peak."}},
+{"@type":"Question","name":"What is peak-to-peak voltage?","acceptedAnswer":{"@type":"Answer","text":"Peak-to-peak voltage is the full voltage swing from the positive peak to the negative peak."}},
+{"@type":"Question","name":"How do I convert RMS to peak voltage?","acceptedAnswer":{"@type":"Answer","text":"For a sine wave, peak voltage equals RMS voltage multiplied by square root of 2."}},
+{"@type":"Question","name":"How do I convert peak to peak-to-peak?","acceptedAnswer":{"@type":"Answer","text":"For a symmetrical waveform, peak-to-peak voltage equals 2 × peak voltage."}},
+{"@type":"Question","name":"Why is peak voltage higher than RMS voltage?","acceptedAnswer":{"@type":"Answer","text":"RMS is an effective heating value, while peak voltage is the highest instantaneous waveform value."}},
+{"@type":"Question","name":"Can this calculator handle kV?","acceptedAnswer":{"@type":"Answer","text":"Yes. Select kV as the input unit, and the calculator converts it internally to volts."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Peak Voltage Calculator","item":"https://calcboy.com/tool/peak-voltage-calculator"}
+]
 }
 </script>
 
