@@ -1,185 +1,289 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Antenna Azimuth and Elevation Calculator | Satellite Alignment Tool</title>
-<meta name="description" content="Calculate the look angles (Azimuth and Elevation) for an antenna toward a geostationary satellite based on receiver and satellite coordinates.">
-<meta name="keywords" content="antenna azimuth and elevation calculator, satellite look angles calculator, antenna pointing calculator, azimuth elevation angle formula, dish alignment calculator, dish pointer tool, geostationary satellite coordinates calculation, ground station alignment tool, rx longitude latitude solver, satellite look angle math, tracking dish alignment, true north azimuth calculation">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Antenna Azimuth and Elevation Calculator | Satellite Look Angle Tool - CalcBoy</title>
+<meta name="description" content="Calculate antenna azimuth and elevation look angles for geostationary satellite alignment using receiver latitude, longitude and satellite longitude.">
+<meta name="keywords" content="antenna azimuth and elevation calculator, satellite look angle calculator, antenna pointing calculator, dish alignment calculator, satellite azimuth calculator, satellite elevation calculator, geostationary satellite calculator, dish pointer calculator, ground station alignment calculator, true north azimuth calculator, satellite tracking angle calculator, CalcBoy">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0;color:#333}
-.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
-.section-title{margin:16px 0 12px;font-size:14px;font-weight:800;color:#8b95a7;letter-spacing:.5px;text-transform:uppercase}
-label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
-.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
-input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+#antenna-look-calc,#antenna-look-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#antenna-look-calc{width:100%;max-width:620px;margin:0 auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.section-title{margin:4px 0 0;font-size:13px;font-weight:900;color:#64748b;letter-spacing:.6px;text-transform:uppercase}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
 input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-.unit{height:43px;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #cfd6df;border-radius:8px;font-weight:700;font-size:14px;color:#555}
-.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
-#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:13px;font-weight:700}
-.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
-.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{padding:16px;border-radius:12px;min-height:82px}
-.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
-.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
-.cardLine span{font-weight:800;font-size:18px;color:inherit}
-.blue{background:#eef5ff;border:1px solid #bfd3ff}
-.blue *{color:#2359e8}
-.green{background:#ecfdf5;border:1px solid #bbf7d0}
-.green *{color:#16a34a}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
-.infoBox h2{margin:0 0 12px;font-size:16px;color:#2d3748;border-bottom:1px solid #edf2f7;padding-bottom:6px}
-.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
-.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#475467;font-weight:700;overflow-x:auto;line-height:1.6}
-.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
-.waveguide-diagram svg{width:100%;min-width:400px;height:auto;display:block;margin:auto}
-.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
-.exampleCard p{margin:4px 0;font-size:13px;color:#4a5568}
+.unit-box{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#374151}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:18px;font-weight:900;min-height:22px;word-break:break-word}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
-  .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr}
-  .exampleGrid{grid-template-columns:1fr}
+body{padding:10px}
+#antenna-look-calc{max-width:100%;padding-top:14px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.result-grid{grid-template-columns:1fr 1fr}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-value{font-size:14px}
+.infoBox{padding:14px}
+.diagramBox{padding:10px}
 }
-</style></head>
+</style>
+</head>
 <body>
-<main class="calc">
-  <form id="tool">
-    <div class="section-title">Receiver Location</div>
-    
-    <label for="rx_lon">Longitude (+ = E)</label>
-    <div class="row">
+
+<div id="antenna-look-calc">
+
+<div class="calc-grid">
+  <div class="section-title">Receiver Location</div>
+
+  <div>
+    <label class="calc-label">Longitude (+ = E)</label>
+    <div class="calc-row">
       <input id="rx_lon" type="number" placeholder="Receiver longitude" step="any">
-      <div class="unit">°</div>
-    </div>
-
-    <label for="rx_lat">Latitude (+ = N)</label>
-    <div class="row">
-      <input id="rx_lat" type="number" placeholder="Receiver latitude" step="any">
-      <div class="unit">°</div>
-    </div>
-
-    <div class="section-title">Satellite Location</div>
-
-    <label for="sat_lon">Satellite Longitude (+ = E)</label>
-    <div class="row">
-      <input id="sat_lon" type="number" placeholder="Satellite longitude" step="any">
-      <div class="unit">°</div>
-    </div>
-
-    <button class="btn" type="button" onclick="cmd_calculate()">CALCULATE</button>
-  </form>
-  
-  <div id="errorBox">Please enter valid values.</div>
-
-  <div class="resultTitle">RESULTS</div>
-  <div class="resultGrid">
-    <div class="card blue">
-      <div class="cardLabel">AZIMUTH</div>
-      <div class="cardLine">
-        <span id="rx_az">-</span>
-      </div>
-    </div>
-    <div class="card green">
-      <div class="cardLabel">ELEVATION</div>
-      <div class="cardLine">
-        <span id="rx_el">-</span>
-      </div>
+      <div class="unit-box">°</div>
     </div>
   </div>
 
-  <section class="infoBox">
-    <h2>Antenna Azimuth and Elevation Graph</h2>
-    <p>Azimuth tracks the horizontal steering vector angle relative clockwise from true North across the horizontal ground layout. Elevation maps the vertical pitch scaling boundaries rising immediately from the horizontal surface up towards the targeted geostationary orbit endpoint.</p>
-    <div class="diagramBox">
-      <div class="waveguide-diagram">
-        <svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg">
-          <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.6"/>
-            <stop offset="100%" stop-color="#ffffff"/>
-          </linearGradient>
-          <rect x="0" y="0" width="400" height="420" fill="url(#skyGrad)"/>
-
-          <line x1="40" y1="380" x2="360" y2="280" stroke="#4a5568" stroke-width="1.5"/>
-          <path d="M 40 380 L 48 373 M 40 380 L 52 381" stroke="#4a5568" stroke-width="1.5"/>
-          <path d="M 360 280 L 352 287 M 360 280 L 348 279" stroke="#4a5568" stroke-width="1.5"/>
-          
-          <text x="35" y="405" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">North</text>
-          <text x="365" y="275" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">South</text>
-
-          <line x1="150" y1="315" x2="150" y2="245" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
-          <circle cx="150" cy="315" r="4" fill="#334155"/>
-
-          <path d="M 75 368 C 110 325 210 295 264 300" fill="none" stroke="#475467" stroke-width="1.2"/>
-          <path d="M 264 300 L 255 296 M 264 300 L 258 305" stroke="#475467" stroke-width="1.2"/>
-          <text x="235" y="335" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">Azimuth</text>
-
-          <g transform="translate(160, 230) rotate(-15)">
-            <ellipse cx="0" cy="0" rx="45" ry="60" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5"/>
-            <ellipse cx="0" cy="0" rx="20" ry="30" fill="none" stroke="#fdba74" stroke-width="1"/>
-            <path d="M 0 10 L 30 40 L 40 35" fill="none" stroke="#475467" stroke-width="2"/>
-            <circle cx="40" cy="35" r="6" fill="#94a3b8" stroke="#475467"/>
-          </g>
-          
-          <circle cx="150" cy="245" r="6" fill="#64748b"/>
-          <path d="M 144 245 L 160 230" stroke="#475467" stroke-width="2"/>
-
-          <line x1="165" y1="225" x2="290" y2="75" stroke="#475467" stroke-width="1"/>
-          <path d="M 290 75 L 282 80 M 290 75 L 286 84" stroke="#475467" stroke-width="1"/>
-
-          <path d="M 264 300 C 285 240 280 150 215 170" fill="none" stroke="#475467" stroke-width="1"/>
-          <path d="M 215 170 L 223 166 M 215 170 L 221 176" stroke="#475467" stroke-width="1"/>
-          
-          <text x="290" y="175" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">elevation</text>
-          <text x="290" y="198" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">angle</text>
-
-          <g transform="translate(295, 55) rotate(-20)">
-            <rect x="-12" y="-12" width="24" height="24" rx="3" fill="#334155" stroke="#1e293b" stroke-width="1.5"/>
-            <ellipse cx="0" cy="-16" rx="10" ry="5" fill="#94a3b8" stroke="#334155"/>
-            <ellipse cx="0" cy="16" rx="10" ry="5" fill="#94a3b8" stroke="#334155"/>
-            <line x1="0" y1="-12" x2="0" y2="-16" stroke="#334155" stroke-width="2"/>
-            <line x1="0" y1="12" x2="0" y2="16" stroke="#334155" stroke-width="2"/>
-            <rect x="-55" y="-5" width="43" height="10" fill="#0284c7" stroke="#0369a1" stroke-width="1"/>
-            <rect x="12" y="-5" width="43" height="10" fill="#0284c7" stroke="#0369a1" stroke-width="1"/>
-            <line x1="-34" y1="-5" x2="-34" y2="5" stroke="#0369a1" stroke-width="0.8"/>
-            <line x1="33" y1="-5" x2="33" y2="5" stroke="#0369a1" stroke-width="0.8"/>
-          </g>
-        </svg>
-      </div>
+  <div>
+    <label class="calc-label">Latitude (+ = N)</label>
+    <div class="calc-row">
+      <input id="rx_lat" type="number" placeholder="Receiver latitude" step="any">
+      <div class="unit-box">°</div>
     </div>
-  </section>
+  </div>
 
-  <section class="infoBox">
-    <h2>Formulas & Geometrical Space Logic</h2>
-    <p>Pointing properties map real-time structural lookup metrics across vector orientations relative directly to spherical tracking rules:</p>
-    <div class="formulaLine">
-      <strong>Geocentric Constant System baselines:</strong><br>
-      Mean Planetary Base Radius (R0) = 6370 km<br>
-      Geostationary Synchronization Height (h) = 35800 km
-    </div>
-    <div class="formulaLine">
-      <strong>Azimuth Angular Tracking:</strong><br>
-      Azimuth = atan(tan(delta_lon) / sin(rx_lat)) + 180
-    </div>
-    <div class="formulaLine">
-      <strong>Elevation Vertical Pitch:</strong><br>
-      Elevation = atan([cos(rx_lat) * cos(delta_lon) - (R0 / (R0 + h))] / sqrt(1 - [cos(rx_lat) * cos(delta_lon)]^2))
-    </div>
-  </section>
+  <div class="section-title">Satellite Location</div>
 
-  <section class="infoBox">
-    <h2>Practical Alignment Example</h2>
-    <div class="exampleGrid">
-      <div class="exampleCard">
-        <p><b>Receiver Position Values</b></p>
-        <p>Receiver Longitude: 72.50° E</p>
-        <p>Receiver Latitude: 23.00° N</p>
-      </div>
-      <div class="exampleCard">
-        <p><b>Target Satellite Values</b></p>
-        <p>Satellite Orbiter Longitude: 83.00° E</p>
-        <p>Calculated Orientation: Complete</p>
-      </div>
+  <div>
+    <label class="calc-label">Satellite Longitude (+ = E)</label>
+    <div class="calc-row">
+      <input id="sat_lon" type="number" placeholder="Satellite longitude" step="any">
+      <div class="unit-box">°</div>
     </div>
-  </section>
-</main>
+  </div>
+</div>
+
+<button type="button" onclick="cmd_calculate()">CALCULATE</button>
+
+<div id="errorBox">Please enter valid longitude and latitude values.</div>
+
+<div class="result-title">RESULTS</div>
+<div class="result-grid">
+  <div class="result-card blue">
+    <div class="result-label">Azimuth</div>
+    <div class="result-value"><span id="rx_az"></span></div>
+  </div>
+  <div class="result-card green">
+    <div class="result-label">Elevation</div>
+    <div class="result-value"><span id="rx_el"></span></div>
+  </div>
+</div>
+
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+  <div class="paramItem"><strong>Receiver Longitude</strong>Ground receiver longitude in degrees. East longitude is positive and west longitude is negative.</div>
+  <div class="paramItem"><strong>Receiver Latitude</strong>Ground receiver latitude in degrees. North latitude is positive and south latitude is negative.</div>
+  <div class="paramItem"><strong>Satellite Longitude</strong>Geostationary satellite orbital longitude in degrees, using the same east-positive convention.</div>
+  <div class="paramItem"><strong>Look Angles</strong>Azimuth gives horizontal pointing direction, while elevation gives upward dish tilt angle.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+  <div class="exampleCard">
+    <p><strong>Dish Antenna Alignment</strong></p>
+    <p>Enter your receiver coordinates and satellite longitude to estimate where to point a fixed satellite dish.</p>
+  </div>
+  <div class="exampleCard">
+    <p><strong>Ground Station Setup</strong></p>
+    <p>Use azimuth and elevation for initial geostationary satellite antenna positioning before fine signal peaking.</p>
+  </div>
+  <div class="exampleCard">
+    <p><strong>True North Reference</strong></p>
+    <p>Azimuth is referenced clockwise from true north, not magnetic north, so compass correction may be needed.</p>
+  </div>
+  <div class="exampleCard">
+    <p><strong>Low Elevation Warning</strong></p>
+    <p>If elevation is very low or negative, the satellite may be near the horizon or not visible from that location.</p>
+  </div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>Azimuth tracks horizontal steering from true north. Elevation tracks the vertical angle above the local horizon toward the geostationary satellite.</p>
+
+<div class="diagramBox">
+<svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Antenna azimuth and elevation diagram">
+  <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.6"/>
+    <stop offset="100%" stop-color="#ffffff"/>
+  </linearGradient>
+  <rect x="0" y="0" width="400" height="420" fill="url(#skyGrad)"/>
+
+  <line x1="40" y1="380" x2="360" y2="280" stroke="#4a5568" stroke-width="1.5"/>
+  <path d="M 40 380 L 48 373 M 40 380 L 52 381" stroke="#4a5568" stroke-width="1.5"/>
+  <path d="M 360 280 L 352 287 M 360 280 L 348 279" stroke="#4a5568" stroke-width="1.5"/>
+
+  <text x="35" y="405" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">North</text>
+  <text x="365" y="275" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">South</text>
+
+  <line x1="150" y1="315" x2="150" y2="245" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="150" cy="315" r="4" fill="#334155"/>
+
+  <path d="M 75 368 C 110 325 210 295 264 300" fill="none" stroke="#475467" stroke-width="1.2"/>
+  <path d="M 264 300 L 255 296 M 264 300 L 258 305" stroke="#475467" stroke-width="1.2"/>
+  <text x="235" y="335" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">Azimuth</text>
+
+  <g transform="translate(160, 230) rotate(-15)">
+    <ellipse cx="0" cy="0" rx="45" ry="60" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5"/>
+    <ellipse cx="0" cy="0" rx="20" ry="30" fill="none" stroke="#fdba74" stroke-width="1"/>
+    <path d="M 0 10 L 30 40 L 40 35" fill="none" stroke="#475467" stroke-width="2"/>
+    <circle cx="40" cy="35" r="6" fill="#94a3b8" stroke="#475467"/>
+  </g>
+
+  <circle cx="150" cy="245" r="6" fill="#64748b"/>
+  <path d="M 144 245 L 160 230" stroke="#475467" stroke-width="2"/>
+
+  <line x1="165" y1="225" x2="290" y2="75" stroke="#475467" stroke-width="1"/>
+  <path d="M 290 75 L 282 80 M 290 75 L 286 84" stroke="#475467" stroke-width="1"/>
+
+  <path d="M 264 300 C 285 240 280 150 215 170" fill="none" stroke="#475467" stroke-width="1"/>
+  <path d="M 215 170 L 223 166 M 215 170 L 221 176" stroke="#475467" stroke-width="1"/>
+
+  <text x="290" y="175" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">elevation</text>
+  <text x="290" y="198" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">angle</text>
+
+  <g transform="translate(295, 55) rotate(-20)">
+    <rect x="-12" y="-12" width="24" height="24" rx="3" fill="#334155" stroke="#1e293b" stroke-width="1.5"/>
+    <ellipse cx="0" cy="-16" rx="10" ry="5" fill="#94a3b8" stroke="#334155"/>
+    <ellipse cx="0" cy="16" rx="10" ry="5" fill="#94a3b8" stroke="#334155"/>
+    <line x1="0" y1="-12" x2="0" y2="-16" stroke="#334155" stroke-width="2"/>
+    <line x1="0" y1="12" x2="0" y2="16" stroke="#334155" stroke-width="2"/>
+    <rect x="-55" y="-5" width="43" height="10" fill="#0284c7" stroke="#0369a1" stroke-width="1"/>
+    <rect x="12" y="-5" width="43" height="10" fill="#0284c7" stroke="#0369a1" stroke-width="1"/>
+    <line x1="-34" y1="-5" x2="-34" y2="5" stroke="#0369a1" stroke-width="0.8"/>
+    <line x1="33" y1="-5" x2="33" y2="5" stroke="#0369a1" stroke-width="0.8"/>
+  </g>
+</svg>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formula">Original geocentric constants preserved:</div>
+<div class="formula">Mean planetary base radius R0 = 6370 km.</div>
+<div class="formula">Geostationary synchronization height h = 35800 km.</div>
+<div class="formula">delta_lon = receiver longitude - satellite longitude.</div>
+<div class="formula">Azimuth = atan(tan(delta_lon) / sin(receiver latitude)) + 180.</div>
+<div class="formula">num = cos(receiver latitude) × cos(delta_lon) - R0 / (R0 + h).</div>
+<div class="formula">den = sqrt(1 - [cos(receiver latitude) × cos(delta_lon)]²).</div>
+<div class="formula">Elevation = atan(num / den).</div>
+</section>
+
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Example: Receiver longitude = 72.50° E, receiver latitude = 23.00° N, satellite longitude = 83.00° E.</div>
+<div class="formulaBox">Step 1: delta_lon = 72.50 - 83.00 = -10.50°.</div>
+<div class="formulaBox">Step 2: Use receiver latitude and delta longitude in the azimuth equation.</div>
+<div class="formulaBox">Step 3: Use R0, h, receiver latitude and delta longitude in the elevation equation.</div>
+<div class="formulaBox">Step 4: Point antenna horizontally using azimuth, then tilt upward using elevation.</div>
+</section>
+
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+  <div class="aboutStep">Enter receiver longitude in degrees. Use positive for east and negative for west.</div>
+  <div class="aboutStep">Enter receiver latitude in degrees. Use positive for north and negative for south.</div>
+  <div class="aboutStep">Enter geostationary satellite longitude in degrees.</div>
+  <div class="aboutStep">Click Calculate to get azimuth and elevation look angles.</div>
+  <div class="aboutStep">Use true north reference for azimuth and adjust dish elevation carefully for strongest signal.</div>
+</div>
+</section>
+
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Calculate satellite antenna azimuth and elevation look angles.</strong>
+<p>The CalcBoy Antenna Azimuth and Elevation Calculator estimates dish pointing angles toward a geostationary satellite from receiver longitude, receiver latitude and satellite longitude.</p>
+</div>
+<p>Satellite dish alignment depends on two main angles. Azimuth tells you the horizontal direction to rotate the antenna, measured clockwise from true north. Elevation tells you how far to tilt the dish upward from the local horizon. Together, these look angles help aim a dish, VSAT antenna, tracking system or ground station toward a geostationary satellite.</p>
+<p>This calculator is useful for satellite TV dish setup, ground station alignment, VSAT installation, RF field work, communication link planning and educational satellite geometry checks. The input convention is simple: east longitude and north latitude are positive, while west longitude and south latitude are negative.</p>
+<p>Use the calculated values as a starting alignment reference. Real installation may require correction for magnetic declination, local obstacles, antenna offset angle, mount level error, LNB skew, cable loss and final signal peaking using a meter or receiver signal quality display.</p>
+<div class="aboutMiniGrid">
+  <div class="aboutMiniCard"><span>Best Use</span>Geostationary satellite dish look angle estimation.</div>
+  <div class="aboutMiniCard"><span>Supported Inputs</span>Receiver longitude, receiver latitude and satellite longitude.</div>
+  <div class="aboutMiniCard"><span>Helpful For</span>Dish alignment, VSAT setup, ground stations and satellite TV installs.</div>
+  <div class="aboutMiniCard"><span>Design Reminder</span>Use true north and verify final signal strength on hardware.</div>
+</div>
+<div class="aboutNote">Tip: If compass direction is used, apply local magnetic declination because this calculator gives azimuth relative to true north.</div>
+</section>
+
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is antenna azimuth?</h3>
+<p>Azimuth is the horizontal pointing angle measured clockwise from true north toward the satellite direction.</p>
+
+<h3>What is antenna elevation?</h3>
+<p>Elevation is the vertical angle above the horizon used to tilt the dish toward the satellite.</p>
+
+<h3>What does positive longitude mean?</h3>
+<p>Positive longitude means east. Negative longitude means west.</p>
+
+<h3>What does positive latitude mean?</h3>
+<p>Positive latitude means north. Negative latitude means south.</p>
+
+<h3>Can this be used for geostationary satellites?</h3>
+<p>Yes. The calculator is designed for geostationary satellite longitude-based look angle estimation.</p>
+
+<h3>Why is my elevation negative?</h3>
+<p>A negative elevation means the satellite is below the local horizon or not visible from that receiver location.</p>
+</section>
+
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+  <div class="linkCard"><strong>Satellite Link Budget Calculator</strong>Estimate RF link power levels for satellite communication.</div>
+  <div class="linkCard"><strong>Antenna Gain Calculator</strong>Calculate antenna gain from dish diameter and frequency.</div>
+  <div class="linkCard"><strong>Free Space Path Loss Calculator</strong>Estimate RF path loss over distance and frequency.</div>
+  <div class="linkCard"><strong>RF Wavelength Calculator</strong>Calculate wavelength from operating frequency.</div>
+</div>
+</section>
+
+</div>
 
 <script>
 function cmd_calculate(){
@@ -244,8 +348,8 @@ function cmd_calculate(){
 
 function showError(){
   document.getElementById("errorBox").style.display = "block";
-  document.getElementById("rx_az").innerText = "-";
-  document.getElementById("rx_el").innerText = "-";
+  document.getElementById("rx_az").innerText = "";
+  document.getElementById("rx_el").innerText = "";
 }
 
 function hideError(){
@@ -256,4 +360,34 @@ document.getElementById("rx_lon").addEventListener("input", hideError);
 document.getElementById("rx_lat").addEventListener("input", hideError);
 document.getElementById("sat_lon").addEventListener("input", hideError);
 </script>
-</body></html>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is antenna azimuth?","acceptedAnswer":{"@type":"Answer","text":"Azimuth is the horizontal pointing angle measured clockwise from true north toward the satellite direction."}},
+{"@type":"Question","name":"What is antenna elevation?","acceptedAnswer":{"@type":"Answer","text":"Elevation is the vertical angle above the horizon used to tilt the dish toward the satellite."}},
+{"@type":"Question","name":"What does positive longitude mean?","acceptedAnswer":{"@type":"Answer","text":"Positive longitude means east. Negative longitude means west."}},
+{"@type":"Question","name":"What does positive latitude mean?","acceptedAnswer":{"@type":"Answer","text":"Positive latitude means north. Negative latitude means south."}},
+{"@type":"Question","name":"Can this be used for geostationary satellites?","acceptedAnswer":{"@type":"Answer","text":"Yes. The calculator is designed for geostationary satellite longitude-based look angle estimation."}},
+{"@type":"Question","name":"Why is my elevation negative?","acceptedAnswer":{"@type":"Answer","text":"A negative elevation means the satellite is below the local horizon or not visible from that receiver location."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"RF Calculators","item":"https://calcboy.com/category/rf-calculators/"},
+{"@type":"ListItem","position":3,"name":"Antenna Azimuth and Elevation Calculator","item":"https://calcboy.com/tool/antenna-azimuth-and-elevation-calculator"}
+]
+}
+</script>
+
+</body>
+</html>
