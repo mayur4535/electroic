@@ -1,161 +1,841 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Minimum Detectable Signal (MDS) Calculator | RF Sensitivity Tool</title>
-<meta name="description" content="Calculate the Minimum Detectable Signal (MDS) of an RF receiver circuit using channel operational bandwidth and device noise figure parameters.">
-<meta name="keywords" content="minimum detectable signal calculator, mds calculator rf, receiver sensitivity tool, thermal noise floor calculator, noise figure sensitivity, rf link budget solver, kTB noise power calculator, dbm receiver threshold, radar minimum signal calculation, communications receiver noise solver, channel bandwidth noise floor">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Minimum Detectable Signal (MDS) Calculator | RF Receiver Sensitivity Calculator | CalcBoy</title>
+
+<meta name="description" content="Calculate Minimum Detectable Signal (MDS), receiver sensitivity, thermal noise floor and RF receiver performance using bandwidth and noise figure values.">
+
+<meta name="keywords" content="minimum detectable signal calculator, mds calculator, receiver sensitivity calculator, thermal noise floor calculator, rf receiver sensitivity, noise figure calculator, receiver noise floor, communication receiver calculator, radar receiver sensitivity, satellite receiver sensitivity, CalcBoy">
+
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0;color:#333}
-.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
-label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
-.row{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:8px;margin-bottom:16px}
-input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
-select{text-align:center;font-weight:800;padding:0 6px}
-input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-.unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#555}
-.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
-/* Small red error text custom styled above result layout */
-#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:13px;font-weight:700}
-.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
-.resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
-.card{padding:16px;border-radius:12px;min-height:82px}
-.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
-.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
-.cardLine span{font-weight:800;font-size:18px;color:inherit}
-.blue{background:#eef5ff;border:1px solid #bfd3ff}
-.blue *{color:#2359e8}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
-.infoBox h2{margin:0 0 12px;font-size:16px;color:#2d3748;border-bottom:1px solid #edf2f7;padding-bottom:6px}
-.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
-.formulaLine{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#475467;font-weight:700;overflow-x:auto;line-height:1.6}
-.diagramBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
-.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
-.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
-.exampleCard p{margin:4px 0;font-size:13px;color:#4a5568}
-@media(max-width:600px){
-  .row{grid-template-columns:minmax(0,1fr) 72px}
-  .exampleGrid{grid-template-columns:1fr}
+#mds-calc,#mds-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#mds-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+
+.calc-grid{display:grid;gap:15px}
+
+.calc-label{
+display:block;
+font-size:15px;
+font-weight:700;
+color:#4b5563;
+margin-bottom:7px;
 }
-</style></head>
+
+.calc-row{
+display:grid;
+grid-template-columns:minmax(0,1fr) 82px;
+gap:8px;
+align-items:center;
+}
+
+input,select{
+width:100%;
+height:43px;
+border:1px solid #cfd6df;
+border-radius:8px;
+padding:0 12px;
+font-size:15px;
+background:#fff;
+outline:none;
+}
+
+input:focus,select:focus{
+border-color:#ff6a00;
+box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.unit-box{
+width:82px;
+min-width:82px;
+max-width:82px;
+height:43px;
+border:1px solid #cfd6df;
+border-radius:8px;
+background:#eee;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:15px;
+font-weight:700;
+color:#374151;
+}
+
+button{
+width:100%;
+height:45px;
+border:0;
+border-radius:9px;
+background:linear-gradient(90deg,#ff7a18,#ff4b00);
+color:#fff;
+font-size:15px;
+font-weight:800;
+cursor:pointer;
+margin-top:15px;
+}
+
+#errorBox{
+display:none;
+margin-top:14px;
+margin-bottom:6px;
+color:#dc2626;
+font-size:14px;
+font-weight:800;
+text-align:center;
+border:2px solid #dc2626;
+padding:10px;
+border-radius:8px;
+background:#fef2f2;
+}
+
+.result-title{
+margin-top:30px;
+margin-bottom:14px;
+font-size:13px;
+font-weight:800;
+letter-spacing:1px;
+color:#7b8794;
+}
+
+.result-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.result-card{
+min-height:82px;
+padding:16px;
+border-radius:12px;
+border:1px solid #cfd6df;
+}
+
+.result-card.blue{
+background:#eef5ff;
+border-color:#bcd7ff;
+}
+
+.result-card.blue .result-label,
+.result-card.blue .result-value{
+color:#2359e8;
+}
+
+.result-label{
+font-size:11px;
+font-weight:900;
+text-transform:uppercase;
+margin-bottom:10px;
+letter-spacing:.5px;
+}
+
+.result-value{
+font-size:16px;
+font-weight:900;
+word-break:break-word;
+line-height:1.2;
+min-height:22px;
+}
+
+.infoBox{
+margin-top:16px;
+padding:16px;
+background:#fff;
+border:1px solid #e5e7eb;
+border-radius:12px;
+box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+
+.infoBox h2{
+margin:0 0 12px;
+font-size:15px;
+color:#1e293b;
+border-bottom:1px solid #edf2f7;
+padding-bottom:6px;
+font-weight:800;
+text-transform:uppercase;
+letter-spacing:.5px;
+}
+
+.infoBox p,
+.infoBox li{
+font-size:13px;
+line-height:1.6;
+color:#667085;
+font-weight:700;
+}
+
+.formula,
+.formulaBox{
+background:#f8fafc;
+border:1px solid #e2e8f0;
+border-radius:8px;
+padding:12px;
+margin:8px 0;
+font-size:13px;
+color:#334155;
+font-weight:700;
+line-height:1.6;
+}
+
+.paramGrid,
+.exampleGrid,
+.aboutMiniGrid,
+.linkGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin:12px 0;
+}
+
+.paramItem,
+.exampleCard,
+.aboutMiniCard,
+.linkCard{
+background:#f8fafc;
+padding:10px;
+border-radius:8px;
+border:1px solid #e2e8f0;
+font-size:12px;
+font-weight:600;
+color:#475467;
+line-height:1.55;
+}
+
+.paramItem strong,
+.aboutMiniCard span,
+.linkCard strong{
+color:#0f172a;
+display:block;
+margin-bottom:2px;
+font-weight:900;
+}
+
+.diagramBox{
+background:#fff;
+padding:16px;
+text-align:center;
+margin-top:10px;
+border:1px solid #e5e7eb;
+border-radius:12px;
+overflow-x:auto;
+}
+
+.diagramBox svg{
+width:100%;
+max-width:560px;
+height:auto;
+display:block;
+margin:auto;
+}
+
+.aboutLead{
+background:linear-gradient(135deg,#eef5ff,#fff7ed);
+border:1px solid #dbeafe;
+border-radius:12px;
+padding:14px;
+margin-bottom:12px;
+}
+
+.aboutLead strong{
+display:block;
+font-size:16px;
+color:#0f172a;
+margin-bottom:7px;
+}
+
+.aboutNote{
+background:#ecfdf5;
+border:1px solid #bbf7d0;
+border-left:5px solid #059669;
+border-radius:10px;
+padding:12px;
+margin:12px 0;
+font-size:13px;
+font-weight:700;
+color:#065f46;
+line-height:1.6;
+}
+
+.aboutSteps{
+counter-reset:step;
+display:grid;
+gap:8px;
+margin:12px 0;
+}
+
+.aboutStep{
+position:relative;
+background:#fff;
+border:1px solid #e5e7eb;
+border-radius:10px;
+padding:11px 11px 11px 42px;
+font-size:13px;
+font-weight:700;
+color:#475467;
+line-height:1.55;
+}
+
+.aboutStep:before{
+counter-increment:step;
+content:counter(step);
+position:absolute;
+left:11px;
+top:11px;
+width:22px;
+height:22px;
+border-radius:50%;
+background:#ff7a18;
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+font-weight:900;
+}
+
+@media(max-width:600px){
+
+.calc-row{
+grid-template-columns:minmax(0,1fr) 72px;
+}
+
+.unit-box{
+width:72px;
+min-width:72px;
+max-width:72px;
+}
+
+.paramGrid,
+.exampleGrid,
+.aboutMiniGrid,
+.linkGrid{
+grid-template-columns:1fr;
+}
+
+.result-grid{
+grid-template-columns:1fr 1fr;
+}
+
+.result-value{
+font-size:14px;
+}
+
+}
+</style>
+</head>
+
 <body>
-<main class="calc">
-  <form id="tool">
-    <label for="bandwidth">Bandwidth</label>
-    <div class="row">
-      <input id="bandwidth" type="number" step="any" placeholder="Example: 10">
-      <select id="bandwidthUnit">
-        <option value="1">Hz</option>
-        <option value="1000">kHz</option>
-        <option value="1000000" selected>MHz</option>
-        <option value="1000000000">GHz</option>
-      </select>
-    </div>
 
-    <label for="noiseFigure">Noise Figure</label>
-    <div class="row">
-      <input id="noiseFigure" type="number" step="any" placeholder="Example: 3.5">
-      <div class="unitBox">dB</div>
-    </div>
+<div id="mds-calc">
 
-    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
-  </form>
-  
-  <div id="errorBox">Please enter valid values.</div>
+<div class="calc-grid">
 
-  <div class="resultTitle">RESULTS</div>
-  <div class="resultGrid">
-    <div class="card blue">
-      <div class="cardLabel">MINIMUM DETECTABLE SIGNAL (MDS)</div>
-      <div class="cardLine"><span id="mdsResult">-</span></div>
-    </div>
-  </div>
+<div>
+<label class="calc-label">Bandwidth</label>
+<div class="calc-row">
+<input id="bandwidth" type="number" step="any" oninput="clearResults()">
+<select id="bandwidthUnit" onchange="clearResults()">
+<option value="1">Hz</option>
+<option value="1000">kHz</option>
+<option value="1000000" selected>MHz</option>
+<option value="1000000000">GHz</option>
+</select>
+</div>
+</div>
 
-  <section class="infoBox">
-    <h2>Minimum Detectable Signal Power Levels</h2>
-    <p>Minimum Detectable Signal defines the baseline receiver sensitivity threshold where the target incoming signal energy matches cleanly above the combined limits of integrated thermal noise and internal amplifier distortion stages.</p>
-    <div class="diagramBox">
-      <div class="waveguide-diagram">
-        <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0" y="0" width="520" height="340" fill="#ffffff" stroke="none"/>
-          
-          <line x1="30" y1="220" x2="490" y2="220" stroke="#16a34a" stroke-width="2"/>
-          <text x="45" y="244" fill="#16a34a" font-size="13" font-family="sans-serif" font-weight="bold">Mean Noise Level</text>
-          
-          <line x1="30" y1="125" x2="490" y2="125" stroke="#dc2626" stroke-width="2"/>
-          
-          <line x1="85" y1="125" x2="65" y2="95" stroke="#000000" stroke-width="1.2"/>
-          <polygon points="85,125 82,116 77,120" fill="#000000"/>
-          <text x="60" y="85" fill="#dc2626" font-size="14" font-family="sans-serif" font-weight="bold">MDS Level</text>
+<div>
+<label class="calc-label">Noise Figure</label>
+<div class="calc-row">
+<input id="noiseFigure" type="number" step="any" oninput="clearResults()">
+<div class="unit-box">dB</div>
+</div>
+</div>
 
-          <line x1="246" y1="125" x2="246" y2="75" stroke="#000000" stroke-width="1.2"/>
-          <polygon points="246,125 242,117 250,117" fill="#000000"/>
-          <polygon points="246,75 242,83 250,83" fill="#000000"/>
-          
-          <path d="M 35 220 C 50 180, 60 250, 75 220 C 90 190, 100 240, 115 220 C 130 195, 140 250, 155 210 C 170 160, 185 245, 200 220 C 215 190, 230 100, 246 75 C 262 100, 275 245, 290 220 C 305 190, 315 250, 330 220 C 345 185, 355 120, 370 110 C 385 100, 395 245, 410 220 C 425 190, 435 240, 450 220 C 465 195, 475 235, 485 220" fill="none" stroke="#2359e8" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-        </svg>
-      </div>
-    </div>
-  </section>
+</div>
 
-  <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
-    <p>Receiver link budget boundaries combine absolute thermal constraints with hardware noise figure degradation coefficients linearly:</p>
-    <div class="formulaLine">
-      <strong>MDS Sensitivity Formulation:</strong><br>
-      MDS = -174 + 10 * log10(Bandwidth in Hz) + Noise Figure
-    </div>
-    <p>Where -174 dBm/Hz defines the universal flat thermal noise power density limit across a localized 1Hz bandwidth segment matching standard operational temperatures around 290 Kelvin.</p>
-  </section>
+<button type="button" onclick="calc()">CALCULATE</button>
 
-  <section class="infoBox">
-    <h2>Practical RF Sensitivity Example</h2>
-    <div class="exampleGrid">
-      <div class="exampleCard">
-        <p><b>Input Parameters</b></p>
-        <p>Channel Bandwidth: 10.00 MHz</p>
-        <p>Noise Figure (NF): 3.50 dB</p>
-      </div>
-      <div class="exampleCard">
-        <p><b>Determined Sensitivity Threshold</b></p>
-        <p>Calculated Receiver MDS: -100.50 dBm</p>
-      </div>
-    </div>
-  </section>
-</main>
+<div id="errorBox">
+Please enter valid values.
+</div>
+
+<div class="result-title">
+RESULTS
+</div>
+
+<div class="result-grid">
+
+<div class="result-card blue">
+<div class="result-label">Minimum Detectable Signal (MDS)</div>
+<div class="result-value">
+<span id="mdsResult"></span>
+</div>
+</div>
+
+</div>
+
+<section class="infoBox">
+
+<h2>Input Parameters Specification</h2>
+
+<div class="paramGrid">
+
+<div class="paramItem">
+<strong>Bandwidth</strong>
+Receiver bandwidth determines the amount of thermal noise entering the receiver front end and directly affects overall receiver sensitivity.
+</div>
+
+<div class="paramItem">
+<strong>Noise Figure</strong>
+Noise Figure quantifies additional noise introduced by receiver circuitry beyond the theoretical thermal noise floor.
+</div>
+
+<div class="paramItem">
+<strong>Bandwidth Units</strong>
+Bandwidth may be entered in Hz, kHz, MHz or GHz. The calculator automatically converts the selected value into Hertz.
+</div>
+
+<div class="paramItem">
+<strong>Applications</strong>
+Used in RF communication systems, telemetry receivers, radar systems, satellite ground stations and wireless network analysis.
+</div>
+
+</div>
+
+</section>
+
+<section class="infoBox">
+
+<h2>Practical Operational Examples</h2>
+
+<div class="exampleGrid">
+
+<div class="exampleCard">
+<p><strong>Narrowband Telemetry Receiver</strong></p>
+<p>Bandwidth: 25 kHz</p>
+<p>Noise Figure: 2 dB</p>
+<p>Excellent sensitivity for long-range telemetry links.</p>
+</div>
+
+<div class="exampleCard">
+<p><strong>Industrial Wireless Receiver</strong></p>
+<p>Bandwidth: 5 MHz</p>
+<p>Noise Figure: 4 dB</p>
+<p>Typical industrial communication receiver design.</p>
+</div>
+
+<div class="exampleCard">
+<p><strong>Radar Receiver</strong></p>
+<p>Bandwidth: 20 MHz</p>
+<p>Noise Figure: 3 dB</p>
+<p>Used during target detection sensitivity calculations.</p>
+</div>
+
+<div class="exampleCard">
+<p><strong>Satellite Ground Station</strong></p>
+<p>Bandwidth: 10 MHz</p>
+<p>Noise Figure: 1.2 dB</p>
+<p>Low-noise front-end architecture for weak signal reception.</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="infoBox">
+
+<h2>Diagrams & Theory</h2>
+
+<p>
+Minimum Detectable Signal (MDS) represents the weakest RF signal level that can be reliably distinguished from the receiver noise floor. It is one of the most important receiver sensitivity specifications used in communication systems, telemetry equipment, radar receivers and satellite ground stations.
+</p>
+
+<div class="diagramBox">
+
+<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg">
+
+<rect x="0" y="0" width="520" height="340" fill="#ffffff"/>
+
+<line x1="30" y1="220" x2="490" y2="220" stroke="#16a34a" stroke-width="2"/>
+<text x="45" y="244" fill="#16a34a" font-size="13" font-weight="bold">
+Mean Noise Level
+</text>
+
+<line x1="30" y1="125" x2="490" y2="125" stroke="#dc2626" stroke-width="2"/>
+
+<line x1="85" y1="125" x2="65" y2="95" stroke="#111827" stroke-width="1.2"/>
+<polygon points="85,125 82,116 77,120" fill="#111827"/>
+
+<text x="60" y="85" fill="#dc2626" font-size="14" font-weight="bold">
+MDS Level
+</text>
+
+<line x1="246" y1="125" x2="246" y2="75" stroke="#111827" stroke-width="1.2"/>
+<polygon points="246,125 242,117 250,117" fill="#111827"/>
+<polygon points="246,75 242,83 250,83" fill="#111827"/>
+
+<path d="M 35 220 C 50 180,60 250,75 220 C 90 190,100 240,115 220 C 130 195,140 250,155 210 C 170 160,185 245,200 220 C 215 190,230 100,246 75 C 262 100,275 245,290 220 C 305 190,315 250,330 220 C 345 185,355 120,370 110 C 385 100,395 245,410 220 C 425 190,435 240,450 220 C 465 195,475 235,485 220"
+fill="none"
+stroke="#2359e8"
+stroke-width="2.5"
+stroke-linejoin="round"
+stroke-linecap="round"/>
+
+</svg>
+
+</div>
+
+<p>
+Every receiver generates thermal noise. If the incoming signal level falls below the combined thermal and internal receiver noise, reliable detection becomes increasingly difficult. MDS calculations help engineers determine communication range, receiver performance and overall system sensitivity before deployment.
+</p>
+
+<p>
+Lower MDS values indicate better receiver sensitivity. A receiver capable of detecting signals near -120 dBm is generally more sensitive than a receiver limited to approximately -100 dBm under similar operating conditions.
+</p>
+
+</section>
+
+<section class="infoBox">
+
+<h2>Formulas & Mathematical Logic</h2>
+
+<p>
+Receiver sensitivity calculations begin with the theoretical thermal noise density and then include the additional noise generated by receiver circuitry through the Noise Figure parameter.
+</p>
+
+<div class="formula">
+MDS = -174 + 10 × log10(Bandwidth in Hz) + Noise Figure
+</div>
+
+<div class="formulaBox">
+Bandwidth must first be converted into Hertz before applying the logarithmic calculation.
+</div>
+
+<div class="formulaBox">
+Thermal Noise Density = -174 dBm/Hz
+</div>
+
+<div class="formulaBox">
+Higher Bandwidth → Higher Noise Floor → Higher MDS
+</div>
+
+<div class="formulaBox">
+Higher Noise Figure → Reduced Sensitivity → Higher MDS
+</div>
+
+<p>
+The constant -174 dBm/Hz represents the theoretical thermal noise density at approximately 290 Kelvin. Increasing receiver bandwidth allows more noise energy into the receiver front end, while higher Noise Figure values represent additional internally generated noise from amplifiers, mixers and other RF stages.
+</p>
+
+</section>
+
+<section class="infoBox">
+
+<h2>Step-by-Step Example</h2>
+
+<div class="exampleGrid">
+
+<div class="exampleCard">
+<strong>Step 1</strong>
+<p>Bandwidth = 10 MHz</p>
+</div>
+
+<div class="exampleCard">
+<strong>Step 2</strong>
+<p>Noise Figure = 3.5 dB</p>
+</div>
+
+<div class="exampleCard">
+<strong>Step 3</strong>
+<p>10 MHz = 10,000,000 Hz</p>
+</div>
+
+<div class="exampleCard">
+<strong>Step 4</strong>
+<p>MDS = -174 + 10 × log10(10,000,000) + 3.5</p>
+</div>
+
+<div class="exampleCard">
+<strong>Step 5</strong>
+<p>MDS = -174 + 70 + 3.5</p>
+</div>
+
+<div class="exampleCard">
+<strong>Final Result</strong>
+<p>MDS = -100.50 dBm</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="infoBox">
+
+<h2>How to Use This Calculator</h2>
+
+<div class="aboutSteps">
+
+<div class="aboutStep">
+Enter the receiver bandwidth value.
+</div>
+
+<div class="aboutStep">
+Select the correct bandwidth unit from the dropdown menu.
+</div>
+
+<div class="aboutStep">
+Enter the receiver Noise Figure value in dB.
+</div>
+
+<div class="aboutStep">
+Click the Calculate button to determine the Minimum Detectable Signal.
+</div>
+
+</div>
+
+</section>
+
+<section class="infoBox">
+
+<h2>About This Calculator</h2>
+
+<div class="aboutLead">
+<strong>RF Receiver Sensitivity Analysis Tool</strong>
+This CalcBoy calculator estimates Minimum Detectable Signal levels using receiver bandwidth and Noise Figure values. It is useful for RF engineers, communication designers, radar specialists and wireless system developers.
+</div>
+
+<div class="aboutMiniGrid">
+
+<div class="aboutMiniCard">
+<span>Best Use</span>
+Receiver sensitivity calculations.
+</div>
+
+<div class="aboutMiniCard">
+<span>Helpful For</span>
+RF, telemetry and satellite systems.
+</div>
+
+<div class="aboutMiniCard">
+<span>Inputs</span>
+Bandwidth and Noise Figure.
+</div>
+
+<div class="aboutMiniCard">
+<span>Output</span>
+Minimum Detectable Signal in dBm.
+</div>
+
+</div>
+
+<p>
+The CalcBoy Minimum Detectable Signal Calculator helps engineers determine the weakest signal level that can be detected by a receiver above its noise floor. Receiver sensitivity is a critical parameter because it directly influences communication range, reliability and overall system performance.
+</p>
+
+<p>
+Bandwidth and Noise Figure are the primary factors that affect MDS. Increasing bandwidth raises the receiver noise floor because more thermal noise energy enters the system. Similarly, a higher Noise Figure indicates additional internally generated noise that reduces receiver sensitivity.
+</p>
+
+<p>
+MDS calculations are widely used during RF link budget analysis, wireless network design, telemetry system development, microwave communication planning and radar receiver evaluation. Accurate sensitivity calculations help engineers predict real-world receiver performance before equipment deployment.
+</p>
+
+<div class="aboutNote">
+Tip: Improving receiver Noise Figure often produces a larger sensitivity improvement than increasing transmitter power.
+</div>
+
+</section>
+
+<section class="infoBox">
+
+<h2>Frequently Asked Questions</h2>
+
+<div class="aboutSteps">
+
+<div class="aboutStep">
+<strong>What is Minimum Detectable Signal (MDS)?</strong><br>
+MDS is the weakest RF signal level that a receiver can reliably detect above its internal noise floor.
+</div>
+
+<div class="aboutStep">
+<strong>Why is MDS important?</strong><br>
+MDS determines receiver sensitivity and directly affects communication range, signal reliability and link performance.
+</div>
+
+<div class="aboutStep">
+<strong>How does bandwidth affect MDS?</strong><br>
+Increasing bandwidth increases thermal noise power, which raises the MDS value and reduces receiver sensitivity.
+</div>
+
+<div class="aboutStep">
+<strong>How does Noise Figure affect receiver sensitivity?</strong><br>
+A lower Noise Figure introduces less internal receiver noise and improves sensitivity by reducing the MDS threshold.
+</div>
+
+<div class="aboutStep">
+<strong>What does -174 dBm/Hz represent?</strong><br>
+It is the theoretical thermal noise density at approximately 290 Kelvin and forms the basis of receiver sensitivity calculations.
+</div>
+
+<div class="aboutStep">
+<strong>Where are MDS calculations used?</strong><br>
+They are widely used in RF communications, telemetry systems, satellite receivers, microwave links and radar applications.
+</div>
+
+</div>
+
+</section>
+
+<section class="infoBox">
+
+<h2>Related Calculators</h2>
+
+<div class="linkGrid">
+
+<div class="linkCard">
+<strong>Receiver Sensitivity Calculator</strong>
+Evaluate receiver detection thresholds and communication performance.
+</div>
+
+<div class="linkCard">
+<strong>Noise Figure Calculator</strong>
+Calculate receiver noise contribution and RF front-end performance.
+</div>
+
+<div class="linkCard">
+<strong>RF Link Budget Calculator</strong>
+Analyze transmitter power, path loss and receiver sensitivity.
+</div>
+
+<div class="linkCard">
+<strong>Free Space Path Loss Calculator</strong>
+Estimate RF propagation loss over distance.
+</div>
+
+<div class="linkCard">
+<strong>Thermal Noise Power Calculator</strong>
+Determine noise power based on bandwidth and temperature.
+</div>
+
+<div class="linkCard">
+<strong>Signal To Noise Ratio Calculator</strong>
+Calculate SNR for communication and RF systems.
+</div>
+
+</div>
+
+</section>
 
 <script>
-function clearResults(){
-  document.getElementById("mdsResult").innerText = "-";
-}
 
-document.getElementById("bandwidth").addEventListener("input", clearResults);
-document.getElementById("noiseFigure").addEventListener("input", clearResults);
-document.getElementById("bandwidthUnit").addEventListener("change", clearResults);
+function clearResults(){
+document.getElementById("mdsResult").innerHTML="";
+}
 
 function calc(){
-  var bandwidthValue = Number(document.getElementById("bandwidth").value);
-  var bandwidthUnit = Number(document.getElementById("bandwidthUnit").value);
-  var NF = Number(document.getElementById("noiseFigure").value);
 
-  if(
-    document.getElementById("bandwidth").value === "" ||
-    document.getElementById("noiseFigure").value === "" ||
-    isNaN(bandwidthValue) ||
-    isNaN(NF) ||
-    bandwidthValue <= 0
-  ){
-    document.getElementById("errorBox").style.display = "block";
-    clearResults();
-    return;
-  }
+var bandwidthValue=Number(document.getElementById("bandwidth").value);
+var bandwidthUnit=Number(document.getElementById("bandwidthUnit").value);
+var NF=Number(document.getElementById("noiseFigure").value);
 
-  document.getElementById("errorBox").style.display = "none";
+if(
+document.getElementById("bandwidth").value==="" ||
+document.getElementById("noiseFigure").value==="" ||
+isNaN(bandwidthValue) ||
+isNaN(NF) ||
+bandwidthValue<=0
+){
+document.getElementById("errorBox").style.display="block";
+clearResults();
+return;
+}
 
-  /* ORIGINAL FORMULA PRESERVED EXACTLY */
-  var B = bandwidthValue * bandwidthUnit;
-  var c1 = (-174 + (10 * Math.log10(B)) + NF);
+document.getElementById("errorBox").style.display="none";
 
-  document.getElementById("mdsResult").innerText = c1.toFixed(4) + " dBm";
+/* ORIGINAL FORMULA PRESERVED */
+
+var B=bandwidthValue*bandwidthUnit;
+
+var c1=(-174+(10*Math.log10(B))+NF);
+
+document.getElementById("mdsResult").innerHTML=
+c1.toFixed(4)+" dBm";
+
+}
+
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"mainEntity":[
+{
+"@type":"Question",
+"name":"What is Minimum Detectable Signal (MDS)?",
+"acceptedAnswer":{
+"@type":"Answer",
+"text":"MDS is the weakest RF signal level that a receiver can reliably detect above its noise floor."
+}
+},
+{
+"@type":"Question",
+"name":"Why is MDS important?",
+"acceptedAnswer":{
+"@type":"Answer",
+"text":"MDS determines receiver sensitivity and communication performance."
+}
+},
+{
+"@type":"Question",
+"name":"How does bandwidth affect MDS?",
+"acceptedAnswer":{
+"@type":"Answer",
+"text":"Higher bandwidth increases noise power and raises the MDS value."
+}
+},
+{
+"@type":"Question",
+"name":"How does Noise Figure affect MDS?",
+"acceptedAnswer":{
+"@type":"Answer",
+"text":"Higher Noise Figure increases receiver noise and reduces sensitivity."
+}
+}
+]
 }
 </script>
-</body></html>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{
+"@type":"ListItem",
+"position":1,
+"name":"Home",
+"item":"https://www.calcboy.com/"
+},
+{
+"@type":"ListItem",
+"position":2,
+"name":"RF Calculators",
+"item":"https://www.calcboy.com/rf-calculators/"
+},
+{
+"@type":"ListItem",
+"position":3,
+"name":"Minimum Detectable Signal Calculator"
+}
+]
+}
+</script>
+
+</div>
+
+</body>
+</html>
