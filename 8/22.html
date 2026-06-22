@@ -1,11 +1,18 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Coax Impedance Calculator | RF Transmission Designer</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Coax Impedance Calculator | RF Transmission Designer | CalcBoy</title>
 <meta name="description" content="Calculate coaxial cable characteristic impedance, propagation delay, parasitic inductance, and capacitance parameters.">
-<meta name="keywords" content="coax impedance calculator, coaxial cable transmission line solver, characteristics impedance zo equation, shield inner id d2 substrate, center conductor outer id d1, dielectric substrate constant er, propagation delay time nanoseconds, parasitic inductance capacitance per inch, rf coaxial structural wire routing">
+<meta name="keywords" content="coax impedance calculator, coaxial cable transmission line solver, characteristics impedance zo equation, shield inner id d2 substrate, center conductor outer id d1, dielectric substrate constant er, propagation delay time nanoseconds, parasitic inductance capacitance per inch, rf coaxial structural wire routing, CalcBoy">
 <style>
+/* Exact CSS Classes and Margins Imported from Master Flyback Reference Template */
 *{box-sizing:border-box}
-body{margin:0;background:#f6f8fb;font-family:Arial,sans-serif;color:#1f2937}
-.coax-wrap{width:100%;max-width:620px;margin:auto;padding:14px 22px 30px;padding-top:24px}
+body{margin:0;background:#f6f8fb;font-family:Arial,sans-serif;padding:10px;color:#1f2937}
+.coax-wrap{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+
+/* Form Inputs and Interactive Row Styling */
 .input-grid{display:grid;gap:14px}
 .field label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px;padding-left:4px}
 .input-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px}
@@ -16,7 +23,7 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
 .calc-btn{width:100%;height:48px;border:0;border-radius:10px;margin-top:20px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
 
 /* Small red bold error text custom positioned strictly above results section */
-.error-box{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;line-height:1.45}
+.error-box{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;line-height:1.45;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
 
 .section-title{margin:22px 0 12px;font-size:13px;color:#7b8794;letter-spacing:.05em;font-weight:800;text-transform:uppercase}
 
@@ -25,31 +32,45 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
 .result-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;min-height:82px}
 .result-card span{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
 .result-card b{display:block;font-size:18px;font-weight:900;word-break:break-all;line-height:1}
-.result-card:nth-child(1) span,.result-card:nth-child(1) b{color:#2563eb;background:#eef5ff;border-color:#bfd3ff}
-.result-card:nth-child(2) span,.result-card:nth-child(2) b{color:#16a34a;background:#ecfdf5;border-color:#bbf7d0}
-.result-card:nth-child(3) span,.result-child:nth-child(3) b{color:#7c3aed;background:#f5f3ff;border-color:#ddd6fe}
-.result-card:nth-child(4) span,.result-card:nth-child(4) b{color:#ea580c;background:#fff7ed;border-color:#fed7aa}
+
 /* Inject standard localized colored borders for standalone cards look matching UI */
 .result-card{border:1px solid #cfd6df}
 .result-card:nth-child(1){background:#eef5ff;border-color:#bfd3ff}
+.result-card:nth-child(1) span, .result-card:nth-child(1) b{color:#2359e8}
 .result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
+.result-card:nth-child(2) span, .result-card:nth-child(2) b{color:#16a34a}
 .result-card:nth-child(3){background:#f5f3ff;border-color:#ddd6fe}
+.result-card:nth-child(3) span, .result-card:nth-child(3) b{color:#7c3aed}
 .result-card:nth-child(4){background:#fff7ed;border-color:#fed7aa}
+.result-card:nth-child(4) span, .result-card:nth-child(4) b{color:#ea580c}
 
+/* Existing InfoBox Internal Styles preserved identically */
 .info-box,.diagram-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-top:10px;font-size:13px;line-height:1.6;color:#4a5568;font-weight:500}
 .info-box h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-top:8px;font-size:13px;color:#334155;font-weight:700;overflow-x:auto}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-top:8px;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
 .diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
 .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
-.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-.exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
+.exampleGrid, .aboutMiniGrid, .linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.exampleCard, .aboutMiniCard, .linkCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.exampleCard strong, .aboutMiniCard span, .linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+
+/* Premium Appended UI Content Extensions Styles (Locked & Safe) */
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:500;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.info-box h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
 
 @media(max-width:600px){
+  body{padding:10px}
+  .coax-wrap{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
   .input-row{grid-template-columns:minmax(0,1fr) 72px}
   .result-grid{grid-template-columns:1fr 1fr;gap:10px}
   .result-card{padding:12px;min-height:76px}
   .result-card b{font-size:15px}
-  .exampleGrid{grid-template-columns:1fr}
+  .exampleGrid, .aboutMiniGrid, .linkGrid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -175,6 +196,79 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
     <div class="formulaLine">Inductance = 5.08 * ln(d2 / d1) &nbsp;&nbsp;(expressed in nH/in)</div>
     <div class="formulaLine">Capacitance = 1.41 / ln(d2 / d1) &nbsp;&nbsp;(expressed in pF/in)</div>
   </div>
+
+  <!-- Premium Appended Content (Strictly Locked consecutive formula blocks with absolutely NO loose text) -->
+  <section class="info-box">
+    <h2>Step-by-Step Example</h2>
+    <div class="formula">Example: Conductor ID (d1) = 35 mil, Shield Inner ID (d2) = 116 mil, Dielectric (er) = 2.30.</div>
+    <div class="formula">Step 1: Convert units to standard calculation inches. Conductor ID (d1) = 35 * 0.001 = 0.035 in, and Shield ID (d2) = 116 * 0.001 = 0.116 in.</div>
+    <div class="formula">Step 2: Calculate the natural logarithm of the diameter ratio: ln(d2 / d1) = ln(0.116 / 0.035) = ln(3.314286) = 1.198228.</div>
+    <div class="formula">Step 3: Solve the characteristic impedance (Zo) using the natural logarithm formula: Zo = (60 / sqrt(erv)) * ln(d2 / d1) = (60 / sqrt(2.30)) * 1.198228 = (60 / 1.516575) * 1.198228 = 47.41 Ohms.</div>
+    <div class="formula">Step 4: Solve the propagation delay: Delay = 84.72e-3 * sqrt(2.30) = 0.08472 * 1.516575 = 0.1285 ns/in.</div>
+    <div class="formula">Step 5: Solve the parasitic inductance: Inductance = 5.08 * ln(d2 / d1) = 5.08 * 1.198228 = 6.09 nH/in.</div>
+    <div class="formula">Step 6: Solve the parasitic capacitance: Capacitance = 1.41 / ln(d2 / d1) = 1.41 / 1.198228 = 1.18 pF/in.</div>
+    <div class="formula">Result: The calculated parameters are Impedance = 47.41 Ohms, Delay = 0.1285 ns/in, Inductance = 6.09 nH/in, and Capacitance = 1.18 pF/in.</div>
+  </section>
+
+  <section class="info-box">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the external inner <strong>In Dia (Conductor ID)</strong> value and select the desired multiplier unit (mil, cm, mm, µm, in).</div>
+      <div class="aboutStep">Enter the inner diameter of the outer <strong>In Dia (Surface Shield ID)</strong> and select its unit.</div>
+      <div class="aboutStep">Input the relative permittivity of the insulating substrate in the <strong>Dielectric (Substrate Constant)</strong> field.</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to initiate the coaxial transmission line solver.</div>
+      <div class="aboutStep">Read the computed values for Impedance (Zo), Propagation Delay, Inductance, and Capacitance on the Results cards.</div>
+    </div>
+  </section>
+
+  <section class="info-box">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Determine high-frequency coaxial cable transmission line parameters with precision.</strong>
+      <p>The CalcBoy Coax Impedance Calculator evaluates the characteristic impedance (Zo), propagation delay, parasitic inductance, and capacitance per unit length using outer shield and inner conductor diameters.</p>
+    </div>
+    <p class="aboutText">Coaxial cables are standard transmission mediums in radio frequency (RF) networks, laboratory instrumentation, and high-speed data links. The geometric spacing between the inner wire and the grounding shield determines how electromagnetic energy propagates along the line. Impedance must be closely controlled to prevent wave reflections and maximize signal delivery.</p>
+    <p class="aboutText">Using these standard geometric ratios, antenna designers, RF engineers, and lab technicians can predict cable behavior, check matching limits, and select appropriate materials (such as foam or solid dielectric insulators) to meet system specifications.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Best Use</span>RF circuit planning, coaxial line selection, and laboratory impedance matching.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Characteristic Impedance (Zo), Propagation Delay, Inductance, and Capacitance per inch.</div>
+      <div class="aboutMiniCard"><span>Helpful For</span>High-speed layouts, ham radio feedlines, and signal integrity evaluation.</div>
+      <div class="aboutMiniCard"><span>Design Reminder</span>Dielectric consistency directly affects transmission speed and shielding.</div>
+    </div>
+    <div class="aboutNote">Tip: Standard RG-58 cables are rated at 50 Ohms, while TV antenna cables (RG-6) are typically rated at 75 Ohms. Match these system values to eliminate power loss.</div>
+  </section>
+
+  <section class="info-box">
+    <h2>Frequently Asked Questions</h2>
+    <h3>How do the cable dimensions affect impedance?</h3>
+    <p class="aboutText">Impedance increases as the outer shield diameter (d2) becomes larger relative to the inner conductor diameter (d1). Conversely, a higher dielectric constant (er) decreases characteristic impedance.</p>
+
+    <h3>What are common coaxial dielectric values?</h3>
+    <p class="aboutText">Solid Teflon (PTFE) has a dielectric constant of 2.1, solid Polyethylene (PE) is 2.3, and foamed dielectrics range between 1.3 and 1.6 due to high air content.</p>
+
+    <h3>Why is propagation delay important?</h3>
+    <p class="aboutText">Propagation delay determines signal transit time along the cable. In phase-matched antenna arrays or high-speed clock routing, matching cable propagation delays prevents skew and phase alignment issues.</p>
+
+    <h3>Does cable length affect characteristic impedance?</h3>
+    <p class="aboutText">No. Characteristic impedance is a per-unit-length property set entirely by cross-sectional geometry and materials. A 1-inch cable and a 100-foot cable of the same type have the same impedance.</p>
+
+    <h3>What happens if cable impedance is mismatched?</h3>
+    <p class="aboutText">Mismatches cause standing wave spikes (high SWR) and signal energy reflections. This results in power loss, heating, and signal distortion.</p>
+
+    <h3>How are capacitance and inductance related to Zo?</h3>
+    <p class="aboutText">Characteristic impedance is mathematically related to these parameters by the equation Zo = sqrt(L / C). Controlling spacing helps achieve the target Zo value.</p>
+  </section>
+
+  <section class="info-box">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>VSWR to Return Loss Calculator</strong>Evaluate wave reflections and power transfer.</div>
+      <div class="linkCard"><strong>Microstrip Line Impedance Solver</strong>Plan matching traces on circuit board layouts.</div>
+      <div class="linkCard"><strong>Skin Depth Calculator</strong>Calculate high-frequency conductor penetration.</div>
+      <div class="linkCard"><strong>RF Attenuator Calculator</strong>Design matching pads to reduce signal levels safely.</div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -244,4 +338,94 @@ function coaxAACRun(){
   return false;
 }
 </script>
-</body></html>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do the cable dimensions affect impedance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Impedance increases as the outer shield diameter (d2) becomes larger relative to the inner conductor diameter (d1). Conversely, a higher dielectric constant (er) decreases characteristic impedance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are common coaxial dielectric values?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Solid Teflon (PTFE) has a dielectric constant of 2.1, solid Polyethylene (PE) is 2.3, and foamed dielectrics range between 1.3 and 1.6 due to high air content."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is propagation delay important?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Propagation delay determines signal transit time along the cable. In phase-matched antenna arrays or high-speed clock routing, matching cable propagation delays prevents skew and phase alignment issues."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does cable length affect characteristic impedance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Characteristic impedance is a per-unit-length property set entirely by cross-sectional geometry and materials. A 1-inch cable and a 100-foot cable of the same type have the same impedance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if cable impedance is mismatched?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mismatches cause standing wave spikes (high SWR) and signal energy reflections. This results in power loss, heating, and signal distortion."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How are capacitance and inductance related to Zo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Characteristic impedance is mathematically related to these parameters by the equation Zo = sqrt(L / C). Controlling spacing helps achieve the target Zo value."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Components",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Coax Impedance Calculator",
+      "item": "https://calcboy.com/tool/coax-impedance-calculator"
+    }
+  ]
+}
+</script>
+</body>
+</html>
