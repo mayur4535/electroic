@@ -1,19 +1,35 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RF Transformer Calculator | Impedance Matching Tool</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RF Transformer Calculator | Winding turns Ratio Solver | CalcBoy</title>
 <meta name="description" content="Calculate primary to secondary turns ratio (Np/Ns) and secondary to primary turns ratio (Ns/Np) of an RF transformer from impedance values.">
-<meta name="keywords" content="rf transformer calculator, turns ratio calculation formula, impedance matching transformer solver, primary secondary coil winding ratio, center tapped transformer turns ratio, source load impedance mismatch tool, magnetic coupling transformer equation, rf balun design turns ratio, winding ratio solver circuit">
+<meta name="keywords" content="rf transformer calculator, turns ratio calculation formula, impedance matching transformer solver, primary secondary coil winding ratio, center tapped transformer turns ratio, source load impedance mismatch tool, magnetic coupling transformer equation, rf balun design turns ratio, winding ratio solver circuit, CalcBoy">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0;color:#333}
-.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+/* Reset and Container Margins - Tightened to exactly 10px on mobile as requested */
+*{box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif}
+body{margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+.calc{
+  width:100% !important;
+  max-width:620px !important;
+  margin:0 auto !important;
+  padding:10px !important; /* Forces 10px margin edge-to-edge on mobile screens */
+  padding-top:14px !important;
+}
+
+/* Form Layout */
 label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
 .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
 input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
 .unitBox{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#555}
 input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
 .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+
 /* Small red error text custom styled above result layout */
-#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+
+/* Results Display */
 .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
 .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{padding:16px;border-radius:12px;min-height:82px}
@@ -23,20 +39,37 @@ input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
 .blue *{color:#2359e8}
 .green{background:#ecfdf5;border:1px solid #bbf7d0}
 .green *{color:#16a34a}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+
+/* Premium Content & InfoBox Layouts */
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
-.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
+.infoBox p, .infoBox li{font-size:13.5px;line-height:1.6;color:#475467;font-weight:400}
 .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:500;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
 .diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
 .waveguide-diagram svg{width:100%;max-width:440px;height:auto;display:block;margin:auto}
+
+/* Premium UI Structure Locks */
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:12px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:500;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:500;color:#475467;line-height:1.55}
+.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+
 @media(max-width:600px){
+  .calc{padding:10px !important} /* 10px Mobile Margin Gutter strictly maintained */
   .row{grid-template-columns:minmax(0,1fr) 72px}
   .resultGrid{grid-template-columns:1fr}
-  .paramGrid{grid-template-columns:1fr}
+  .paramGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 }
 </style></head>
 <body>
@@ -57,7 +90,7 @@ input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
     <button class="btn" type="button" onclick="calc()">CALCULATE</button>
   </form>
   
-  <div id="errorBox">Please enter valid values.</div>
+  <div id="errorBox">Please enter valid values. All fields are required.</div>
 
   <div class="resultTitle">RESULTS</div>
   <div class="resultGrid">
@@ -87,15 +120,17 @@ input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
 
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
-    <div class="exampleBox">
-      <strong>Example 1: Standard 1:4 Impedance Step-Up Balun</strong><br>
-      • Input Impedance (Zi) = 50.00 Ω | Output Impedance (Zl) = 200.00 Ω<br>
-      • <em>Calculated Primary-to-Secondary (Np/Ns): 0.5000000 | Secondary-to-Primary (Ns/Np): 2.0000000</em>
-    </div>
-    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
-      <strong>Example 2: Step-Down Matching Network</strong><br>
-      • Input Impedance (Zi) = 75.00 Ω | Output Impedance (Zl) = 12.00 Ω<br>
-      • <em>Calculated Primary-to-Secondary (Np/Ns): 2.5000000 | Secondary-to-Primary (Ns/Np): 0.4000000</em>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Example 1: Standard 1:4 Impedance Step-Up Balun</strong></p>
+        <p>• Input Impedance (Zi) = 50.00 Ω | Output Impedance (Zl) = 200.00 Ω<br>
+        • <em>Calculated Primary-to-Secondary (Np/Ns): 0.5000000 | Secondary-to-Primary (Ns/Np): 2.0000000</em></p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Example 2: Step-Down Matching Network</strong></p>
+        <p>• Input Impedance (Zi) = 75.00 Ω | Output Impedance (Zl) = 12.00 Ω<br>
+        • <em>Calculated Primary-to-Secondary (Np/Ns): 2.5000000 | Secondary-to-Primary (Ns/Np): 0.4000000</em></p>
+      </div>
     </div>
   </section>
 
@@ -164,6 +199,90 @@ input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
     </div>
     <p>The transform framework applies the physical square-law induction rule to compute electrical winding relationships necessary to counter impedance step alterations directly.</p>
   </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Practical Calculation Example</h2>
+    <div class="formulaBox">
+      Suppose you need to match a standard RF transmitter output to a long-wire antenna:
+      <br>• Input Impedance (Zi) = 50 Ω
+      <br>• Output Impedance (Zl) = 450 Ω
+    </div>
+    <p><strong>Step 1:</strong> Calculate the impedance ratio and solve the Primary-to-Secondary turns ratio (Np/Ns).</p>
+    <div class="formulaBox">
+      Np / Ns = sqrt( Zi / Zl )
+      <br>Np / Ns = sqrt( 50 / 450 )
+      <br>Np / Ns = sqrt( 0.1111111 ) ≈ 0.3333333
+    </div>
+    <p>This means a 1:3 winding turns ratio is required (for every 1 turn on the primary coil, you need 3 turns on the secondary coil).</p>
+    <p><strong>Step 2:</strong> Solve the inverse Secondary-to-Primary turns ratio (Ns/Np).</p>
+    <div class="formulaBox">
+      Ns / Np = 1 / (Np / Ns)
+      <br>Ns / Np = 1 / 0.3333333 = 3.0000000
+    </div>
+    <p>This confirms that a 1:9 impedance matching transformer requires a 1:3 turns ratio winding structure.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the driving source <strong>Input Impedance (Zi)</strong> value in Ohms (Ω). This represents the primary winding impedance.</div>
+      <div class="aboutStep">Enter the terminating load <strong>Output Impedance (Zl)</strong> value in Ohms (Ω) for the secondary network.</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to initiate the square-root winding conversion.</div>
+      <div class="aboutStep">Read the computed Primary-to-Secondary (Np/Ns) and Secondary-to-Primary (Ns/Np) ratios on the Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Optimize impedance matching networks using high-frequency RF winding ratios.</strong>
+      <p>The CalcBoy RF Transformer Calculator evaluates the primary-to-secondary turns ratio (Np/Ns) and the secondary-to-primary turns ratio (Ns/Np) needed to achieve perfect impedance matching between circuits.</p>
+    </div>
+    
+    <p>In high-frequency radio frequency (RF) design, transferring power efficiently between components is a fundamental engineering requirement. Active circuits like power amplifiers, mixers, and receivers often exhibit different characteristic impedances than passive structures like antennas or transmission lines (typically 50 or 75 Ohms). Connecting two mismatched interfaces directly causes signal reflections, standing waves (high VSWR), and significant insertion loss. An RF transformer uses magnetic flux coupling to transform voltage and current levels, providing a passive, low-loss method to match these impedances.</p>
+    
+    <p>Unlike low-frequency power transformers, RF transformers operate across megahertz and gigahertz bands, utilizing specialized ferrite toroid or binocular cores to achieve high magnetic coupling coefficients with minimal losses. The math behind this transformation relies on the square-law induction relationship: the impedance ratio between the primary and secondary windings is proportional to the square of the winding turns ratio. This calculator solves this relationship, helping antenna designers and hardware engineers specify balun designs, matching networks, and circuit board interfaces with precision.</p>
+
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Application</span>Balun design, antenna impedance matching, power amplifier staging, and receiver front-ends.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Winding turns ratios (Np/Ns and Ns/Np) for step-up or step-down configurations.</div>
+      <div class="aboutMiniCard"><span>Crucial Principle</span>Uses the square-root of the impedance ratio to solve for physical coil winding ratios.</div>
+      <div class="aboutMiniCard"><span>Design Rule</span>Align winding ratios to core saturation limits to avoid signal distortion and overheating.</div>
+    </div>
+
+    <div class="aboutNote">Tip: A standard 4:1 impedance matching balun (matching 200 Ohms to 50 Ohms) requires a 2:1 winding turns ratio (Ns/Np = 2). Keep this square-law relationship in mind during wire selection.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>Why is the transformer turns ratio related to the square root of the impedance ratio?</h3>
+    <p>Because voltage scales proportionally with the turns ratio (Vp / Vs = Np / Ns) and current scales inversely (Ip / Is = Ns / Np). Since electrical impedance is the ratio of voltage to current (Z = V / I), the impedance ratio scales with the square of the turns ratio (Zp / Zs = (Np / Ns)^2). Taking the square root gives the winding turns ratio.</p>
+
+    <h3>What is an RF Balun, and how does it relate to these calculations?</h3>
+    <p>A "Balun" (Balanced-to-Unbalanced) is a specialized RF transformer designed to interface balanced signal lines (like folded dipoles) with unbalanced lines (like coaxial cables). Standard 4:1 impedance baluns utilize a 2:1 winding turns ratio to match a 200 Ohm balanced antenna to a 50 Ohm unbalanced coaxial feedline.</p>
+
+    <h3>Why do RF transformers use ferrite cores instead of iron?</h3>
+    <p>At high frequencies, ordinary iron cores suffer from extreme eddy current and hysteresis power losses. Ferrite materials exhibit very high electrical resistivity along with high magnetic permeability, which minimizes core heating and allows efficient energy transfer across megahertz and gigahertz frequency bands.</p>
+
+    <h3>How does winding style (like bifilar or trifilar) affect RF transformer performance?</h3>
+    <p>Wrapping the primary and secondary wires tightly together in parallel (bifilar) minimizes leakage inductance and parasitic capacitance. This close physical coupling is crucial for maintaining wide operating bandwidths and minimizing high-frequency insertion loss.</p>
+
+    <h3>Can I use this calculator for center-tapped RF transformers?</h3>
+    <p>Yes. If the transformer has a center tap, the calculated turns ratio applies to the entire winding. If you are matching to only one side of the tap (half-winding), the matched impedance will be one-fourth of the total secondary impedance due to the square-law relationship.</p>
+
+    <h3>What limits the maximum power rating of an RF transformer?</h3>
+    <p>Power handling is restricted primarily by the magnetic saturation threshold of the ferrite core. Exceeding this limit causes non-linear distortion, introduces harmonics, and generates excessive core heat, which can damage the wire insulation.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>VSWR and Return Loss Calculator</strong>Check antenna match and signal reflection levels.</div>
+      <div class="linkCard"><strong>RF Attenuator Calculator</strong>Design matching resistive pad networks.</div>
+      <div class="linkCard"><strong>Microstrip Line Impedance Solver</strong>Model trace dimensions on printed circuit boards.</div>
+      <div class="linkCard"><strong>Coaxial Cable Attenuation Solver</strong>Track transmission line attenuation losses.</div>
+    </div>
+  </section>
 </main>
 
 <script>
@@ -202,4 +321,94 @@ function calc(){
 
 clearResults();
 </script>
-</body></html>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why is the transformer turns ratio related to the square root of the impedance ratio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because voltage scales proportionally with the turns ratio (Vp / Vs = Np / Ns) and current scales inversely (Ip / Is = Ns / Np). Since electrical impedance is the ratio of voltage to current (Z = V / I), the impedance ratio scales with the square of the turns ratio (Zp / Zs = (Np / Ns)^2). Taking the square root gives the winding turns ratio."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is an RF Balun, and how does it relate to these calculations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A 'Balun' (Balanced-to-Unbalanced) is a specialized RF transformer designed to interface balanced signal lines (like folded dipoles) with unbalanced lines (like coaxial cables). Standard 4:1 impedance baluns utilize a 2:1 winding turns ratio to match a 200 Ohm balanced antenna to a 50 Ohm unbalanced coaxial feedline."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do RF transformers use ferrite cores instead of iron?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At high frequencies, ordinary iron cores suffer from extreme eddy current and hysteresis power losses. Ferrite materials exhibit very high electrical resistivity along with high magnetic permeability, which minimizes core heating and allows efficient energy transfer across megahertz and gigahertz frequency bands."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does winding style (like bifilar or trifilar) affect RF transformer performance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Wrapping the primary and secondary wires tightly together in parallel (bifilar) minimizes leakage inductance and parasitic capacitance. This close physical coupling is crucial for maintaining wide operating bandwidths and minimizing high-frequency insertion loss."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this calculator for center-tapped RF transformers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If the transformer has a center tap, the calculated turns ratio applies to the entire winding. If you are matching to only one side of the tap (half-winding), the matched impedance will be one-fourth of the total secondary impedance due to the square-law relationship."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What limits the maximum power rating of an RF transformer?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Power handling is restricted primarily by the magnetic saturation threshold of the ferrite core. Exceeding this limit causes non-linear distortion, introduces harmonics, and generates excessive core heat, which can damage the wire insulation."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Calculators",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "RF Transformer Calculator",
+      "item": "https://calcboy.com/tool/rf-transformer-calculator"
+    }
+  ]
+}
+</script>
+</body>
+</html>
