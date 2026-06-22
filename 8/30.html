@@ -3,15 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cascaded Noise Figure Calculator | RF Link System Planner</title>
+<title>Cascaded Noise Figure Calculator | RF Link System Planner | CalcBoy</title>
 
 <meta name="description" content="Free online Cascaded Noise Figure Calculator. Compute system gain paths, cumulative noise factor bounds, thermal temperature offsets, and friis equations dynamically.">
-<meta name="keywords" content="cascaded noise figure calculator, friis cascade noise tool, multi stage rf amplifier solver, composite link budget factor calculator, noise factor to noise temperature conversion, spot noise factor validation, effective input noise temperature grid, receiver system noise performance tracker, low noise amplifier link budget calculation, friis noise equation simulation, receiver system sensitivity analyzer, spot noise attenuation index, receiver stages insertion loss, automatic rf system link modeling, rf link cascade optimizer, cumulative noise figure equation, noise factor calculation engine">
+<meta name="keywords" content="cascaded noise figure calculator, friis cascade noise tool, multi stage rf amplifier solver, composite link budget factor calculator, noise factor to noise temperature conversion, spot noise factor validation, effective input noise temperature grid, receiver system noise performance tracker, low noise amplifier link budget calculation, friis noise equation simulation, receiver system sensitivity analyzer, spot noise attenuation index, receiver stages insertion loss, automatic rf system link modeling, rf link cascade optimizer, cumulative noise figure equation, noise factor calculation engine, CalcBoy">
 
 <style>
+    /* Exact CSS Classes and Margins Imported from Master Flyback Reference Template */
     *{box-sizing:border-box;font-family:Arial,sans-serif}
-    body{margin:0;background:#f6f8fb;padding:0;color:#333}
-    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+    .calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+
+    /* Form Inputs and Interactive Row Styling */
     label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
     .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
     .stageRow{display:grid;grid-template-columns:54px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:10px}
@@ -22,27 +25,47 @@
     .valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151;background:#eee}
     input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
     .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px}
-    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
     .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    
+    /* Symmetrical 2-Column Results Grid strictly preserved */
     .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
     .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
-    .cardLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+    .cardLine{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
     .cardValue,.cardUnit{font-size:18px;font-weight:900;line-height:1}
     .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
     .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
     .purple{background:#f5f3ff;border-color:#ddd6fe} .purple *{color:#7c3aed}
-    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    
+    /* Existing InfoBox Internal Styles preserved identically */
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
     .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+    .infoBox p, .infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
     .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
-    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .formula, .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+    .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem, .exampleCard, .aboutMiniCard, .linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+    .paramItem strong, .aboutMiniCard span, .linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+    .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
     .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
-    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr}.paramGrid{grid-template-columns:1fr}.stageRow,.stageHead{grid-template-columns:48px minmax(0,1fr) minmax(0,1fr);gap:7px}}
+
+    /* Premium Appended UI Content Extensions Styles (Locked & Safe) */
+    .aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+    .aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+    .aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+    .aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+    .aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+    .aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
+    @media(max-width:600px){
+      body{padding:10px}
+      .row{grid-template-columns:minmax(0,1fr) 72px}
+      .resultGrid{grid-template-columns:1fr 1fr}
+      .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{grid-template-columns:1fr}
+      .stageRow, .stageHead{grid-template-columns:48px minmax(0,1fr) minmax(0,1fr);gap:7px}
+    }
 </style>
 </head>
 <body>
@@ -63,6 +86,7 @@
 
   <form id="stageForm" onsubmit="event.preventDefault();"></form>
   <button class="btn" id="calculate" type="button" onclick="application.calculate()">CALCULATE</button>
+</form>
 
   <div id="errorBox">Please enter valid values in all stage blocks.</div>
 
@@ -142,15 +166,84 @@
         </svg>
       </div>
     </div>
-    <p></p>
     <p>Cascading configurations analyze cumulative attenuation performance. Early stage amplification factor attributes drastically scale down overall degradation boundaries.</p>
   </section>
 
   <section class="infoBox">
     <h2>Formulas & Mathematical Logic</h2>
-    <div class="formulaLine">F_total = F1 + (F2 - 1)/G1 + (F3 - 1)/(G1 * G2) + ...</div>
-    <div class="formulaLine">Noise Temp = 290 * (10^(NF_total/10) - 1)</div>
+    <div class="formula">F_total = F1 + (F2 - 1)/G1 + (F3 - 1)/(G1 * G2) + ...</div>
+    <div class="formula">Noise Temp = 290 * (10^(NF_total/10) - 1)</div>
     <p>Logarithmic input variables are transformed into direct active scalars internally inside execution arrays to map cascading network layers safely.</p>
+  </section>
+
+  <!-- Premium Appended Content (Strictly Locked consecutive formulaBox blocks with absolutely NO loose text) -->
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: 2-stage cascade where Stage 1 has Noise Figure (NF1) = 1.20 dB, Gain (G1) = 15.00 dB, and Stage 2 has Noise Figure (NF2) = 3.00 dB, Gain (G2) = 10.00 dB.</div>
+    <div class="formulaBox">Step 1: Convert all logarithmic decibel parameters to raw linear power factor ratios: F1 = 10^(1.20 / 10) = 1.318257, F2 = 10^(3.00 / 10) = 1.995262, and G1 = 10^(15.00 / 10) = 31.622777.</div>
+    <div class="formulaBox">Step 2: Solve the total system noise factor using Friis cascade noise equation: F_total = F1 + (F2 - 1) / G1 = 1.318257 + (1.995262 - 1) / 31.622777 = 1.318257 + 0.031473 = 1.349730.</div>
+    <div class="formulaBox">Step 3: Convert the total linear noise factor back to a logarithmic Noise Figure in decibels: Total NF = 10 * log10(F_total) = 10 * log10(1.349730) = 1.3025 dB.</div>
+    <div class="formulaBox">Step 4: Solve the cumulative total linear gain of the system by summing up stage gains: Total Gain = G1 + G2 = 15.00 + 10.00 = 25.00 dB.</div>
+    <div class="formulaBox">Step 5: Solve the effective input system noise temperature (Te) using standard room temperature reference (290 K): Te = 290 * (F_total - 1) = 290 * (1.349730 - 1) = 290 * 0.349730 = 101.42 K.</div>
+    <div class="formulaBox">Result: The calculated composite parameters are Total NF = 1.3025 dB, Total Gain = 25.00 dB, and Noise Temperature = 101.42 K.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Select the total number of amplifier stages in your receiver lineup using the <strong>Number of Cascaded Amplifiers</strong> dropdown.</div>
+      <div class="aboutStep">Input the respective <strong>NF dB</strong> (Noise Figure) and <strong>Gain dB</strong> values for each active stage generated in the form grid.</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to initiate the Friis cascade noise computation.</div>
+      <div class="aboutStep">Read the computed values for Total Noise Figure, Total Gain, and equivalent Noise Temperature on the Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Analyze multi-stage receiver chains and optimize cascade noise factors with professional precision.</strong>
+      <p>The CalcBoy Cascaded Noise Figure Calculator evaluates total noise figure, cumulative gain, and equivalent noise temperature across up to 10 sequential active receiver stages using Friis equations.</p>
+    </div>
+    <p>An RF link budget is a comprehensive mathematical accounting of all the power gains and losses that an electromagnetic signal experiences as it propagates from a transmitter through an open-air medium to a receiver. Designing a robust wireless network—whether it is a terrestrial Wi-Fi link, a long-range point-to-point microwave backhaul, or a satellite communication transponder—requires a detailed link budget analysis. If the signal reaching the receiving antenna is too weak, it falls below the receiver sensitivity threshold, resulting in packet loss, link degradation, or a complete connection dropout. An accurate budget ensures that there is sufficient margin to withstand temporary environmental attenuations.</p>
+    <p>To compute these transmission metrics, the calculator integrates several distinct physical layers. The active power of the transmitter radio is attenuated by the passive insertion losses of coaxial cables, connectors, and lightning protectors before reaching the feedpoint. The antenna then concentrates this energy, providing a directional gain (Gt). As the wave travels through free space, it spreads spherically, creating a high-loss propagation path (Free Space Loss) before being captured by the receiver's directional antenna (Gr) and attenuated again by receiver cabling. The net signal level reaching the receiver port—referred to as the Received Signal Strength Indicator (RSSI)—must exceed the receiver sensitivity by a safety threshold called the fade margin. This calculator solves for these variables, allowing RF engineers to predict link reliability under diverse operational configurations.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Application</span>Low-noise amplifier cascading, satellite receiver chains, radar front-ends, and link budget optimization.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Cumulative Noise Figure (dB), Total Power Gain (dB), and effective input Noise Temperature (Kelvin).</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Gains of preceding stages divide and suppress the noise contributions of subsequent receiver components.</div>
+      <div class="aboutMiniCard"><span>Design Rule</span>Always place your lowest noise figure, highest gain amplifier as the first active stage in the cascade.</div>
+    </div>
+    <div class="aboutNote">Tip: Passive stages (like filters or cables with insertion loss) have a noise figure equal to their loss and a negative gain. Be sure to input negative gain values for these passive lossy stages.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What physically is the purpose of Friis' cascade noise equation?</h3>
+    <p>Friis' cascade equation calculates the cumulative noise figure of a series of active and passive components connected in series. It mathematically models how noise added by later stages is suppressed by the gains of the preceding stages.</p>
+
+    <h3>Why is the noise figure of the first stage (LNA) the most critical?</h3>
+    <p>Because the noise added by the first stage is amplified by the full gain of the system, whereas the noise added by later stages is divided by the cumulative gains of all the stages that came before them. Therefore, the first amplifier establishes the absolute noise baseline of the receiver.</p>
+
+    <h3>How do passive, lossy components (like cables or filters) affect the cascade?</h3>
+    <p>A passive component has a noise figure equal to its attenuation loss (in dB) and a negative gain equal to that same loss. If placed before the first LNA, a lossy cable directly adds to the system noise figure decibel-for-decibel, significantly degrading receiver sensitivity.</p>
+
+    <h3>What is the relationship between cascaded noise figure and noise temperature?</h3>
+    <p>They are different representations of the same physical noise power. Once the cumulative system noise figure is calculated, the equivalent noise temperature (Te) is computed relative to the standard room reference temperature of 290 Kelvin. This thermal temperature is highly favored in space and cryogenic systems.</p>
+
+    <h3>Can this calculator handle negative gains or passive stages?</h3>
+    <p>Yes. If a stage represents a passive filter, cable, or attenuator, simply enter its insertion loss (e.g., 3 dB) as a positive Noise Figure value, and input its negative loss (e.g., -3 dB) in the Gain field. The script will compute the cascade correctly.</p>
+
+    <h3>What limits the maximum number of stages I can compute?</h3>
+    <p>This calculator supports up to 10 cascaded stages, which is more than sufficient for almost all practical receiver topologies, including complex double-conversion superheterodyne architectures.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Noise Figure and Noise Temperature Calculator</strong>Convert NF to absolute temperature Kelvins.</div>
+      <div class="linkCard"><strong>RF Path Loss Calculator</strong>Model free-space signal attenuation across distance boundaries.</div>
+      <div class="linkCard"><strong>EIRP (Isotropic Radiated Power) Solver</strong>Calculate total radiated transmitter power levels.</div>
+      <div class="linkCard"><strong>Specific Absorption Rate (SAR) Solver</strong>Evaluate biological electromagnetic wave absorption limits.</div>
+    </div>
   </section>
 </main>
 
@@ -214,6 +307,95 @@ var application={
   }
 };
 document.addEventListener("DOMContentLoaded",function(){ application.init(); });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What physically is the purpose of Friis' cascade noise equation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Friis' cascade equation calculates the cumulative noise figure of a series of active and passive components connected in series. It mathematically models how noise added by later stages is suppressed by the gains of the preceding stages."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the noise figure of the first stage (LNA) the most critical?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because the noise added by the first stage is amplified by the full gain of the system, whereas the noise added by later stages is divided by the cumulative gains of all the stages that came before them. Therefore, the first amplifier establishes the absolute noise baseline of the receiver."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do passive, lossy components (like cables or filters) affect the cascade?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A passive component has a noise figure equal to its attenuation loss (in dB) and a negative gain equal to that same loss. If placed before the first LNA, a lossy cable directly adds to the system noise figure decibel-for-decibel, significantly degrading receiver sensitivity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the relationship between cascaded noise figure and noise temperature?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They are different representations of the same physical noise power. Once the cumulative system noise figure is calculated, the equivalent noise temperature (Te) is computed relative to the standard room reference temperature of 290 Kelvin. This thermal temperature is highly favored in space and cryogenic systems."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can this calculator handle negative gains or passive stages?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If a stage represents a passive filter, cable, or attenuator, simply enter its insertion loss (e.g., 3 dB) as a positive Noise Figure value, and input its negative loss (e.g., -3 dB) in the Gain field. The script will compute the cascade correctly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What limits the maximum number of stages I can compute?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator supports up to 10 cascaded stages, which is more than sufficient for almost all practical receiver topologies, including complex double-conversion superheterodyne architectures."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Calculators",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Cascaded Noise Figure Calculator",
+      "item": "https://calcboy.com/tool/cascaded-noise-figure-calculator"
+    }
+  ]
+}
 </script>
 </body>
 </html>
