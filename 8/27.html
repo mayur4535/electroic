@@ -3,22 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RF Link Budget Calculator | Wireless Propagation System Planner</title>
+<title>RF Link Budget Calculator | Wireless Propagation System Planner | CalcBoy</title>
 
 <meta name="description" content="Free online RF Link Budget Calculator to compute fade margin, free space path loss, received signal strength indicator (RSSI), transmission distance limits, and required baseline transmit power values.">
-<meta name="keywords" content="rf link budget calculator, fade margin calculation tool, free space path loss tracker, received signal strength rssi solver, wireless link power distance analyzer, transmission line cable loss pad, satellite link attenuation profile, microwave path planning matrix">
+<meta name="keywords" content="rf link budget calculator, fade margin calculation tool, free space path loss tracker, received signal strength rssi solver, wireless link power distance analyzer, transmission line cable loss pad, satellite link attenuation profile, microwave path planning matrix, CalcBoy">
 
 <style>
+    /* Exact CSS Classes and Margins Imported from Master Flyback Reference Template */
     *{box-sizing:border-box;font-family:Arial,sans-serif}
-    body{margin:0;background:#f6f8fb;padding:0;color:#333}
-    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+    .calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+
+    /* Form Inputs and Interactive Row Styling */
     label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
     .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
     .valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
     .valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151;background:#eee}
     input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
     input:disabled{background:#f3f4f6;color:#9ca3af}
-    .optionBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:16px}
+    
+    /* Options Box Styling */
+    .optionBox{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
     .optionTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-bottom:12px}
     .radioGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
     .radioItem{position:relative}
@@ -26,8 +31,12 @@
     .radioItem label{margin:0;min-height:42px;display:flex;align-items:center;justify-content:center;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-size:13px;font-weight:800;cursor:pointer;text-align:center;padding:8px 5px}
     .radioItem input:checked + label{border-color:#ff6a00;background:#fff7ed;color:#c2410c}
     .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+    
+    /* Small red error text custom styled above result layout */
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
     .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    
+    /* Symmetrical 2-Column Results Grid strictly preserved */
     .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
     .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
@@ -36,17 +45,34 @@
     .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
     .purple{background:#f5f3ff;border-color:#ddd6fe} .purple *{color:#7c3aed}
     .orange{background:#fff7ed;border-color:#fed7aa} .orange *{color:#ea580c}
-    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    
+    /* Existing InfoBox Internal Styles preserved identically */
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
     .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+    .infoBox p, .infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
     .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
-    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .formula, .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+    .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem, .exampleCard, .aboutMiniCard, .linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+    .paramItem strong, .aboutMiniCard span, .linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+    .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
     .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
-    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr}.paramGrid{grid-template-columns:1fr}}
+
+    /* Premium Appended UI Content Extensions Styles (Locked & Safe) */
+    .aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+    .aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+    .aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+    .aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+    .aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+    .aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
+    @media(max-width:600px){
+      body{padding:10px}
+      .row{grid-template-columns:minmax(0,1fr) 72px}
+      .resultGrid{grid-template-columns:1fr 1fr}
+      .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{grid-template-columns:1fr}
+    }
 </style>
 </head>
 <body>
@@ -89,7 +115,7 @@
     <button class="btn" type="button" onclick="calculateAll()">CALCULATE</button>
   </form>
 
-  <div id="errorBox">Please enter valid measurement settings.</div>
+  <div id="errorBox">Please enter valid measurement settings. All fields are required and must be greater than zero.</div>
 
   <div class="resultTitle">RESULTS</div>
   <div class="resultGrid">
@@ -181,7 +207,7 @@
           <text x="486" y="198" fill="#2359e8" font-size="12" font-weight="bold" text-anchor="start">Rx power</text>
           
           <line x1="435" y1="240" x2="480" y2="240" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
-          <text x="486" y="244" fill="#475569" font-size="12" font-weight="bold" text-anchor="start">Rx sensitivity</text>
+          <text x="486" y="244" fill="#475469" font-size="12" font-weight="bold" text-anchor="start">Rx sensitivity</text>
           
           <line x1="457" y1="198" x2="457" y2="237" stroke="#2359e8" stroke-width="1.2"/>
           <polygon points="457,198 454,206 460,206" fill="#2359e8"/>
@@ -195,11 +221,81 @@
 
   <section class="infoBox">
     <h2>Formulas & Mathematical Logic</h2>
-    <div class="formulaLine">Free Space Loss = C + 20 * log10(Distance) + 20 * log10(Frequency)</div>
-    <div class="formulaLine">ERP = Tx Power - Tx Cable Loss + Tx Antenna Gain</div>
-    <div class="formulaLine">Rx Signal Strength = ERP - Free Space Loss + Rx Antenna Gain - Rx Cable Loss</div>
-    <div class="formulaLine">Fade Margin = Rx Signal Strength - Rx Sensitivity</div>
-    <p>Constants adjust dynamically matching environment scale vectors ($C=36.6$ for standard miles tracks / $C=32.5$ for kilometer metrics).</p>
+    <div class="formula">Free Space Loss = C + 20 * log10(Distance) + 20 * log10(Frequency)</div>
+    <div class="formula">ERP = Tx Power - Tx Cable Loss + Tx Antenna Gain</div>
+    <div class="formula">Rx Signal Strength = ERP - Free Space Loss + Rx Antenna Gain - Rx Cable Loss</div>
+    <div class="formula">Fade Margin = Rx Signal Strength - Rx Sensitivity</div>
+    <p>Constants adjust dynamically matching environment scale vectors (C = 36.6 for standard miles tracks / C = 32.5 for kilometer metrics).</p>
+  </section>
+
+  <!-- Premium Appended Content (Strictly Locked consecutive formulaBox blocks with absolutely NO loose text) -->
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Frequency = 2440 MHz, Tx Power = 23 dBm, Tx Cable Loss = 0.9 dB, Tx Antenna Gain = 9 dB, Distance = 10 miles, Rx Antenna Gain = 24 dB, Rx Cable Loss = 0.9 dB, Rx Sensitivity = -90 dBm, Compute target = Fade Margin.</div>
+    <div class="formulaBox">Step 1: Calculate the Free Space Loss (FSL) using the constant factor for miles (C = 36.6): FSL = 36.6 + 20 * log10(Distance) + 20 * log10(Frequency) = 36.6 + 20 * log10(10) + 20 * log10(2440) = 36.6 + 20 + 67.7 = 124.3 dB.</div>
+    <div class="formulaBox">Step 2: Calculate the Effective Radiated Power (ERP) at the transmitter antenna: ERP = Tx Power - Tx Cable Loss + Tx Antenna Gain = 23 - 0.9 + 9 = 31.1 dBm.</div>
+    <div class="formulaBox">Step 3: Calculate the Received Signal Strength (RSSI) at the receiver: RSSI = ERP - FSL + Rx Antenna Gain - Rx Cable Loss = 31.1 - 124.3 + 24 - 0.9 = -70.1 dBm.</div>
+    <div class="formulaBox">Step 4: Calculate the total link Fade Margin: Fade Margin = RSSI - Rx Sensitivity = -70.1 - (-90) = 19.9 dB.</div>
+    <div class="formulaBox">Result: The computed link budget yields a Free Space Loss of 124.3 dB, an RSSI of -70.1 dBm, and a safe Fade Margin of 19.9 dB (yielding a Good link status).</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Navigate to the <strong>OPTIONS</strong> box to select your preferred distance units (miles or km) and choose your target variable to compute (Fade Margin, Distance, or Tx Power).</div>
+      <div class="aboutStep">Enter your transmitter system parameters: <strong>Frequency (MHz)</strong>, <strong>Tx Power (dBm)</strong>, <strong>Tx Cable Loss (dB)</strong>, and <strong>Tx Antenna Gain (dB)</strong>.</div>
+      <div class="aboutStep">Enter your receiver system parameters: <strong>Distance (miles or km)</strong>, <strong>Rx Antenna Gain (dB)</strong>, <strong>Rx Cable Loss (dB)</strong>, and <strong>Rx Sensitivity (dBm)</strong>.</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to evaluate the complete RF link budget.</div>
+      <div class="aboutStep">Review the computed output variable (Fade Margin, Distance, or Tx Power) along with the Free Space Loss, Rx Signal Strength, and overall Link Status (Strong, Good, Weak, or Poor) on the Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Optimize wireless system designs, evaluate transmission path dynamics, and establish reliable link safety margins.</strong>
+      <p>The CalcBoy RF Link Budget Calculator evaluates the signal path performance of wireless communication links. It computes either the link fade margin, the maximum transmission distance, or the required transmitter output power using multi-parameter inputs.</p>
+    </div>
+    <p>An RF link budget is a comprehensive mathematical accounting of all the power gains and losses that an electromagnetic signal experiences as it propagates from a transmitter through an open-air medium to a receiver. Designing a robust wireless network—whether it is a terrestrial Wi-Fi link, a long-range point-to-point microwave backhaul, or a satellite communication transponder—requires a detailed link budget analysis. If the signal reaching the receiving antenna is too weak, it falls below the receiver sensitivity threshold, resulting in packet loss, link degradation, or a complete connection dropout. An accurate budget ensures that there is sufficient margin to withstand temporary environmental attenuations.</p>
+    <p>To compute these transmission metrics, the calculator integrates several distinct physical layers. The active power of the transmitter radio is attenuated by the passive insertion losses of coaxial cables, connectors, and lightning protectors before reaching the feedpoint. The antenna then concentrates this energy, providing a directional gain (Gt). As the wave travels through free space, it spreads spherically, creating a high-loss propagation path (Free Space Loss) before being captured by the receiver's directional antenna (Gr) and attenuated again by receiver cabling. The net signal level reaching the receiver port—referred to as the Received Signal Strength Indicator (RSSI)—must exceed the receiver sensitivity by a safety threshold called the fade margin. This calculator solves for these variables, allowing RF engineers to predict link reliability under diverse operational configurations.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Best Use</span>Point-to-point microwave link planning, cellular base station coverage assessment, satellite link budgets, and Wi-Fi bridging.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Fade Margin (dB), maximum operational Distance, or required Transmitter Power (dBm) depending on selected mode.</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Compiles transmitter gains, cable losses, and free space wave expansion rates to determine the final receiver power envelope.</div>
+      <div class="aboutMiniCard"><span>Fade Margin Rule</span>Always design terrestrial links with a minimum fade margin of 15 to 20 dB to withstand temporary atmospheric fade or rain attenuation.</div>
+    </div>
+    <div class="aboutNote">Tip: A link fade margin of 20 dB or more is highly recommended for critical outdoor paths to guarantee 99.99% availability against unpredictable weather and atmospheric obstructions.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What is the physical meaning of an RF link budget, and why is it important?</h3>
+    <p>An RF link budget is a detailed accounting of all the power gains and losses in a communication path from the transmitter to the receiver. It is critical because it determines whether the received signal is strong enough to be decoded by the receiver while keeping a safety margin against environmental attenuations.</p>
+
+    <h3>What is a Fade Margin, and what is an acceptable minimum level?</h3>
+    <p>Fade margin is the safety margin (in dB) between the received signal level (RSSI) and the minimum receiver sensitivity. It protects the link against signal drops caused by weather (rain, fog), multi-path reflections, or physical obstructions. A fade margin of 15 to 20 dB is generally targeted for high-reliability systems.</p>
+
+    <h3>How does the choice of distance units (miles vs. km) affect the calculation?</h3>
+    <p>The unit choice changes the free-space propagation constant used in the loss formula. For calculations in miles, the constant is 36.6, whereas for kilometers, the constant is 32.5. Selecting different units internally scales the mathematical equation to ensure the output remains physically accurate.</p>
+
+    <h3>Why does cable loss significantly degrade the link budget?</h3>
+    <p>Coaxial cables have internal resistive and dielectric losses. As high-frequency currents travel down the line, some RF power is dissipated as heat. This attenuation directly reduces the net power reaching the transmitter antenna (lowering EIRP) and attenuates the signal captured by the receiver antenna before it reaches the receiver port.</p>
+
+    <h3>Can this calculator reverse-engineer the required transmitter power or distance?</h3>
+    <p>Yes. The calculator features an OPTIONS selector at the top. By switching the Compute target to "Distance" or "Tx Power," the tool mathematically rearranges the logarithmic link equations to solve for the maximum allowable path distance or the minimum transmitter power required to maintain your target fade margin.</p>
+
+    <h3>What is the physical meaning of the Link Status ratings (Strong, Good, Weak, Poor)?</h3>
+    <p>These ratings categorize the link reliability based on the calculated fade margin. A margin above 20 dB is "Strong" (immune to most weather changes), 15 to 20 dB is "Good" (highly reliable), 10 to 15 dB is "Weak" (vulnerable to fading), and below 10 dB is "Poor" (prone to frequent dropouts).</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Free Space Path Loss Calculator</strong>Model signal attenuation across distance boundaries.</div>
+      <div class="linkCard"><strong>EIRP (Isotropic Radiated Power) Solver</strong>Calculate total radiated transmitter power levels.</div>
+      <div class="linkCard"><strong>Friis Transmission Calculator</strong>Compute received power along line-of-sight paths.</div>
+      <div class="linkCard"><strong>Specific Absorption Rate (SAR) Solver</strong>Evaluate biological electromagnetic wave absorption limits.</div>
+    </div>
   </section>
 </main>
 
