@@ -1,19 +1,35 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RF Field Strength Calculator | Electromagnetic Field Tool</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RF Field Strength Calculator | Electromagnetic Field Solver | CalcBoy</title>
 <meta name="description" content="Calculate electromagnetic transmitter wavelength and RF field strength using antenna heights, radiation current, operational frequency, and boundary distance.">
-<meta name="keywords" content="rf field strength calculator, electromagnetic field calculation formula, antenna effective height tool, radiation wave field strength equation, transmitter wavelength solver, anechoic chamber wave propagation, antenna excitation current, free space path transmission loss, rf radiation exposure level">
+<meta name="keywords" content="rf field strength calculator, electromagnetic field calculation formula, antenna effective height tool, radiation wave field strength equation, transmitter wavelength solver, anechoic chamber wave propagation, antenna excitation current, free space path transmission loss, rf radiation exposure level, CalcBoy">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0;color:#333}
-.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+/* Reset and Container Margins - Tightened to exactly 10px on mobile as requested */
+*{box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif}
+body{margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+.calc{
+  width:100% !important;
+  max-width:620px !important;
+  margin:0 auto !important;
+  padding:10px !important; /* Forces 10px margin edge-to-edge on mobile screens */
+  padding-top:14px !important;
+}
+
+/* Form Layout */
 label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
 .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
 input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
 select{text-align:center;font-weight:800;padding:0 6px}
 input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
 .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
+
 /* Small red error text custom styled above result layout */
-#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+
+/* Results Display */
 .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
 .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{padding:16px;border-radius:12px;min-height:82px}
@@ -25,20 +41,37 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
 .blue .cardLabel,.blue .cardValue,.blue .cardUnit{color:#2359e8}
 .green{background:#edfdf3;border:1px solid #bff0d0}
 .green .cardLabel,.green .cardValue,.green .cardUnit{color:#019863}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+
+/* Premium Content & InfoBox Layouts */
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
-.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
+.infoBox p, .infoBox li{font-size:13.5px;line-height:1.6;color:#475467;font-weight:400}
 .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
 .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:500;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
 .diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
 .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+
+/* Premium UI Structure Locks */
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:12px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:500;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:500;color:#475467;line-height:1.55}
+.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+
 @media(max-width:600px){
+  .calc{padding:10px !important} /* 10px Mobile Margin Gutter strictly maintained */
   .row{grid-template-columns:minmax(0,1fr) 72px}
   .resultGrid{grid-template-columns:1fr}
-  .paramGrid{grid-template-columns:1fr}
+  .paramGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 }
 </style></head>
 <body>
@@ -99,7 +132,7 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
     <button class="btn" type="button" onclick="calc()">CALCULATE</button>
   </form>
   
-  <div id="errorBox">Please enter valid values.</div>
+  <div id="errorBox">Please enter valid values. All fields are required.</div>
 
   <div class="resultTitle">RESULTS</div>
   <div class="resultGrid">
@@ -216,6 +249,98 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
     </div>
     <p>Where 120 × π (approximately 377 Ohms) sets the uniform wave characteristic impedance of free space, scaling the induction ratio across geometric paths linearly.</p>
   </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Practical Calculation Example</h2>
+    <div class="formulaBox">
+      Suppose you have a low-frequency radio propagation setup with these parameters:
+      <br>• Effective Height of Transmitting Antenna (Ht) = 2 m
+      <br>• Effective Height of Receiving Antenna (Hr) = 1.5 m
+      <br>• Antenna Current (I) = 0.5 A
+      <br>• Distance from Transmitting Antenna (d) = 50 m
+      <br>• Operating Frequency (f) = 150 kHz (which is 150,000 Hz)
+    </div>
+    <p><strong>Step 1:</strong> Calculate the operational wavelength (λ) of the transmitter.</p>
+    <div class="formulaBox">
+      λ = 3 * 10^8 / f
+      <br>λ = 3 * 10^8 / 150,000
+      <br>λ = 2000 m
+    </div>
+    <p><strong>Step 2:</strong> Solve the RF magnetic field strength ($H$) at the boundary distance.</p>
+    <div class="formulaBox">
+      RF Field Strength = (120 * π * Ht * Hr * I) / (λ * d)
+      <br>RF Field Strength = (120 * π * 2 * 1.5 * 0.5) / (2000 * 50)
+      <br>RF Field Strength = (120 * π * 1.5) / 100,000
+      <br>RF Field Strength = (180 * π) / 100,000
+      <br>RF Field Strength ≈ 565.48668 / 100,000 ≈ 0.005655 A/m
+    </div>
+    <p>This demonstrates how transmitter currents establish field patterns across specific physical distances.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the <strong>Effective Height of the Transmitting Antenna</strong> in meters (m) or select alternative units (cm, mm, ft).</div>
+      <div class="aboutStep">Enter the <strong>Effective Height of the Receiving Antenna</strong> in meters (m).</div>
+      <div class="aboutStep">Input the radiating <strong>Antenna Current</strong> in Amperes (A) or milliamperes (mA).</div>
+      <div class="aboutStep">Input the spatial separation <strong>Distance</strong> in meters (m), kilometers (km), or feet (ft).</div>
+      <div class="aboutStep">Enter the operational <strong>Operating Frequency</strong> in Hz, kHz, MHz, or GHz.</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to evaluate propagation metrics.</div>
+      <div class="aboutStep">Read the computed Wavelength (m) and RF Field Strength (A/m) displayed inside the Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Predict electromagnetic wave field intensities across free-space propagation environments.</strong>
+      <p>The CalcBoy RF Field Strength Calculator evaluates the transmitter wavelength and resulting radiated magnetic field strength (A/m) using antenna geometric apertures, excitation currents, and path lengths.</p>
+    </div>
+    
+    <p>Electromagnetic wave propagation is the core foundation of radio communication, broadcasting, and telemetry networks. When an alternating current flows through a transmitting antenna, it radiates electromagnetic fields. The intensity of this radiation field at a remote location—referred to as the RF field strength—determines whether a receiver can decode the signal cleanly above the noise floor. RF engineers use this metric to model coverage maps, design high-frequency links, and ensure electromagnetic compatibility (EMC) in test facilities.</p>
+    
+    <p>This calculator computes the magnetic field strength ($H$) component of the radiating wave in Amperes per meter (A/m). In the far-field region where the wave behaves as a plane wave, this magnetic component is linked to the electric field strength ($E$) by the wave impedance of free space (approximately 377 Ohms). By estimating both the wavelength and the field strength, designers can optimize antenna heights and feed currents to satisfy regulatory safety limits and broadcast requirements.</p>
+
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Application</span>Radio link budgets, antenna pattern design, RF safety assessment, and EMC compliance testing.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Propagating Wavelength (λ in meters) and RF Magnetic Field Strength (H in A/m).</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Uses the characteristic wave impedance of free space (120π ≈ 377 Ω) to scale induction parameters.</div>
+      <div class="aboutMiniCard"><span>Coverage Rule</span>Increasing antenna height or excitation current directly increases the far-field strength.</div>
+    </div>
+
+    <div class="aboutNote">Tip: Effective antenna height is not always the physical length; it represents the equivalent height of an idealized element carrying a uniform current that would radiate the same field.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What is the physical meaning of an antenna's effective height?</h3>
+    <p>Effective height is not just the mechanical length. It is the spatial integration of the current distribution along the antenna's radiating axis. It represents the physical length of an equivalent idealized antenna carrying a uniform current that would radiate the exact same field strength.</p>
+
+    <h3>Why is the calculated RF field strength measured in Amperes per meter (A/m)?</h3>
+    <p>This calculator computes the magnetic field strength ($H$) component of the propagating electromagnetic wave, which is measured in $A/m$. In the far-field region, the electric field ($E$ in $V/m$) can be derived by multiplying the magnetic field strength by the wave impedance of free space (approximately 377 Ohms): $E = H \times 377$.</p>
+
+    <h3>Does this calculation model apply to the near-field region?</h3>
+    <p>No. This classical equation is mathematically valid in the far-field (Fraunhofer) region, which begins at a distance significantly larger than the operating wavelength ($d \gg \lambda$). In the near-field (Fresnel and reactive) regions, inductive and capacitive field interactions dominate, requiring complex vector Maxwell equation solvers.</p>
+
+    <h3>How does the wave impedance of free space (120π ≈ 377 Ω) affect propagation?</h3>
+    <p>Wave impedance acts as an electromagnetic resistance of open space. The constant $120\pi$ is used in the field strength equation to scale the relationship between antenna excitation currents, physical heights, and free-space wave radiation.</p>
+
+    <h3>How do antenna current losses affect calculated field strengths?</h3>
+    <p>This calculator assumes an idealized lossless radiating element. In practical hardware, ohmic heat losses and dielectric absorption reduce the effective radiation current below the input excitation current, slightly lowering the observed field strength.</p>
+
+    <h3>Can I use this calculator for high-frequency microwave paths?</h3>
+    <p>Yes, though high-frequency microwave systems (e.g., above 1 GHz) typically rely on aperture antennas (like horn antennas or parabolic dishes) where gain and effective area (Aperture) parameters are used instead of effective heights. For wire antennas (like dipoles, monopoles, or wire arrays), this tool is highly accurate.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>VSWR and Return Loss Calculator</strong>Analyze antenna matching and transmission line reflection.</div>
+      <div class="linkCard"><strong>Antenna Radiation Pattern Solver</strong>Model directional power levels.</div>
+      <div class="linkCard"><strong>Free Space Path Loss Calculator</strong>Track open-air signal attenuation.</div>
+      <div class="linkCard"><strong>Specific Absorption Rate (SAR) Solver</strong>Evaluate biological electromagnetic wave absorption limits.</div>
+    </div>
+  </section>
 </main>
 
 <script>
@@ -288,4 +413,94 @@ function calc(){
 
 clearResults();
 </script>
-</body></html>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the physical significance of an antenna's effective height?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Effective height is not just the mechanical length. It is the spatial integration of the current distribution along the antenna's radiating axis. It represents the physical length of an equivalent idealized antenna carrying a uniform current that would radiate the exact same field strength."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the calculated RF field strength measured in Amperes per meter (A/m)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator computes the magnetic field strength (H) component of the propagating electromagnetic wave, which is measured in A/m. In the far-field region, the electric field (E in V/m) can be derived by multiplying the magnetic field strength by the wave impedance of free space (approximately 377 Ohms): E = H * 377."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculation model apply to the near-field region?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. This classical equation is mathematically valid in the far-field (Fraunhofer) region, which begins at a distance significantly larger than the operating wavelength (d >> lambda). In the near-field (Fresnel and reactive) regions, inductive and capacitive field interactions dominate, requiring complex vector Maxwell equation solvers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the wave impedance of free space (120π ≈ 377 Ω) affect propagation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Wave impedance acts as an electromagnetic resistance of open space. The constant 120π is used in the field strength equation to scale the relationship between antenna excitation currents, physical heights, and free-space wave radiation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do antenna current losses affect calculated field strengths?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator assumes an idealized lossless radiating element. In practical hardware, ohmic heat losses and dielectric absorption reduce the effective radiation current below the input excitation current, slightly lowering the observed field strength."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this calculator for high-frequency microwave paths?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, though high-frequency microwave systems (e.g., above 1 GHz) typically rely on aperture antennas (like horn antennas or parabolic dishes) where gain and effective area (Aperture) parameters are used instead of effective heights. For wire antennas (like dipoles, monopoles, or wire arrays), this tool is highly accurate."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Calculators",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "RF Field Strength Calculator",
+      "item": "https://calcboy.com/tool/rf-field-strength-calculator"
+    }
+  ]
+}
+</script>
+</body>
+</html>
