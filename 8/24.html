@@ -3,39 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>EIRP Calculator | Effective Isotropic Radiated Power Solver</title>
+<title>EIRP Calculator | Effective Isotropic Radiated Power Solver | CalcBoy</title>
 
 <meta name="description" content="Free online EIRP Calculator to compute Effective Isotropic Radiated Power from transmitter output power, coax cable insertion loss, and directional antenna gain. Supports dBm, dBW, Watts, and mW conversions with full link budget mathematical verification.">
-<meta name="keywords" content="eirp calculator, effective isotropic radiated power calculator, rf link budget solver, transmitter power to eirp, antenna gain dbi calculator, cable loss db calculation, radar output power tool, equivalent isotropically radiated power, satellite link budget formula, watt to dbm converter, dbw to dbm equation, microwave transmission link loss, rf passive pad line attenuation, rf passive network analyzer, radio frequency propagation solver, wifi transmitter power tracker, wireless line-of-sight signal calculator, telecommunication link budget analyzer">
+<meta name="keywords" content="eirp calculator, effective isotropic radiated power calculator, rf link budget solver, transmitter power to eirp, antenna gain dbi calculator, cable loss db calculation, radar output power tool, equivalent isotropically radiated power, satellite link budget formula, watt to dbm converter, dbw to dbm equation, microwave transmission link loss, rf passive pad line attenuation, rf passive network analyzer, radio frequency propagation solver, wifi transmitter power tracker, wireless line-of-sight signal calculator, telecommunication link budget analyzer, CalcBoy">
 
 <style>
+    /* Exact CSS Classes and Margins Imported from Master Flyback Reference Template */
     *{box-sizing:border-box;font-family:Arial,sans-serif}
-    body{margin:0;background:#f6f8fb;padding:0;color:#333}
-    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+    .calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+
+    /* Form Inputs and Interactive Row Styling */
     label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
     .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
     .valueBox,input{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
     .valueBox{display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151;background:#eee}
     input:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
     .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
     .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    
+    /* Symmetrical 2-Column Results Grid strictly preserved */
     .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
     .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
     .cardValue{font-size:18px;font-weight:900;line-height:1}
     .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
-    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    
+    /* Existing InfoBox Internal Styles preserved identically */
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
     .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+    .infoBox p, .infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
     .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
-    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .formula, .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+    .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem, .exampleCard, .aboutMiniCard, .linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+    .paramItem strong, .aboutMiniCard span, .linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+    .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
     .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
-    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr}.paramGrid{grid-template-columns:1fr}}
+
+    /* Premium Appended UI Content Extensions Styles (Locked & Safe) */
+    .aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+    .aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+    .aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+    .aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+    .aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+    .aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
+    @media(max-width:600px){
+      body{padding:10px}
+      .row{grid-template-columns:minmax(0,1fr) 72px}
+      .resultGrid{grid-template-columns:1fr 1fr}
+      .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{grid-template-columns:1fr}
+    }
 </style>
 </head>
 <body>
@@ -62,7 +84,7 @@
     <button class="btn" type="button" onclick="calc()">CALCULATE</button>
   </form>
 
-  <div id="errorBox">Please enter valid calculation values.</div>
+  <div id="errorBox">Please enter valid calculation values. All fields are required.</div>
 
   <div class="resultTitle">RESULTS</div>
   <div class="resultGrid">
@@ -142,6 +164,75 @@
     <div class="formulaLine">EIRP = Power (dBm) - Cable Loss (dB) + Antenna Gain (dBi)</div>
     <p>The engineering solver unifies non-logarithmic metrics securely using standard decibel power division algorithms to evaluate system constraints linearly.</p>
   </section>
+
+  <!-- Premium Appended Content (Strictly Locked consecutive formulaBox blocks with absolutely NO loose text) -->
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Transmitter Output Power = 30 dBm, Cable Loss = 2 dB, Antenna Gain = 10 dBi.</div>
+    <div class="formulaBox">Step 1: Check your transmitter power unit. Since 30 dBm is selected, no power scale conversion is required.</div>
+    <div class="formulaBox">Step 2: Subtract the coaxial cable line loss from the transmitter output power: 30 dBm - 2 dB = 28 dBm.</div>
+    <div class="formulaBox">Step 3: Add the directional antenna gain to find the total radiated power: 28 dBm + 10 dBi = 38 dBm.</div>
+    <div class="formulaBox">Result: The equivalent isotropic radiated power (EIRP) of the transmission system is exactly 38.00 dBm.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter your transmitter output power in the <strong>O/P Power (Radar)</strong> field and select your unit (dBm, dBW, mW, or W).</div>
+      <div class="aboutStep">Input the total passive transmission line insertion loss in the <strong>Cable Loss</strong> field in decibels (dB).</div>
+      <div class="aboutStep">Input the directional antenna focus magnification factor in the <strong>Antenna Gain</strong> field in decibels isotropic (dBi).</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to initiate the link budget power addition.</div>
+      <div class="aboutStep">Read the computed Equivalent Isotropic Radiated Power (EIRP) displayed in dBm on the Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Analyze transmitter system link budgets and calculate equivalent radiated wave power with precision.</strong>
+      <p>The CalcBoy EIRP Calculator computes the Effective Isotropic Radiated Power of an RF transmitter, radar, or satellite system using transmitter output, cable insertion losses, and directional antenna gains.</p>
+    </div>
+    <p>Effective Isotropic Radiated Power (EIRP) is a fundamental metric used in telecommunications, satellite communication links, radar systems, and wireless network design to quantify the actual power radiated by an antenna system in its direction of maximum gain. Rather than looking only at the raw output power of the transmitter amplifier, EIRP takes into account the complete active and passive pathway. It represents the hypothetical power that an ideal isotropic antenna (which radiates energy uniformly in all directions) would have to emit to achieve the same signal intensity as the directional antenna in its main lobe.</p>
+    <p>To determine the true EIRP of an RF installation, engineers must perform a simple addition across the link budget components. The raw output power of the transmitter is attenuated by the passive insertion losses of coaxial cables, connectors, attenuators, and lightning protectors. This net power reaching the feedpoint is then multiplied (or added logarithmically) by the directional gain of the antenna (dBi). Calculating EIRP is crucial for ensuring compliance with regulatory emission limits (such as FCC, ICNIRP, or local government rules) and verifying that the signal has sufficient strength to overcome path attenuation and reach the receiver above the noise floor.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Best Use</span>RF link budget analysis, satellite communications planning, Wi-Fi coverage modeling, and regulatory compliance checks.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Equivalent Isotropic Radiated Power (EIRP) in decibels relative to one milliwatt (dBm).</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Subtracting transmission losses and adding directional antenna gains isolates the actual radiated signal strength.</div>
+      <div class="aboutMiniCard"><span>Design Rule</span>Always keep EIRP within local legal limits to prevent interference with neighboring frequency bands.</div>
+    </div>
+    <div class="aboutNote">Tip: Standard Wi-Fi routers and consumer transmitters are strictly limited by FCC and ETSI regulations on maximum EIRP to prevent unlicensed devices from flooding the spectrum.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What is the physical meaning of Effective Isotropic Radiated Power (EIRP)?</h3>
+    <p>EIRP is the equivalent power that an ideal isotropic antenna (which radiates energy as a perfect sphere in 360 degrees) would need to be fed to produce the same peak power density at a distant point as the directional antenna being evaluated.</p>
+
+    <h3>What is the difference between EIRP and ERP (Effective Radiated Power)?</h3>
+    <p>EIRP measures antenna gain relative to an ideal isotropic antenna (expressed in dBi). ERP measures antenna gain relative to a standard half-wave dipole antenna (expressed in dBd). Because a half-wave dipole has a gain of 2.15 dBi over an isotropic radiator, the two are related by the equation: EIRP = ERP + 2.15 dB.</p>
+
+    <h3>Why does the transmitter cable loss decrease the EIRP?</h3>
+    <p>Coaxial cables, connectors, and adapters have internal resistive and dielectric losses. As high-frequency currents travel down the line, some power is dissipated as heat. This attenuation directly reduces the net power reaching the antenna feedpoint, reducing the total radiated power.</p>
+
+    <h3>How do I convert transmitter power from Watts to dBm?</h3>
+    <p>Power in dBm is calculated relative to 1 milliwatt using the logarithmic formula: Power(dBm) = 10 * log10(Power in Watts * 1000). For example, 1 Watt is equal to 30 dBm, and 10 Watts is equal to 40 dBm. The calculator handles these conversions internally based on your selection.</p>
+
+    <h3>How does antenna gain (dBi) increase EIRP without adding active power?</h3>
+    <p>Antennas are passive devices; they cannot generate energy. Antenna gain is achieved by focusing the radiated electromagnetic energy in a specific direction, like a reflector in a flashlight. By squeezing the energy into a narrow beam width, the signal intensity in that direction increases significantly, raising the EIRP.</p>
+
+    <h3>What happens if the calculated EIRP exceeds regulatory limits?</h3>
+    <p>Exceeding legal EIRP limits can cause severe interference with other licensed or unlicensed wireless services. It can also cause legal penalties. RF operators must use inline attenuators, lower the transmitter output power, or use an antenna with lower gain to comply with local regulations.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>VSWR and Return Loss Calculator</strong>Check antenna match and transmission line reflections.</div>
+      <div class="linkCard"><strong>RF Path Loss Calculator</strong>Model free-space signal attenuation across distance boundaries.</div>
+      <div class="linkCard"><strong>Microstrip Line Impedance Solver</strong>Model trace dimensions on printed circuit board layouts.</div>
+      <div class="linkCard"><strong>Specific Absorption Rate (SAR) Solver</strong>Evaluate biological electromagnetic wave absorption limits.</div>
+    </div>
+  </section>
 </main>
 
 <script>
@@ -165,6 +256,95 @@ function calc(){
   if(unit === 4){ eirp = eirp + 30; }
   
   document.getElementById("eirpValue").innerText = Math.round(eirp * 10000) / 10000 + " dBm";
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the physical meaning of Effective Isotropic Radiated Power (EIRP)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "EIRP is the equivalent power that an ideal isotropic antenna (which radiates energy as a perfect sphere in 360 degrees) would need to be fed to produce the same peak power density at a distant point as the directional antenna being evaluated."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between EIRP and ERP (Effective Radiated Power)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "EIRP measures antenna gain relative to an ideal isotropic antenna (expressed in dBi). ERP measures antenna gain relative to a standard half-wave dipole antenna (expressed in dBd). Because a half-wave dipole has a gain of 2.15 dBi over an isotropic radiator, the two are related by the equation: EIRP = ERP + 2.15 dB."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the transmitter cable loss decrease the EIRP?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Coaxial cables, connectors, and adapters have internal resistive and dielectric losses. As high-frequency currents travel down the line, some power is dissipated as heat. This attenuation directly reduces the net power reaching the feedpoint, reducing the total radiated power."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I convert transmitter power from Watts to dBm?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Power in dBm is calculated relative to 1 milliwatt using the logarithmic formula: Power(dBm) = 10 * log10(Power in Watts * 1000). For example, 1 Watt is equal to 30 dBm, and 10 Watts is equal to 40 dBm. The calculator handles these conversions internally based on your selection."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does antenna gain (dBi) increase EIRP without adding active power?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Antennas are passive devices; they cannot generate energy. Antenna gain is achieved by focusing the radiated electromagnetic energy in a specific direction, like a reflector in a flashlight. By squeezing the energy into a narrow beam width, the signal intensity in that direction increases significantly, raising the EIRP."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if the calculated EIRP exceeds regulatory limits?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Exceeding legal EIRP limits can cause severe interference with other licensed or unlicensed wireless services. It can also cause legal penalties. RF operators must use inline attenuators, lower the transmitter output power, or use an antenna with lower gain to comply with local regulations."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Calculators",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "EIRP Calculator",
+      "item": "https://calcboy.com/tool/eirp-calculator"
+    }
+  ]
 }
 </script>
 </body>
