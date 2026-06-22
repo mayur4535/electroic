@@ -1,92 +1,373 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Reflection Coefficient Calculator | Transmission Line Solver</title>
-<meta name="description" content="Calculate the reflection coefficient (Gamma) and reflected voltage of a transmission line system using load impedance, source impedance, and incident voltage parameters.">
-<meta name="keywords" content="reflection coefficient calculator, wave reflection coefficient formula, transmission line mismatch solver, impedance matching calculator, voltage reflection coefficient equation, reflected voltage power tracking, s-parameter return loss tool, load source impedance network, rf characteristic impedance mismatch">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Coax Impedance Calculator | Coaxial Transmission Line Solver | CalcBoy</title>
+<meta name="description" content="Calculate coaxial cable characteristic impedance (Zo), propagation delay, inductance, and capacitance per unit length using outer shield and inner conductor diameters.">
+<meta name="keywords" content="coax impedance calculator, coaxial cable impedance formula, characteristic impedance coax, conductor diameter substrate, coax delay solver, capacitance coax line, coaxial line solver, CalcBoy">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0;color:#333}
-.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
-label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
-.row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
-input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
-select{text-align:center;font-weight:800;padding:0 6px}
-input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-.btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px}
-/* Small red error text custom styled above result layout */
-#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
-.resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
-.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{padding:16px;border-radius:12px;min-height:82px}
-.cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px}
-.cardLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}
-.cardLine span{font-weight:800;font-size:18px;color:inherit}
-.blue{background:#eef5ff;border:1px solid #bfd3ff}
-.blue *{color:#2359e8}
-.green{background:#ecfdf5;border:1px solid #bbf7d0}
-.green *{color:#16a34a}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
-.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
-.formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-.paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-.exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
-.diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
-.waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
-@media(max-width:600px){
-  .row{grid-template-columns:minmax(0,1fr) 72px}
-  .resultGrid{grid-template-columns:1fr}
-  .paramGrid{grid-template-columns:1fr}
+/* Reset and Container Margins - Tightened to exactly 10px as requested */
+#coax-calc, #coax-calc *, .calc, .calc * {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
-</style></head>
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f6f8fb;
+  color: #333;
+}
+#coax-calc, .calc {
+  width: 100% !important;
+  max-width: 620px !important;
+  margin: 0 auto !important;
+  padding: 10px !important; /* Set to 10px to eliminate wide outer gutters */
+}
+
+/* Form Styling */
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 82px;
+  gap: 8px;
+  align-items: center;
+}
+input, select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+}
+input:focus, select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
+}
+.unit-box {
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
+}
+button {
+  width: 100%;
+  height: 45px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(90deg,#ff7a18,#ff4b00);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+/* Error Box Styling */
+#errorBox {
+  display: none;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  border: 2px solid #dc2626;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fef2f2;
+}
+
+/* Results Cards Styling */
+.result-title {
+  margin-top: 30px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #7b8794;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.result-card {
+  min-height: 82px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #cfd6df;
+}
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: .5px;
+}
+.result-value {
+  font-size: 16px;
+  font-weight: 900;
+  word-break: break-word;
+  line-height: 1.2;
+  min-height: 22px;
+}
+
+/* Info Box / Content Styling */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #475467;
+  font-weight: 400;
+}
+.formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.diagramBox {
+  background: #fff;
+  padding: 16px;
+  text-align: center;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.diagramBox svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+.aboutLead {
+  background: linear-gradient(135deg,#eef5ff,#fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid #059669;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 12px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff7a18;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+/* Mobile Responsiveness & Margin Optimization */
+@media(max-width:600px){
+  #coax-calc, .calc {
+    padding: 10px !important; /* Forces 10px margin edge-to-edge on mobile screens */
+  }
+  .calc-row {
+    grid-template-columns: minmax(0,1fr) 72px;
+  }
+  .unit-box {
+    width: 72px;
+    min-width: 72px;
+    max-width: 72px;
+  }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
 <body>
-<main class="calc">
-  <form id="tool">
-    <label for="zl">ZL (Load Impedance)</label>
-    <div class="row">
-      <input id="zl" type="number" step="any" placeholder="Example: 75">
-      <select id="zlUnit">
-        <option value="1">Ω</option>
-        <option value="1000">kΩ</option>
-        <option value="1000000">MΩ</option>
-      </select>
+
+<div id="coax-calc">
+  <form id="coax-form">
+    <div class="calc-grid">
+      <div>
+        <label class="calc-label" for="d1">In Dia (Conductor ID)</label>
+        <div class="calc-row">
+          <input id="d1" type="number" step="any" placeholder="Example: 35">
+          <select id="d1Unit">
+            <option value="1">mil</option>
+            <option value="393.700787">cm</option>
+            <option value="39.3700787">mm</option>
+            <option value="0.0393700787">µm</option>
+            <option value="1000">in</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label" for="d2">In Dia (Surface Shield ID)</label>
+        <div class="calc-row">
+          <input id="d2" type="number" step="any" placeholder="Example: 116">
+          <select id="d2Unit">
+            <option value="1">mil</option>
+            <option value="393.700787">cm</option>
+            <option value="39.3700787">mm</option>
+            <option value="0.0393700787">µm</option>
+            <option value="1000">inch</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label" for="er">Dielectric (Substrate)</label>
+        <div class="calc-row" style="grid-template-columns:1fr;">
+          <input id="er" type="number" step="any" placeholder="Example: 2.25">
+        </div>
+      </div>
     </div>
 
-    <label for="zs">ZS (Source Impedance)</label>
-    <div class="row">
-      <input id="zs" type="number" step="any" placeholder="Example: 50">
-      <select id="zsUnit">
-        <option value="1">Ω</option>
-        <option value="1000">kΩ</option>
-        <option value="1000000">MΩ</option>
-      </select>
-    </div>
-
-    <label for="vi">Vrms (Incident Voltage)</label>
-    <div class="row">
-      <input id="vi" type="number" step="any" placeholder="Example: 10">
-      <select id="viUnit">
-        <option value="1">V</option>
-        <option value="0.001">mV</option>
-        <option value="1000">kV</option>
-      </select>
-    </div>
-
-    <button class="btn" type="button" onclick="calc()">CALCULATE</button>
+    <button type="button" onclick="calc()">CALCULATE</button>
   </form>
-  
-  <div id="errorBox">Please enter valid values.</div>
 
-  <div class="resultTitle">RESULTS</div>
-  <div class="resultGrid">
-    <div class="card blue">
-      <div class="cardLabel">Γ Reflection Coefficient</div>
-      <div class="cardLine"><span id="reflectionResult">-</span></div>
+  <div id="errorBox">Please enter valid values. Ensure d2 is greater than d1 and all values are greater than zero.</div>
+
+  <div class="result-title">RESULTS</div>
+  <div class="result-grid">
+    <div class="result-card blue">
+      <div class="result-label">Impedance (Zo)</div>
+      <div class="result-value"><span id="impedanceResult">-</span></div>
     </div>
-    <div class="card green">
-      <div class="cardLabel">Vref Reflected Voltage</div>
-      <div class="cardLine"><span id="voltageResult">-</span></div>
+    <div class="result-card green">
+      <div class="result-label">Delay</div>
+      <div class="result-value"><span id="delayResult">-</span></div>
+    </div>
+    <div class="result-card purple">
+      <div class="result-label">Inductance</div>
+      <div class="result-value"><span id="inductanceResult">-</span></div>
+    </div>
+    <div class="result-card orange">
+      <div class="result-label">Capacitance</div>
+      <div class="result-value"><span id="capacitanceResult">-</span></div>
     </div>
   </div>
 
@@ -94,156 +375,176 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
       <div class="paramItem">
-        <strong>Load Impedance (ZL)</strong>
-        The electrical impedance terminating the endpoint boundary of the transmission line wire network, measured in Ohms (Ω).
+        <strong>Conductor ID (d1)</strong>
+        The baseline external mechanical boundary diameter profile thickness of the interior active signal wire core pin component.
       </div>
       <div class="paramItem">
-        <strong>Source Impedance (ZS / Zg)</strong>
-        The characteristic or structural source driver internal matching path impedance threshold feeding the transmission system inputs.
+        <strong>Surface Shield ID (d2)</strong>
+        The internal opening clearance diameter scale measured across the interior boundary face of the outer metal grounding jacket layer.
       </div>
       <div class="paramItem">
-        <strong>Incident Voltage (Vincident)</strong>
-        The root-mean-square amplitude (Vrms) of the forward propagation waveform traveling down toward the mismatched termination interface.
+        <strong>Dielectric Constant (er)</strong>
+        The relative permittivity of the insulating substrate medium separating the active core conductor from the shielding layer.
       </div>
     </div>
   </section>
 
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
-    <div class="exampleBox">
-      <strong>Example 1: Standard RF Cable Mismatch Configuration</strong><br>
-      • Load Impedance (ZL) = 75.00 Ω | Source Impedance (ZS) = 50.00 Ω<br>
-      • Forward Incident Voltage (Vincident) = 12.00 Volts (V)<br>
-      • <em>Calculated Coefficient: 0.200000 | Reflected Voltage Component: 2.400000 V</em>
-    </div>
-    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
-      <strong>Example 2: Perfect Impedance Matched Network</strong><br>
-      • Load Impedance (ZL) = 50.00 Ω | Source Impedance (ZS) = 50.00 Ω<br>
-      • Forward Incident Voltage (Vincident) = 5.00 Volts (V)<br>
-      • <em>Calculated Coefficient: 0.000000 (Zero Wave Reflections) | Reflected Voltage: 0.00 V</em>
-    </div>
-  </section>
-
-  <section class="infoBox">
-    <h2>Transmission Line Wave Reflection Schema</h2>
-    <p>The vector model details forward Vincident wave propagation encountering an immediate boundary step change down the line path width.</p>
-    <div class="diagramBox">
-      <div class="waveguide-diagram">
-        <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0" y="0" width="620" height="280" fill="#ffffff" stroke="none"/>
-          
-          <circle cx="50" cy="130" r="16" fill="none" stroke="#000000" stroke-width="1.5"/>
-          <path d="M 42 130 C 42 122, 50 122, 50 130 C 50 138, 58 138, 58 130" fill="none" stroke="#000000" stroke-width="1.5"/>
-          <text x="26" y="136" fill="#000000" font-size="16" font-family="sans-serif" font-weight="bold">Vg</text>
-          
-          <rect x="110" y="38" width="50" height="28" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
-          <text x="135" y="57" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">Zg</text>
-          
-          <line x1="50" y1="114" x2="50" y2="52" stroke="#000000" stroke-width="1.2"/>
-          <line x1="50" y1="52" x2="110" y2="52" stroke="#000000" stroke-width="1.2"/>
-          <line x1="160" y1="52" x2="240" y2="52" stroke="#000000" stroke-width="1.2"/>
-          <line x1="50" y1="146" x2="50" y2="228" stroke="#000000" stroke-width="1.2"/>
-          <line x1="50" y1="228" x2="240" y2="228" stroke="#000000" stroke-width="1.2"/>
-          
-          <circle cx="200" cy="52" r="3" fill="#000000"/>
-          <circle cx="200" cy="228" r="3" fill="#000000"/>
-          
-          <line x1="185" y1="65" x2="185" y2="215" stroke="#2359e8" stroke-width="1.2"/>
-          <polygon points="185,58 181,68 189,68" fill="#2359e8"/>
-          <polygon points="185,222 181,212 189,212" fill="#2359e8"/>
-          <text x="172" y="55" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">+</text>
-          <text x="172" y="228" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">-</text>
-          <text x="145" y="142" fill="#000000" font-size="15" font-family="sans-serif" font-weight="bold">Vin</text>
-          
-          <text x="215" y="38" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">Iin</text>
-          <path d="M 210 46 L 225 54 L 210 56" fill="none" stroke="#000000" stroke-width="1.2"/>
-          
-          <rect x="240" y="44" width="220" height="15" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
-          <ellipse cx="240" cy="51.5" rx="3" ry="7.5" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
-          <ellipse cx="460" cy="51.5" rx="3" ry="7.5" fill="#ffffff" stroke="#000000" stroke-width="1.5" stroke-dasharray="2,1"/>
-          
-          <rect x="240" y="220" width="220" height="15" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
-          <ellipse cx="240" cy="227.5" rx="3" ry="7.5" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
-          <ellipse cx="460" cy="227.5" rx="3" ry="7.5" fill="#ffffff" stroke="#000000" stroke-width="1.5" stroke-dasharray="2,1"/>
-          
-          <line x1="260" y1="18" x2="440" y2="18" stroke="#2359e8" stroke-width="1.2"/>
-          <polygon points="245,18 257,22 257,14" fill="#2359e8"/>
-          <polygon points="455,18 443,22 443,14" fill="#2359e8"/>
-          <line x1="245" y1="14" x2="245" y2="40" stroke="#2359e8" stroke-width="1" stroke-dasharray="2,2"/>
-          <line x1="455" y1="14" x2="455" y2="40" stroke="#2359e8" stroke-width="1" stroke-dasharray="2,2"/>
-          <text x="350" y="16" fill="#000000" font-size="16" font-family="sans-serif" font-style="italic" text-anchor="middle">l</text>
-          
-          <text x="245" y="258" fill="#000000" font-size="13" font-family="sans-serif" font-style="italic" text-anchor="middle">Z = -l</text>
-          <text x="455" y="258" fill="#000000" font-size="13" font-family="sans-serif" font-style="italic" text-anchor="middle">Z = 0</text>
-          
-          <rect x="525" y="100" width="28" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
-          <text x="539" y="136" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">ZL</text>
-          
-          <line x1="460" y1="52" x2="539" y2="52" stroke="#000000" stroke-width="1.2"/>
-          <line x1="539" y1="52" x2="539" y2="100" stroke="#000000" stroke-width="1.2"/>
-          <line x1="460" y1="228" x2="539" y2="228" stroke="#000000" stroke-width="1.2"/>
-          <line x1="539" y1="228" x2="539" y2="160" stroke="#000000" stroke-width="1.2"/>
-          
-          <text x="495" y="38" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">IL</text>
-          <path d="M 490 46 L 505 54 L 490 56" fill="none" stroke="#000000" stroke-width="1.2"/>
-          
-          <path d="M 558 58 C 575 100, 575 180, 558 222" fill="none" stroke="#2359e8" stroke-width="1.2"/>
-          <polygon points="556,52 563,62 554,64" fill="#2359e8"/>
-          <polygon points="556,228 554,216 563,218" fill="#2359e8"/>
-          <text x="548" y="55" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">+</text>
-          <text x="548" y="234" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold">-</text>
-          <text x="585" y="144" fill="#000000" font-size="15" font-family="sans-serif" font-weight="bold">VL</text>
-          
-          <path d="M 285 92 C 262 105, 262 175, 285 188" fill="none" stroke="#dc2626" stroke-width="1.8"/>
-          <polygon points="285,188 283,178 276,183" fill="#dc2626"/>
-          <text x="294" y="144" fill="#dc2626" font-size="14" font-family="sans-serif" font-weight="bold">Γin, Zin</text>
-          
-          <path d="M 445 92 C 422 105, 422 175, 445 188" fill="none" stroke="#dc2626" stroke-width="1.8"/>
-          <polygon points="445,188 443,178 436,183" fill="#dc2626"/>
-          <text x="454" y="144" fill="#dc2626" font-size="14" font-family="sans-serif" font-weight="bold">ΓL, ZL</text>
-        </svg>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Example 1: Standard RG-58 Test Setup</strong></p>
+        <p>• Conductor ID = 35.0 mil | Surface Shield ID = 116.0 mil<br>
+        • Dielectric Constant = 2.30 (Solid Polyethylene)<br>
+        • Output Impedance: ~47.4 Ω | Delay Parameter: ~0.129 ns/in.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Example 2: Semirigid Foam Substrate Matrix</strong></p>
+        <p>• Conductor ID = 20.0 mil | Surface Shield ID = 67.0 mil<br>
+        • Dielectric Constant = 1.44 (Expanded Teflon)<br>
+        • Output Inductance: ~6.14 nH/in | Capacitance: ~1.68 pF/in.</p>
       </div>
     </div>
   </section>
 
   <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
-    <div class="formulaLine">
-      <strong>Voltage Reflection Coefficient (Gamma Formula):</strong><br>
-      Γ = (ZL - ZS) / (ZL + ZS)
+    <h2>Diagrams & Theory</h2>
+    <p>A coaxial cable consists of a concentric center conductor and an outer circular metal shield separated by a uniform dielectric insulation layer. The electromagnetic fields are fully contained within the dielectric layer, reducing radio frequency interference (RFI) emissions and isolating the signal path.</p>
+    
+    <div class="diagramBox">
+      <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="620" height="280" fill="#ffffff" stroke="none"/>
+        <circle cx="200" cy="140" r="100" fill="#f1f5f9" stroke="#1e293b" stroke-width="4"/>
+        <circle cx="200" cy="140" r="96" fill="#e2e8f0" stroke="none"/>
+        <circle cx="200" cy="140" r="30" fill="#ea580c" stroke="#c2410c" stroke-width="2"/>
+        <line x1="170" y1="140" x2="230" y2="140" stroke="#0f172a" stroke-width="1.5" stroke-dasharray="2,2"/>
+        <line x1="170" y1="135" x2="170" y2="145" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="230" y1="135" x2="230" y2="145" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="200" y="125" fill="#0f172a" font-size="12" font-family="sans-serif" font-weight="900" text-anchor="middle">d1 (Conductor ID)</text>
+        <line x1="104" y1="180" x2="296" y2="180" stroke="#1d4ed8" stroke-width="1.5"/>
+        <polygon points="104,180 114,184 114,176" fill="#1d4ed8"/>
+        <polygon points="296" y1="180" x2="286" y2="184" stroke-width="1.5" fill="#1d4ed8"/>
+        <text x="200" y="200" fill="#1d4ed8" font-size="12" font-family="sans-serif" font-weight="900" text-anchor="middle">d2 (Surface Shield ID)</text>
+        <rect x="360" y="40" width="220" height="200" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" rx="8"/>
+        <text x="380" y="75" fill="#ea580c" font-size="14" font-family="sans-serif" font-weight="bold">● Inner Conductor (d1)</text>
+        <text x="380" y="115" fill="#475467" font-size="14" font-family="sans-serif" font-weight="bold">● Dielectric Substrate (er)</text>
+        <text x="380" y="155" fill="#1e293b" font-size="14" font-family="sans-serif" font-weight="bold">● Metal Ground Shield (d2)</text>
+        <text x="380" y="195" fill="#0f172a" font-size="13" font-family="sans-serif" font-weight="bold" font-style="italic">Formula: Zo = 138/sqrt(er) * log10(d2/d1)</text>
+      </svg>
     </div>
-    <div class="formulaLine">
-      <strong>Reflected Backward Voltage Wave Amplitude (Vreflected):</strong><br>
-      Vref = Γ * Vincident
-    </div>
-    <p>The voltage reflection coefficient tracks the specific complex amplitude boundary step ratio between incoming incident waves and resulting backward reflected echo energy waves triggered directly by network impedance mismatches.</p>
   </section>
-</main>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaBox">Characteristic Impedance (Zo): Zo = (138 / sqrt(er)) * log10(d2 / d1) Ω</div>
+    <div class="formulaBox">Propagation Delay (Delay): Delay = 0.08472 * sqrt(er) ns/in</div>
+    <div class="formulaBox">Inductance (L): L = 11.7 * log10(d2 / d1) nH/in</div>
+    <div class="formulaBox">Capacitance (C): C = (0.6128 * er) / log10(d2 / d1) pF/in</div>
+    <p>These formulas define the steady-state distributed parameters of high-frequency wave propagation. Impedance is set by the geometric ratio of conductor dimensions and the substrate’s dielectric constant.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Practical Calculation Example</h2>
+    <div class="formulaBox">Suppose: Conductor ID (d1) = 35 mil, Shield ID (d2) = 116 mil, Dielectric (er) = 2.30</div>
+    <div class="formulaBox">Step 1: Calculate Characteristic Impedance (Zo)</div>
+    <p class="formulaBox">Zo = (138 / sqrt(2.30)) * log10(116 / 35)<br>Zo = (138 / 1.51657) * log10(3.31428)<br>Zo = 90.994 * 0.52039 = 47.35 Ω</p>
+    <div class="formulaBox">Step 2: Calculate Propagation Delay</div>
+    <p class="formulaBox">Delay = 0.08472 * sqrt(2.30) = 0.08472 * 1.51657 = 0.128 ns/in</p>
+    <div class="formulaBox">Step 3: Calculate Distributed Inductance</div>
+    <p class="formulaBox">L = 11.7 * log10(116 / 35) = 11.7 * 0.52039 = 6.09 nH/in</p>
+    <div class="formulaBox">Step 4: Calculate Distributed Capacitance</div>
+    <p class="formulaBox">C = (0.6128 * 2.30) / log10(116 / 35) = 1.40944 / 0.52039 = 2.71 pF/in</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the inner conductor diameter in the <strong>In Dia (Conductor ID)</strong> field and select your multiplier unit.</div>
+      <div class="aboutStep">Enter the inner diameter of the outer shield in the <strong>In Dia (Surface Shield ID)</strong> field and choose its unit.</div>
+      <div class="aboutStep">Input the relative permittivity of the insulating substrate in the <strong>Dielectric (Substrate)</strong> input box.</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to evaluate transmission line parameters.</div>
+      <div class="aboutStep">Read the values for characteristic impedance, propagation delay, inductance, and capacitance on the colored results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Determine high-frequency coaxial cable transmission line characteristics instantly.</strong>
+      <p>The CalcBoy Coax Impedance Calculator evaluates characteristic impedance, propagation delay, inductance, and capacitance per unit length using the mechanical core boundaries and relative permittivity.</p>
+    </div>
+    
+    <p>Coaxial cables are standard transmission mediums in radio frequency (RF) networks, laboratory instrumentation, and high-speed data links. The geometric spacing between the inner wire and the grounding shield determines how electromagnetic energy propagates along the line. Impedance must be closely controlled to prevent wave reflections and maximize signal delivery.</p>
+    
+    <p>Using these standard geometric ratios, antenna designers, RF engineers, and lab technicians can predict cable behavior, check matching limits, and select appropriate materials (such as foam or solid dielectric insulators) to meet system specifications.</p>
+
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Best Use</span>RF circuit planning, coaxial line selection, and laboratory impedance matching.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Characteristic Impedance (Zo), Propagation Delay, Inductance, and Capacitance per inch.</div>
+      <div class="aboutMiniCard"><span>Helpful For</span>High-speed layouts, ham radio feedlines, and signal integrity evaluation.</div>
+      <div class="aboutMiniCard"><span>Design Reminder</span>Dielectric consistency directly affects transmission speed and shielding.</div>
+    </div>
+
+    <div class="aboutNote">Tip: Standard RG-58 cables are rated at 50 Ohms, while TV antenna cables (RG-6) are typically rated at 75 Ohms. Match these system values to eliminate power loss.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>How do the cable dimensions affect impedance?</h3>
+    <p>Impedance increases as the outer shield diameter (d2) becomes larger relative to the inner conductor diameter (d1). Conversely, a higher dielectric constant (er) decreases characteristic impedance.</p>
+
+    <h3>What are common coaxial dielectric values?</h3>
+    <p>Solid Teflon (PTFE) has a dielectric constant of 2.1, solid Polyethylene (PE) is 2.3, and foamed dielectrics range between 1.3 and 1.6 due to high air content.</p>
+
+    <h3>Why is propagation delay important?</h3>
+    <p>Propagation delay determines signal transit time along the cable. In phase-matched antenna arrays or high-speed clock routing, matching cable propagation delays prevents skew and phase alignment issues.</p>
+
+    <h3>Does cable length affect characteristic impedance?</h3>
+    <p>No. Characteristic impedance is a per-unit-length property set entirely by cross-sectional geometry and materials. A 1-inch cable and a 100-foot cable of the same type have the same impedance.</p>
+
+    <h3>What happens if cable impedance is mismatched?</h3>
+    <p>Mismatches cause standing wave spikes (high SWR) and signal energy reflections. This results in power loss, heating, and signal distortion.</p>
+
+    <h3>How are capacitance and inductance related to Zo?</h3>
+    <p>Characteristic impedance is mathematically related to these parameters by the equation Zo = sqrt(L / C). Controlling spacing helps achieve the target Zo value.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>VSWR to Return Loss Calculator</strong>Evaluate wave reflections and power transfer.</div>
+      <div class="linkCard"><strong>Microstrip Line Impedance Solver</strong>Plan matching traces on circuit board layouts.</div>
+      <div class="linkCard"><strong>Skin Depth Calculator</strong>Calculate high-frequency conductor penetration.</div>
+      <div class="linkCard"><strong>RF Attenuator Calculator</strong>Design matching pads to reduce signal levels safely.</div>
+    </div>
+  </section>
+</div>
 
 <script>
 function clearResults(){
-  document.getElementById("reflectionResult").innerText = "-";
-  document.getElementById("voltageResult").innerText = "-";
+  document.getElementById("impedanceResult").innerText = "-";
+  document.getElementById("delayResult").innerText = "-";
+  document.getElementById("inductanceResult").innerText = "-";
+  document.getElementById("capacitanceResult").innerText = "-";
 }
 
-document.getElementById("zl").addEventListener("input", clearResults);
-document.getElementById("zs").addEventListener("input", clearResults);
-document.getElementById("vi").addEventListener("input", clearResults);
-document.getElementById("zlUnit").addEventListener("change", clearResults);
-document.getElementById("zsUnit").addEventListener("change", clearResults);
-document.getElementById("viUnit").addEventListener("change", clearResults);
+document.getElementById("d1").addEventListener("input", clearResults);
+document.getElementById("d2").addEventListener("input", clearResults);
+document.getElementById("er").addEventListener("input", clearResults);
+document.getElementById("d1Unit").addEventListener("change", clearResults);
+document.getElementById("d2Unit").addEventListener("change", clearResults);
 
 function calc(){
-  var ZL = Number(document.getElementById("zl").value) * Number(document.getElementById("zlUnit").value);
-  var ZS = Number(document.getElementById("zs").value) * Number(document.getElementById("zsUnit").value);
-  var VI = Number(document.getElementById("vi").value) * Number(document.getElementById("viUnit").value);
+  var d1 = Number(document.getElementById("d1").value) * Number(document.getElementById("d1Unit").value);
+  var d2 = Number(document.getElementById("d2").value) * Number(document.getElementById("d2Unit").value);
+  var er = Number(document.getElementById("er").value);
 
   if(
-    document.getElementById("zl").value === "" ||
-    document.getElementById("zs").value === "" ||
-    document.getElementById("vi").value === "" ||
-    isNaN(ZL) || isNaN(ZS) || isNaN(VI) ||
-    (ZL + ZS) === 0
+    document.getElementById("d1").value === "" ||
+    document.getElementById("d2").value === "" ||
+    document.getElementById("er").value === "" ||
+    isNaN(d1) || isNaN(d2) || isNaN(er) ||
+    d1 <= 0 || d2 <= 0 || er <= 0 || d2 <= d1
   ){
     document.getElementById("errorBox").style.display = "block";
     clearResults();
@@ -252,12 +553,106 @@ function calc(){
 
   document.getElementById("errorBox").style.display = "none";
 
-  /* ORIGINAL COMPUTATION ALGORITHM PRESERVED EXPLICITLY */
-  var c1 = ((ZL - ZS) / (ZL + ZS));
-  var c2 = (c1 * VI);
+  /* Formulas & Calculations */
+  var zo = (138 / Math.sqrt(er)) * Math.log10(d2 / d1);
+  var delay = 0.08472 * Math.sqrt(er);
+  var inductance = 11.7 * Math.log10(d2 / d1);
+  var capacitance = (0.6128 * er) / Math.log10(d2 / d1);
 
-  document.getElementById("reflectionResult").innerText = c1.toFixed(6);
-  document.getElementById("voltageResult").innerText = c2.toFixed(6) + " V";
+  document.getElementById("impedanceResult").innerText = zo.toFixed(2) + " Ω";
+  document.getElementById("delayResult").innerText = delay.toFixed(3) + " ns/in";
+  document.getElementById("inductanceResult").innerText = inductance.toFixed(2) + " nH/in";
+  document.getElementById("capacitanceResult").innerText = capacitance.toFixed(2) + " pF/in";
 }
 </script>
-</body></html>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do the cable dimensions affect impedance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Impedance increases as the outer shield diameter (d2) becomes larger relative to the inner conductor diameter (d1). Conversely, a higher dielectric constant (er) decreases characteristic impedance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are common coaxial dielectric values?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Solid Teflon (PTFE) has a dielectric constant of 2.1, solid Polyethylene (PE) is 2.3, and foamed dielectrics range between 1.3 and 1.6 due to high air content."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is propagation delay important?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Propagation delay determines signal transit time along the cable. In phase-matched antenna arrays or high-speed clock routing, matching cable propagation delays prevents skew and phase alignment issues."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does cable length affect characteristic impedance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Characteristic impedance is a per-unit-length property set entirely by cross-sectional geometry and materials. A 1-inch cable and a 100-foot cable of the same type have the same impedance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if cable impedance is mismatched?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mismatches cause standing wave spikes (high SWR) and signal energy reflections. This results in power loss, heating, and signal distortion."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How are capacitance and inductance related to Zo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Characteristic impedance is mathematically related to these parameters by the equation Zo = sqrt(L / C). Controlling spacing helps achieve the target Zo value."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Calculators",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Coax Impedance Calculator",
+      "item": "https://calcboy.com/tool/coax-impedance-calculator"
+    }
+  ]
+}
+</script>
+</body>
+</html>
