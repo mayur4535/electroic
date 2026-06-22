@@ -1,19 +1,35 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RF Phase Noise to Phase Jitter Converter Calculator | Noise Solver</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RF Phase Noise to Phase Jitter Converter Calculator | Noise Solver | CalcBoy</title>
 <meta name="description" content="Convert integrated phase noise power density (dBc) into RMS phase jitter in radians and micro-seconds using operational oscillator frequency.">
-<meta name="keywords" content="rf phase noise to phase jitter converter, rms phase jitter calculator radians, integrated phase noise power density dbc, clock jitter time domain simulation, frequency oscillator offset tool, period jitter deviation calculator, timing phase deviation calculation, spectral noise density converter, phase noise integration limits">
+<meta name="keywords" content="rf phase noise to phase jitter converter, rms phase jitter calculator radians, integrated phase noise power density dbc, clock jitter time domain simulation, frequency oscillator offset tool, period jitter deviation calculator, timing phase deviation calculation, spectral noise density converter, phase noise integration limits, CalcBoy">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0;color:#333}
-.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+/* Reset and Container Margins - Tightened to exactly 10px on mobile as requested */
+*{box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif}
+body{margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+.calc{
+  width:100% !important;
+  max-width:620px !important;
+  margin:0 auto !important;
+  padding:10px !important; /* Forces 10px margin edge-to-edge on mobile screens */
+  padding-top:14px !important;
+}
+
+/* Form Layout */
 label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
 .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
 input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
 select{text-align:center;font-weight:800;padding:0 6px}
 input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
 .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+
 /* Small red error text custom styled above result layout */
-#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+
+/* Results Display */
 .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
 .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{padding:16px;border-radius:12px;min-height:82px}
@@ -25,20 +41,37 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
 .blue *{color:#2359e8}
 .green{background:#ecfdf5;border:1px solid #bbf7d0}
 .green *{color:#16a34a}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+
+/* Premium Content & InfoBox Layouts */
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
-.infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
+.infoBox p, .infoBox li{font-size:13.5px;line-height:1.6;color:#475467;font-weight:400}
 .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
 .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
+.paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:500;color:#475467}
+.paramItem strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 .exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
 .diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
 .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+
+/* Premium UI Structure Locks */
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:12px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:500;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:500;color:#475467;line-height:1.55}
+.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+
 @media(max-width:600px){
+  .calc{padding:10px !important} /* 10px Mobile Margin Gutter strictly maintained */
   .row{grid-template-columns:minmax(0,1fr) 72px}
   .resultGrid{grid-template-columns:1fr}
-  .paramGrid{grid-template-columns:1fr}
+  .paramGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 }
 </style></head>
 <body>
@@ -63,7 +96,7 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
     <button class="btn" type="button" onclick="calc()">CALCULATE</button>
   </form>
   
-  <div id="errorBox">Please enter valid values</div>
+  <div id="errorBox">Please enter valid values. All fields are required.</div>
 
   <div class="resultTitle">RESULTS</div>
   <div class="resultGrid">
@@ -99,15 +132,17 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
 
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
-    <div class="exampleBox">
-      <strong>Example 1: Clear Local Clock Matrix Baseline</strong><br>
-      • Carrier Frequency Oscillator = 10.00 MHz | Integrated Phase Noise = -45.00 dBw / dBc<br>
-      • <em>Calculated Radians Phase Jitter: 0.0079621 Rad | RMS Time Jitter Value: 0.12672108 uS</em>
-    </div>
-    <div class="exampleBox" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:10px;">
-      <strong>Example 2: Low-Noise High Frequency Synthesizer</strong><br>
-      • Carrier Frequency Oscillator = 150.00 MHz | Integrated Phase Noise = -60.00 dBc<br>
-      • <em>Calculated Radians Phase Jitter: 0.0014142 Rad | RMS Time Jitter Value: 0.00150053 uS</em>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Example 1: Clear Local Clock Matrix Baseline</strong></p>
+        <p>• Carrier Frequency Oscillator = 10.00 MHz | Integrated Phase Noise = -45.00 dBw / dBc<br>
+        • <em>Calculated Radians Phase Jitter: 0.0079621 Rad | RMS Time Jitter Value: 0.12672108 uS</em></p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Example 2: Low-Noise High Frequency Synthesizer</strong></p>
+        <p>• Carrier Frequency Oscillator = 150.00 MHz | Integrated Phase Noise = -60.00 dBc<br>
+        • <em>Calculated Radians Phase Jitter: 0.0014142 Rad | RMS Time Jitter Value: 0.00150053 uS</em></p>
+      </div>
     </div>
   </section>
 
@@ -186,7 +221,92 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
     </div>
     <p>The time conversion model derives the direct physical time variance sweep tracking error triggered over clock periods relative to active single sideband spectral noise power accumulation limits.</p>
   </section>
-</main>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Practical Calculation Example</h2>
+    <div class="formulaBox">
+      Suppose you have a clock synthesizer running with these parameters:
+      <br>• Carrier Frequency Oscillator (f) = 10 MHz
+      <br>• Integrated Phase Noise (PN) = -40 dBc
+    </div>
+    <p><strong>Step 1:</strong> Calculate the RMS Phase Jitter in phase-domain radians ($\theta_{rms}$).</p>
+    <div class="formulaBox">
+      PhaseJitter = sqrt( 2 * 10^(PN / 10) )
+      <br>PhaseJitter = sqrt( 2 * 10^(-40 / 10) )
+      <br>PhaseJitter = sqrt( 2 * 10^-4 ) = sqrt( 0.0002 ) ≈ 0.0141421 Rad
+    </div>
+    <p><strong>Step 2:</strong> Solve for the equivalent RMS timing jitter in microseconds ($\mu\text{s}$).</p>
+    <div class="formulaBox">
+      RMS Jitter (uS) = [ PhaseJitter / (2 * pi * f) ] * 10^6
+      <br>RMS Jitter (uS) = [ 0.0141421 / (2 * pi * 10) ] * 10^6
+      <br>RMS Jitter (uS) = [ 0.0141421 / 62.831853 ] * 10^6
+      <br>RMS Jitter (uS) ≈ 0.00022508 * 10^6 = 225.079 uS
+    </div>
+    <p>This demonstrates how frequency-domain spectral phase noise transforms into direct physical timing errors (cycle uncertainty) in clock systems.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the fundamental operating carrier <strong>Frequency Oscillator</strong> value and select the desired unit (kHz, MHz, or GHz).</div>
+      <div class="aboutStep">Input the integrated single-sideband <strong>Phase Noise</strong> value in decibels relative to the carrier (dBc).</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to initiate the timing transformation logic.</div>
+      <div class="aboutStep">Review the output RMS phase jitter in microseconds (time domain) and radians (phase domain) on the Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Translate frequency-domain spectral phase noise into real-world timing jitter.</strong>
+      <p>The CalcBoy RF Phase Noise to Phase Jitter Converter Calculator converts integrated single-sideband phase noise power (dBc) into RMS phase jitter in both phase radians and time-domain microseconds.</p>
+    </div>
+    
+    <p>In high-speed communication networks, digital clock routing, and high-frequency RF systems, signal timing must be precise. Standard crystal oscillators, phase-locked loops (PLLs), and frequency synthesizers generate high-frequency clock signals. However, subtle thermal and electrical perturbations cause the phase of the signal to drift. In the frequency domain, this phase instability is measured as single-sideband (SSB) phase noise spectral power density. In the time domain, these fluctuations manifest as timing jitter, causing clock edges to arrive slightly early or late relative to their ideal positions.</p>
+    
+    <p>Integrating phase noise spectral density over a specific frequency offset band (e.g., 12 kHz to 20 MHz) yields the total integrated phase noise in dBc. This calculator converts this integrated power value into RMS phase jitter in radians, and then scales it relative to the operating frequency to find the time-domain RMS jitter in microseconds ($\mu\text{s}$). Designers use these metrics to determine if clock timing margins satisfy the strict jitter budgets of high-speed digital links and high-speed data converters.</p>
+
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Application</span>Clock synthesizer design, PLL loop filter optimization, high-speed ADC clocking, and serial data links.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>RMS timing jitter (Time-domain in microseconds) and RMS phase deviation (Phase-domain in radians).</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Uses the operating carrier frequency to translate relative phase angles into absolute clock edge timing deviations.</div>
+      <div class="aboutMiniCard"><span>Design Rule</span>Minimize integrated phase noise to avoid clock edge timing uncertainty and receiver bit errors.</div>
+    </div>
+
+    <div class="aboutNote">Tip: A lower phase noise value (e.g., -60 dBc instead of -40 dBc) represents exponentially less noise power, resulting in a cleaner clock with significantly lower timing jitter.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What is the physical relationship between phase noise and phase jitter?</h3>
+    <p>Phase noise is a frequency-domain metric representing the spectral power distribution of phase fluctuations around the carrier, whereas phase jitter is the time-domain equivalent representing the variance in clock transition edge crossings.</p>
+
+    <h3>Why do we integrate phase noise over a specific frequency band?</h3>
+    <p>Phase noise is distributed continuously. To find the total timing impact (jitter) for a particular application, we must integrate the power spectral density across a defined offset frequency range (e.g., 12 kHz to 20 MHz for high-speed Ethernet).</p>
+
+    <h3>Why does the time-domain jitter decrease as the oscillator frequency increases?</h3>
+    <p>Time jitter is related to the period of the clock. For a fixed phase deviation in radians, a higher frequency means a shorter absolute cycle period, which translates to a smaller absolute time deviation.</p>
+
+    <h3>What is the physical difference between RMS jitter and Peak-to-Peak jitter?</h3>
+    <p>RMS jitter represents the standard deviation (1-sigma) of timing edges over time assuming a Gaussian distribution. Peak-to-Peak jitter defines the total range from the absolute minimum to maximum deviation, which is crucial for determining clock setup and hold margin failures.</p>
+
+    <h3>How does integrated phase noise power density (dBc) relate to single-sideband phase noise (dBc/Hz)?</h3>
+    <p>Single-sideband phase noise is measured in a 1 Hz bandwidth at specific offset frequencies. The integrated phase noise (in dBc) is the mathematical area under this spectral noise plot across the chosen integration boundaries.</p>
+
+    <h3>Can we use this calculator to estimate jitter in high-speed ADC sampling?</h3>
+    <p>Yes. RMS phase jitter acts as a major limit on ADC signal-to-noise ratios (SNR). Excessive jitter during clock transitions adds sampling uncertainty, which manifests as aperture noise and degrades high-frequency analog conversion precision.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>VSWR to Return Loss Calculator</strong>Analyze antenna matching and transmission line reflection.</div>
+      <div class="linkCard"><strong>Frequency to Wavelength Solver</strong>Determine electromagnetic signal dimensions.</div>
+      <div class="linkCard"><strong>Phase-Locked Loop Loop Filter Calculator</strong>Optimize PLL filter bandwidth limits.</div>
+      <div class="linkCard"><strong>1dB Compression Point Calculator</strong>Evaluate operating limits of active RF stages.</div>
+    </div>
+  </section>
+</div>
 
 <script>
 function clearResults(){
@@ -238,4 +358,94 @@ function calc(){
 
 clearResults();
 </script>
-</body></html>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the physical relationship between phase noise and phase jitter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Phase noise is a frequency-domain metric representing the spectral power distribution of phase fluctuations around the carrier, whereas phase jitter is the time-domain equivalent representing the variance in clock transition edge crossings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do we integrate phase noise over a specific frequency band?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Phase noise is distributed continuously. To find the total timing impact (jitter) for a particular application, we must integrate the power spectral density across a defined offset frequency range (e.g., 12 kHz to 20 MHz for high-speed Ethernet)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the time-domain jitter decrease as the oscillator frequency increases?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Time jitter is related to the period of the clock. For a fixed phase deviation in radians, a higher frequency means a shorter absolute cycle period, which translates to a smaller absolute time deviation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the physical difference between RMS jitter and Peak-to-Peak jitter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "RMS jitter represents the standard deviation (1-sigma) of timing edges over time assuming a Gaussian distribution. Peak-to-Peak jitter defines the total range from the absolute minimum to maximum deviation, which is crucial for determining clock setup and hold margin failures."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does integrated phase noise power density (dBc) relate to single-sideband phase noise (dBc/Hz)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Single-sideband phase noise is measured in a 1 Hz bandwidth at specific offset frequencies. The integrated phase noise (in dBc) is the mathematical area under this spectral noise plot across the chosen integration boundaries."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can we use this calculator to estimate jitter in high-speed ADC sampling?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. RMS phase jitter acts as a major limit on ADC signal-to-noise ratios (SNR). Excessive jitter during clock transitions adds sampling uncertainty, which manifests as aperture noise and degrades high-frequency analog conversion precision."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Calculators",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "RF Phase Noise to Phase Jitter Converter Calculator",
+      "item": "https://calcboy.com/tool/rf-phase-noise-to-phase-jitter-converter-calculator"
+    }
+  ]
+}
+</script>
+</body>
+</html>
