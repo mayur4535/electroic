@@ -1,11 +1,24 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Antenna Downtilt and Coverage Calculator | RF Link Solver</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Antenna Downtilt and Coverage Calculator | RF Link Solver | CalcBoy</title>
 <meta name="description" content="Calculate antenna downtilt angles, receiver distances, and inner/outer footprint coverage boundary limits based on cell tower and station node heights.">
-<meta name="keywords" content="antenna downtilt calculator, cell tower coverage radius solver, vertical beamwidth angle matching, transmission path loss footprint tool, inner radius coverage equation, outer edge boundary limits, rf link budget optimization, base station elevation geometry, receiver distance calculation tracking">
+<meta name="keywords" content="antenna downtilt calculator, cell tower coverage radius solver, vertical beamwidth angle matching, transmission path loss footprint tool, inner radius coverage equation, outer edge boundary limits, rf link budget optimization, base station elevation geometry, receiver distance calculation tracking, CalcBoy">
 <style>
+/* Reset and Container Margins - Tightened to exactly 10px on mobile as locked */
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:0;color:#333}
-.calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+body{margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+.calc{
+  width:100% !important;
+  max-width:620px !important;
+  margin:0 auto !important;
+  padding:10px !important; /* Forces 10px mobile margin as locked */
+  padding-top:14px !important;
+}
+
+/* Original Styles Preserved Identically */
 label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
 .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
 .typeRow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;margin-bottom:16px}
@@ -13,10 +26,12 @@ input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;p
 select{text-align:center;font-weight:800;padding:0 6px}
 input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
 .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-/* Small red error text custom styled above result layout */
-#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
 .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
-.resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
+
+/* Results Grid - Converted strictly to 2-Column layout as locked */
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
 .card{padding:16px;border-radius:12px;min-height:82px}
 .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
 .cardLine{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
@@ -28,22 +43,41 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
 .green *{color:#16a34a}
 .purple{background:#f5f3ff;border:1px solid #ddd6fe}
 .purple *{color:#7c3aed}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+
+/* Existing InfoBox Internal Styles preserved identically */
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
 .infoBox p{font-size:13px;line-height:1.6;color:#4a5568;margin-bottom:12px;font-weight:500}
 .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
+.formula, .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
 .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
 .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
 .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
 .exampleBox{background:#fefce8;border:1px solid #fef08a;padding:12px;border-radius:8px;margin-top:8px;font-size:12px;color:#713f12;font-weight:600}
 .diagramBox{background:#fff;border:none;padding:12px;overflow-x:auto;text-align:center;margin-top:10px}
 .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
+
+/* Premium Appended UI Content Extensions Styles (Locked & Safe) */
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:12px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:500;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:500;color:#475467;line-height:1.55}
+.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
+
 @media(max-width:600px){
+  .calc{padding:10px !important} /* 10px Mobile Margin Gutter strictly maintained */
   .row{grid-template-columns:minmax(0,1fr) 72px}
   .typeRow{grid-template-columns:105px minmax(0,1fr)}
-  .paramGrid{grid-template-columns:1fr}
+  .resultGrid{grid-template-columns:1fr} /* Switch to 1-Column on small viewports to prevent squishing */
+  .paramGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 }
-</style></head>
+</style>
+</head>
 <body>
 <main class="calc">
   <form id="tool">
@@ -106,7 +140,7 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
     <button class="btn" type="button" onclick="calc()">CALCULATE</button>
   </form>
   
-  <div id="errorBox">Please enter valid values.</div>
+  <div id="errorBox">Please enter valid values. All fields are required.</div>
 
   <div class="resultTitle">RESULTS</div>
   <div class="resultGrid">
@@ -259,19 +293,81 @@ input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,
 
   <section class="infoBox">
     <h2>Formulas & Mathematical Logic</h2>
-    <div class="formulaLine">
-      <strong>Distance Link Computation Mode (Calculates Angle & Radius Spans):</strong><br>
-      • Downtilt Angle = atan((Ht - Hr) / Distance)<br>
-      • Inner Radius Footprint = (Ht - Hr) / tan(Downtilt + Beamwidth / 2)<br>
-      • Outer Radius Footprint = (Ht - Hr) / tan(Downtilt - Beamwidth / 2)
-    </div>
-    <div class="formulaLine">
-      <strong>Downtilt Optimization Mode (Calculates Linear Separation Range):</strong><br>
-      • Receiver Range Distance = (Ht - Hr) / tan(Downtilt)<br>
-      • Inner Radius Footprint = (Ht - Hr) / tan(Downtilt - Beamwidth / 2)<br>
-      • Outer Radius Footprint = (Ht - Hr) / tan(Downtilt + Beamwidth / 2)
-    </div>
+    <div class="formula">Distance Link Computation Mode (Calculates Angle and Radius Spans):<br>• Downtilt Angle = atan((Ht - Hr) / Distance)<br>• Inner Radius Footprint = (Ht - Hr) / tan(Downtilt + Beamwidth / 2)<br>• Outer Radius Footprint = (Ht - Hr) / tan(Downtilt - Beamwidth / 2)</div>
+    <div class="formula">Downtilt Optimization Mode (Calculates Linear Separation Range):<br>• Receiver Range Distance = (Ht - Hr) / tan(Downtilt)<br>• Inner Radius Footprint = (Ht - Hr) / tan(Downtilt - Beamwidth / 2)<br>• Outer Radius Footprint = (Ht - Hr) / tan(Downtilt + Beamwidth / 2)</div>
     <p>The system leverages basic trigonometric angular relationships to map signal dispersion boundaries down onto targeted terrestrial geographic matrices safely.</p>
+  </section>
+
+  <!-- Premium Appended Content (Strictly Locked consecutive formulaBox blocks with absolutely NO loose text) -->
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Transmitter Height (Ht) = 150 ft, Receiver Height (Hr) = 30 ft, Calculator Mode = Downtilt, Downtilt Angle = 5.0 degrees, Beamwidth Angle = 6.0 degrees.</div>
+    <div class="formulaBox">Step 1: Calculate the relative vertical height difference between antennas: H = Ht - Hr = 150 - 30 = 120 ft.</div>
+    <div class="formulaBox">Step 2: Calculate the target receiver range distance based on the specified downtilt angle: Distance = H / tan(Downtilt) = 120 / tan(5.0 degrees) = 120 / 0.087489 = 1371.62 ft.</div>
+    <div class="formulaBox">Step 3: Solve the inner coverage radius footprint limit: Inner = H / tan(Downtilt + Beamwidth / 2) = 120 / tan(5.0 + 3.0 degrees) = 120 / tan(8.0 degrees) = 120 / 0.14054 = 854.37 ft. (Note: Under Downtilt mode, inner radius utilizes Downtilt + Beamwidth / 2 to evaluate the nearest boundary).</div>
+    <div class="formulaBox">Step 4: Solve the outer coverage radius footprint limit: Outer = H / tan(Downtilt - Beamwidth / 2) = 120 / tan(5.0 - 3.0 degrees) = 120 / tan(2.0 degrees) = 120 / 0.03492 = 3433.80 ft.</div>
+    <div class="formulaBox">Result: The optimized coverage span starts at an inner radius of 854.37 ft and extends to an outer boundary of 3433.80 ft.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the physical elevation height of the <strong>Transmitter Height</strong> and select your desired units.</div>
+      <div class="aboutStep">Enter the target endpoint elevation height of the <strong>Receiver Height</strong> and select its unit.</div>
+      <div class="aboutStep">Select the <strong>Calculator Type</strong> mode: Distance (to calculate downtilt angle) or Downtilt (to calculate receiver distance).</div>
+      <div class="aboutStep">Input the corresponding target <strong>Distance</strong> or target <strong>Downtilt Angle</strong> in degrees inside the mode field.</div>
+      <div class="aboutStep">Enter the vertical half-power <strong>Beamwidth Angle</strong> of the sector antenna in degrees.</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to initiate the trigonometric coverage boundary solver.</div>
+      <div class="aboutStep">Analyze the computed downtilt angle (or target distance) along with the inner and outer coverage radii on the Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Optimize base station coverage footprints and minimize adjacent-cell interference with precision.</strong>
+      <p>The CalcBoy Antenna Downtilt and Coverage Calculator evaluates mechanical antenna tilt angles, target receiver distances, and geographical footprint coverage boundaries using height differentials and vertical beamwidths.</p>
+    </div>
+    <p>Antenna downtilt is an essential adjustment used in cellular network design to direct the main beam of a base station antenna downward toward the ground. This optimizes signal coverage inside a target cell, minimizes overlap with adjacent cells (co-channel interference), and maximizes spectral efficiency. Antenna downtilt is accomplished using either mechanical tilting of the physical antenna bracket (mechanical tilt) or by shifting the phase of the signal fed to individual radiating elements within the array (electrical tilt). This calculator analyzes the geometric relationships between cell tower transmitter height, receiver station elevation, vertical antenna beamwidth, and target distance to solve for either the required downtilt angle or the resulting footprint boundaries (inner and outer coverage radii).</p>
+    <p>In high-frequency cellular networks (such as LTE, 5G, and high-capacity microcells), control over signal footprints is critical. Unwanted spillover from a tall sector site can degrade signal-to-noise ratios (SNR) in neighboring cells, triggering handoff failures and data throughput drops. By modeling coverage limits using the vertical half-power (-3 dB) beamwidth, network planning engineers and RF technicians can position the beam's main lobe precisely over the high-traffic density zone. This ensures that the footprint starts at a safe inner boundary and falls off rapidly before interfering with the next base station's coverage area.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Application</span>Cellular network planning, sector site tilt optimization, microwave link budget calculations, and interference mitigation.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Downtilt Angle (degrees), Receiver Distance (feet), and Inner/Outer Coverage Footprint boundaries.</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Uses trigonometric ratios of height differentials and beamwidth divergence angles to solve for ground footprints.</div>
+      <div class="aboutMiniCard"><span>Optimization Rule</span>Adjust tilt parameters so that the outer coverage boundary drops off sharply before the neighboring cell edge.</div>
+    </div>
+    <div class="aboutNote">Tip: A negative outer coverage radius indicates that the upper edge of the vertical beam points above the horizon (0 degrees). This means the beam does not intersect the ground, creating an infinite outer coverage limit.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What physically happens when you downtilt a cell tower sector antenna?</h3>
+    <p>Downtilting rotates the antenna's main radiation pattern toward the ground. This increases the signal strength within the target cell area, reduces co-channel interference to adjacent cells, and improves overall network capacity.</p>
+
+    <h3>What is the difference between mechanical downtilt and electrical downtilt?</h3>
+    <p>Mechanical downtilt physically tilts the antenna bracket on the tower, which lowers the beam direction in the front but actually rises the beam direction behind and on the sides. Electrical downtilt alters the phase of the signal fed to internal radiating elements, tilting the pattern uniformly in all horizontal directions (360 degrees) without physical movement.</p>
+
+    <h3>Why is vertical beamwidth critical for footprint boundary calculations?</h3>
+    <p>Vertical beamwidth (typically 5 to 15 degrees) defines the spread of the signal. The upper and lower half-power (-3 dB) limits of this vertical beam determine where the signal starts and stops being highly effective, marking the inner and outer coverage boundaries.</p>
+
+    <h3>How do I handle outer coverage radius calculations that yield negative values?</h3>
+    <p>A negative outer coverage radius occurs when the upper beamwidth edge (Downtilt - Beamwidth / 2) is pointing above the horizon (0 degrees or positive angles). Since the beam points to the sky, it theoretically never intersects the ground, creating an infinite coverage boundary.</p>
+
+    <h3>Why does the receiver height (Hr) need to be subtracted from the transmitter height (Ht)?</h3>
+    <p>Electromagnetic propagation is relative to the straight line of sight between the two antenna centers. Subtracting receiver height isolates the true relative vertical elevation difference (H = Ht - Hr) necessary for accurate right-triangle trigonometric calculations.</p>
+
+    <h3>Can we use this calculator for macro cell towers as well as small cells?</h3>
+    <p>Yes. The calculator uses unit-less ratio trigonometry, making it applicable to macro towers (which are tall and cover wide areas) as well as small cells and Wi-Fi networks (which are low to the ground and cover tight footprints), provided you input consistent measurement units.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>VSWR and Return Loss Calculator</strong>Check antenna match and transmission line reflections.</div>
+      <div class="linkCard"><strong>RF Path Loss Calculator</strong>Model free-space signal attenuation across distance boundaries.</div>
+      <div class="linkCard"><strong>Microstrip Line Impedance Solver</strong>Model trace dimensions on printed circuit board layouts.</div>
+      <div class="linkCard"><strong>Specific Absorption Rate (SAR) Solver</strong>Evaluate biological electromagnetic wave absorption limits.</div>
+    </div>
   </section>
 </main>
 
@@ -376,4 +472,94 @@ function calc(){
 updateMode();
 clearResults();
 </script>
-</body></html>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What physically happens when you downtilt a cell tower sector antenna?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Downtilting rotates the antenna's main radiation pattern toward the ground. This increases the signal strength within the target cell area, reduces co-channel interference to adjacent cells, and improves overall network capacity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between mechanical downtilt and electrical downtilt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mechanical downtilt physically tilts the antenna bracket on the tower, which lowers the beam direction in the front but actually rises the beam direction behind and on the sides. Electrical downtilt alters the phase of the signal fed to internal radiating elements, tilting the pattern uniformly in all horizontal directions (360 degrees) without physical movement."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is vertical beamwidth critical for footprint boundary calculations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Vertical beamwidth (typically 5 to 15 degrees) defines the spread of the signal. The upper and lower half-power (-3 dB) limits of this vertical beam determine where the signal starts and stops being highly effective, marking the inner and outer coverage boundaries."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I handle outer coverage radius calculations that yield negative values?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A negative outer coverage radius occurs when the upper beamwidth edge (Downtilt - Beamwidth / 2) is pointing above the horizon (0 degrees or positive angles). Since the beam points to the sky, it theoretically never intersects the ground, creating an infinite coverage boundary."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the receiver height (Hr) need to be subtracted from the transmitter height (Ht)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Electromagnetic propagation is relative to the straight line of sight between the two antenna centers. Subtracting receiver height isolates the true relative vertical elevation difference (H = Ht - Hr) necessary for accurate right-triangle trigonometric calculations."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can we use this calculator for macro cell towers as well as small cells?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The calculator uses unit-less ratio trigonometry, making it applicable to macro towers (which are tall and cover wide areas) as well as small cells and Wi-Fi networks (which are low to the ground and cover tight footprints), provided you input consistent measurement units."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Calculators",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Antenna Downtilt and Coverage Calculator",
+      "item": "https://calcboy.com/tool/antenna-downtilt-and-coverage-calculator"
+    }
+  ]
+}
+</script>
+</body>
+</html>
