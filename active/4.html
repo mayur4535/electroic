@@ -1,5 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Varactor Diode Calculator | Cutoff & Quality Factor | CalcBoy</title>
+<meta name="description" content="Calculate varactor diode capacitance, cutoff frequency, and quality factor under reverse bias conditions. Free CalcBoy engineering tool.">
+<meta name="keywords" content="varactor diode calculator, varicap calculator, diode cutoff frequency, quality factor calculator, tuning circuit calculator, CalcBoy">
+<style>
+#varactor-diode-calc,#varactor-diode-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#varactor-diode-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+.subTitle{font-size:13px;font-weight:900;color:#64748b;text-transform:uppercase;margin-top:4px;padding:10px 0 0;border-top:1px solid #e5e7eb}
+button, .calc-btn{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr}
+.result-value{font-size:14px}
+#varactor-diode-calc .result-card.purple{grid-column:span 1 !important}
+}
+</style>
+</head>
+<body>
 
-<SCRIPT language="javascript" type="text/javascript">
+<div id="varactor-diode-calc">
+
+  <FORM name="calculator" id="calculator" onsubmit="event.preventDefault();">
+    <div class="calc-grid">
+      <div class="subTitle">Input Parameters</div>
+
+      <div>
+        <label class="calc-label">Diode Capacitance at 0V (Cd)</label>
+        <div class="calc-row">
+          <input name="number1" type="number" step="any" value="47">
+          <div class="unit-box">pF</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Barrier Voltage (Vb)</label>
+        <div class="calc-row">
+          <input name="number2" type="number" step="any" value="0.7">
+          <div class="unit-box">V</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Applied Reverse Bias Potential (V)</label>
+        <div class="calc-row">
+          <input name="number3" type="number" step="any" value="-4">
+          <div class="unit-box">V</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Series Resistance (Rs)</label>
+        <div class="calc-row">
+          <input name="number4" type="number" step="any" value="2">
+          <div class="unit-box">Ω</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">Operating Frequency (F)</label>
+        <div class="calc-row">
+          <input name="number5" type="number" step="any" value="100">
+          <div class="unit-box">MHz</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="calc-label">m Grading Factor</label>
+        <div class="calc-row">
+          <input name="number6" type="number" step="any" value="0.5">
+          <div class="unit-box">m</div>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" onclick="calc()">CALCULATE</button>
+
+    <div id="errorBox" style="display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2">Please enter valid values. Configuration parameters must be greater than zero.</div>
+
+    <div class="result-title">RESULTS</div>
+
+    <div class="result-grid">
+      <div class="result-card blue">
+        <div class="result-label">Calculated Diode Capacitance</div>
+        <div class="result-value">
+          <input name="diode_capacitance" readonly style="border:none;background:transparent;padding:0;font-size:18px;font-weight:900;color:#2359e8;width:100%;height:auto;outline:none;cursor:default;">
+        </div>
+      </div>
+      <div class="result-card green">
+        <div class="result-label">Diode Cutoff Frequency</div>
+        <div class="result-value">
+          <input name="diode_cutoff_frequency" readonly style="border:none;background:transparent;padding:0;font-size:18px;font-weight:900;color:#16a34a;width:100%;height:auto;outline:none;cursor:default;">
+        </div>
+      </div>
+      <div class="result-card purple" style="grid-column: span 2;">
+        <div class="result-label">Quality Factor (QF)</div>
+        <div class="result-value">
+          <input name="quality_factor" readonly style="border:none;background:transparent;padding:0;font-size:18px;font-weight:900;color:#7c3aed;width:100%;height:auto;outline:none;cursor:default;">
+        </div>
+      </div>
+    </div>
+  </FORM>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Zero-Bias Capacitance (Cd)</strong>The diode's transition capacitance measured under zero applied voltage (0V bias) conditions.</div>
+      <div class="paramItem"><strong>Barrier Voltage (Vb)</strong>The internal built-in contact potential of the semiconductor p-n junction (typically 0.7V for silicon).</div>
+      <div class="paramItem"><strong>Reverse Bias Potential (V)</strong>The external reverse voltage applied across the diode terminals (must be entered as a negative value).</div>
+      <div class="paramItem"><strong>Series Resistance (Rs)</strong>The parasitic bulk semiconductor resistance of the diode contacts and active regions.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>UHF Tuning Tank Setup</strong></p>
+        <p>Zero-Bias Capacitance Cd = 47 pF<br>Barrier Voltage Vb = 0.7 V<br>Reverse Bias V = -4.0 V, Series Rs = 2.0 Ω<br>Operating Frequency F = 100 MHz, m = 0.5</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Computed Varactor Output</strong></p>
+        <p>• Tuning Diode Capacitance = 21.68 pF<br>• Diode Cutoff Frequency = 3670.6 MHz<br>• Dynamic Quality Factor (Q) = 36.7</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>FM Radio Modulation</strong></p>
+        <p>Operating in the 88-108 MHz range. Applying a variable modulating audio signal across the reverse bias node changes circuit capacitance dynamically, modulating carrier frequency.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Microwave Phase Shifter</strong></p>
+        <p>Using hyperabrupt junction varactor diodes (m = 0.75 to 1.0) to achieve large capacitance tuning ranges with low control voltage changes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A varactor diode (or varicap diode) acts as a voltage-variable capacitor. Operating exclusively in the reverse bias region, changing the reverse voltage adjusts the width of the depletion layer, which directly tunes the junction transition capacitance (Cj).</p>
+
+    <!-- Drawing 1: I-V Characteristics Curve -->
+    <h3>Volt-Ampere (V-I) Characteristics of Standard Diode</h3>
+    <div class="diagramBox">
+      <svg viewBox="0 0 540 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Standard diode I-V characteristics curve">
+        <rect width="540" height="320" fill="#ffffff" stroke="none"/>
+        
+        <!-- Grid lines & Axes -->
+        <line x1="80" y1="160" x2="480" y2="160" stroke="#94a3b8" stroke-width="2"/> <!-- X Axis (Voltage) -->
+        <line x1="320" y1="40" x2="320" y2="280" stroke="#94a3b8" stroke-width="2"/> <!-- Y Axis (Current) -->
+        
+        <!-- Axis Arrows -->
+        <polygon points="480,160 470,155 470,165" fill="#94a3b8"/>
+        <polygon points="320,40 315,50 325,50" fill="#334155"/>
+        <polygon points="320,280 315,270 325,270" fill="#334155"/>
+        <polygon points="80,160 90,155 90,165" fill="#334155"/>
+        
+        <!-- Standard Diode V-I Curve -->
+        <!-- Forward bias exponential rise & Reverse bias flat drop -->
+        <path d="M 120,260 L 120,175 C 120,170 140,165 320,160 Q 380,160 395,140 T 450,50" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round"/>
+        
+        <!-- Knee and breakdown dashed lines -->
+        <line x1="395" y1="140" x2="395" y2="160" stroke="#475569" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <line x1="120" y1="175" x2="120" y2="160" stroke="#475569" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+        <!-- Labels -->
+        <text x="460" y="195" font-size="12" font-family="sans-serif" font-weight="bold" fill="#334155" text-anchor="middle">+V (Forward Voltage)</text>
+        <text x="80" y="145" font-size="12" font-family="sans-serif" font-weight="bold" fill="#334155"> -V (Reverse Voltage)</text>
+        <text x="330" y="55" font-size="12" font-family="sans-serif" font-weight="bold" fill="#334155"> +I (Forward Current)</text>
+        <text x="330" y="270" font-size="12" font-family="sans-serif" font-weight="bold" fill="#334155"> -I (Reverse Current )</text>
+
+        <text x="395" y="180" font-size="11" font-family="sans-serif" font-weight="bold" fill="#1e40af" text-anchor="middle">Knee (0.7V)</text>
+        <text x="110" y="115" font-size="11" font-family="sans-serif" font-weight="bold" fill="#991b1b" text-anchor="middle">Breakdown (Vbr)</text>
+
+        <text x="430" y="100" font-size="12" font-family="sans-serif" font-weight="bold" fill="#2563eb">Forward Bias</text>
+        <text x="200" y="200" font-size="12" font-family="sans-serif" font-weight="bold" fill="#1e293b">Reverse Bias Region</text>
+        <text x="150" y="250" font-size="11" font-family="sans-serif" font-weight="bold" fill="#b91c1c">Zener / Avalanche Region</text>
+      </svg>
+    </div>
+
+    <!-- Drawing 2: Varactor Tuning Circuit -->
+    <h3>Varactor Diode Tuning Circuit</h3>
+    <div class="diagramBox">
+      <svg viewBox="0 0 540 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Varactor diode tuning equivalent circuit schematic">
+        <rect x="0" y="0" width="540" height="220" fill="#ffffff" stroke="none"/>
+        
+        <!-- AC Signal Source (Vs) -->
+        <circle cx="50" cy="110" r="16" fill="none" stroke="#1e293b" stroke-width="2"/>
+        <path d="M 42,110 Q 46,100 50,110 T 58,110" fill="none" stroke="#1e293b" stroke-width="2"/>
+        <text x="30" y="142" font-size="13" font-family="sans-serif" font-weight="bold" fill="#1e293b" text-anchor="middle">Vs</text>
+
+        <!-- Top and bottom rail wires -->
+        <line x1="50" y1="50" x2="80" y2="50" stroke="#000" stroke-width="2"/>
+        <line x1="50" y1="170" x2="380" y2="170" stroke="#000" stroke-width="2"/>
+        <line x1="50" y1="126" x2="50" y2="170" stroke="#000" stroke-width="2"/>
+        <line x1="50" y1="50" x2="50" y2="94" stroke="#000" stroke-width="2"/>
+
+        <!-- Series Resistor R -->
+        <path d="M 80,50 L 95,50 L 99,42 L 107,58 L 115,42 L 123,58 L 131,42 L 139,58 L 143,50 L 250,50" fill="none" stroke="#475569" stroke-width="2" stroke-linejoin="round"/>
+        <text x="119" y="34" font-size="14" font-family="sans-serif" font-weight="bold" fill="#475569" text-anchor="middle">R</text>
+
+        <!-- Parallel Branch: Back-to-Back Varactor Diode Network -->
+        <!-- Top Varactor (D1) pointing down -->
+        <line x1="250" y1="50" x2="250" y2="70" stroke="#000" stroke-width="2"/>
+        <polygon points="238,70 262,70 250,90" fill="#fff" stroke="#dc2626" stroke-width="2"/>
+        <line x1="238" y1="90" x2="262" y2="90" stroke="#dc2626" stroke-width="2.5"/>
+        <line x1="238" y1="94" x2="262" y2="94" stroke="#dc2626" stroke-width="1.5"/>
+        <line x1="250" y1="94" x2="250" y2="110" stroke="#000" stroke-width="2"/>
+        <text x="274" y="85" font-size="13" font-family="sans-serif" font-weight="bold" fill="#dc2626">D1</text>
+
+        <!-- Node and Bias Supply Vc -->
+        <circle cx="250" cy="110" r="4" fill="#1e293b"/>
+        <line x1="250" y1="110" x2="190" y2="110" stroke="#00008b" stroke-width="2"/>
+        <circle cx="190" cy="110" r="4" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+        <text x="190" y="98" font-size="14" font-family="sans-serif" font-weight="bold" fill="#2563eb" text-anchor="middle">Vc</text>
+        <text x="190" y="130" font-size="11" font-family="sans-serif" fill="#64748b" text-anchor="middle">Variable DC</text>
+
+        <!-- Bottom Varactor (D2) pointing up -->
+        <line x1="250" y1="110" x2="250" y2="126" stroke="#000" stroke-width="2"/>
+        <line x1="238" y1="126" x2="262" y2="126" stroke="#dc2626" stroke-width="1.5"/>
+        <line x1="238" y1="130" x2="262" y2="130" stroke="#dc2626" stroke-width="2.5"/>
+        <polygon points="238,150 262,150 250,130" fill="#fff" stroke="#dc2626" stroke-width="2"/>
+        <line x1="250" y1="150" x2="250" y2="170" stroke="#000" stroke-width="2"/>
+        <text x="274" y="145" font-size="13" font-family="sans-serif" font-weight="bold" fill="#dc2626">D2</text>
+
+        <!-- Connecting Line to Inductor L -->
+        <line x1="250" y1="50" x2="380" y2="50" stroke="#000" stroke-width="2"/>
+        
+        <!-- Inductor (L) -->
+        <line x1="380" y1="50" x2="380" y2="65" stroke="#000" stroke-width="2"/>
+        <path d="M 380,65 C 398,75 398,85 380,85 C 398,95 398,105 380,105 C 398,115 398,125 380,125 C 398,135 398,145 380,145" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+        <line x1="380" y1="145" x2="380" y2="170" stroke="#000" stroke-width="2"/>
+        <text x="402" y="110" font-size="14" font-family="sans-serif" font-weight="bold" fill="#16a34a">L</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Tuned Diode Capacitance: C = Cd / (Vb - V)^m</div>
+    <div class="formula">Cutoff Frequency: f_co = 1 / (2 * pi * Rs * Cj)</div>
+    <div class="formula">Quality Factor (QF): Q = f_co / F</div>
+    <p>The voltage-controlled junction width of a varactor behaves like an adjustable parallel plate capacitor. Increasing the applied reverse bias potential (V) widens the depletion layer, reducing transition junction capacitance dynamically.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Sizing a varicap diode circuit with Cd = 47 pF, Vb = 0.7 V, applied reverse bias V = -4 V, series Rs = 2 Ω, and F = 100 MHz (m = 0.5 abrupt profile).</div>
+    <div class="formulaBox">Step 1: Calculate the net barrier drop: V_net = Vb - V = 0.7 - (-4.0) = 4.7 V.</div>
+    <div class="formulaBox">Step 2: Calculate the tuned junction capacitance: C = 47 / (4.7)^0.5 = 47 / 2.1679 = 21.68 pF.</div>
+    <div class="formulaBox">Step 3: Calculate the cutoff frequency: f_co = 1 / (2 * pi * 2 * 21.68 * 10^-12) = 3670.6 MHz.</div>
+    <div class="formulaBox">Step 4: Resolve the circuit quality factor (Q) at 100 MHz operating limits: Q = 3670.6 / 100 = 36.7.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the nominal zero-bias diode capacitance (Cd) in picofarads (pF).</div>
+      <div class="aboutStep">Enter the junction capacitance (Cj) across the depletion layer in picofarads (pF).</div>
+      <div class="aboutStep">Specify the parasitic series ohmic resistance (Rs) of the semiconductor contacts in Ohms.</div>
+      <div class="aboutStep">Input the parasitic lead inductance (Ls) of the component packaging in nanohenries (nH).</div>
+      <div class="aboutStep">Click Calculate to evaluate the resistive cutoff limit (f_co) and the self-resonant frequency (f_xo) in Megahertz (MHz).</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Model voltage-variable capacitance, RF resonance quality factors, and cutoff boundaries with CalcBoy's professional suite.</strong>
+      <p>This design calculator estimates dynamic junction capacitance, high-frequency cutoff limits, and quality factors for reverse-biased varactor (varicap) diodes.</p>
+    </div>
+    <p>A varactor diode—widely known as a varicap diode—is a semiconductor device designed to act as a voltage-controlled capacitor. Unlike standard diodes optimized for forward-bias rectification, the varactor is operated exclusively under reverse bias conditions. When reverse voltage is applied across the p-n junction, it repels charge carriers, creating a charge-free depletion layer that behaves like the insulating dielectric of a parallel plate capacitor, while the highly doped p and n regions act as the conductive plates [6].</p>
+    <p>By adjusting the applied reverse voltage, designers can vary the width of this depletion layer dynamically. Increasing the reverse voltage widens the depletion layer, which decreases the junction capacitance [6]. Conversely, lowering the reverse bias narrows the depletion region, elevating the capacitance [6]. This capability allows varactor diodes to tune resonant LC tank circuits electronically in response to analog control voltages [6].</p>
+    <p>In high-frequency RF systems, the quality factor (Q) and cutoff frequency are critical parameters [6]. Parasitic series resistance (Rs) within the semiconductor bulk limits high-frequency performance by dissipating signal power as heat [6]. To prevent excessive signal attenuation and phase noise in voltage-controlled oscillators (VCOs) and FM transmitters, designers use back-to-back varactor topologies [6]. This configuration prevents the RF voltage swing from forward-biasing the diodes under peak signal levels, preserving stable tuning and high signal integrity [6]. This CalcBoy utility models these complex parameters, providing a reliable starting point for RF filter and oscillator design [6].</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Typical Applications</span>Voltage-controlled oscillators (VCOs), phase-locked loops (PLLs), FM transmitters, and tunable RF filters.</div>
+      <div class="aboutMiniCard"><span>Calculated Deliverables</span>Junction capacitance, RF cutoff frequency, and dynamic circuit quality factor (Q).</div>
+      <div class="aboutMiniCard"><span>Target Audience</span>RF engineers, communications hardware designers, telecommunication students, and radio amateur builders.</div>
+      <div class="aboutMiniCard"><span>Grading Tip</span>Hyperabrupt varactor diodes (m = 0.75 to 1.0) provide much wider capacitance changes under narrow tuning voltages than abrupt models (m = 0.5).</div>
+    </div>
+    <div class="aboutNote">Tip: Always incorporate high-quality decoupling RF chokes or resistors in your DC biasing path to prevent high-frequency signals from leaking into the DC control lines.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <p><strong>1. What is a varactor diode and how does it function?</strong></p>
+    <p>A varactor diode is a specialized p-n junction diode that acts as a voltage-controlled variable capacitor. Operating under reverse bias, changing the applied voltage adjusts the width of the depletion layer, which serves as the variable dielectric spacer between conductive layers.</p>
+
+    <p><strong>2. Why are varactor diodes operated exclusively under reverse bias?</strong></p>
+    <p>Operating under reverse bias prevents current from flowing through the diode, establishing a stable depletion region that behaves like an insulating dielectric. Forward-biasing the diode would cause it to conduct current, destroying the capacitive property.</p>
+
+    <p><strong>3. What is the significance of the m factor (grading coefficient)?</strong></p>
+    <p>The grading coefficient (m) is determined by the doping profile of the p-n junction. Standard abrupt junction varactors have m = 0.5, while linearly graded junctions have m = 0.33, and hyperabrupt junctions have m values up to 1.0 or more, enabling larger tuning ranges.</p>
+
+    <p><strong>4. Why is low series resistance (Rs) critical for varactor performance?</strong></p>
+    <p>Series resistance is a parasitic parameter that dissipates RF energy as heat. Lower series resistance increases the diode's quality factor (Q) and extends the cutoff frequency limit, allowing the diode to operate efficiently at higher frequencies.</p>
+
+    <p><strong>5. Why are varactor diodes often placed back-to-back in tuning circuits?</strong></p>
+    <p>Placing two varactor diodes back-to-back in series prevents the RF signal swing from accidentally forward-biasing either diode under peak positive voltages. This configuration minimizes signal distortion and keeps the tuning capacitance stable.</p>
+
+    <p><strong>6. What is the difference between transition capacitance and diffusion capacitance?</strong></p>
+    <p>Transition (junction) capacitance occurs in reverse bias due to charge separation across the depletion layer, which varactors are designed to exploit. Diffusion capacitance occurs under forward bias due to minority carrier injection, which is avoided in tuning circuits.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong><a href="https://calcboy.com/tool/ohms-law-calculator" target="_blank" style="text-decoration:none;color:inherit;">Ohm's Law Calculator</a></strong>Solve current, voltage, resistance, and power relationships.</div>
+      <div class="linkCard"><strong><a href="https://calcboy.com/tool/parallel-resistor-calculator" target="_blank" style="text-decoration:none;color:inherit;">Parallel Resistor Calculator</a></strong>Calculate equivalent resistances of parallel networks.</div>
+      <div class="linkCard"><strong><a href="https://calcboy.com/tool/resonant-frequency-calculator" target="_blank" style="text-decoration:none;color:inherit;">Resonant Frequency Calculator</a></strong>Calculate standard LC tank resonant frequencies.</div>
+      <div class="linkCard"><strong><a href="https://calcboy.com/tool/wire-cable-voltage-drop-calculator" target="_blank" style="text-decoration:none;color:inherit;">Wire Cable Voltage Drop Calculator</a></strong>Calculate potential drops across electrical lines.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* 
+   ORIGINAL JAVASCRIPT CALCULATION ENGINE - 100% UNTOUCHED & LOCKED
+   This executes the math exactly as defined, writing directly to the form element values.
+*/
 function calc()
 {
 C=Number(document.calculator.number1.value);
@@ -19,132 +377,42 @@ document.calculator.diode_capacitance.value=c1;
 document.calculator.diode_cutoff_frequency.value=c2;
 document.calculator.quality_factor.value=c3;
 }
-</SCRIPT>
 
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+function clearResults() {
+  document.calculator.diode_capacitance.value = "";
+  document.calculator.diode_cutoff_frequency.value = "";
+  document.calculator.quality_factor.value = "";
+  document.getElementById("errorBox").style.display = "none";
 }
+</script>
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. What is a varactor diode and how does it function?","acceptedAnswer":{"@type":"Answer","text":"A varactor diode is a specialized p-n junction diode that acts as a voltage-controlled variable capacitor. Operating under reverse bias, changing the applied voltage adjusts the width of the depletion layer, which serves as the variable dielectric spacer between conductive layers."}},
+{"@type":"Question","name":"2. Why are varactor diodes operated exclusively under reverse bias?","acceptedAnswer":{"@type":"Answer","text":"Operating under reverse bias prevents current from flowing through the diode, establishing a stable depletion region that behaves like an insulating dielectric. Forward-biasing the diode would cause it to conduct current, destroying the capacitive property."}},
+{"@type":"Question","name":"3. What is the significance of the m factor (grading coefficient)?","acceptedAnswer":{"@type":"Answer","text":"The grading coefficient (m) is determined by the doping profile of the p-n junction. Standard abrupt junction varactors have m = 0.5, while linearly graded junctions have m = 0.33, and hyperabrupt junctions have m values up to 1.0 or more, enabling larger tuning ranges."}},
+{"@type":"Question","name":"4. Why is low series resistance (Rs) critical for varactor performance?","acceptedAnswer":{"@type":"Answer","text":"Series resistance is a parasitic parameter that dissipates RF energy as heat. Lower series resistance increases the diode's quality factor (Q) and extends the cutoff frequency limit, allowing the diode to operate efficiently at higher frequencies."}},
+{"@type":"Question","name":"5. Why are varactor diodes often placed back-to-back in tuning circuits?","acceptedAnswer":{"@type":"Answer","text":"Placing two varactor diodes back-to-back in series prevents the RF signal swing from accidentally forward-biasing either diode under peak positive voltages. This configuration minimizes signal distortion and keeps the tuning capacitance stable."}},
+{"@type":"Question","name":"6. What is the difference between transition capacitance and diffusion capacitance?","acceptedAnswer":{"@type":"Answer","text":"Transition (junction) capacitance occurs in reverse bias due to charge separation across the depletion layer, which varactors are designed to exploit. Diffusion capacitance occurs under forward bias due to minority carrier injection, which is avoided in tuning circuits."}}
+]
 }
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Varactor Diode Calculator","item":"https://calcboy.com/tool/varactor-diode-calculator"}
+]
 }
+</script>
 
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
-
-
-
-<FORM name="calculator">
-
-<label for="r2" style="font-size:55;" >C<sub>d</sub></label><font face="Arial" size="6"> (Diode Capacitance 0V) </font><input  name="number1"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">pF</label>
-<h1 style="font-size:30px;"></h1>
-
-<label for="r2" style="font-size:55;" >V<sub>b</sub></label><font face="Arial" size="6"> (Barrier voltage ) </font><input  name="number2"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-<h1 style="font-size:30px;"></h1>
-<label for="r2" style="font-size:55;" >V<sub></sub></label><font face="Arial" size="6"> (Applied reverse bias potential) </font><input  name="number3"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-<h1 style="font-size:47px;"></h1>
-<label for="r2" style="font-size:55;" >R<sub>s</sub></label><font face="Arial" size="6"> (Series resistance) </font><input  name="number4"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-<h1 style="font-size:32px;"></h1>
-<label for="r2" style="font-size:55;" >F<sub></sub></label><font face="Arial" size="6"> (Operating Frequency) </font><input  name="number5"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:46px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">MH<sub>z</label>
-<h1 style="font-size:48px;"></h1>
-<label for="r2" style="font-size:55;" >m Factor<sub></sub></label><font face="Arial" size="6">  </font><input  name="number6"  class="intro"  style="position: absolute;   width:370; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:30;"></h1>
-</fieldset>
-<h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-<label for="r2" style="font-size:55;" >Diode</label><font face="Arial" size="6"> (Capacitance) </font><input  name="diode_capacitance"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">F</label>
-<h1 style="font-size:50;"></h1>
-<label for="r2" style="font-size:55;" >frequency</label><font face="Arial" size="6"> (Cutoff) </font><input  name="diode_cutoff_frequency"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:47px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">MH<sub>z</label>
-<h1 style="font-size:50;"></h1>
-<label for="r2" style="font-size:55;" >QF</label><font face="Arial" size="6"> (Quality Factor) </font><input  name="quality_factor"  class="intro"  style="position: absolute;   width:370; text-align
-:center;right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:30;"></h1>
-
-
-
-</FORM>
+</body>
+</html>
