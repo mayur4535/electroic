@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Skin Depth Calculator | Electromagnetic Wave Solver</title>
+<title>Skin Depth Calculator | Electromagnetic Wave Solver | CalcBoy</title>
 <meta name="description" content="Calculate electromagnetic skin depth from material resistivity, relative permeability, and system frequency across RF transmission lines.">
-<meta name="keywords" content="skin depth calculator, rf penetration depth solver, alternating current frequency attenuation, conductor eddy current tracking, material resistivity balance tracker">
+<meta name="keywords" content="skin depth calculator, rf penetration depth solver, alternating current frequency attenuation, conductor eddy current tracking, material resistivity balance tracker, CalcBoy">
 <style>
+    /* Exact CSS Classes and Margins Imported from Master Flyback Reference Template */
     *{box-sizing:border-box;font-family:Arial,sans-serif}
-    body{margin:0;background:#f6f8fb;padding:0;color:#333}
-    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+    .calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+
+    /* Form Inputs and Interactive Row Styling */
     label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
     .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
     .fullRow{margin-bottom:16px}
@@ -21,6 +24,8 @@
     .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
     #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
     .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    
+    /* Symmetrical 2-Column Results Grid strictly preserved */
     .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
     .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
@@ -28,17 +33,34 @@
     .cardValue,.cardUnit{font-size:18px;font-weight:900;line-height:1}
     .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
     .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
+    
+    /* Existing InfoBox Internal Styles preserved identically */
     .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
     .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+    .infoBox p, .infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
     .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
-    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .formula, .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+    .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem, .exampleCard, .aboutMiniCard, .linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+    .paramItem strong, .aboutMiniCard span, .linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+    .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
     .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
-    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr} .paramGrid{grid-template-columns:1fr}}
+
+    /* Premium Appended UI Content Extensions Styles (Locked & Safe) */
+    .aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+    .aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+    .aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+    .aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+    .aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+    .aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
+    @media(max-width:600px){
+      body{padding:10px}
+      .row{grid-template-columns:minmax(0,1fr) 72px}
+      .resultGrid{grid-template-columns:1fr 1fr}
+      .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{grid-template-columns:1fr}
+    }
 </style>
 </head>
 <body>
@@ -130,8 +152,8 @@
           
           <defs>
             <radialGradient id="gradDC" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#1e40af"/>
-              <stop offset="100%" stop-color="#1d4ed8"/>
+              <stop offset="0%" stop-color="#1e40af" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#1d4ed8" stop-opacity="1"/>
             </radialGradient>
             <radialGradient id="gradLowAC" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stop-color="#ffffff"/>
@@ -173,10 +195,80 @@
 
   <section class="infoBox">
     <h2>Formulas & Mathematical Logic</h2>
-    <div class="formulaLine">Skin Depth (d) = sqrt( rho / (pi * Frequency * mur * mu0) )</div>
-    <div class="formulaLine">Constant mu0 Reference Value = 4 * pi * 10^-7 H/m</div>
-    <div class="formulaLine">Normalized Dimensional Scaler: micro-ohm cm converted via factor 10^-8</div>
+    <div class="formula">Skin Depth (d) = sqrt( rho / (pi * Frequency * mur * mu0) )</div>
+    <div class="formula">Constant mu0 Reference Value = 4 * pi * 10^-7 H/m</div>
+    <div class="formula">Normalized Dimensional Scaler: micro-ohm cm converted via factor 10^-8</div>
     <p>The system engine translates operational frequencies into base Hertz parameters to perform standard matrix conversions without tracking errors.</p>
+  </section>
+
+  <!-- Premium Appended Content (Strictly Locked consecutive formulaBox blocks with absolutely NO loose text) -->
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Material = Copper (Resistivity = 1.678 micro-ohm cm, ur = 0.999991), Frequency = 10 GHz.</div>
+    <div class="formulaBox">Step 1: Convert the input parameters to standard SI base units: rho = 1.678 * 10^-8 Ohm-meters, frequency (f) = 10 GHz = 10,000,000,000 Hz, mu0 = 4 * pi * 10^-7 H/m.</div>
+    <div class="formulaBox">Step 2: Calculate the absolute magnetic permeability (mu) of the conductor substrate: mu = mu0 * ur = (4 * pi * 10^-7) * 0.999991 = 1.256625e-6 H/m.</div>
+    <div class="formulaBox">Step 3: Solve the skin depth (delta) using the fundamental wave penetration equation: delta = sqrt( rho / (pi * f * mu) ) = sqrt( 1.678e-8 / (3.141593 * 10,000,000,000 * 1.256625e-6) ) = sqrt( 1.678e-8 / 39478.42 ) = 6.5194e-7 meters.</div>
+    <div class="formulaBox">Step 4: Convert the raw value from meters to micrometers (um) for standard microstrip and trace analysis: delta = 6.5194e-7 * 10^6 = 0.6519 um.</div>
+    <div class="formulaBox">Result: The calculated electromagnetic skin depth of the copper conductor at 10 GHz is exactly 0.6519 micrometers.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Select your conductor substance from the <strong>Select Material</strong> dropdown menu, or choose Custom to manually input parameters.</div>
+      <div class="aboutStep">If using a custom material, enter the electrical <strong>Resistivity</strong> in micro-ohm centimeters (µΩ·cm) and the <strong>Relative Permeability</strong> (ur) values.</div>
+      <div class="aboutStep">Enter your operating signal <strong>Frequency</strong> and select the corresponding unit (MHz or GHz).</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to initiate the skin effect wave equations.</div>
+      <div class="aboutStep">Read the computed values for equivalent Skin Depth in micrometers (µm) and normalized Frequency in MHz on the Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Quantify high-frequency signal penetration depth and optimize PCB copper plating limits.</strong>
+      <p>The CalcBoy Skin Depth Calculator evaluates the electromagnetic penetration depth (µm) and normalized frequency in MHz using material resistivity, magnetic permeability, and operating frequency.</p>
+    </div>
+    <p>Skin depth (represented by the Greek letter delta, δ) is a fundamental electromagnetic phenomenon where alternating currents (AC) tend to distribute themselves unevenly within a conductor. Unlike direct current (DC) which flows uniformly through the entire cross-sectional area of a wire, high-frequency AC signals are pushed toward the outer boundaries of the conductor. This is caused by eddy currents generated by the changing magnetic fields within the wire, creating opposing electromotive forces that cancel current flow in the center. As a result, the current density decreases exponentially from the surface toward the core, dropping to approximately 37 percent (the reciprocal of Euler's number, 1/e) of its surface value at one skin depth.</p>
+    <p>In radio frequency (RF) design, microwave engineering, and high-speed printed circuit board (PCB) layout planning, skin depth is a critical parameter. Because the signal is restricted to a very thin outer layer of the conductor, the effective cross-sectional area available for conduction is drastically reduced, which exponentially increases the AC resistance of the trace. To minimize insertion losses, engineers utilize highly conductive materials like gold, silver, or copper for plating. They must also ensure that the thickness of the plating is at least three to five times the skin depth at the operating frequency. This calculator automates these complex electromagnetic calculations, allowing designers to specify trace parameters and shielding thicknesses safely.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Application</span>High-speed PCB layout planning, RF shielding efficiency, inductor winding design, and microstrip trace plating.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Equivalent electromagnetic skin depth in micrometers (µm) and normalized frequency in MHz.</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Eddy currents generated by self-induction concentrate AC current flow strictly along the conductor outer boundaries.</div>
+      <div class="aboutMiniCard"><span>Design Rule</span>Ensure metal plating thicknesses are at least 3 to 5 times the skin depth to prevent substantial signal attenuation.</div>
+    </div>
+    <div class="aboutNote">Tip: Magnetic metals like Nickel exhibit a very high relative permeability (ur ≈ 600), which increases internal self-induction, concentrating the current into an extremely thin skin layer and raising AC resistance.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What physically is the skin effect, and what causes it?</h3>
+    <p>The skin effect is the tendency of alternating currents to flow mostly near the outer surface of a conductor. It is caused by internal eddy currents generated by the changing magnetic fields of the AC signal. These eddy currents oppose the primary current in the center of the wire while reinforcing it near the outer surface, forcing current to the outer "skin" layer.</p>
+
+    <h3>Why does skin depth decrease as the signal frequency increases?</h3>
+    <p>At higher frequencies, the rate of change of the magnetic field is much faster, which generates stronger internal eddy currents and self-induction forces. This increases the opposing electromagnetic forces in the core of the conductor, squeezing the current flow closer to the outer surface and resulting in a thinner skin depth.</p>
+
+    <h3>How does material resistivity (rho) affect skin depth?</h3>
+    <p>Resistivity describes a material's natural resistance to current flow. Materials with higher resistivity (such as Nickel or stainless steel) exhibit weaker eddy currents, allowing the signal to penetrate deeper into the conductor, which results in a thicker skin depth. Highly conductive materials (such as Silver or Copper) have a much thinner skin depth.</p>
+
+    <h3>Why does the calculator show an extremely thin skin depth for Nickel?</h3>
+    <p>Nickel is a ferromagnetic material with a high relative permeability (ur ≈ 600). High permeability greatly amplifies the internal magnetic flux density, creating exceptionally strong self-induction eddy currents. This forces the AC signal into an extremely thin outer layer, resulting in high AC resistance despite Nickel's decent conductivity.</p>
+
+    <h3>Can we use this calculator to determine shielding thickness?</h3>
+    <p>Yes. Electromagnetic shielding relies on reflecting and absorbing waves. A shield that is several skin depths thick (typically 5 or more) provides high attenuation of incoming electromagnetic waves, effectively isolating sensitive circuits from external RF interference.</p>
+
+    <h3>What is standard room-temperature copper resistivity?</h3>
+    <p>Pure annealed copper has a standard reference resistivity of approximately 1.678 micro-ohm centimeters (µΩ·cm) at 20 degrees Celsius. This is the baseline value loaded automatically when you select Copper from the material dropdown list.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Coax Impedance Calculator</strong>Calculate Zo, capacitance, and delay of coaxial transmission lines.</div>
+      <div class="linkCard"><strong>Microstrip Line Impedance Solver</strong>Model trace dimensions on printed circuit board layouts.</div>
+      <div class="linkCard"><strong>RF Power Conversion Calculator</strong>Translate power levels between dBm, dBW, and Watts.</div>
+      <div class="linkCard"><strong>Specific Absorption Rate (SAR) Solver</strong>Evaluate biological electromagnetic wave absorption limits.</div>
+    </div>
   </section>
 </main>
 
