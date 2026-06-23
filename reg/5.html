@@ -2,263 +2,54 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analog to Digital Converter (ADC) Calculator | Mixed Signal Solver</title>
-<meta name="description" content="Calculate the numeric digital value and binary digital output bitstream string from analog voltage, resolution bits, and reference constraints.">
-<meta name="keywords" content="analog to digital converter calculator, ADC binary output solver, quantization resolution tracker, reference voltage scaling matrix, discrete binary bit stream encoder">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Analog to Digital Converter (ADC) Calculator | CalcBoy</title>
+<meta name="description" content="Calculate the digital LSB numeric output and binary bitstream from analog input voltage, resolution bits, and reference voltage boundaries.">
+<meta name="keywords" content="analog to digital converter calculator, adc calculator, adc binary output solver, analog to digital bitstream, quantizer calculator, CalcBoy">
 <style>
 /* CUSTOM ISOLATED SPECIFICATION LOOKUP AND DESIGN PATH PROTECTIONS */
-#adc-calc,
-#adc-calc *{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  margin:0;
-  background:#f6f8fb;
-  padding:10px;
-  color:#333;
-}
-
-#adc-calc{
-  width:100%;
-  max-width:620px;
-  margin:auto;
-  padding-top:14px;
-}
-
-#adc-calc .calc-grid{
-  display:grid;
-  gap:15px;
-}
-
-#adc-calc .calc-label{
-  display:block;
-  font-size:15px;
-  font-weight:700;
-  color:#4b5563;
-  margin-bottom:7px;
-}
-
-#adc-calc .calc-row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 82px;
-  gap:8px;
-  align-items:center;
-}
-
-#adc-calc input,
-#adc-calc select{
-  width:100%;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  padding:0 12px;
-  font-size:15px;
-  background:#fff;
-  outline:none;
-}
-
-#adc-calc input:focus{
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
-}
-
-#adc-calc .unit-box{
-  width:82px;
-  min-width:82px;
-  max-width:82px;
-  height:43px;
-  border:1px solid #cfd6df;
-  border-radius:8px;
-  background:#eee;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  font-weight:700;
-  color:#374151;
-}
-
-#adc-calc button{
-  width:100%;
-  height:45px;
-  margin-top:24px;
-  border:0;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ff7a18,#ff3d00);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-#adc-calc .result-title{
-  margin-top:30px;
-  margin-bottom:14px;
-  font-size:13px;
-  font-weight:800;
-  color:#7b8794;
-  letter-spacing:.5px;
-}
-
-#adc-calc .result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-#adc-calc .result-card{
-  min-height:82px;
-  padding:16px;
-  border-radius:12px;
-  border:1px solid #cfd6df;
-}
-
-#adc-calc .result-card:nth-child(1){
-  background:#eef5ff;
-  border-color:#bfd3ff;
-}
-
-#adc-calc .result-card:nth-child(2){
-  background:#ecfdf5;
-  border-color:#bbf7d0;
-}
-
-#adc-calc .result-card:nth-child(1) .result-label,
-#adc-calc .result-card:nth-child(1) .result-value{
-  color:#2359e8;
-}
-
-#adc-calc .result-card:nth-child(2) .result-label,
-#adc-calc .result-card:nth-child(2) .result-value{
-  color:#16a34a;
-}
-
-#adc-calc .result-label{
-  font-size:11px;
-  font-weight:900;
-  text-transform:uppercase;
-  margin-bottom:10px;
-  letter-spacing:0.5px;
-}
-
-#adc-calc .result-value{
-  font-size:18px;
-  font-weight:900;
-  word-break:break-word;
-  min-height:18px;
-  line-height:1;
-}
-
-#adc-calc .infoBox{
-  margin-top:16px;
-  padding:16px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  box-shadow:0 1px 3px rgba(0,0,0,0.05);
-}
-
-#adc-calc .infoBox h2{
-  margin:0 0 12px;
-  font-size:15px;
-  color:#1e293b;
-  border-bottom:1px solid #edf2f7;
-  padding-bottom:6px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:0.5px;
-}
-
-#adc-calc .formula{
-  background:#f8fafc;
-  border:1px solid #e2e8f0;
-  border-radius:8px;
-  padding:12px;
-  margin:8px 0;
-  font-size:13px;
-  color:#334155;
-  font-weight:700;
-  overflow-x:auto;
-  line-height:1.6;
-}
-
-#errorBox{
-  display:none;
-  margin-top:14px;
-  margin-bottom:6px;
-  color:#dc2626;
-  font-size:14px;
-  font-weight:800;
-  text-align:center;
-  border:2px solid #dc2626;
-  padding:10px;
-  border-radius:8px;
-  background:#fef2f2;
-}
-
-#adc-calc .paramGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin:12px 0;
-}
-
-#adc-calc .paramItem{
-  background:#f8fafc;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #e2e8f0;
-  font-size:12px;
-  font-weight:600;
-  color:#475467;
-}
-
-#adc-calc .paramItem strong{
-  color:#0f172a;
-  display:block;
-  margin-bottom:2px;
-}
-
-#adc-calc .exampleGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:8px;
-}
-
-#adc-calc .exampleCard{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  padding:12px;
-  font-size:13px;
-}
-
-#adc-calc .diagramBox{
-  background:#fff;
-  padding:16px;
-  text-align:center;
-  margin-top:10px;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-}
-
-#adc-calc .waveguide-diagram svg{
-  width:100%;
-  max-width:540px;
-  height:auto;
-  display:block;
-  margin:auto;
-}
-
+#adc-calc,#adc-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0 !important;background:#f6f8fb;padding:0 !important;color:#333}
+#adc-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px 10px 10px !important;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+button, .calc-btn{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
-  body{padding:0;}
-  #adc-calc .calc-row{grid-template-columns:minmax(0,1fr) 72px;}
-  #adc-calc .unit-box{width:72px; min-width:72px; max-width:72px;}
-  #adc-calc .result-grid, #adc-calc .exampleGrid, #adc-calc .paramGrid {grid-template-columns:1fr;}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
@@ -299,12 +90,12 @@ body{
 
   <div class="result-title">RESULTS</div>
   <div class="result-grid">
-    <div class="result-card">
+    <div class="result-card blue">
       <div class="result-label">Numeric Digital LSB</div>
       <div class="result-value"><span id="Num_Digital_output">-</span></div>
     </div>
 
-    <div class="result-card">
+    <div class="result-card green">
       <div class="result-label">Binary Digital Bitstream</div>
       <div class="result-value"><span id="Binary_output">-</span></div>
     </div>
@@ -313,8 +104,10 @@ body{
   <section class="infoBox">
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
-      <div class="paramItem"><strong>Resolution Bits (N)</strong> Total quantization bit budget determining the matching step numbers ($2^n$) across processing grids.</div>
-      <div class="paramItem"><strong>Reference Target Voltage (Vref)</strong> Maximum full-scale analog metric rail configuration bounding dynamic quantization ranges.</div>
+      <div class="paramItem"><strong>Resolution Bits (N)</strong> Total quantization bit depth determining the matching step numbers (2^N) across sampling intervals.</div>
+      <div class="paramItem"><strong>Analog Input Voltage (VIN)</strong> The continuous, real-world voltage level present at the converter input channel to be measured.</div>
+      <div class="paramItem"><strong>Reference Target Voltage (Vref)</strong> Maximum full-scale analog threshold bounding the dynamic range of the digital quantization window.</div>
+      <div class="paramItem"><strong>Conversion Scales</strong> Digital steps define the resolution accuracy, showing how finely the analog input can be resolved.</div>
     </div>
   </section>
 
@@ -322,79 +115,151 @@ body{
     <h2>Practical Operational Examples</h2>
     <div class="exampleGrid">
       <div class="exampleCard">
-        <p><strong>Quantization Base Setup</strong></p>
-        <p>Resolution Target = 8 Bits ($2^8 = 256$ steps)<br>Analog Input (Vin) = 2.500 V<br>Reference Scale (Vref) = 5.000 V</p>
+        <p><strong>Arduino 5V Sampling Base</strong></p>
+        <p>Resolution Target = 10 Bits (2^10 = 1024 steps)<br>Analog Input (VIN) = 2.500 V<br>Reference Scale (Vref) = 5.000 V</p>
       </div>
       <div class="exampleCard">
         <p><strong>Computed Core Matrix States</strong></p>
-        <p>• Numeric LSB Integer = 128<br>• Encoded Binary Code = 10000000<br>• Partitioning boundaries register perfectly.</p>
+        <p>• Numeric LSB Integer = 512<br>• Encoded Binary Code = 1000000000<br>• Quantization mapping completes cleanly.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Standard 8-Bit DAC/ADC Bridge</strong></p>
+        <p>Resolution = 8 Bits (256 steps). Inputting VIN = 1.25V with a 5.0V Vref generates a numeric value of 64 (binary string 1000000).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>High-Precision Industrial Node</strong></p>
+        <p>Resolution = 16 Bits (65,536 steps). Measures thermocouple voltages with high precision, providing microscopic step resolutions.</p>
       </div>
     </div>
-  </section>
-
-  <section class="infoBox">
-    <h2>Circuit Configurations & Applications</h2>
-    <p>Mixed signal processing flash encoders interpret continuous voltage levels into structural microprocessor language commands. Tracking quantization steps eliminates distortion noise loops to enforce clear binary matrix sampling cleanly.</p>
   </section>
 
   <section class="infoBox">
     <h2>Diagrams & Theory</h2>
     <div class="diagramBox">
-      <div class="waveguide-diagram">
-        <svg viewBox="0 0 540 240" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0" y="0" width="540" height="240" fill="#ffffff" stroke="none"/>
+      <svg viewBox="0 0 540 240" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="540" height="240" fill="#ffffff" stroke="none"/>
+        
+        <defs>
+          <linearGradient id="adcBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#475569"/>
+            <stop offset="100%" stroke="none" stop-color="#1e293b"/>
+          </linearGradient>
+        </defs>
+
+        <g transform="translate(15, 30)">
+          <line x1="10" y1="80" x2="150" y2="80" stroke="#94a3b8" stroke-width="1.5"/>
+          <line x1="20" y1="20" x2="20" y2="140" stroke="#94a3b8" stroke-width="1.5"/>
+          <path d="M 20,80 Q 52.5,10 85,80 T 150,80" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="85" y="155" font-size="12" font-family="sans-serif" font-weight="bold" fill="#2563eb" text-anchor="middle">Analog Input (Vin)</text>
+        </g>
+
+        <line x1="175" y1="110" x2="215" y2="110" stroke="#475569" stroke-width="2"/>
+        <polygon points="215,110 207,105 207,115" fill="#475569"/>
+
+        <polygon points="230,40 330,60 330,160 230,180" fill="url(#adcBodyGrad)" stroke="#0f172a" stroke-width="2"/>
+        <text x="280" y="116" font-size="18" font-family="sans-serif" font-weight="900" fill="#ffffff" text-anchor="middle">ADC</text>
+
+        <g transform="translate(330, 20)">
+          <line x1="0" y1="30" x2="70" y2="30" stroke="#1e293b" stroke-width="2"/>
+          <polygon points="70,30 64,26 64,34" fill="#1e293b"/>
+          <text x="82" y="34" font-size="13" font-family="sans-serif" font-weight="bold" fill="#0f172a">0 (LSB)</text>
+
+          <line x1="0" y1="60" x2="70" y2="60" stroke="#1e293b" stroke-width="2"/>
+          <polygon points="70,60 64,56 64,64" fill="#1e293b"/>
+          <text x="82" y="64" font-size="13" font-family="sans-serif" font-weight="bold" fill="#0f172a">1</text>
+
+          <line x1="0" y1="90" x2="70" y2="90" stroke="#1e293b" stroke-width="2"/>
+          <polygon points="70,90 64,86 64,94" fill="#1e293b"/>
+          <text x="82" y="94" font-size="13" font-family="sans-serif" font-weight="bold" fill="#0f172a">0</text>
+
+          <line x1="35" y1="112" x2="35" y2="132" stroke="#475569" stroke-width="2" stroke-dasharray="3,3"/>
+
+          <line x1="0" y1="150" x2="70" y2="150" stroke="#1e293b" stroke-width="2"/>
+          <polygon points="70,150 64,146 64,154" fill="#1e293b"/>
+          <text x="82" y="154" font-size="13" font-family="sans-serif" font-weight="bold" fill="#0f172a">1 (MSB)</text>
           
-          <defs>
-            <linearGradient id="adcBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#475569"/>
-              <stop offset="100%" stroke="none" stop-color="#1e293b"/>
-            </linearGradient>
-          </defs>
-
-          <g transform="translate(15, 30)">
-            <line x1="10" y1="80" x2="150" y2="80" stroke="#94a3b8" stroke-width="1.5"/>
-            <line x1="20" y1="20" x2="20" y2="140" stroke="#94a3b8" stroke-width="1.5"/>
-            <path d="M 20,80 Q 52.5,10 85,80 T 150,80" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
-            <text x="85" y="155" font-size="12" font-family="sans-serif" font-weight="bold" fill="#2563eb" text-anchor="middle">Analog Input (Vin)</text>
-          </g>
-
-          <line x1="175" y1="110" x2="215" y2="110" stroke="#475569" stroke-width="2"/>
-          <polygon points="215,110 207,105 207,115" fill="#475569"/>
-
-          <polygon points="230,40 330,60 330,160 230,180" fill="url(#adcBodyGrad)" stroke="#0f172a" stroke-width="2"/>
-          <text x="280" y="116" font-size="18" font-family="sans-serif" font-weight="900" fill="#ffffff" text-anchor="middle">ADC</text>
-
-          <g transform="translate(330, 20)">
-            <line x1="0" y1="30" x2="70" y2="30" stroke="#1e293b" stroke-width="2"/>
-            <polygon points="70,30 64,26 64,34" fill="#1e293b"/>
-            <text x="82" y="34" font-size="13" font-family="sans-serif" font-weight="bold" fill="#0f172a">0 (LSB)</text>
-
-            <line x1="0" y1="60" x2="70" y2="60" stroke="#1e293b" stroke-width="2"/>
-            <polygon points="70,60 64,56 64,64" fill="#1e293b"/>
-            <text x="82" y="64" font-size="13" font-family="sans-serif" font-weight="bold" fill="#0f172a">1</text>
-
-            <line x1="0" y1="90" x2="70" y2="90" stroke="#1e293b" stroke-width="2"/>
-            <polygon points="70,90 64,86 64,94" fill="#1e293b"/>
-            <text x="82" y="94" font-size="13" font-family="sans-serif" font-weight="bold" fill="#0f172a">0</text>
-
-            <line x1="35" y1="112" x2="35" y2="132" stroke="#475569" stroke-width="2" stroke-dasharray="3,3"/>
-
-            <line x1="0" y1="150" x2="70" y2="150" stroke="#1e293b" stroke-width="2"/>
-            <polygon points="70,150 64,146 64,154" fill="#1e293b"/>
-            <text x="82" y="154" font-size="13" font-family="sans-serif" font-weight="bold" fill="#0f172a">1 (MSB)</text>
-            
-            <text x="40" y="180" font-size="12" font-family="sans-serif" font-weight="bold" fill="#16a34a" text-anchor="middle">Binary Code</text>
-          </g>
-        </svg>
-      </div>
+          <text x="40" y="180" font-size="12" font-family="sans-serif" font-weight="bold" fill="#16a34a" text-anchor="middle">Binary Code</text>
+        </g>
+      </svg>
     </div>
-    <p>The processing module slices linear voltage curves recursively into absolute finite bit outputs configured relative to reference boundaries.</p>
+    <p>Analog to Digital Converters (ADCs) operate by sampling a continuous analog voltage waveform at discrete intervals and quantifying the measured amplitude into discrete binary step configurations. This quantization introduces a slight approximation error known as quantization noise, which decreases as the resolution bit depth (N) increases.</p>
   </section>
 
-  <div class="formula">
-    Digital Output = floor((2<sup>n</sup> × VIN) / Vref)<br>
-    Binary Output = Digital Output converted to binary code strings
-  </div>
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Digital Output = floor((2^N * VIN) / Vref)</div>
+    <div class="formula">Binary Output = Digital Output converted to binary code strings</div>
+    <p>By mapping continuous input voltages onto discrete quantization step intervals, the ADC translates physical real-world states into processed computer code. The system converts fractional levels systematically based on the maximum reference voltage limits.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Resolving a 3.3V analog sensor input with a 10-bit ADC using a 5.0V reference.</div>
+    <div class="formulaBox">Step 1: Calculate the total step states available for the given bit depth: 2^10 = 1024 discrete steps.</div>
+    <div class="formulaBox">Step 2: Apply the voltage quantization ratio: Step Value = floor((1024 * 3.3) / 5.0).</div>
+    <div class="formulaBox">Step 3: Execute the calculation: floor(3379.2 / 5.0) = floor(675.84) = 675 LSB.</div>
+    <div class="formulaBox">Step 4: Convert the integer 675 into its equivalent binary representation: 1010100011.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the resolution bit depth (e.g., 8, 10, 12, or 16 bits) in the Resolution Bits field.</div>
+      <div class="aboutStep">Input the physical analog voltage (VIN) that you intend to measure.</div>
+      <div class="aboutStep">Specify the system reference voltage (Vref) defining the converter's full-scale threshold.</div>
+      <div class="aboutStep">Click Calculate to instantly view the calculated numeric LSB step value and the matching binary bitstream.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Translate continuous analog signal amplitudes into discrete digital quantization metrics.</strong>
+      <p>This design tool helps engineers and students model quantization steps, LSB sizing, and binary string conversions for success-register (SAR) and flash converter modules.</p>
+    </div>
+    <p>Analog to Digital Converters (ADCs) serve as the vital bridge between the physical analog world and digital microprocessors. Every physical quantity—temperature, pressure, sound, or light—is continuous by nature. To process these measurements, microcontrollers like Arduinos, STM32s, or DSP chips require the signal to be converted into discrete digital steps.</p>
+    <p>The resolution of an ADC defines how finely it can divide the input range. For instance, a basic 10-bit converter divides a 5V scale into 1,024 steps, providing a step resolution of roughly 4.88mV per step. High-performance industrial instruments use 16-bit or 24-bit delta-sigma converters to resolve microvolt-level fluctuations safely, isolating target signals from background thermal noise.</p>
+    <p>This calculator maps these variables clearly, letting you assess how reference voltage changes scale step measurements. It also outputs the raw binary stream, helping write firmware, define registers, and configure signal-conditioning circuits without calculating by hand.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Configurations</span>Sensor calibration, microcontroller ADC modeling, and signal processing.</div>
+      <div class="aboutMiniCard"><span>Key Deliverables</span>Quantization step indices, matching binary streams, and step resolution parameters.</div>
+      <div class="aboutMiniCard"><span>Target Audience</span>Firmware developers, electronics hobbyists, and circuit board designers.</div>
+      <div class="aboutMiniCard"><span>Key Tip</span>Ensure input voltage does not exceed Vref to prevent conversion clipping and signal distortion.</div>
+    </div>
+    <div class="aboutNote">Tip: Use passive low-pass RC filters at your analog input pin to remove noise above the Nyquist frequency, preventing aliasing distortion during high-speed sampling.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What is the relationship between resolution bits and step size?</h3>
+    <p>Higher resolution bits split the reference scale into more steps. The voltage width of each step, known as the Least Significant Bit (LSB), is determined by dividing Vref by 2^N.</p>
+
+    <h3>What happens if the input voltage exceeds the reference voltage?</h3>
+    <p>If the input voltage exceeds Vref, the ADC reaches saturation. The converter outputs its maximum digital value (such as 1023 for a 10-bit ADC), resulting in clipped waveforms and signal distortion.</p>
+
+    <h3>What is quantization noise, and how is it minimized?</h3>
+    <p>Quantization noise is the inherent rounding error introduced during analog-to-digital conversion. Increasing the bit depth (resolution) reduces the step size, lowering quantization noise.</p>
+
+    <h3>Can I use this tool to model Successive Approximation Register (SAR) ADCs?</h3>
+    <p>Yes. The basic mathematical quantization formula applies to standard SAR, flash, and delta-sigma ADC architectures alike.</p>
+
+    <h3>Why is a stable reference voltage critical for accurate sampling?</h3>
+    <p>Since the digital output is calculated relative to Vref, any voltage drift or noise on the Vref rail directly scales the measured output, causing reading errors.</p>
+
+    <h3>How does a 12-bit ADC compare to a 10-bit ADC?</h3>
+    <p>A 12-bit ADC provides 4,096 discrete steps, which is four times the resolution of a 10-bit converter (1,024 steps), allowing for far more precise measurements.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Digital to Analog Converter (DAC) Calculator</strong>Convert digital values back into continuous analog waveforms.</div>
+      <div class="linkCard"><strong>Voltage Divider Calculator</strong>Scale high analog signals down to safe ADC input voltage limits.</div>
+      <div class="linkCard"><strong>Op-Amp Gain Calculator</strong>Design input signal-conditioning preamplifier circuits.</div>
+      <div class="linkCard"><strong>RC Low-Pass Filter Calculator</strong>Calculate cutoff frequencies for anti-aliasing input filters.</div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -439,6 +304,34 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("Num_Digital_output").innerText = "-";
   document.getElementById("Binary_output").innerText = "-";
 });
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is the relationship between resolution bits and step size?","acceptedAnswer":{"@type":"Answer","text":"Higher resolution bits split the reference scale into more steps. The voltage width of each step, known as the Least Significant Bit (LSB), is determined by dividing Vref by 2^N."}},
+{"@type":"Question","name":"What happens if the input voltage exceeds the reference voltage?","acceptedAnswer":{"@type":"Answer","text":"If the input voltage exceeds Vref, the ADC reaches saturation. The converter outputs its maximum digital value (such as 1023 for a 10-bit ADC), resulting in clipped waveforms and signal distortion."}},
+{"@type":"Question","name":"What is quantization noise, and how is it minimized?","acceptedAnswer":{"@type":"Answer","text":"Quantization noise is the inherent rounding error introduced during analog-to-digital conversion. Increasing the bit depth (resolution) reduces the step size, lowering quantization noise."}},
+{"@type":"Question","name":"Can I use this tool to model Successive Approximation Register (SAR) ADCs?","acceptedAnswer":{"@type":"Answer","text":"Yes. The basic mathematical quantization formula applies to standard SAR, flash, and delta-sigma ADC architectures alike."}},
+{"@type":"Question","name":"Why is stable reference voltage critical for accurate sampling?","acceptedAnswer":{"@type":"Answer","text":"Since the digital output is calculated relative to Vref, any voltage drift or noise on the Vref rail directly scales the measured output, causing reading errors."}},
+{"@type":"Question","name":"How does a 12-bit ADC compare to a 10-bit ADC?","acceptedAnswer":{"@type":"Answer","text":"A 12-bit ADC provides 4,096 discrete steps, which is four times the resolution of a 10-bit converter (1,024 steps), allowing for far more precise measurements."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Analog to Digital Converter (ADC) Calculator","item":"https://calcboy.com/tool/analog-to-digital-converter-adc-calculator"}
+]
+}
 </script>
 
 </body>
