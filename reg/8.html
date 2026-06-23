@@ -1,462 +1,356 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Inductor Design Tool | Coil and Planar Spiral Inductance Calculator</title>
-<meta name="description" content="Design single, multilayer and flat spiral inductors with coil dimensions, turns, spacing, Wheeler, current sheet and monomial formulas.">
-<meta name="keywords" content="inductor design tool, coil inductance calculator, planar spiral inductor calculator, flat spiral coil calculator, single layer coil calculator, multilayer coil calculator, modified wheeler calculator, current sheet formula, monomial fit inductor, PCB spiral inductor design, RF coil calculator, air core inductor calculator, square spiral inductor, hexagonal spiral coil, octagonal spiral inductor, circular spiral inductor, coil turns calculator, inductor geometry calculator">
+<title>Coil Inductance Calculator | Single, Multi & Planar Spiral Coil</title>
+<meta name="description" content="Calculate single layer, multi layer and planar spiral coil inductance with square, hexagonal, octagonal and circular flat coil shapes.">
+<meta name="keywords" content="coil inductance calculator, single layer coil calculator, multi layer coil inductance calculator, planar spiral inductor calculator, flat spiral coil calculator, square spiral inductor calculator, hexagonal spiral inductor calculator, octagonal spiral inductor calculator, circular spiral inductor calculator, Wheeler formula calculator, current sheet inductance calculator, monomial fit inductor calculator, PCB spiral inductor calculator, RF coil inductance calculator, air core coil calculator, ferrite coil inductance calculator, CalcBoy">
+
 <style>
-#inductor-design-calc,#inductor-design-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+#coil-inductance-calc,#coil-inductance-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#inductor-design-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
-.calc-grid{display:grid;gap:15px}
-.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
-.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
-input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
-select{text-align:center;font-weight:700;padding:0 6px}
-input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-.unit-box,.unit-select{width:82px;min-width:82px;max-width:82px;height:43px}
-.unit-box{border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
-button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
-#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
-.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
-.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-.result-card:nth-child(1){background:#eef5ff;border-color:#bcd7ff}
-.result-card:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}
-.result-card:nth-child(3){background:#f5f3ff;border-color:#ddd6fe}
-.result-card:nth-child(4){background:#fff7ed;border-color:#fed7aa}
-.result-card:nth-child(5){background:#f0fdfa;border-color:#99f6e4}
-.result-card:nth-child(1) .result-label,.result-card:nth-child(1) .result-value{color:#2359e8}
-.result-card:nth-child(2) .result-label,.result-card:nth-child(2) .result-value{color:#16a34a}
-.result-card:nth-child(3) .result-label,.result-card:nth-child(3) .result-value{color:#7c3aed}
-.result-card:nth-child(4) .result-label,.result-card:nth-child(4) .result-value{color:#ea580c}
-.result-card:nth-child(5) .result-label,.result-card:nth-child(5) .result-value{color:#0f766e}
-.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
-.result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-.paramGrid,.exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-.paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
-.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
-.hidden{display:none!important}
+#coil-inductance-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+#coil-inductance-calc .calc-grid{display:grid;gap:15px}
+#coil-inductance-calc .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+#coil-inductance-calc .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+#coil-inductance-calc input,#coil-inductance-calc select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font-size:14px;background:#fff;color:#111827;outline:none;text-align:center}
+#coil-inductance-calc input:focus,#coil-inductance-calc select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+#coil-inductance-calc .unit-box{height:43px;border:1px solid #cfd6df;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#111827}
+#coil-inductance-calc .calc-btn{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 7px 16px rgba(255,91,0,.22)}
+#coil-inductance-calc #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+#coil-inductance-calc .modeBox{display:none}
+#coil-inductance-calc .modeBox.active{display:grid;gap:15px}
+#coil-inductance-calc .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:1px}
+#coil-inductance-calc .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#coil-inductance-calc .result-card{min-height:82px;padding:16px;border-radius:12px}
+#coil-inductance-calc .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px}
+#coil-inductance-calc .result-value{font-size:15px;font-weight:900;word-break:break-word}
+#coil-inductance-calc .blue{background:#eef5ff;border:1px solid #bcd7ff}
+#coil-inductance-calc .green{background:#ecfdf5;border:1px solid #bbf7d0}
+#coil-inductance-calc .purple{background:#f5f3ff;border:1px solid #ddd6fe}
+#coil-inductance-calc .orange{background:#fff7ed;border:1px solid #fed7aa}
+#coil-inductance-calc .blue .result-label,#coil-inductance-calc .blue .result-value{color:#2563eb}
+#coil-inductance-calc .green .result-label,#coil-inductance-calc .green .result-value{color:#059669}
+#coil-inductance-calc .purple .result-label,#coil-inductance-calc .purple .result-value{color:#7c3aed}
+#coil-inductance-calc .orange .result-label,#coil-inductance-calc .orange .result-value{color:#ea580c}
+
+#coil-inductance-calc .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+#coil-inductance-calc .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase}
+#coil-inductance-calc .infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+#coil-inductance-calc .infoBox p,#coil-inductance-calc .infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+#coil-inductance-calc .paramGrid,#coil-inductance-calc .exampleGrid,#coil-inductance-calc .linkGrid,#coil-inductance-calc .aboutMiniGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+#coil-inductance-calc .paramItem,#coil-inductance-calc .exampleCard,#coil-inductance-calc .linkCard,#coil-inductance-calc .aboutMiniCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+#coil-inductance-calc .paramItem strong,#coil-inductance-calc .linkCard strong,#coil-inductance-calc .aboutMiniCard span{color:#0f172a;display:block;margin-bottom:4px;font-weight:900}
+#coil-inductance-calc .diagramBox{background:#fff;padding:16px;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;display:flex;justify-content:center}
+#coil-inductance-calc .diagramBox svg{width:100%;max-width:560px;height:auto;display:block}
+#coil-inductance-calc .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+#coil-inductance-calc .aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+#coil-inductance-calc .aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+#coil-inductance-calc .aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+#coil-inductance-calc .aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+#coil-inductance-calc .aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+#coil-inductance-calc .aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
 @media(max-width:600px){
 body{padding:10px}
-.calc-row{grid-template-columns:minmax(0,1fr) 72px}
-.unit-box,.unit-select{width:72px;min-width:72px;max-width:72px}
-.paramGrid,.exampleGrid{grid-template-columns:1fr}
-.result-grid{grid-template-columns:1fr 1fr}
-.result-value{font-size:14px}
+#coil-inductance-calc .calc-row{grid-template-columns:minmax(0,1fr) 72px}
+#coil-inductance-calc .result-grid{grid-template-columns:1fr 1fr;gap:10px}
+#coil-inductance-calc .paramGrid,#coil-inductance-calc .exampleGrid,#coil-inductance-calc .linkGrid,#coil-inductance-calc .aboutMiniGrid{grid-template-columns:1fr}
+#coil-inductance-calc .result-card{padding:12px 10px}
 }
 </style>
 </head>
 
 <body>
-<div id="inductor-design-calc">
+<div id="coil-inductance-calc">
 
-  <div class="calc-grid">
-    <div>
-      <label class="calc-label">Coil Type</label>
-      <div class="calc-row">
-        <select id="geometry" onchange="updateGeometry()">
-          <option value="1" selected>Single</option>
-          <option value="2">Multi</option>
-          <option value="3">Flat</option>
-        </select>
-        <div class="unit-box">TYPE</div>
-      </div>
-    </div>
+<div class="calc-grid">
+<div>
+<label class="calc-label">Calculator Type</label>
+<div class="calc-row">
+<select id="mode" onchange="switchMode()">
+<option value="single">Single Layer Coil</option>
+<option value="multi">Multi Layer Coil</option>
+<option value="flat">Flat Planar Spiral Coil</option>
+</select>
+<div class="unit-box">TYPE</div>
+</div>
+</div>
 
-    <div id="spiralShapeRow" class="hidden">
-      <label class="calc-label">Planar Spiral Shape</label>
-      <div class="calc-row">
-        <select id="spiralShape" onchange="clearOutputs()">
-          <option value="square" selected>Square</option>
-          <option value="hexagonal">Hexagonal</option>
-          <option value="octagonal">Octagonal</option>
-          <option value="circular">Circular</option>
-        </select>
-        <div class="unit-box">SHAPE</div>
-      </div>
-    </div>
+<div id="singleBox" class="modeBox active">
+<div><label class="calc-label">Coil Diameter</label><div class="calc-row"><input id="sDia" type="number" value="25" oninput="clearResults()"><select id="sDiaUnit" onchange="clearResults()"><option value="mm">mm</option><option value="cm">cm</option><option value="in">inch</option></select></div></div>
+<div><label class="calc-label">Coil Length</label><div class="calc-row"><input id="sLen" type="number" value="50" oninput="clearResults()"><select id="sLenUnit" onchange="clearResults()"><option value="mm">mm</option><option value="cm">cm</option><option value="in">inch</option></select></div></div>
+<div><label class="calc-label">Number of Turns</label><div class="calc-row"><input id="sTurns" type="number" value="20" oninput="clearResults()"><div class="unit-box">N</div></div></div>
+<div><label class="calc-label">Relative Permeability μr</label><div class="calc-row"><input id="sMu" type="number" value="1" oninput="clearResults()"><div class="unit-box">μr</div></div></div>
+</div>
 
-    <div id="standardDiameterRow">
-      <label class="calc-label" id="diameterLabel">Coil Diameter</label>
-      <div class="calc-row">
-        <input id="diamIn" type="number" min="0" placeholder="Enter diameter">
-        <select id="coilUnits" class="unit-select" onchange="clearOutputs();updateUnitLabels();">
-          <option value="0.0393700787402" selected>mm</option>
-          <option value="0.393700787402">cm</option>
-          <option value="39.3700787402">m</option>
-          <option value="1">in</option>
-          <option value="12">ft</option>
-        </select>
-      </div>
-    </div>
+<div id="multiBox" class="modeBox">
+<div><label class="calc-label">Average Coil Diameter</label><div class="calc-row"><input id="mDia" type="number" value="25" oninput="clearResults()"><select id="mDiaUnit" onchange="clearResults()"><option value="mm">mm</option><option value="cm">cm</option><option value="in">inch</option></select></div></div>
+<div><label class="calc-label">Coil Length</label><div class="calc-row"><input id="mLen" type="number" value="30" oninput="clearResults()"><select id="mLenUnit" onchange="clearResults()"><option value="mm">mm</option><option value="cm">cm</option><option value="in">inch</option></select></div></div>
+<div><label class="calc-label">Coil Thickness / Depth</label><div class="calc-row"><input id="mDepth" type="number" value="10" oninput="clearResults()"><select id="mDepthUnit" onchange="clearResults()"><option value="mm">mm</option><option value="cm">cm</option><option value="in">inch</option></select></div></div>
+<div><label class="calc-label">Number of Turns</label><div class="calc-row"><input id="mTurns" type="number" value="80" oninput="clearResults()"><div class="unit-box">N</div></div></div>
+<div><label class="calc-label">Relative Permeability μr</label><div class="calc-row"><input id="mMu" type="number" value="1" oninput="clearResults()"><div class="unit-box">μr</div></div></div>
+</div>
 
-    <div id="intDiamRow">
-      <label class="calc-label">Internal Diameter</label>
-      <div class="calc-row">
-        <input id="innDiamIn" type="number" min="0" placeholder="Enter internal diameter">
-        <div class="unit-box" id="c4">mm</div>
-      </div>
-    </div>
+<div id="flatBox" class="modeBox">
+<div><label class="calc-label">Flat Spiral Shape</label><div class="calc-row"><select id="flatShape" onchange="clearResults()"><option value="square">Square</option><option value="hex">Hexagonal</option><option value="oct">Octagonal</option><option value="circle">Circular</option></select><div class="unit-box">SHAPE</div></div></div>
+<div><label class="calc-label">Number of Turns (n)</label><div class="calc-row"><input id="fTurns" type="number" value="5" oninput="clearResults()"><div class="unit-box">turns</div></div></div>
+<div><label class="calc-label">Spacing Between Turns (s)</label><div class="calc-row"><input id="fSpace" type="number" value="2" oninput="clearResults()"><div class="unit-box">µm</div></div></div>
+<div><label class="calc-label">Turn Width (w)</label><div class="calc-row"><input id="fWidth" type="number" value="10" oninput="clearResults()"><div class="unit-box">µm</div></div></div>
+<div><label class="calc-label">Outer Diameter (Dout)</label><div class="calc-row"><input id="fDout" type="number" value="250" oninput="clearResults()"><div class="unit-box">µm</div></div></div>
+</div>
+</div>
 
-    <div id="lengthRow">
-      <label class="calc-label">Coil Length</label>
-      <div class="calc-row">
-        <input id="lengthIn" type="number" min="0" placeholder="Enter coil length">
-        <div class="unit-box" id="c5">mm</div>
-      </div>
-    </div>
+<button class="calc-btn" onclick="calculate()">CALCULATE</button>
+<div id="errorBox">Please enter all required numeric values.</div>
 
-    <div id="standardTurnsRow">
-      <label class="calc-label">Turns</label>
-      <div class="calc-row">
-        <input id="nTurnsIn" type="number" min="0" placeholder="Enter turns">
-        <div class="unit-box">N</div>
-      </div>
-    </div>
+<div class="result-title">RESULTS</div>
 
-    <div id="flatInputs" class="hidden">
-      <label class="calc-label">Outer Diameter (dout)</label>
-      <div class="calc-row"><input id="flatDout" type="number" value="250"><div class="unit-box">µm</div></div>
+<div id="normalResults" class="result-grid">
+<div class="result-card blue"><div class="result-label">Inductance</div><div class="result-value" id="uHOut"></div></div>
+<div class="result-card green"><div class="result-label">Millihenry</div><div class="result-value" id="mHOut"></div></div>
+<div class="result-card purple"><div class="result-label">Henry</div><div class="result-value" id="HOut"></div></div>
+<div class="result-card orange"><div class="result-label">Formula Type</div><div class="result-value" id="typeOut"></div></div>
+</div>
 
-      <label class="calc-label" style="margin-top:15px;">Turn Width (w)</label>
-      <div class="calc-row"><input id="flatW" type="number" value="10"><div class="unit-box">µm</div></div>
+<div id="flatResults" class="result-grid" style="display:none">
+<div class="result-card blue"><div class="result-label">Modified Wheeler</div><div class="result-value" id="flatW"></div></div>
+<div class="result-card green"><div class="result-label">Current Sheet</div><div class="result-value" id="flatC"></div></div>
+<div class="result-card purple"><div class="result-label">Monomial Fit</div><div class="result-value" id="flatM"></div></div>
+<div class="result-card orange"><div class="result-label">Selected Shape</div><div class="result-value" id="flatShapeOut"></div></div>
+<div class="result-card blue"><div class="result-label">Calculated Inner Diameter</div><div class="result-value"><span id="dinOut"></span> µm</div></div>
+<div class="result-card green"><div class="result-label">Fill Factor p</div><div class="result-value" id="fillOut"></div></div>
+</div>
 
-      <label class="calc-label" style="margin-top:15px;">Spacing (s)</label>
-      <div class="calc-row"><input id="flatS" type="number" value="2"><div class="unit-box">µm</div></div>
+<section class="infoBox">
+<h2>Input Parameters Specification</h2>
+<div class="paramGrid">
+<div class="paramItem"><strong>Coil Type</strong>Select Single Layer, Multi Layer, or Flat Planar Spiral Coil.</div>
+<div class="paramItem"><strong>Diameter</strong>Diameter selector supports mm, cm, and inch for single and multi coil modes.</div>
+<div class="paramItem"><strong>Length / Depth</strong>Single coil uses coil length; multi coil uses length plus winding thickness/depth.</div>
+<div class="paramItem"><strong>Turns</strong>Number of turns directly affects inductance because N is squared in the formula.</div>
+<div class="paramItem"><strong>Relative Permeability μr</strong>Use 1 for air core. Ferrite or magnetic core materials may need higher μr.</div>
+<div class="paramItem"><strong>Flat Spiral Shape</strong>Square, hexagonal, octagonal and circular shapes use different planar constants.</div>
+</div>
+</section>
 
-      <label class="calc-label" style="margin-top:15px;">Turns (n)</label>
-      <div class="calc-row"><input id="flatN" type="number" value="5"><div class="unit-box">N</div></div>
-    </div>
-  </div>
+<section class="infoBox">
+<h2>Practical Operational Examples</h2>
+<div class="exampleGrid">
+<div class="exampleCard"><p><strong>Single Layer RF Coil</strong></p><p>Use diameter, coil length, turns and μr = 1 for an air-core RF coil used in LC tanks or antenna matching.</p></div>
+<div class="exampleCard"><p><strong>Multi Layer Coil</strong></p><p>Use average diameter, length, winding depth, turns and permeability for thicker wound inductors.</p></div>
+<div class="exampleCard"><p><strong>PCB Spiral Inductor</strong></p><p>Use flat mode for square, hexagonal, octagonal or circular planar spiral layouts.</p></div>
+<div class="exampleCard"><p><strong>Ferrite Core Estimate</strong></p><p>Change μr when estimating a magnetic-core coil, but verify with measurement for final hardware.</p></div>
+</div>
+</section>
 
-  <button onclick="calculateVal()">CALCULATE</button>
+<section class="infoBox">
+<h2>Diagrams & Theory</h2>
+<p>These custom SVG diagrams show single coil, multi-layer coil, and four flat spiral inductor shapes arranged in one line.</p>
 
-  <div id="errorBox">Please enter valid inductor dimensions.</div>
+<div class="diagramBox">
+<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Coil geometry diagram">
+<rect width="900" height="520" fill="#fff"/>
+<style>
+.cCoil{stroke:#dc2626;stroke-width:7;fill:none;stroke-linecap:square;stroke-linejoin:miter}
+.cTurn{stroke:#111827;stroke-width:2;fill:#fff}
+.cBoxA{fill:#eef5ff;stroke:#2563eb;stroke-width:4}
+.cBoxB{fill:#fff7ed;stroke:#2563eb;stroke-width:4}
+.cTxt{font-family:Arial,sans-serif;font-size:18px;font-weight:900;fill:#111827}
+.cSmall{font-family:Arial,sans-serif;font-size:13px;font-weight:800;fill:#334155}
+.track{fill:none;stroke:#9db4ff;stroke-width:16;stroke-linecap:square;stroke-linejoin:miter}
+.edge{fill:none;stroke:#111827;stroke-width:1.3;stroke-linecap:square;stroke-linejoin:miter}
+.term{fill:#f97316;stroke:#111827;stroke-width:1.5}
+</style>
+<text x="450" y="30" text-anchor="middle" class="cTxt">Coil Inductance Geometry</text>
 
-  <div class="result-title">RESULTS</div>
+<g transform="translate(95,65)">
+<text x="120" y="0" text-anchor="middle" class="cTxt">Multi Coil</text>
+<rect x="55" y="74" width="110" height="82" class="cBoxA"/>
+<circle cx="65" cy="25" r="11" class="cTurn"/><circle cx="95" cy="25" r="11" class="cTurn"/><circle cx="125" cy="25" r="11" class="cTurn"/><circle cx="155" cy="25" r="11" class="cTurn"/>
+<circle cx="65" cy="55" r="11" class="cTurn"/><circle cx="95" cy="55" r="11" class="cTurn"/><circle cx="125" cy="55" r="11" class="cTurn"/><circle cx="155" cy="55" r="11" class="cTurn"/>
+<circle cx="65" cy="175" r="11" class="cTurn"/><circle cx="95" cy="175" r="11" class="cTurn"/><circle cx="125" cy="175" r="11" class="cTurn"/><circle cx="155" cy="175" r="11" class="cTurn"/>
+<circle cx="65" cy="205" r="11" class="cTurn"/><circle cx="95" cy="205" r="11" class="cTurn"/><circle cx="125" cy="205" r="11" class="cTurn"/><circle cx="155" cy="205" r="11" class="cTurn"/>
+</g>
 
-  <div class="result-grid" id="standardResults">
-    <div class="result-card">
-      <div class="result-label">Inductance</div>
-      <div class="result-value"><span id="rsltDiv"></span></div>
-    </div>
+<g transform="translate(555,65)">
+<text x="95" y="0" text-anchor="middle" class="cTxt">Single Coil</text>
+<rect x="37" y="58" width="100" height="70" class="cBoxB"/>
+<circle cx="40" cy="40" r="11" class="cTurn"/><circle cx="70" cy="40" r="11" class="cTurn"/><circle cx="100" cy="40" r="11" class="cTurn"/><circle cx="130" cy="40" r="11" class="cTurn"/>
+<circle cx="40" cy="145" r="11" class="cTurn"/><circle cx="70" cy="145" r="11" class="cTurn"/><circle cx="100" cy="145" r="11" class="cTurn"/><circle cx="130" cy="145" r="11" class="cTurn"/>
+</g>
 
-    <div class="result-card">
-      <div class="result-label">Output Unit</div>
-      <div class="result-value">
-        <select id="lUnits" onchange="clearOutputs()" class="unit-select" style="border:none;background:transparent;font-size:16px;font-weight:900;padding:0;height:auto;width:100%;">
-          <option value="1000000">pH</option>
-          <option value="1000">nH</option>
-          <option value="1" selected>µH</option>
-          <option value="0.001">mH</option>
-          <option value="0.000001">H</option>
-        </select>
-      </div>
-    </div>
-  </div>
+<text x="450" y="345" text-anchor="middle" class="cTxt">Flat Spiral Inductor Shapes</text>
 
-  <div class="result-grid hidden" id="flatResults">
-    <div class="result-card"><div class="result-label">Inner Diameter</div><div class="result-value"><span id="flatDin"></span></div></div>
-    <div class="result-card"><div class="result-label">Fill Factor</div><div class="result-value"><span id="flatRho"></span></div></div>
-    <div class="result-card"><div class="result-label">Modified Wheeler</div><div class="result-value"><span id="flatWheeler"></span></div></div>
-    <div class="result-card"><div class="result-label">Current Sheet</div><div class="result-value"><span id="flatCurrent"></span></div></div>
-    <div class="result-card"><div class="result-label">Monomial Fit</div><div class="result-value"><span id="flatMono"></span></div></div>
-  </div>
+<g transform="translate(20,385) scale(.62)"><path class="track" d="M190 190 H10 V10 H190 V160 H40 V40 H160 V130 H70 V70 H130 V100 H100"/><path class="edge" d="M190 190 H10 V10 H190 V160 H40 V40 H160 V130 H70 V70 H130 V100 H100"/><circle cx="190" cy="190" r="5" class="term"/><circle cx="100" cy="100" r="5" class="term"/><text x="100" y="245" text-anchor="middle" class="cSmall">a) square</text></g>
+<g transform="translate(245,385) scale(.62)"><path class="track" d="M190 100 L145 178 L55 178 L10 100 L55 22 L145 22 L176 76 L136 150 L68 150 L32 100 L68 50 L132 50 L154 88 L120 126 L82 126 L60 100 L82 74 L112 74 L128 100 L110 112 L92 112 L84 100 L94 88 L112 88"/><path class="edge" d="M190 100 L145 178 L55 178 L10 100 L55 22 L145 22 L176 76 L136 150 L68 150 L32 100 L68 50 L132 50 L154 88 L120 126 L82 126 L60 100 L82 74 L112 74 L128 100 L110 112 L92 112 L84 100 L94 88 L112 88"/><circle cx="190" cy="100" r="5" class="term"/><circle cx="112" cy="88" r="5" class="term"/><text x="100" y="245" text-anchor="middle" class="cSmall">b) hexagonal</text></g>
+<g transform="translate(470,385) scale(.62)"><path class="track" d="M190 100 L164 164 L100 190 L36 164 L10 100 L36 36 L100 10 L164 36 L178 70 L150 150 L100 172 L50 150 L28 100 L50 50 L100 28 L150 50 L160 86 L136 136 L100 152 L64 136 L48 100 L64 64 L100 48 L136 64 L144 92 L124 124 L100 136 L76 124 L64 100 L76 76 L100 64 L124 76 L130 100 L112 112 L92 112 L84 100 L94 88 L112 88"/><path class="edge" d="M190 100 L164 164 L100 190 L36 164 L10 100 L36 36 L100 10 L164 36 L178 70 L150 150 L100 172 L50 150 L28 100 L50 50 L100 28 L150 50 L160 86 L136 136 L100 152 L64 136 L48 100 L64 64 L100 48 L136 64 L144 92 L124 124 L100 136 L76 124 L64 100 L76 76 L100 64 L124 76 L130 100 L112 112 L92 112 L84 100 L94 88 L112 88"/><circle cx="190" cy="100" r="5" class="term"/><circle cx="112" cy="88" r="5" class="term"/><text x="100" y="245" text-anchor="middle" class="cSmall">c) octagonal</text></g>
+<g transform="translate(695,385) scale(.62)"><path class="track" d="M190 100 C190 150 150 190 100 190 C50 190 10 150 10 100 C10 50 50 10 100 10 C150 10 190 50 190 100 C190 138 138 166 100 166 C62 166 34 138 34 100 C34 62 62 34 100 34 C138 34 166 62 166 100 C166 126 126 142 100 142 C74 142 58 126 58 100 C58 74 74 58 100 58 C126 58 142 74 142 100 C142 114 114 120 100 120 C86 120 80 114 80 100 C80 86 86 80 100 80 C114 80 120 86 120 100 C120 106 112 112 108 108"/><path class="edge" d="M190 100 C190 150 150 190 100 190 C50 190 10 150 10 100 C10 50 50 10 100 10 C150 10 190 50 190 100 C190 138 138 166 100 166 C62 166 34 138 34 100 C34 62 62 34 100 34 C138 34 166 62 166 100 C166 126 126 142 100 142 C74 142 58 126 58 100 C58 74 74 58 100 58 C126 58 142 74 142 100 C142 114 114 120 100 120 C86 120 80 114 80 100 C80 86 86 80 100 80 C114 80 120 86 120 100 C120 106 112 112 108 108"/><circle cx="190" cy="100" r="5" class="term"/><circle cx="108" cy="108" r="5" class="term"/><text x="100" y="245" text-anchor="middle" class="cSmall">d) circular</text></g>
+</svg>
+</div>
+</section>
 
-  <section class="infoBox">
-    <h2>Input Parameters Specification</h2>
-    <div class="paramGrid">
-      <div class="paramItem"><strong>Coil Type</strong> Select single layer, multilayer, or flat planar spiral inductor geometry for correct coil inductance calculation.</div>
-      <div class="paramItem"><strong>Planar Spiral Shape</strong> Square, hexagonal, octagonal, and circular spiral layouts use shape-specific constants for RF PCB inductors.</div>
-      <div class="paramItem"><strong>Dimensions</strong> Diameter, length, width, spacing, inner diameter and outer diameter define winding area and magnetic coupling.</div>
-      <div class="paramItem"><strong>Turns</strong> Turn count controls flux linkage and strongly affects air core coil, multilayer coil, and planar spiral inductance values.</div>
-    </div>
-  </section>
+<section class="infoBox">
+<h2>Formulas & Mathematical Logic</h2>
+<div class="formulaBox">Single layer: L(µH) = (r² × N² × μr) / (9r + 10l)</div>
+<div class="formulaBox">Multi layer: L(µH) = (0.8 × r² × N² × μr) / (6r + 9l + 10d)</div>
+<div class="formulaBox">Flat mode: delta = n × (w + s) - s; Din = Dout - 2 × delta; Davg = Dout - delta; p = (Dout - Davg) / Davg.</div>
+<div class="formulaBox">Flat mode uses Modified Wheeler, Current Sheet and Monomial Fit constants for the selected shape only.</div>
+</section>
 
-  <section class="infoBox">
-    <h2>Practical Operational Examples</h2>
-    <div class="exampleGrid">
-      <div class="exampleCard">
-        <p><strong>Flat Spiral Verification</strong></p>
-        <p>Shape: Square<br>dout: 250 µm<br>w: 10 µm<br>s: 2 µm<br>n: 5</p>
-      </div>
-      <div class="exampleCard">
-        <p><strong>Expected Square Result</strong></p>
-        <p>Inner Diameter: 134.00 µm<br>Fill Factor: 0.3021<br>Modified Wheeler: 7.710 nH<br>Current Sheet: 7.625 nH<br>Monomial Fit: 7.517 nH</p>
-      </div>
-    </div>
-  </section>
+<section class="infoBox">
+<h2>Step-by-Step Example</h2>
+<div class="formulaBox">Single layer example: diameter = 25 mm, length = 50 mm, turns = 20, μr = 1.</div>
+<div class="formulaBox">Convert dimensions to inches, then r = diameter / 2.</div>
+<div class="formulaBox">Apply Wheeler formula and display µH, mH and H.</div>
+<div class="formulaBox">Flat example: n = 5, w = 10 µm, s = 2 µm, Dout = 250 µm. delta = 58 µm, Din = 134 µm.</div>
+</section>
 
-  <section class="infoBox">
-    <h2>Diagrams & Theory</h2>
-    <p>Single and multilayer coils are useful for air-core RF inductors, while flat planar spirals are used in PCB inductors, RF filters, oscillators, impedance matching and compact electronic layouts.</p>
+<section class="infoBox">
+<h2>How to Use This Calculator</h2>
+<div class="aboutSteps">
+<div class="aboutStep">Select Single, Multi, or Flat Planar Spiral Coil.</div>
+<div class="aboutStep">Enter coil geometry and select units where available.</div>
+<div class="aboutStep">For Single or Multi, enter relative permeability μr.</div>
+<div class="aboutStep">For Flat mode, choose Square, Hexagonal, Octagonal or Circular shape.</div>
+<div class="aboutStep">Press Calculate to display results.</div>
+</div>
+</section>
 
-    <div class="diagramBox" id="singleMultiDiagram">
-      <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arrowGreen" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"/>
-          </marker>
-        </defs>
+<section class="infoBox">
+<h2>About This Calculator</h2>
+<div class="aboutLead">
+<strong>Calculate inductance for wound coils and PCB-style planar spiral inductors.</strong>
+<p>This CalcBoy calculator combines three practical coil design modes in one lightweight tool.</p>
+</div>
+<p>The Coil Inductance Calculator helps estimate inductance for single layer solenoid coils, multi-layer windings, and flat planar spiral inductors. Single and multi-layer modes are useful for RF coils, air-core inductors, ferrite-core windings, sensor coils and custom electromagnet design. Flat mode is useful for PCB spiral inductors and IC-style planar inductor layouts.</p>
+<div class="aboutMiniGrid">
+<div class="aboutMiniCard"><span>Single Layer</span>Best for simple air-core coils, RF tank circuits and antenna matching coils.</div>
+<div class="aboutMiniCard"><span>Multi Layer</span>Useful for thicker windings where coil depth affects inductance.</div>
+<div class="aboutMiniCard"><span>Flat Spiral</span>Supports square, hexagonal, octagonal and circular planar spiral shapes.</div>
+<div class="aboutMiniCard"><span>Design Note</span>Real inductance changes with frequency, parasitic capacitance, wire diameter and core losses.</div>
+</div>
+<div class="aboutNote">Tip: For RF or high-current designs, always verify calculated inductance with an LCR meter or VNA before final hardware use.</div>
+</section>
 
-        <text x="140" y="270" font-size="22" font-weight="bold" text-anchor="middle">MULTI COIL</text>
-        <rect x="100" y="110" width="80" height="40" fill="none" stroke="#3b82f6" stroke-width="4"/>
-        <g fill="none" stroke="black" stroke-width="2">
-          <circle cx="110" cy="97" r="8"/><circle cx="140" cy="97" r="8"/><circle cx="170" cy="97" r="8"/>
-          <circle cx="110" cy="78" r="8"/><circle cx="140" cy="78" r="8"/><circle cx="170" cy="78" r="8"/>
-          <circle cx="110" cy="163" r="8"/><circle cx="140" cy="163" r="8"/><circle cx="170" cy="163" r="8"/>
-          <circle cx="110" cy="182" r="8"/><circle cx="140" cy="182" r="8"/><circle cx="170" cy="182" r="8"/>
-        </g>
-        <line x1="80" y1="78" x2="80" y2="95" stroke="#16a34a" stroke-width="2" marker-start="url(#arrowGreen)" marker-end="url(#arrowGreen)"/>
-        <text x="25" y="89" font-size="18">Depth</text>
-        <line x1="100" y1="210" x2="180" y2="210" stroke="#16a34a" stroke-width="2" marker-start="url(#arrowGreen)" marker-end="url(#arrowGreen)"/>
-        <text x="110" y="240" font-size="18">Length</text>
-        <line x1="190" y1="90" x2="190" y2="130" stroke="#16a34a" stroke-width="2" marker-start="url(#arrowGreen)" marker-end="url(#arrowGreen)"/>
-        <text x="200" y="115" font-size="18">Radius</text>
+<section class="infoBox">
+<h2>Frequently Asked Questions</h2>
+<h3>What is coil inductance?</h3><p>Coil inductance is the ability of a winding to store magnetic energy when current flows through it.</p>
+<h3>What does μr mean?</h3><p>μr is relative permeability. Use μr = 1 for air-core coils and higher values for magnetic materials.</p>
+<h3>Why are there three flat spiral formulas?</h3><p>Modified Wheeler, Current Sheet and Monomial Fit are different published approximation methods for planar spiral inductors.</p>
+<h3>What is calculated inner diameter?</h3><p>It is the inner opening left after subtracting turns, trace width and spacing from outer diameter.</p>
+<h3>What is fill factor p?</h3><p>It describes how tightly the spiral is packed according to the average diameter relation used in the formula.</p>
+<h3>Are these results exact?</h3><p>No. They are engineering estimates. Real measured inductance may vary due to construction and material effects.</p>
+<h3>Can I use this for PCB inductors?</h3><p>Yes, use Flat Planar Spiral Coil mode and select the matching shape.</p>
+</section>
 
-        <text x="440" y="270" font-size="22" font-weight="bold" text-anchor="middle">SINGLE COIL</text>
-        <rect x="400" y="130" width="80" height="40" fill="none" stroke="#1e3a8a" stroke-width="4"/>
-        <g fill="none" stroke="black" stroke-width="2">
-          <circle cx="410" cy="118" r="8"/><circle cx="440" cy="118" r="8"/><circle cx="470" cy="118" r="8"/>
-          <circle cx="410" cy="182" r="8"/><circle cx="440" cy="182" r="8"/><circle cx="470" cy="182" r="8"/>
-        </g>
-        <line x1="490" y1="150" x2="490" y2="125" stroke="#16a34a" stroke-width="2" marker-start="url(#arrowGreen)" marker-end="url(#arrowGreen)"/>
-        <text x="500" y="140" font-size="18">Radius</text>
-        <line x1="400" y1="210" x2="480" y2="210" stroke="#16a34a" stroke-width="2" marker-start="url(#arrowGreen)" marker-end="url(#arrowGreen)"/>
-        <text x="410" y="240" font-size="18">Length</text>
-      </svg>
-    </div>
-
-    <div class="diagramBox hidden" id="flatDiagram">
-      <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="orangeArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f97316"/>
-          </marker>
-        </defs>
-
-        <rect width="900" height="220" fill="#fff"/>
-
-        <g transform="translate(8,18)">
-          <polyline points="85,88 85,65 105,55 128,65 142,88 132,118 102,138 65,128 42,100 50,60 88,35 135,52 160,92 145,145 95,172 35,150 5,95 35,35 92,5 155,35 182,95 155,158 92,188" fill="none" stroke="#7b9df7" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/>
-          <polyline points="85,88 85,65 105,55 128,65 142,88 132,118 102,138 65,128 42,100 50,60 88,35 135,52 160,92 145,145 95,172 35,150 5,95 35,35 92,5 155,35 182,95 155,158 92,188" fill="none" stroke="#4b5563" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
-          <line x1="85" y1="10" x2="85" y2="185" stroke="#f97316" stroke-width="2" marker-start="url(#orangeArrow)" marker-end="url(#orangeArrow)"/>
-          <line x1="85" y1="60" x2="85" y2="135" stroke="#f97316" stroke-width="2" marker-start="url(#orangeArrow)" marker-end="url(#orangeArrow)"/>
-          <text x="94" y="100" font-size="12">Din</text><text x="72" y="205" font-size="12">Dout</text><text x="88" y="17" font-size="11">w</text><text x="112" y="27" font-size="11">s</text>
-        </g>
-
-        <g transform="translate(230,18)">
-          <polyline points="86,88 86,65 112,55 135,88 112,122 76,135 42,112 32,78 62,42 110,32 155,70 160,112 125,155 65,168 15,125 5,72 52,20 112,5 178,45 198,105 158,165 92,190" fill="none" stroke="#7b9df7" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/>
-          <polyline points="86,88 86,65 112,55 135,88 112,122 76,135 42,112 32,78 62,42 110,32 155,70 160,112 125,155 65,168 15,125 5,72 52,20 112,5 178,45 198,105 158,165 92,190" fill="none" stroke="#4b5563" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
-          <line x1="98" y1="8" x2="98" y2="188" stroke="#f97316" stroke-width="2" marker-start="url(#orangeArrow)" marker-end="url(#orangeArrow)"/>
-          <line x1="86" y1="90" x2="132" y2="60" stroke="#f97316" stroke-width="2" marker-end="url(#orangeArrow)"/>
-          <text x="80" y="108" font-size="12">Din</text><text x="115" y="165" font-size="12">Dout</text><text x="108" y="15" font-size="11">w</text><text x="70" y="28" font-size="11">s</text>
-        </g>
-
-        <g transform="translate(468,20)">
-          <polyline points="95,90 95,70 70,70 70,110 120,110 120,45 45,45 45,135 145,135 145,20 20,20 20,160 170,160 170,0" fill="none" stroke="#7b9df7" stroke-width="14" stroke-linejoin="miter" stroke-linecap="butt"/>
-          <polyline points="95,90 95,70 70,70 70,110 120,110 120,45 45,45 45,135 145,135 145,20 20,20 20,160 170,160 170,0" fill="none" stroke="#4b5563" stroke-width="1.4" stroke-linejoin="miter"/>
-          <line x1="95" y1="0" x2="95" y2="160" stroke="#f97316" stroke-width="2" marker-start="url(#orangeArrow)" marker-end="url(#orangeArrow)"/>
-          <line x1="67" y1="64" x2="67" y2="112" stroke="#f97316" stroke-width="2" marker-start="url(#orangeArrow)" marker-end="url(#orangeArrow)"/>
-          <text x="76" y="90" font-size="12">Din</text><text x="112" y="90" font-size="12">Dout</text><text x="112" y="13" font-size="11">w</text><text x="138" y="24" font-size="11">s</text>
-        </g>
-
-        <g transform="translate(705,20)">
-          <path d="M90 88 C90 70,115 70,115 90 C115 122,65 128,45 100 C22 68,50 32,92 32 C140 32,165 75,145 118 C120 170,42 172,12 118 C-22 60,28 8,92 8 C170 8,205 72,176 138" fill="none" stroke="#7b9df7" stroke-width="14" stroke-linecap="round"/>
-          <path d="M90 88 C90 70,115 70,115 90 C115 122,65 128,45 100 C22 68,50 32,92 32 C140 32,165 75,145 118 C120 170,42 172,12 118 C-22 60,28 8,92 8 C170 8,205 72,176 138" fill="none" stroke="#4b5563" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="92" y1="8" x2="92" y2="165" stroke="#f97316" stroke-width="2" marker-start="url(#orangeArrow)" marker-end="url(#orangeArrow)"/>
-          <line x1="92" y1="90" x2="150" y2="90" stroke="#f97316" stroke-width="2" marker-start="url(#orangeArrow)" marker-end="url(#orangeArrow)"/>
-          <text x="55" y="94" font-size="12">Dout</text><text x="108" y="106" font-size="12">Din</text><text x="25" y="98" font-size="11">s</text><text x="58" y="76" font-size="11">w</text>
-        </g>
-      </svg>
-    </div>
-  </section>
-
-  <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
-    <div class="formula" id="formulaBox">Single Layer: Self-Inductance = r² × N² / (9r + 10l)</div>
-    <div class="formula">Flat Spiral: din = dout - 2 × (n × (w + s) - s)</div>
-    <div class="formula">Modified Wheeler, Current Sheet and Monomial Fit use shape-specific constants for square, hexagonal, octagonal and circular spiral coils.</div>
-    <p>This calculator preserves the original single and multilayer coil logic, and flat mode uses planar spiral formulas based on outer diameter, turn width, spacing and turns. Formula source reference was supplied in your uploaded code. :contentReference[oaicite:0]{index=0}</p>
-  </section>
+<section class="infoBox">
+<h2>Related Calculators</h2>
+<div class="linkGrid">
+<div class="linkCard"><strong>Inductive Reactance Calculator</strong>Convert inductance to reactance at a selected frequency.</div>
+<div class="linkCard"><strong>LC Resonance Calculator</strong>Useful for oscillator and RF tank circuit design.</div>
+<div class="linkCard"><strong>Capacitor Impedance Calculator</strong>Related AC impedance tool for capacitors.</div>
+<div class="linkCard"><strong>PCB Trace Calculator</strong>Useful for PCB conductor sizing and layout checks.</div>
+</div>
+</section>
 
 </div>
 
 <script>
+function showError(v){document.getElementById("errorBox").style.display=v?"block":"none";}
+function val(id){return Number(document.getElementById(id).value);}
+function formatValue(v){if(!isFinite(v))return "";if(Math.abs(v)>=1000)return v.toFixed(2);if(Math.abs(v)>=1)return v.toFixed(4);return v.toPrecision(4);}
+function toInch(v,u){v=Number(v);if(u==="mm")return v/25.4;if(u==="cm")return v/2.54;return v;}
 var u=4e-7*Math.PI;
 
-function roundVal(x,f){
-  return Math.round(x*Math.pow(10,f))/Math.pow(10,f);
-}
-
-function updateUnitLabels(){
-  var v=Number(document.getElementById("coilUnits").value);
-  var unit="mm";
-  if(v==0.393700787402)unit="cm";
-  else if(v==39.3700787402)unit="m";
-  else if(v==1)unit="in";
-  else if(v==12)unit="ft";
-  document.getElementById("c4").innerHTML=unit;
-  document.getElementById("c5").innerHTML=unit;
-}
-
-function updateGeometry(){
-  var g=Number(document.getElementById("geometry").value);
-
-  document.getElementById("spiralShapeRow").classList.toggle("hidden",g!=3);
-  document.getElementById("flatInputs").classList.toggle("hidden",g!=3);
-  document.getElementById("standardResults").classList.toggle("hidden",g==3);
-  document.getElementById("flatResults").classList.toggle("hidden",g!=3);
-  document.getElementById("standardDiameterRow").classList.toggle("hidden",g==3);
-  document.getElementById("standardTurnsRow").classList.toggle("hidden",g==3);
-  document.getElementById("singleMultiDiagram").classList.toggle("hidden",g==3);
-  document.getElementById("flatDiagram").classList.toggle("hidden",g!=3);
-
-  if(g==1){
-    document.getElementById("diameterLabel").innerHTML="Coil Diameter";
-    document.getElementById("lengthRow").style.display="block";
-    document.getElementById("intDiamRow").style.display="none";
-  }else if(g==3){
-    document.getElementById("lengthRow").style.display="none";
-    document.getElementById("intDiamRow").style.display="none";
-  }else{
-    document.getElementById("diameterLabel").innerHTML="Outer Diameter";
-    document.getElementById("lengthRow").style.display="block";
-    document.getElementById("intDiamRow").style.display="block";
-  }
-
-  updateUnitLabels();
-  clearOutputs();
-}
-
-function clearOutputs(){
-  ["rsltDiv","flatDin","flatRho","flatWheeler","flatCurrent","flatMono"].forEach(function(id){
-    document.getElementById(id).innerHTML="";
+function clearResults(){
+  showError(false);
+  ["uHOut","mHOut","HOut","typeOut","flatW","flatC","flatM","flatShapeOut","dinOut","fillOut"].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.innerText="";
   });
-  document.getElementById("errorBox").style.display="none";
 }
 
-function wheeler(K1,K2,n,davg,rho){
-  return K1*u*n*n*davg/(1+K2*rho)*1e3;
+function switchMode(){
+  var mode=document.getElementById("mode").value;
+  document.querySelectorAll(".modeBox").forEach(e=>e.classList.remove("active"));
+  document.getElementById(mode+"Box").classList.add("active");
+  document.getElementById("normalResults").style.display=mode==="flat"?"none":"grid";
+  document.getElementById("flatResults").style.display=mode==="flat"?"grid":"none";
+  clearResults();
 }
 
-function mohan(c1,c2,c3,c4,n,davg,rho){
-  return u*n*n*davg*c1*0.5*(Math.log(c2/rho)+c3*rho+c4*rho*rho)*1e3;
+function normalOutput(uH,type){
+  document.getElementById("uHOut").innerText=formatValue(uH)+" µH";
+  document.getElementById("mHOut").innerText=formatValue(uH/1000)+" mH";
+  document.getElementById("HOut").innerText=formatValue(uH/1000000)+" H";
+  document.getElementById("typeOut").innerText=type;
 }
 
-function monomial(beta,a1,a2,a3,a4,a5,dout,w,davg,n,s){
-  return beta*Math.pow(dout,a1)*Math.pow(w,a2)*Math.pow(davg,a3)*Math.pow(n,a4)*Math.pow(s,a5);
-}
+function calculate(){
+  showError(false);
+  var mode=document.getElementById("mode").value;
 
-function calculateFlatSpiral(){
-  var shape=document.getElementById("spiralShape").value;
-  var n=Math.abs(Number(document.getElementById("flatN").value));
-  var w=Math.abs(Number(document.getElementById("flatW").value));
-  var s=Math.abs(Number(document.getElementById("flatS").value));
-  var dout=Math.abs(Number(document.getElementById("flatDout").value));
-  var errorBox=document.getElementById("errorBox");
-
-  if(n<=0||w<=0||s<=0||dout<=0){
-    errorBox.innerHTML="Please enter valid inductor dimensions.";
-    errorBox.style.display="block";
-    return;
+  if(mode==="single"){
+    var dia=toInch(val("sDia"),document.getElementById("sDiaUnit").value);
+    var len=toInch(val("sLen"),document.getElementById("sLenUnit").value);
+    var n=val("sTurns"),mu=val("sMu");
+    if(dia<=0||len<=0||n<=0||mu<=0){clearResults();showError(true);return;}
+    var r=dia/2;
+    normalOutput((r*r*n*n*mu)/((9*r)+(10*len)),"Single Layer Wheeler");
   }
 
-  var delta=n*(w+s)-s;
-  var din=dout-2*delta;
-  var davg=dout-delta;
-  var rho=(dout-davg)/davg;
-
-  if(din<=0||rho<=0){
-    errorBox.innerHTML="There are too many turns for this outer diameter.";
-    errorBox.style.display="block";
-    return;
+  if(mode==="multi"){
+    var dia=toInch(val("mDia"),document.getElementById("mDiaUnit").value);
+    var len=toInch(val("mLen"),document.getElementById("mLenUnit").value);
+    var depth=toInch(val("mDepth"),document.getElementById("mDepthUnit").value);
+    var n=val("mTurns"),mu=val("mMu");
+    if(dia<=0||len<=0||depth<=0||n<=0||mu<=0){clearResults();showError(true);return;}
+    var r=dia/2;
+    normalOutput((0.8*r*r*n*n*mu)/((6*r)+(9*len)+(10*depth)),"Multi Layer Wheeler");
   }
 
-  errorBox.innerHTML="Please enter valid inductor dimensions.";
-  errorBox.style.display="none";
-
-  var constants={
-    square:{wheeler:[2.34,2.75],current:[1.27,2.07,0.18,0.13],mono:[1.62e-3,-1.21,-0.147,2.40,1.78,-0.030]},
-    hexagonal:{wheeler:[2.33,3.82],current:[1.09,2.23,0.00,0.17],mono:[1.28e-3,-1.24,-0.174,2.47,1.77,-0.049]},
-    octagonal:{wheeler:[2.25,3.55],current:[1.07,2.29,0.00,0.19],mono:[1.33e-3,-1.21,-0.163,2.43,1.75,-0.049]},
-    circular:{wheeler:[2.23,3.45],current:[1.00,2.46,0.00,0.20],mono:[1.33e-3,-1.21,-0.163,2.43,1.75,-0.049]}
-  };
-
-  var c=constants[shape];
-
-  document.getElementById("flatDin").innerHTML=roundVal(din,2).toFixed(2)+" µm";
-  document.getElementById("flatRho").innerHTML=roundVal(rho,4).toFixed(4);
-  document.getElementById("flatWheeler").innerHTML=roundVal(wheeler(c.wheeler[0],c.wheeler[1],n,davg,rho),3).toFixed(3)+" nH";
-  document.getElementById("flatCurrent").innerHTML=roundVal(mohan(c.current[0],c.current[1],c.current[2],c.current[3],n,davg,rho),3).toFixed(3)+" nH";
-  document.getElementById("flatMono").innerHTML=roundVal(monomial(c.mono[0],c.mono[1],c.mono[2],c.mono[3],c.mono[4],c.mono[5],dout,w,davg,n,s),3).toFixed(3)+" nH";
-
-  document.getElementById("formulaBox").innerHTML=
-    "Flat Planar Spiral:<br>" +
-    "din = dout - 2 × (n × (w + s) - s)<br>" +
-    "davg = dout - (n × (w + s) - s)<br>" +
-    "fill factor = (dout - davg) / davg";
+  if(mode==="flat"){calculateFlat();}
 }
 
-function calculateVal(){
-  var g=Number(document.getElementById("geometry").value);
+function wheeler(K1,K2,n,davg,rho){return K1*u*n*n*davg/(1+K2*rho)*1e3;}
+function mohan(c1,c2,c3,c4,n,davg,rho){return u*n*n*davg*c1*0.5*(Math.log(c2/rho)+c3*rho+c4*rho*rho)*1e3;}
+function monomial(beta,a1,a2,a3,a4,a5,dout,w,davg,n,s){return beta*Math.pow(dout,a1)*Math.pow(w,a2)*Math.pow(davg,a3)*Math.pow(n,a4)*Math.pow(s,a5);}
 
-  if(g==3){
-    calculateFlatSpiral();
-    return;
-  }
+function calculateFlat(){
+  var shape=document.getElementById("flatShape").value;
+  var n=Math.abs(val("fTurns")),s=Math.abs(val("fSpace")),w=Math.abs(val("fWidth")),dout=Math.abs(val("fDout"));
+  if(!n||!s||!w||!dout){clearResults();showError(true);return;}
 
-  var coilUnitValue=Number(document.getElementById("coilUnits").value);
-  var diameter=Number(document.getElementById("diamIn").value);
-  var coilLength=Number(document.getElementById("lengthIn").value);
-  var intDiam=Number(document.getElementById("innDiamIn").value);
-  var nTurns=Number(document.getElementById("nTurnsIn").value);
-  var lUnits=Number(document.getElementById("lUnits").value);
-  var errorBox=document.getElementById("errorBox");
+  var delta=n*(w+s)-s,din=dout-2*delta,davg=dout-delta,rho=(dout-davg)/davg;
+  if(din<=0||rho<=0){clearResults();showError(true);return;}
 
-  if(diameter<=0||nTurns<=0||(g==1&&coilLength<=0)||(g==2&&(coilLength<=0||intDiam<=0))){
-    errorBox.innerHTML="Please enter valid inductor dimensions.";
-    errorBox.style.display="block";
-    document.getElementById("rsltDiv").innerHTML="";
-    return;
-  }
+  var names={square:"Square",hex:"Hexagonal",oct:"Octagonal",circle:"Circular"};
+  var k={
+    square:{w:[2.34,2.75],c:[1.27,2.07,0.18,0.13],m:[1.62e-3,-1.21,-0.147,2.40,1.78,-0.030]},
+    hex:{w:[2.33,3.82],c:[1.09,2.23,0.00,0.17],m:[1.28e-3,-1.24,-0.174,2.47,1.77,-0.049]},
+    oct:{w:[2.25,3.55],c:[1.07,2.29,0.00,0.19],m:[1.33e-3,-1.21,-0.163,2.43,1.75,-0.049]},
+    circle:{w:[2.23,3.45],c:[1.00,2.46,0.00,0.20],m:[1.33e-3,-1.21,-0.163,2.43,1.75,-0.049]}
+  }[shape];
 
-  errorBox.style.display="none";
-
-  var coilDepth=diameter-intDiam;
-  var mlfsDiam=diameter-intDiam*0.5;
-  var result=0;
-
-  if(g==1){
-    result=(0.5*diameter*coilUnitValue*0.5*diameter*coilUnitValue*nTurns*nTurns/(9*0.5*diameter*coilUnitValue+10*coilLength*coilUnitValue)*lUnits).toFixed(3);
-    document.getElementById("formulaBox").innerHTML="Single Layer:<br>Self-Inductance = r² × N² / (9r + 10l)";
-  }else{
-    result=(0.8*(0.5*mlfsDiam*coilUnitValue*0.5*mlfsDiam*coilUnitValue*nTurns*nTurns)/(6*0.5*mlfsDiam*coilUnitValue+9*coilLength*coilUnitValue+10*coilDepth*coilUnitValue)*lUnits).toFixed(3);
-    document.getElementById("formulaBox").innerHTML="Multi Layer:<br>Self-Inductance = 0.8 × r² × N² / (6r + 9l + 10d)";
-  }
-
-  document.getElementById("rsltDiv").innerHTML=result;
+  document.getElementById("flatW").innerText=formatValue(wheeler(k.w[0],k.w[1],n,davg,rho))+" nH";
+  document.getElementById("flatC").innerText=formatValue(mohan(k.c[0],k.c[1],k.c[2],k.c[3],n,davg,rho))+" nH";
+  document.getElementById("flatM").innerText=formatValue(monomial(k.m[0],k.m[1],k.m[2],k.m[3],k.m[4],k.m[5],dout,w,davg,n,s))+" nH";
+  document.getElementById("flatShapeOut").innerText=names[shape];
+  document.getElementById("dinOut").innerText=formatValue(din);
+  document.getElementById("fillOut").innerText=formatValue(rho);
 }
-
-document.addEventListener("DOMContentLoaded",function(){
-  updateGeometry();
-
-  ["flatDout","flatW","flatS","flatN","diamIn","lengthIn","innDiamIn","nTurnsIn"].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el){
-      el.addEventListener("input",clearOutputs);
-    }
-  });
-});
 </script>
-</body>
-</html>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is coil inductance?","acceptedAnswer":{"@type":"Answer","text":"Coil inductance is the ability of a winding to store magnetic energy when current flows through it."}},
+{"@type":"Question","name":"What does relative permeability mean?","acceptedAnswer":{"@type":"Answer","text":"Relative permeability describes how strongly a core material supports magnetic flux compared with air."}},
+{"@type":"Question","name":"Can this calculator be used for PCB spiral inductors?","acceptedAnswer":{"@type":"Answer","text":"Yes, use Flat Planar Spiral Coil mode and choose square, hexagonal, octagonal or circular shape."}},
+{"@type":"Question","name":"Are calculated inductance values exact?","acceptedAnswer":{"@type":"Answer","text":"No. They are engineering estimates and should be verified with real measurement."}}
+]}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList
