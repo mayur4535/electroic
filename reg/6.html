@@ -3,77 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Battery Charge Discharge and Series / Parallel Calculator | Power Bank Solver</title>
-<meta name="description" content="Calculate total storage energy, backup time bounds, charging/discharging runtime current metrics, and series-parallel arrangement arrays across individual cells.">
-<meta name="keywords" content="battery series parallel calculator, backup runtime discharge solver, c-rate capacity tracker, power storage bank configuration matrix, ampere hour system design balance">
+<title>Battery Series Parallel & Charge Discharge Calculator | CalcBoy</title>
+<meta name="description" content="Calculate battery series and parallel configuration voltage, capacity, total stored energy, backup runtime hours, and charging or discharging currents.">
+<meta name="keywords" content="battery series parallel calculator, battery backup runtime calculator, battery pack capacity solver, c-rate calculator, battery bank design tool, CalcBoy">
 <style>
 /* PREMIUM CUSTOM WRAPPER INJECTION PRESERVING ALL ORIGINAL TARGET DOM ELEMENT IDS */
 #battery-calc,#battery-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f6f8fb;padding:10px;color:#333}
-#battery-calc{width:100%;max-width:620px;margin:auto;padding-top:14px}
-#battery-calc .calc-grid{display:grid;gap:15px}
-#battery-calc .calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
-#battery-calc .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
-#battery-calc input,#battery-calc select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
-#battery-calc select{text-align:center;font-weight:700;padding:0 6px;cursor:pointer}
-#battery-calc input:focus,#battery-calc select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
-#battery-calc .unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+body{margin:0 !important;background:#f6f8fb;padding:0 !important;color:#333}
+#battery-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px 10px 10px !important;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+select{text-align:center;font-weight:700;padding:0 6px;cursor:pointer}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
 #seriesParallelInputs{display:block}
-#battery-calc button{width:100%;height:45px;margin-top:24px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff3d00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+button, .calc-btn{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
 #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
-#battery-calc .result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;color:#7b8794;letter-spacing:.5px}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
 
 /* FIXED LOCKED 2-COLUMNS ADAPTIVE GRID VIEW FOR BOTH MODES */
-#battery-calc .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-#battery-calc .result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
-#battery-calc .result-card:nth-child(1),#battery-calc .result-card:nth-child(5){background:#eef5ff;border-color:#bfd3ff}
-#battery-calc .result-card:nth-child(2),#battery-calc .result-card:nth-child(6){background:#ecfdf5;border-color:#bbf7d0}
-#battery-calc .result-card:nth-child(3),#battery-calc .result-card:nth-child(7){background:#f5f3ff;border-color:#ddd6fe}
-#battery-calc .result-card:nth-child(4),#battery-calc .result-card:nth-child(8){background:#fff7ed;border-color:#fed7aa}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
 
-#battery-calc .result-card:nth-child(1) .result-label,#battery-calc .result-card:nth-child(1) .result-value,#battery-calc .result-card:nth-child(5) .result-label,#battery-calc .result-card:nth-child(5) .result-value{color:#2359e8}
-#battery-calc .result-card:nth-child(2) .result-label,#battery-calc .result-card:nth-child(2) .result-value,#battery-calc .result-card:nth-child(6) .result-label,#battery-calc .result-card:nth-child(6) .result-value{color:#16a34a}
-#battery-calc .result-card:nth-child(3) .result-label,#battery-calc .result-card:nth-child(3) .result-value,#battery-calc .result-card:nth-child(7) .result-label,#battery-calc .result-card:nth-child(7) .result-value{color:#7c3aed}
-#battery-calc .result-card:nth-child(4) .result-label,#battery-calc .result-card:nth-child(4) .result-value,#battery-calc .result-card:nth-child(8) .result-label,#battery-calc .result-card:nth-child(8) .result-value{color:#ea580c}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
 
-#battery-calc .result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:0.5px}
-#battery-calc .result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1}
-#battery-calc .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
-#battery-calc .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
-#battery-calc .infoBox p{font-size:13px;line-height:1.6;color:#475467;margin-bottom:12px;font-weight:600}
-#battery-calc .formula{margin-top:18px;padding:12px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px;line-height:1.6;color:#334155;font-weight:700;overflow-x:auto}
-#battery-calc .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-#battery-calc .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-#battery-calc .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-#battery-calc .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-#battery-calc .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:0.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{margin-top:18px;padding:12px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px;line-height:1.6;color:#334155;font-weight:700;overflow-x:auto}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
 
 /* NO CLIPPING FIXED HORIZONTAL CENTER BOX CONTAINER WITH AUTOMATIC SCROLLOVER FOR SMALL PHONES */
-#battery-calc .diagramBox{
-  background: #fff;
-  padding: 16px;
-  overflow-x: auto;
-  margin-top: 10px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-}
-#battery-calc .waveguide-diagram{
-  width: 100%;
-  display: block;
-}
-#battery-calc .waveguide-diagram svg{
-  width: 100%;
-  min-width: 540px;
-  max-width: 600px;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
+.diagramBox{background: #fff;padding: 16px;overflow-x: auto;margin-top: 10px;border: 1px solid #e5e7eb;border-radius: 12px;}
+.waveguide-diagram{width: 100%;display: block;}
+.waveguide-diagram svg{width: 100%;min-width: 540px;max-width: 600px;height: auto;display: block;margin: 0 auto;}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 @media(max-width:600px){
-  body{padding:0}
-  #battery-calc .calc-row{grid-template-columns:minmax(0,1fr) 72px}
-  #battery-calc .unit-box{width:72px;min-width:72px;max-width:72px}
-  #battery-calc .result-grid,#battery-calc .exampleGrid,#battery-calc .paramGrid{grid-template-columns:1fr}
+  .calc-row{grid-template-columns:minmax(0,1fr) 72px}
+  .unit-box{width:72px;min-width:72px;max-width:72px}
+  .result-grid,.exampleGrid,.paramGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .result-value{font-size:14px}
 }
 </style>
 </head>
@@ -150,42 +138,42 @@ body{margin:0;background:#f6f8fb;padding:10px;color:#333}
 
   <div class="result-title">RESULTS</div>
   <div class="result-grid">
-    <div class="result-card">
+    <div class="result-card blue">
       <div class="result-label">Battery Capacity</div>
       <div class="result-value"><span id="capacityWh">-</span> Wh</div>
     </div>
 
-    <div class="result-card">
+    <div class="result-card green">
       <div class="result-label">Discharge Hours</div>
       <div class="result-value"><span id="time">-</span> h</div>
     </div>
 
-    <div class="result-card">
+    <div class="result-card purple">
       <div class="result-label">Discharge Minutes</div>
       <div class="result-value"><span id="timemin">-</span> m</div>
     </div>
 
-    <div class="result-card series-result">
+    <div class="result-card orange series-result">
       <div class="result-label">Total Batteries</div>
       <div class="result-value"><span id="totalnbbatteries">-</span></div>
     </div>
 
-    <div class="result-card series-result">
+    <div class="result-card blue series-result">
       <div class="result-label">Storage Voltage</div>
       <div class="result-value"><span id="voltsystem">-</span> V</div>
     </div>
 
-    <div class="result-card series-result">
+    <div class="result-card green series-result">
       <div class="result-label">Storage Current</div>
       <div class="result-value"><span id="currentsystem">-</span> A</div>
     </div>
 
-    <div class="result-card series-result">
+    <div class="result-card purple series-result">
       <div class="result-label">Storage Capacity</div>
       <div class="result-value"><span id="capacitysystemAh">-</span> Ah</div>
     </div>
 
-    <div class="result-card series-result">
+    <div class="result-card orange series-result">
       <div class="result-label">Storage Energy</div>
       <div class="result-value"><span id="capacitysystemkWh">-</span> kWh</div>
     </div>
@@ -194,8 +182,10 @@ body{margin:0;background:#f6f8fb;padding:10px;color:#333}
   <section class="infoBox">
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
-      <div class="paramItem"><strong>Unit Cell Voltage / Ah</strong> Native electrical pressure baseline and aggregate metric charge holding value of an isolated singular cell block.</div>
-      <div class="paramItem"><strong>C-Rate Parameter</strong> Scaled dynamic factor showing relative charge or discharge load velocity properties.</div>
+      <div class="paramItem"><strong>Unit Cell Voltage (V)</strong> The nominal electrical pressure rating of a singular battery cell (such as 3.2V for LiFePO4, 3.7V for Li-ion, or 12V for lead-acid blocks).</div>
+      <div class="paramItem"><strong>Rated Cell Capacity (Ah)</strong> The absolute electrical charge capacity a cell can safely sustain and deliver continuously under normal load conditions.</div>
+      <div class="paramItem"><strong>C-Rate Parameter</strong> A relative factor indicating how fast a battery is charged or discharged compared to its overall Ampere-hour rating (e.g., 1C, 0.5C).</div>
+      <div class="paramItem"><strong>Continuous Current (A)</strong> The continuous rate of electrical current flowing through the circuit loop. Calculating C-rate dynamically aligns this value.</div>
     </div>
   </section>
 
@@ -203,19 +193,22 @@ body{margin:0;background:#f6f8fb;padding:10px;color:#333}
     <h2>Practical Operational Examples</h2>
     <div class="exampleGrid">
       <div class="exampleCard">
-        <p><strong>Bank Grouping Setup</strong></p>
-        <p>Cell Specification = 12V 100Ah Lithium<br>Configuration = 2 Series x 2 Parallel<br>Discharge Velocity = 0.5C Factor</p>
+        <p><strong>Lithium-Ion Solar Battery Bank</strong></p>
+        <p>Cell Spec = 3.2V 100Ah LiFePO4 cells<br>Array Configuration = 4 Series x 2 Parallel<br>Continuous discharge current = 50 Amps</p>
       </div>
       <div class="exampleCard">
-        <p><strong>Computed Bank Parameters</strong></p>
-        <p>• Total Installed Units = 4 Pieces<br>• System Busbar Voltage = 24 V nominal<br>• Bank Output Capacity = 200 Ah (4.80 kWh)</p>
+        <p><strong>Computed Solar Array Output</strong></p>
+        <p>• Output System Voltage = 12.8 V<br>• Total Storage Capacity = 200 Ah (2.56 kWh)<br>• Estimated Backup Runtime = 4.0 Hours</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>High-Velocity EV Battery Module</strong></p>
+        <p>Using 10 cells in series, each rated at 3.7V and 50Ah. The total battery energy capacity calculates to 1.85 kWh with an overall output voltage of 37V.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Uninterruptible Power Supply (UPS)</strong></p>
+        <p>A standard 12V 7.2Ah lead-acid battery running a load at a 1.5C discharge rate (10.8A) provides around 40 minutes of estimated backup run-time.</p>
       </div>
     </div>
-  </section>
-
-  <section class="infoBox">
-    <h2>Circuit Configurations & Applications</h2>
-    <p>Combining individual secondary batteries shifts available output parameters to target safe runtime curves. Series links step up net operational line voltages to suppress transmission losses, while parallel shunt branches add current safety buffers cleanly.</p>
   </section>
 
   <section class="infoBox">
@@ -293,22 +286,98 @@ body{margin:0;background:#f6f8fb;padding:10px;color:#333}
             
             <text x="130" y="54" font-size="11" font-family="sans-serif" font-weight="bold" fill="#1e293b" text-anchor="middle">Monitoring Core System</text>
 
-            <path d="M 0,49 L 40,49 M 220,49 L 260,49" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 0,49 L 40,49 M 220,49 L 260,49" stroke="#1e293b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
             <polyline points="245,44 255,49 245,54" fill="none" stroke="#1e293b" stroke-width="2"/>
             <text x="130" y="88" font-size="12" font-family="sans-serif" font-weight="bold" fill="#475569" text-anchor="middle">Time Hours = Ah Capacity / Current</text>
           </g>
         </svg>
       </div>
     </div>
-    <p>The system computes real-time load distribution constants cleanly to track battery group runtime constraints without parameters calculation errors.</p>
+    <p>When engineering battery banks, individual cells can be arranged in series, parallel, or series-parallel matrices. Linking cells in series raises the overall voltage (Vtotal = V1 + V2 + ...) to minimize high-current transmission losses. Connecting cells in parallel expands the net capacity (Ahtotal = Ah1 + Ah2 + ...) to prolong discharge runtimes under identical load constraints.</p>
   </section>
 
-  <div class="formula" id="formulaText">
-    Current = Ah × C-rate OR C-rate = Current / Ah<br>
-    Time = Ah / Current<br>
-    Storage Voltage = Voltage × Series<br>
-    Storage Ah = Ah × Parallel
-  </div>
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula" id="formulaText">
+      Current = Ah * C-rate OR C-rate = Current / Ah<br>
+      Time = Ah / Current<br>
+      Storage Voltage = Voltage * Series<br>
+      Storage Ah = Ah * Parallel<br>
+      Total Storage Energy (kWh) = (Ah * Voltage * Series * Parallel) / 1000
+    </div>
+    <p>The mathematical engine resolves dynamic parameters based on load configurations. Converting values cleanly ensures the system avoids rounding errors during backup runtime calculations.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Configuring a 4S3P array using 3.2V 50Ah LiFePO4 cells.</div>
+    <div class="formulaBox">Step 1: Calculate the output system voltage based on the series count: 3.2V * 4S = 12.8V.</div>
+    <div class="formulaBox">Step 2: Determine total parallel storage capacity: 50Ah * 3P = 150Ah.</div>
+    <div class="formulaBox">Step 3: Calculate the total quantity of battery cells used in the pack: 4S * 3P = 12 cells.</div>
+    <div class="formulaBox">Step 4: Compute the total stored energy: (12.8V * 150Ah) / 1000 = 1.92 kWh (or 1920 Wh).</div>
+    <div class="formulaBox">Step 5: For a constant 30A current draw, determine the discharge runtime: 150Ah / 30A = 5.0 hours.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Select either Series / Parallel or Charging / Discharging from the Mode Selection dropdown.</div>
+      <div class="aboutStep">Input your individual cell nominal voltage and Ampere-hour (Ah) capacity parameters.</div>
+      <div class="aboutStep">Specify either your continuous C-Rate or load Current in Amperes. The opposing field adjusts automatically.</div>
+      <div class="aboutStep">If in Series / Parallel mode, specify the exact number of series and parallel batteries.</div>
+      <div class="aboutStep">Click Calculate to view total capacity, backup runtime, system voltage, and overall storage energy values.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Model, analyze, and optimize battery bank configurations for energy storage systems.</strong>
+      <p>This design tool estimates total storage capacity, backup discharge runtimes, charge current constraints, and series-parallel grouping requirements for modern battery technologies.</p>
+    </div>
+    <p>Designing power storage systems requires a solid understanding of electrochemical cell behavior and circuit configurations. Whether configuring a high-voltage industrial battery stack or a small solar power bank, arranging individual cells in series or parallel paths alters the output characteristics to match application requirements. Series arrays increase output voltage to minimize resistive losses, while parallel banks extend operational backup runtimes under demanding load currents.</p>
+    <p>In addition to physical cell groupings, managing charge and discharge rates is critical for system longevity. The C-rate is a standardized metric indicating how fast a battery is fully depleted or charged relative to its maximum capacity. For instance, a 100Ah battery operating at 1C draws a steady 100 Amps of current and fully depletes in one hour. Operating the same cell at 0.5C lowers the continuous current draw to 50 Amps, extending the backup runtime to two hours under ideal conditions.</p>
+    <p>This calculator scales these variables systematically. By providing the primary cell specifications, the tool resolves storage voltage, total pack capacity, and the resulting kilowatt-hours (kWh) of stored energy. This allows engineers and DIY solar enthusiasts to model battery behavior before purchasing components or assembling custom packs.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Typical Applications</span>Solar battery arrays, UPS emergency backups, custom e-bike battery packs, and portable power stations.</div>
+      <div class="aboutMiniCard"><span>Key Deliverables</span>Total Wh/kWh capacity, series voltage, parallel Ampere-hours, and discharge runtime limits.</div>
+      <div class="aboutMiniCard"><span>Target Audience</span>Power electronic engineers, renewable energy technicians, and solar DIY enthusiasts.</div>
+      <div class="aboutMiniCard"><span>Cell Matching Tip</span>Always use identical cells with matching chemistry, capacity, and internal resistance to prevent hazardous imbalances.</div>
+    </div>
+    <div class="aboutNote">Warning: High-power battery packs contain significant stored energy. Always include appropriate fuses, circuit breakers, and short-circuit protection devices during assembly.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What is the difference between series and parallel battery connections?</h3>
+    <p>Series connections stack cell voltages together while the capacity (Ah) remains the same. Parallel connections sum the capacities (Ah) together while the output voltage remains identical to a single cell.</p>
+
+    <h3>Why do series-connected battery packs require a Battery Management System (BMS)?</h3>
+    <p>Individual battery cells have slight manufacturing differences. Over multiple charge cycles, these variances cause cell voltages to drift. A BMS balances the voltages of series-connected cells to prevent hazardous overcharging or deep discharging.</p>
+
+    <h3>How is C-rate calculated, and how does it impact runtime?</h3>
+    <p>C-rate is determined by dividing the load current by the battery's Ampere-hour capacity. A higher C-rate (faster discharge) draws more current, which shortens the backup runtime but allows for higher output power.</p>
+
+    <h3>Can I connect batteries of different capacities or voltages in series?</h3>
+    <p>No. Mixing batteries of different capacities or voltages causes severe cell imbalances, accelerated degradation, and thermal runaway hazards, as weaker cells will over-discharge under load conditions.</p>
+
+    <h3>What is the difference between Ah and Wh?</h3>
+    <p>Ah (Ampere-hours) measures electrical charge capacity. Wh (Watt-hours) measures the total stored energy, calculated by multiplying the charge capacity (Ah) by the nominal system voltage (V).</p>
+
+    <h3>How does charging current affect battery lifespan?</h3>
+    <p>Charging at excessively high currents (high C-rates) increases internal temperature and causes lithium plating in lithium-based cells, significantly reducing overall battery life cycle and capacity.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Ohm's Law Calculator</strong>Calculate voltage, current, resistance, and power relationships.</div>
+      <div class="linkCard"><strong>Wire Gauge Calculator</strong>Estimate safe wire sizes based on continuous load currents.</div>
+      <div class="linkCard"><strong>Solar Panel Array Calculator</strong>Optimize solar panel configurations for charge controllers.</div>
+      <div class="linkCard"><strong>Buck Converter Design Calculator</strong>Step down DC voltages from battery banks efficiently.</div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -421,6 +490,34 @@ document.addEventListener("DOMContentLoaded", function(){
   
   document.getElementById("errorBox").style.display = "none";
 });
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"What is the difference between series and parallel battery connections?","acceptedAnswer":{"@type":"Answer","text":"Series connections stack cell voltages together while the capacity (Ah) remains the same. Parallel connections sum the capacities (Ah) together while the output voltage remains identical to a single cell."}},
+{"@type":"Question","name":"Why do series-connected battery packs require a Battery Management System (BMS)?","acceptedAnswer":{"@type":"Answer","text":"Individual battery cells have slight manufacturing differences. Over multiple charge cycles, these variances cause cell voltages to drift. A BMS balances the voltages of series-connected cells to prevent hazardous overcharging or deep discharging."}},
+{"@type":"Question","name":"How is C-rate calculated, and how does it impact runtime?","acceptedAnswer":{"@type":"Answer","text":"C-rate is determined by dividing the load current by the battery's Ampere-hour capacity. A higher C-rate (faster discharge) draws more current, which shortens the backup runtime but allows for higher output power."}},
+{"@type":"Question","name":"Can I connect batteries of different capacities or voltages in series?","acceptedAnswer":{"@type":"Answer","text":"No. Mixing batteries of different capacities or voltages causes severe cell imbalances, accelerated degradation, and thermal runaway hazards, as weaker cells will over-discharge under load conditions."}},
+{"@type":"Question","name":"What is the difference between Ah and Wh?","acceptedAnswer":{"@type":"Answer","text":"Ah (Ampere-hours) measures electrical charge capacity. Wh (Watt-hours) measures the total stored energy, calculated by multiplying the charge capacity (Ah) by the nominal system voltage (V)."}},
+{"@type":"Question","name":"How does charging current affect battery lifespan?","acceptedAnswer":{"@type":"Answer","text":"Charging at excessively high currents (high C-rates) increases internal temperature and causes lithium plating in lithium-based cells, significantly reducing overall battery life cycle and capacity."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Battery Series Parallel & Charge Discharge Calculator","item":"https://calcboy.com/tool/battery-series-parallel-charge-discharge-calculator"}
+]
+}
 </script>
 
 </body>
