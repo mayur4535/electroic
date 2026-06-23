@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Wavelength (TEM) Calculator | Guided Electromagnetic Waves</title>
+<title>Wavelength (TEM) Calculator | Guided Electromagnetic Waves | CalcBoy</title>
 <meta name="description" content="Calculate TEM transmission wave wavelength from frequency, dielectric constant, and velocity of propagation properties.">
-<meta name="keywords" content="TEM wavelength calculator, transverse electromagnetic wave, dielectric constant wavelength, propagation velocity calculator, microwave wavelength calculation, transmission line wave solver, RF engineering tool, GHz wavelength calculator">
+<meta name="keywords" content="TEM wavelength calculator, transverse electromagnetic wave, dielectric constant wavelength, propagation velocity calculator, microwave wavelength calculation, transmission line wave solver, RF engineering tool, GHz wavelength calculator, CalcBoy">
 <style>
+    /* Exact CSS Classes and Margins Imported from Master Flyback Reference Template */
     *{box-sizing:border-box;font-family:Arial,sans-serif}
-    body{margin:0;background:#f6f8fb;padding:0;color:#333}
-    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+    .calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+
+    /* Form Inputs and Interactive Row Styling */
     label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
     .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
     .full-row{margin-bottom:16px}
@@ -21,27 +24,43 @@
     #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
     .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
     
-    /* LOCKED STRUCTURAL SINGLE/DUAL COLUMN OUTPUT GRID LAYOUT */
-    .resultGrid{display:grid;grid-template-columns:1fr;gap:12px}
-    .card{padding:16px;border-radius:12px;min-height:82px}
+    /* Symmetrical 2-Column Results Grid strictly preserved */
+    .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
     .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
     .cardLine{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
     .cardLine input{background:transparent !important;font-weight:800;color:inherit;border:none !important;padding:0;height:auto;font-size:18px;width:100%;outline:none;box-shadow:none !important}
     .cardLine label{margin-bottom:0;background:#fff;height:43px;display:flex;align-items:center;justify-content:center;border:1px solid #cfd6df;border-radius:8px;font-weight:800;font-size:14px;color:#333}
-    .blue{background:#eef5ff;border:1px solid #bfd3ff} .blue *{color:#2359e8}
+    .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
     
+    /* Existing InfoBox Internal Styles preserved identically */
     .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
     .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
-    .infoBox p{font-size:13px;line-height:1.6;color:#475467;margin-bottom:12px;font-weight:600}
+    .infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+    .infoBox p, .infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
     .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .formula, .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+    .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem, .exampleCard, .aboutMiniCard, .linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+    .paramItem strong, .aboutMiniCard span, .linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+    .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
     .waveguide-diagram svg{width:100%;max-width:540px;height:auto;display:block;margin:auto}
-    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
-    @media(max-width:600px){.row,.cardLine{grid-template-columns:minmax(0,1fr) 72px}.exampleGrid,.paramGrid{grid-template-columns:1fr}}
+
+    /* Premium Appended UI Content Extensions Styles (Locked & Safe) */
+    .aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+    .aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+    .aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+    .aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+    .aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+    .aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
+    @media(max-width:600px){
+      body{padding:10px}
+      .calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+      .row,.cardLine{grid-template-columns:minmax(0,1fr) 72px}
+      .resultGrid{grid-template-columns:1fr}
+      .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{grid-template-columns:1fr}
+    }
 </style>
 </head>
 <body>
@@ -80,6 +99,13 @@
         <label>mm</label>
       </div>
     </div>
+    <div class="card blue">
+      <div class="cardLabel">WAVE MODE</div>
+      <div class="cardLine">
+        <input type="text" readonly value="TEM" style="background:transparent !important;font-weight:800;color:inherit;border:none !important;padding:0;height:auto;font-size:18px;width:100%;outline:none;box-shadow:none !important">
+        <label>Type</label>
+      </div>
+    </div>
   </div>
 
   <section class="infoBox">
@@ -115,13 +141,6 @@
     <div class="diagramBox">
       <div class="waveguide-diagram">
         <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#ef4444" stop-opacity="0.1"/>
-              <stop offset="50%" stop-color="#ef4444" stop-opacity="0.3"/>
-              <stop offset="100%" stop-color="#ef4444" stop-opacity="0.1"/>
-            </linearGradient>
-          </defs>
           <rect x="5" y="5" width="490" height="210" rx="12" fill="#ffffff" stroke="none"/>
           
           <line x1="40" y1="110" x2="450" y2="110" stroke="#1e293b" stroke-width="2"/>
@@ -150,9 +169,79 @@
   <section class="infoBox">
     <h2>Formulas & Calculation Logic</h2>
     <p>The calculation resolves TEM mode signal parameters inside localized mediums via matching operational frequency boundaries directly:</p>
-    <div class="formulaLine">Wavelength (λ) = Calculated Phase Speed Value (v) / Normalized Frequency (f)</div>
-    <div class="formulaLine">When Dielectric constant is supplied: Effective Matrix Scaling = 1 / Square Root (Dielectric Value)</div>
-    <div class="formulaLine">When Velocity % factor is filled: Phase Threshold speed is computed directly as percentage of Light Speed.</div>
+    <div class="formula">Wavelength (λ) = Calculated Phase Speed Value (v) / Normalized Frequency (f)</div>
+    <div class="formula">When Dielectric constant is supplied: Effective Matrix Scaling = 1 / Square Root (Dielectric Value)</div>
+    <div class="formula">When Velocity % factor is filled: Phase Threshold speed is computed directly as percentage of Light Speed.</div>
+  </section>
+
+  <!-- Premium Appended Content (Strictly Locked consecutive formulaBox blocks with absolutely NO loose text) -->
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Operating Frequency = 2.4 GHz, Dielectric Constant (Er) = 4.40, Velocity of Propagation (VoP) = 0 (ignored).</div>
+    <div class="formulaBox">Step 1: Check your input parameters. Frequency is 2.4 GHz, which is already in the baseline calculation unit of GHz.</div>
+    <div class="formulaBox">Step 2: Calculate the square root of the dielectric constant (relative permittivity) to find the refractive propagation index: sqrt(Er) = sqrt(4.40) = 2.097618.</div>
+    <div class="formulaBox">Step 3: Solve the guided TEM wave phase velocity relative to free-space: v_phase = 300 / sqrt(Er) = 300 / 2.097618 = 143.0189 mm-GHz (or mm/ns).</div>
+    <div class="formulaBox">Step 4: Solve the physical wavelength (lambda) by dividing the phase velocity by the operating frequency: lambda = v_phase / f = 143.0189 / 2.4 = 59.591 mm.</div>
+    <div class="formulaBox">Result: The calculated guided Transverse Electromagnetic (TEM) wavelength is exactly 59.591 mm, defining the physical dimensions of resonant elements.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the high-frequency operating <strong>Frequency</strong> and select the multiplier unit (GHz or MHz).</div>
+      <div class="aboutStep">Input the relative permittivity of the insulating substrate in the <strong>Constant (Dielectric)</strong> field.</div>
+      <div class="aboutStep">Alternatively, if the dielectric constant is unknown, input the percentage fraction of light speed in the <strong>Velocity (Propagation) %</strong> field.</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to initiate the guided wave equations.</div>
+      <div class="aboutStep">Read the computed guided Wavelength in millimeters (mm) displayed on the blue Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Calculate guided transverse electromagnetic wave dimensions across transmission lines and board traces.</strong>
+      <p>The CalcBoy Wavelength (TEM) Calculator computes the physical wavelength (mm) of a Transverse Electromagnetic (TEM) signal using operating frequency, substrate dielectric constant, or velocity of propagation parameters.</p>
+    </div>
+    <p>Transverse Electromagnetic (TEM) waves are a class of electromagnetic propagation waves characterized by having both their electric (E) and magnetic (H) field vector components directed completely orthogonal (perpendicular) relative to the direction of propagation. In free space (vacuum) or open air, all electromagnetic waves travel as TEM waves at the speed of light. Inside practical metallic guided-wave transmission lines, such as coaxial cables, microstrip traces, strip lines, and parallel-wire lines, signals also propagate in the dominant TEM mode. Because TEM waves have flat, dispersionless velocity profiles across wide frequency bands, they are highly favored in high-speed digital routing and broadband microwave systems.</p>
+    <p>However, when an electromagnetic wave propagates through a physical dielectric substrate instead of a vacuum, its phase velocity is slowed down. This velocity reduction is determined by the relative permittivity of the substrate (dielectric constant, Er), which forces the wave to travel at a fraction of the speed of light—a value known as the Velocity of Propagation (VoP). As the phase velocity slows, the physical wavelength of the signal at any given frequency is shortened proportionally. This calculator resolves these parameters, allowing RF antenna designers, high-speed PCB engineers, and transmission line planners to determine the exact wavelength of guided signals, which is a critical step in designing quarter-wave matching transformers, resonant stubs, and RF filters.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Application</span>Bypass stub design, coaxial line selection, printed microstrip design, and antenna engineering.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Guided TEM wavelength in millimeters (mm) and operational phase velocity characteristics.</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Permittivity slows the phase velocity of electromagnetic waves, shortening the guided wavelength.</div>
+      <div class="aboutMiniCard"><span>Design Rule</span>Select low-dielectric constant substrates to maintain high propagation velocity and reduce signal phase delay.</div>
+    </div>
+    <div class="aboutNote">Tip: Standard coaxial cables have a Velocity of Propagation (VoP) of approximately 66 percent for solid polyethylene dielectrics and up to 85 percent for foamed dielectrics. Always match this value to prevent design phase alignment errors.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What physically is a Transverse Electromagnetic (TEM) wave?</h3>
+    <p>A TEM wave is an electromagnetic wave where both the electric and magnetic field components are perpendicular to each other and perpendicular to the direction of wave propagation. Unlike TE or TM modes in waveguides, TEM waves do not have any field components directed along the axis of travel, allowing them to propagate down to 0 Hz (DC).</p>
+
+    <h3>Why does the dielectric constant of a substrate shorten the wavelength?</h3>
+    <p>The dielectric constant (relative permittivity, Er) measures how much a material polarizes in response to an electric field, which slows down the phase velocity of the electromagnetic wave. Because wavelength is the ratio of phase velocity to frequency, a slower phase velocity directly shortens the physical wavelength of the wave.</p>
+
+    <h3>What is the relationship between the Dielectric Constant and Velocity of Propagation (VoP)?</h3>
+    <p>The two parameters are mathematically equivalent representations of wave slowing. The Velocity of Propagation (expressed as a percentage of the speed of light) is inversely proportional to the square root of the dielectric constant: VoP % = 100 / sqrt(Er). The calculator uses this exact relationship to let you input whichever parameter is known.</p>
+
+    <h3>Why do high-speed PCB designers care about the guided wavelength?</h3>
+    <p>High-speed digital signals contain high-frequency components with short wavelengths. If a PCB trace is longer than a fraction of the guided wavelength, it behaves as a transmission line rather than a simple wire. This introduces wave reflections, cross-talk, and signal distortion unless the trace impedance is matched.</p>
+
+    <h3>Can this calculator be used for hollow rectangular or circular waveguides?</h3>
+    <p>No. Hollow metallic waveguides do not support TEM waves because they require at least two separate conductors (like a coaxial cable or microstrip trace) to establish the necessary boundary conditions. Hollow waveguides support Transverse Electric (TE) or Transverse Magnetic (TM) waves, which exhibit high frequency dispersion.</p>
+
+    <h3>How does operating frequency affect the guided wavelength?</h3>
+    <p>Wavelength is inversely proportional to frequency. As the operating frequency increases, the period of the alternating wave decreases, resulting in a physically shorter wavelength. This is why microwave and millimeter-wave circuits are so compact compared to low-frequency radio systems.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Coax Impedance Calculator</strong>Calculate Zo, capacitance, and delay of coaxial transmission lines.</div>
+      <div class="linkCard"><strong>VSWR and Return Loss Calculator</strong>Analyze antenna matching and transmission line reflection.</div>
+      <div class="linkCard"><strong>Free Space Path Loss Calculator</strong>Model free-space signal attenuation across distance boundaries.</div>
+      <div class="linkCard"><strong>Specific Absorption Rate (SAR) Solver</strong>Evaluate biological electromagnetic wave absorption limits.</div>
+    </div>
   </section>
 </main>
 
@@ -224,6 +313,95 @@ function executeWavelengthCalculations() {
     var computedWavelengthMm = 300 / (scaledFrequency * Math.sqrt(mediumScaleFactor));
     
     document.getElementById("tool_output1").value = computedWavelengthMm.toPrecision(5);
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What physically is a Transverse Electromagnetic (TEM) wave?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A TEM wave is an electromagnetic wave where both the electric and magnetic field components are perpendicular to each other and perpendicular to the direction of wave propagation. Unlike TE or TM modes in waveguides, TEM waves do not have any field components directed along the axis of travel, allowing them to propagate down to 0 Hz (DC)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the dielectric constant of a substrate shorten the wavelength?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The dielectric constant (relative permittivity, Er) measures how much a material polarizes in response to an electric field, which slows down the phase velocity of the electromagnetic wave. Because wavelength is the ratio of phase velocity to frequency, a slower phase velocity directly shortens the physical wavelength of the wave."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the relationship between the Dielectric Constant and Velocity of Propagation (VoP)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The two parameters are mathematically equivalent representations of wave slowing. The Velocity of Propagation (expressed as a percentage of the speed of light) is inversely proportional to the square root of the dielectric constant: VoP % = 100 / sqrt(Er). The calculator uses this exact relationship to let you input whichever parameter is known."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do high-speed PCB designers care about the guided wavelength?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "High-speed digital signals contain high-frequency components with short wavelengths. If a PCB trace is longer than a fraction of the guided wavelength, it behaves as a transmission line rather than a simple wire. This introduces wave reflections, cross-talk, and signal distortion unless the trace impedance is matched."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can this calculator be used for hollow rectangular or circular waveguides?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Hollow metallic waveguides do not support TEM waves because they require at least two separate conductors (like a coaxial cable or microstrip trace) to establish the necessary boundary conditions. Hollow waveguides support Transverse Electric (TE) or Transverse Magnetic (TM) waves, which exhibit high frequency dispersion."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does operating frequency affect the guided wavelength?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Wavelength is inversely proportional to frequency. As the operating frequency increases, the period of the alternating wave decreases, resulting in a physically shorter wavelength. This is why microwave and millimeter-wave circuits are so compact compared to low-frequency radio systems."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Calculators",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Wavelength (TEM) Calculator",
+      "item": "https://calcboy.com/tool/wavelength-tem-calculator"
+    }
+  ]
 }
 </script>
 </body>
