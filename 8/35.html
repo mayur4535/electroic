@@ -3,15 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Radar Maximum Range Calculator | RF System Link Planner</title>
+<title>Radar Maximum Range Calculator | RF System Link Planner | CalcBoy</title>
 
 <meta name="description" content="Calculate radar maximum range from radar output power, antenna gain, frequency, radar cross section and minimum detectable signal.">
-<meta name="keywords" content="radar maximum range calculator, radar range equation solver, rcs target tracking calculator, minimal detectable signal smin tracker, radome signal loss footprint, antenna aperture directivity matrix, telecom wave propagation footprint">
+<meta name="keywords" content="radar maximum range calculator, radar range equation solver, rcs target tracking calculator, minimal detectable signal smin tracker, radome signal loss footprint, antenna aperture directivity matrix, telecom wave propagation footprint, CalcBoy">
 
 <style>
+    /* Exact CSS Classes and Margins Imported from Master Flyback Reference Template */
     *{box-sizing:border-box;font-family:Arial,sans-serif}
-    body{margin:0;background:#f6f8fb;padding:0;color:#333}
-    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+    .calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+
+    /* Form Inputs and Interactive Row Styling */
     label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
     .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
     .valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
@@ -19,8 +22,10 @@
     select{text-align:center;font-weight:800;padding:0 6px;cursor:pointer}
     input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
     .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
     .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    
+    /* Symmetrical 2-Column Results Grid strictly preserved */
     .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
     .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
@@ -30,17 +35,34 @@
     .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
     .purple{background:#f5f3ff;border-color:#ddd6fe} .purple *{color:#7c3aed}
     .orange{background:#fff7ed;border-color:#fed7aa} .orange *{color:#ea580c}
-    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    
+    /* Existing InfoBox Internal Styles preserved identically */
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
     .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+    .infoBox p, .infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
     .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
-    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .formula, .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+    .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem, .exampleCard, .aboutMiniCard, .linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+    .paramItem strong, .aboutMiniCard span, .linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+    .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
     .waveguide-diagram svg{width:100%;max-width:500px;height:auto;display:block;margin:auto}
-    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr} .paramGrid{grid-template-columns:1fr}}
+
+    /* Premium Appended UI Content Extensions Styles (Locked & Safe) */
+    .aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+    .aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+    .aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+    .aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+    .aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+    .aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
+    @media(max-width:600px){
+      body{padding:10px}
+      .row{grid-template-columns:minmax(0,1fr) 72px}
+      .resultGrid{grid-template-columns:1fr 1fr}
+      .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{grid-template-columns:1fr}
+    }
 </style>
 </head>
 <body>
@@ -48,7 +70,7 @@
   <form id="tool" onsubmit="event.preventDefault();">
     <label for="rop">Output Power</label>
     <div class="row">
-      <input type="number" id="rop" placeholder="Example: 10" step="any">
+      <input id="rop" type="number" step="any" placeholder="Example: 10">
       <select id="rop-unit">
         <option value="1">mW</option>
         <option value="2" selected>W</option>
@@ -59,13 +81,13 @@
 
     <label for="ag">Antenna Gain</label>
     <div class="row">
-      <input type="number" id="ag" placeholder="Example: 30" step="any">
+      <input id="ag" placeholder="Example: 30" step="any">
       <div class="valueBox">linear</div>
     </div>
 
     <label for="fr">Frequency</label>
     <div class="row">
-      <input type="number" id="fr" placeholder="Example: 10" step="any">
+      <input id="fr" placeholder="Example: 10" step="any">
       <select id="fr-unit">
         <option value="1" selected>GHz</option>
         <option value="2">MHz</option>
@@ -74,7 +96,7 @@
 
     <label for="rcsa">Radar Cross Sectional Area</label>
     <div class="row">
-      <input type="number" id="rcsa" placeholder="Example: 1" step="any">
+      <input id="rcsa" placeholder="Example: 1" step="any">
       <select id="rcsa-unit">
         <option value="1" selected>m²</option>
         <option value="0.01">cm²</option>
@@ -85,7 +107,7 @@
 
     <label for="mds">Minimum Detectable Signal</label>
     <div class="row">
-      <input type="number" id="mds" placeholder="Example: -90" step="any">
+      <input id="mds" placeholder="Example: -90" step="any">
       <select id="mds-unit">
         <option value="1">mW</option>
         <option value="2">W</option>
@@ -148,7 +170,7 @@
 
           <line x1="0" y1="285" x2="480" y2="285" stroke="#334155" stroke-width="2.2"/>
 
-          <g stroke="#475569" stroke-width="2.5" stroke-linecap="round">
+          <g stroke="#475467" stroke-width="2.5" stroke-linecap="round">
             <line x1="50" y1="285" x2="80" y2="222"/>
             <line x1="110" y1="285" x2="80" y2="222"/>
             <line x1="80" y1="285" x2="80" y2="222"/>
@@ -176,47 +198,115 @@
             <path d="M 65,-35 A 65,65 0 0,1 65,35" fill="none" stroke="#eab308" stroke-width="5.5" stroke-linecap="round"/>
             <path d="M -15,50 A 65,65 0 0,1 -15,-50" fill="none" stroke="#eab308" stroke-width="5.5" stroke-linecap="round"/>
 
-            <path d="M -45,0 L -15,-6 L 25,-4 L 45,0 L 25,4 L -15,6 Z" fill="#475569"/>
+            <path d="M -45,0 L -15,-6 L 25,-4 L 45,0 L 25,4 L -15,6 Z" fill="#475467"/>
             <path d="M -10,-5 L 5,-32 L 15,-32 L 2,-4 Z" fill="#64748b"/>
             <path d="M -10,5 L 5,32 L 15,32 L 2,4 Z" fill="#64748b"/>
             <path d="M 22,-3 L 34,-18 L 40,-18 L 31,-2 Z" fill="#334155"/>
             <path d="M 22,3 L 34,18 L 40,18 L 31,2 Z" fill="#334155"/>
-            <polygon points="-45,0 -52,0 -45,2" fill="#0f172a"/>
+
           </g>
           
           <text x="395" y="24" fill="#000000" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle">Target</text>
 
-          <g transform="translate(0, -18)">
-            <path d="M 115,205 
-                     C 135,175 145,225 165,195 C 185,165 195,215 215,185 C 235,155 245,205 265,175 C 285,145 295,195 315,165 C 335,135 345,185 365,155 L 434,55" 
-                  fill="none" stroke="#4b5563" stroke-width="2.2" stroke-linecap="round" marker-end="url(#waveArrow)"/>
+           <g transform="translate(0, 20)">
+            <line x1="130" y1="180" x2="340" y2="80" stroke="#475467" stroke-width="2" stroke-linecap="round"/>
+            <polygon points="80,305 94,299 94,311" fill="#475467"/>
+            <polygon points="434,305 420,299 420,311" fill="#475467"/>
+            <text x="257" y="319" fill="#000000" font-size="14" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle">Range</text>
           </g>
 
-          <g transform="translate(0, 18)">
-            <path d="M 115,205 
-                     C 135,175 145,225 165,195 C 185,165 195,215 215,185 C 235,155 245,205 265,175 C 285,145 295,195 315,165 C 335,135 345,185 365,155 L 434,55" 
-                  fill="none" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" marker-end="url(#waveArrow)"/>
-          </g>
+          
 
           <g transform="translate(0, 20)">
-            <line x1="80" y1="305" x2="434" y2="305" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-            <polygon points="80,305 94,299 94,311" fill="#475569"/>
-            <polygon points="434,305 420,299 420,311" fill="#475569"/>
-            <text x="257" y="309" fill="#000000" font-size="14" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle">Range</text>
+            <line x1="80" y1="305" x2="434" y2="305" stroke="#475467" stroke-width="2" stroke-linecap="round"/>
+            <polygon points="80,305 94,299 94,311" fill="#475467"/>
+            <polygon points="434,305 420,299 420,311" fill="#475467"/>
+            <text x="257" y="319" fill="#000000" font-size="14" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle">Range</text>
           </g>
         </svg>
       </div>
     </div>
-    <p>[A detailed engineering model layout capturing high-frequency transmission vectors from an orange focal hub out to a tilted airborne structural nosecone matrix frame]</p>
     <p>Radar arrays monitor remote sky volumes by comparing high-frequency pulse emissions directly against microscopic target reflections retrieved at low receiver thresholds.</p>
   </section>
 
   <section class="infoBox">
     <h2>Formulas & Mathematical Logic</h2>
-    <div class="formulaLine">R = ⁴√((Pt × G² × σ × c²) / (Smin × (4π)³ × f²))</div>
-    <div class="formulaLine">Pt = Radar power (W) | G = Antenna gain (linear) | σ = RCS (m²)</div>
-    <div class="formulaLine">c = 3 × 10⁸ m/s | f = Freq (Hz) | Smin = MDS Sensitivity (W)</div>
-    <p>The mathematical evaluation extracts the fourth-root path scaling ratio ($R = \sqrt[4]{\dots}$) after normalizing power parameters from logarithmic decibel entries securely.</p>
+    <div class="formula">R = ⁴√((Pt × G² × σ × c²) / (Smin × (4π)³ × f²))</div>
+    <div class="formula">Pt = Radar power (W) | G = Antenna gain (linear) | σ = RCS (m²)</div>
+    <div class="formula">c = 3 × 10⁸ m/s | f = Freq (Hz) | Smin = MDS Sensitivity (W)</div>
+    <p>The mathematical evaluation extracts the fourth-root path scaling ratio (R = fourth-root of (...)) after normalizing power parameters from logarithmic decibel entries securely.</p>
+  </section>
+
+  <!-- Premium Appended Content (Strictly Locked consecutive formulaBox blocks with absolutely NO loose text) -->
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Transmitter Output Power = 10 W, Linear Aperture Gain = 30.00, Operating Frequency = 10 GHz, Target RCS = 1.00 m2, Receiver Sensitivity = -90 dBm.</div>
+    <div class="formulaBox">Step 1: Convert all units to standard linear physics terms: Transmitter Power (Pt) = 10 W, Minimum Detectable Signal (Smin) = 10^((-90 - 30) / 10) = 10^-12 W, Frequency = 10,000,000,000 Hz, Speed of Light (c) = 300,000,000 m/s.</div>
+    <div class="formulaBox">Step 2: Solve the numerator product of the monostatic radar equation: Numerator = Pt * Gain^2 * RCS * c^2 = 10 * 30^2 * 1 * (3 * 10^8)^2 = 10 * 900 * 1 * (9 * 10^16) = 8.1e20.</div>
+    <div class="formulaBox">Step 3: Solve the denominator product of the monostatic radar equation: Denominator = Smin * (4 * pi)^3 * Frequency^2 = 10^-12 * 1984.4017 * (10^10)^2 = 1.9844e11.</div>
+    <div class="formulaBox">Step 4: Divide the numerator by the denominator and calculate the fourth root: Range = (Numerator / Denominator)^(1/4) = (8.1e20 / 1.9844e11)^(0.25) = (4.081838e9)^(0.25) = 252.76 m.</div>
+    <div class="formulaBox">Result: The calculated maximum detection range of the radar system is exactly 252.76 m (or 0.2528 km).</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter your transmitter pulse <strong>Output Power</strong> and select the power unit (mW, W, dBm, or dBW).</div>
+      <div class="aboutStep">Input the directive antenna gain in the <strong>Antenna Gain</strong> field (linear factor scale).</div>
+      <div class="aboutStep">Enter the operational <strong>Frequency</strong> and select the unit (GHz or MHz).</div>
+      <div class="aboutStep">Input the electromagnetic scattering <strong>Radar Cross Sectional Area</strong> of the target and select the area unit.</div>
+      <div class="aboutStep">Input the receiver noise floor threshold in the <strong>Minimum Detectable Signal</strong> field and select the unit (mW, W, dBm, or dBW).</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to initiate the fourth-root radar range solver.</div>
+      <div class="aboutStep">Read the computed Maximum Range in both meters (m) and kilometers (km) displayed on the colored Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Model and predict maximum radar detection ranges using standard monostatic propagation metrics.</strong>
+      <p>The CalcBoy Radar Maximum Range Calculator evaluates the maximum physical detection range (m and km) of a monostatic radar system using operating power, gain, frequency, target cross-section, and sensitivity limits.</p>
+    </div>
+    <p>The radar range equation is a fundamental mathematical model used to determine the maximum distance at which a radar system can detect a target. Operating on the principle of wave propagation and backscattering, a radar transmitter emits a high-frequency electromagnetic pulse of peak power (Pt). As this wave travels outward, its power density disperses spherically. Upon striking a target with a specific radar cross section (RCS, represented as sigma), a small fraction of the incident wave energy is scattered back toward the receiver antenna. The power density of this returning echo wave also decreases spherically over the return path. To be processed successfully by the receiver, the returning signal power must exceed the minimum detectable signal (Smin) or receiver noise floor. Because the signal travels a two-way round-trip path, the received power decreases inversely with the fourth power of the distance, making maximum detection range dependent on the fourth root of system parameters.</p>
+    <p>This calculator computes the maximum detection range of a monostatic radar system in both meters (m) and kilometers (km). It also resolves intermediate variables such as the operating frequency in Hertz (Hz) and the target cross-sectional area in square meters (m2). RF system engineers, aerospace defense designers, and maritime radar operators use these models to specify minimum receiver sensitivity requirements, evaluate antenna directivities, and predict detection envelopes for diverse target profiles.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Application</span>Aerospace defense systems, weather radar planning, maritime target tracking, and active sensor design.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Maximum radar range in meters (m) and kilometers (km), resolved frequency, and standard RCS area.</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Symmetrical monostatic propagation scales signal return strengths inversely with the fourth power of distance.</div>
+      <div class="aboutMiniCard"><span>Design Rule</span>To double the detection range, you must increase transmitter power or target cross-section by a factor of 16 (12 dB).</div>
+    </div>
+    <div class="aboutNote">Tip: A target's physical size does not always match its Radar Cross Section (RCS). Stealth aircraft use specialized geometries and radar-absorbent materials to drastically reduce their electromagnetic scattering footprint (sigma).</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What physically causes the fourth-power dependency in the radar range equation?</h3>
+    <p>The signal travels a two-way round-trip path. The transmitted wave spreads out spherically from the radar antenna to the target, causing the power density to drop with the square of the distance (1 / R^2). The target scatters the wave, and the returning echo spreads out spherically again over the return path, decreasing the power density by another factor of 1 / R^2. Multiplying these together yields a total power attenuation proportional to 1 / R^4.</p>
+
+    <h3>What is Radar Cross Section (RCS), and how does it affect detection range?</h3>
+    <p>RCS (represented as sigma) is a measure of how detectable an object is by radar. It is a function of the target's physical size, shape, material composition, and the wavelength of the incident wave. A larger RCS scatters more energy back to the radar, directly increasing the maximum detection range.</p>
+
+    <h3>What is the physical meaning of the Minimum Detectable Signal (Smin)?</h3>
+    <p>Smin (or MDS) represents the absolute sensitivity limit of the radar receiver. It is the minimum signal power level that the receiver can extract from the background thermal noise floor (typically set by the receiver noise figure and operational bandwidth) to detect a target reliably.</p>
+
+    <h3>Why does operating frequency affect maximum radar range?</h3>
+    <p>The effective capture area (aperture) of the receiver antenna is inversely proportional to the square of the operating frequency for a fixed gain. At higher frequencies, the wavelength is shorter, resulting in a smaller effective receiving aperture that captures less of the returning echo, which decreases the maximum detection range.</p>
+
+    <h3>Does this calculator account for environmental atmospheric losses?</h3>
+    <p>No. This calculator models an idealized free-space propagation environment. Terrestrial radar installations must also account for atmospheric absorption (particularly in rain or fog), multipath reflections from the ground (multipath propagation), and ground clutter, which can significantly reduce actual detection ranges.</p>
+
+    <h3>How can I double the detection range of my radar system?</h3>
+    <p>Because the range scales with the fourth root of the parameters, doubling the maximum detection range requires increasing the numerator terms (such as transmitter peak power or target RCS) by a factor of 16 (which is 12 dB), or increasing the antenna gain by a factor of 4 (which is 6 dB, since gain is squared in the formula).</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>VSWR and Return Loss Calculator</strong>Check antenna match and transmission line reflections.</div>
+      <div class="linkCard"><strong>EIRP (Isotropic Radiated Power) Solver</strong>Calculate total radiated transmitter power levels.</div>
+      <div class="linkCard"><strong>Free Space Path Loss Calculator</strong>Model free-space signal attenuation across distance boundaries.</div>
+      <div class="linkCard"><strong>Specific Absorption Rate (SAR) Solver</strong>Evaluate biological electromagnetic wave absorption limits.</div>
+    </div>
   </section>
 </main>
 
