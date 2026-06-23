@@ -1,140 +1,422 @@
-
-
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-R=Number(document.calculator.number1.value);
-Cj=Number(document.calculator.number2.value);
-Rs=Number(document.calculator.number3.value);
-Ls=Number(document.calculator.number4.value);
-Cj = (Cj * (Math.pow(10,-12)));
-Ls= (Ls*(Math.pow(10,-9)));
-m1= ((R/Rs)-1);
-c1 = ( ( 1/(2*(Math.PI)*R*Cj) ) * (Math.pow(m1,0.5)) );
-m2 = R*Cj ;
-m3 =  ( (1/(Ls*Cj)) - ( 1/(Math.pow(m2,2))) );
-c2  = ( ( 1/(2*3.14) ) * (Math.pow(m3,0.5)) );
-c1 = ( c1/ (Math.pow(10,6)));
-document.calculator.resistive_frequency.value=c1;
-c2 = ( c2/ (Math.pow(10,6)));
-document.calculator.resonant_frequency.value=c2;
-}
-</SCRIPT>
-
-
-
-
-
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tunnel Diode Calculator | Cutoff & Resonant Frequency | CalcBoy</title>
+<meta name="description" content="Calculate the resistive cutoff frequency and self-resonant frequency of a tunnel diode from negative resistance, capacitance, and series parameters.">
+<meta name="keywords" content="tunnel diode calculator, negative resistance calculator, resistive cutoff frequency, self resonant frequency, tunnel diode equivalent circuit, esaki diode, CalcBoy">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#tunnel-diode-calc,#tunnel-diode-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+#tunnel-diode-calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#374151}
+.subTitle{font-size:13px;font-weight:900;color:#64748b;text-transform:uppercase;margin-top:4px;padding:10px 0 0;border-top:1px solid #e5e7eb}
+button, .calc-btn{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:18px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+@media(max-width:600px){
+body{padding:10px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
+<body>
 
+<div id="tunnel-diode-calc">
 
+  <form name="calculator" id="calculator" onsubmit="event.preventDefault();">
+    <div class="calc-grid">
+      <div class="subTitle">Input Parameters</div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
+      <div>
+        <label class="calc-label">Negative Resistance (R)</label>
+        <div class="calc-row">
+          <input name="number1" id="number1" type="number" step="any" value="100" oninput="clearResults()">
+          <div class="unit-box">Ω</div>
+        </div>
+      </div>
 
+      <div>
+        <label class="calc-label">Junction Capacitance (Cj)</label>
+        <div class="calc-row">
+          <input name="number2" id="number2" type="number" step="any" value="5" oninput="clearResults()">
+          <div class="unit-box">pF</div>
+        </div>
+      </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Input</h3></div></legend>
+      <div>
+        <label class="calc-label">Series Resistance (Rs)</label>
+        <div class="calc-row">
+          <input name="number3" id="number3" type="number" step="any" value="5" oninput="clearResults()">
+          <div class="unit-box">Ω</div>
+        </div>
+      </div>
 
+      <div>
+        <label class="calc-label">Series Inductance (Ls)</label>
+        <div class="calc-row">
+          <input name="number4" id="number4" type="number" step="any" value="2" oninput="clearResults()">
+          <div class="unit-box">nH</div>
+        </div>
+      </div>
+    </div>
 
-<FORM name="calculator">
+    <button type="button" onclick="calc()">CALCULATE</button>
+  </form>
 
-<label for="r2" style="font-size:55;" >R</label><font face="Arial" size="6"> (Negative Resistance) </font><input  name="number1"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-<h1 style="font-size:50px;"></h1>
-<label for="r2" style="font-size:55;" >C<sub>J</sub></label><font face="Arial" size="6"> (Junction capcitance) </font><input  name="number2"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">pF</label>
-<h1 style="font-size:35px;"></h1>
-<label for="r2" style="font-size:55;" >R</label><font face="Arial" size="6"> (Series Resistance) </font><input  name="number3"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-<h1 style="font-size:50;"></h1>
-<label for="r2" style="font-size:55;" >L</label><font face="Arial" size="6"> (Series Inductance) </font><input  name="number4"  class="intro"  style="position: absolute;   width:250; text-align
-:center;right: 130px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:59px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">H</label>
-<h1 style="font-size:50;"></h1></fieldset><h1 style="font-size:80;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;">
-</div></legend></fieldset>
+  <div id="errorBox">Please enter valid values. Configuration parameters must be greater than zero.</div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <div class="result-title">RESULTS</div>
 
+  <div class="result-grid">
+    <div class="result-card blue">
+      <div class="result-label">Resistive Frequency (Fco)</div>
+      <div class="result-value">
+        <input name="resistive_frequency" id="resistive_frequency" readonly style="border:none;background:transparent;padding:0;font-size:18px;font-weight:900;color:#2359e8;width:100%;height:auto;outline:none;cursor:default;">
+      </div>
+    </div>
+    <div class="result-card green">
+      <div class="result-label">Self Resonant Frequency (Fr)</div>
+      <div class="result-value">
+        <input name="resonant_frequency" id="resonant_frequency" readonly style="border:none;background:transparent;padding:0;font-size:18px;font-weight:900;color:#16a34a;width:100%;height:auto;outline:none;cursor:default;">
+      </div>
+    </div>
+  </div>
 
-<h3>Outputs</h3></div></legend>
-<label for="r2" style="font-size:55;" >F</label><font face="Arial" size="6"> (Resistive Frequency) </font><input  name="resistive_frequency"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:50px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">MH<sub>z</label>
-<h1 style="font-size:50;"></h1>
-<label for="r2" style="font-size:55;" >F</label><font face="Arial" size="6"> (Self Resonant Frequency) </font><input  name="resonant_frequency"  class="intro"  style="position: absolute;   width:300; text-align
-:center;right: 140px;"class="form-control" type="number" /><label align="middle"style="padding: 5px ; height:68; position: absolute;right: 10px;font-size:50px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">MH<sub>z</label>
-<h1 style="font-size:50;"></h1>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Negative Resistance (R)</strong>The magnitude of the negative differential resistance exhibited by the tunnel diode in its active region.</div>
+      <div class="paramItem"><strong>Junction Capacitance (Cj)</strong>The parasitic transition capacitance across the heavily doped p-n junction, specified in picofarads (pF).</div>
+      <div class="paramItem"><strong>Series Resistance (Rs)</strong>The parasitic bulk ohmic resistance of the semiconductor materials and contact terminals.</div>
+      <div class="paramItem"><strong>Series Inductance (Ls)</strong>The parasitic lead package inductance of the diode housing, specified in nanohenries (nH).</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>UHF Oscillator Sizing</strong></p>
+        <p>Negative Resistance R = 100 Ω<br>Junction Cap Cj = 5 pF<br>Series Rs = 5 Ω, Series Ls = 2 nH</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Microwave Mixer Node</strong></p>
+        <p>Evaluating standard Esaki diodes with ultra-low junction capacitances to raise the maximum resistive cutoff limits into the gigahertz spectrum safely.</p>
+      </div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A tunnel diode (or Esaki diode) is a highly doped semiconductor showing Negative Differential Resistance (NDR) due to quantum tunneling. This NDR region enables the diode to act as an active oscillator or amplifier at microwave frequencies.</p>
 
+    <!-- Drawing 1: VI Characteristics Curve -->
+    <h3>Volt-Ampere (V-I) Characteristics of Tunnel Diode</h3>
+    <div class="diagramBox">
+      <svg viewBox="0 0 540 320" xmlns="http://www.w3.org/2000/svg">
+        <rect width="540" height="320" fill="#ffffff" stroke="none"/>
+        
+        <!-- Grid lines & Axes -->
+        <line x1="80" y1="240" x2="480" y2="240" stroke="#94a3b8" stroke-width="2"/> <!-- X Axis -->
+        <line x1="120" y1="40" x2="120" y2="280" stroke="#94a3b8" stroke-width="2"/> <!-- Y Axis -->
+        
+        <!-- Axis Arrows -->
+        <polygon points="480,240 470,235 470,245" fill="#94a3b8"/>
+        <polygon points="120,40 115,50 125,50" fill="#94a3b8"/>
+        
+        <!-- Curve path (Classic N-shape VI curve) -->
+        <path d="M 100,270 C 120,240 125,220 120,230 C 135,140 155,70 180,70 C 210,70 240,210 280,210 C 320,210 380,160 430,70" fill="none" stroke="#0891b2" stroke-width="3" stroke-linecap="round"/>
+        
+        <!-- Dashed guidelines -->
+        <line x1="180" y1="30" x2="180" y2="240" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="280" y1="70" x2="120" y2="70" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="280" y1="70" x2="280" y2="240" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="360" y1="210" x2="120" y2="210" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
 
+        <!-- Labels -->
+        <text x="110" y="74" font-size="11" font-family="sans-serif" font-weight="bold" fill="#0284c7" text-anchor="end">Ip</text>
+        <text x="110" y="214" font-size="11" font-family="sans-serif" font-weight="bold" fill="#0284c7" text-anchor="end">Iv</text>
+        <text x="180" y="254" font-size="11" font-family="sans-serif" font-weight="bold" fill="#0284c7" text-anchor="middle">Vp</text>
+        <text x="280" y="254" font-size="11" font-family="sans-serif" font-weight="bold" fill="#0284c7" text-anchor="middle">Vv</text>
 
-</FORM>
+        <text x="180" y="20" font-size="11" font-family="sans-serif" font-weight="bold" fill="#15803d" text-anchor="middle">Peak Point</text>
+        <text x="319" y="224" font-size="11" font-family="sans-serif" font-weight="bold" fill="#15803d" text-anchor="middle">Valley Point</text>
 
+        <!-- Peak Point Negative Resistance Bracket Indicator -->
+        <line x1="180" y1="120" x2="280" y2="120" stroke="#dc2626" stroke-width="1.5"/>
+        <polygon points="180,120 186,117 186,123" fill="#dc2626"/>
+        <polygon points="280,120 274,117 274,123" fill="#dc2626"/>
+        <text x="230" y="113" font-size="10" font-family="sans-serif" font-weight="bold" fill="#dc2626" text-anchor="middle">Negative Resistance Region</text>
+
+        <!-- Labels on Slopes -->
+        <text x="115" y="130" font-size="10" font-family="sans-serif" font-weight="bold" fill="#475569">Tunneling Current</text>
+        <text x="350" y="110" font-size="10" font-family="sans-serif" font-weight="bold" fill="#475569">Conventional Current</text>
+        
+        <!-- Axis Titles -->
+        <text x="410" y="265" font-size="12" font-family="sans-serif" font-weight="bold" fill="#1e293b" text-anchor="middle">Forward Voltage (V)</text>
+        <text x="-30" y="45" font-size="12" font-family="sans-serif" font-weight="bold" fill="#1e293b" transform="rotate(-90 70 45)" text-anchor="middle">Forward Current (mA)</text>
+      </svg>
+    </div>
+
+    <!-- Drawing 2: Equivalent Circuit Schematic -->
+    <h3>Tunnel Diode Equivalent Circuit</h3>
+    <div class="diagramBox">
+      <svg viewBox="0 0 540 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tunnel diode equivalent circuit diagram">
+        <rect x="0" y="0" width="540" height="180" fill="#ffffff" stroke="none"/>
+        
+        <!-- Input terminals -->
+        <circle cx="40" cy="50" r="4" fill="#1e293b"/>
+        <circle cx="40" cy="130" r="4" fill="#1e293b"/>
+        
+        <!-- Series Resistor Rs -->
+        <line x1="44" y1="50" x2="80" y2="50" stroke="#000" stroke-width="2"/>
+        <path d="M 80,50 L 90,50 L 94,42 L 102,58 L 110,42 L 118,58 L 126,42 L 134,58 L 138,50 L 155,50" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linejoin="round"/>
+        <text x="117" y="34" font-size="14" font-family="sans-serif" font-weight="bold" fill="#2563eb" text-anchor="middle">Rs</text>
+        
+        <!-- Series Inductor Ls -->
+        <line x1="155" y1="50" x2="175" y2="50" stroke="#000" stroke-width="2"/>
+        <path d="M 175,50 C 185,32 195,32 195,50 C 205,32 215,32 215,50 C 225,32 235,32 235,50 C 245,32 255,32 255,50" fill="none" stroke="#0891b2" stroke-width="2.5"/>
+        <line x1="255" y1="50" x2="290" y2="50" stroke="#000" stroke-width="2"/>
+        <text x="215" y="34" font-size="14" font-family="sans-serif" font-weight="bold" fill="#0891b2" text-anchor="middle">Ls</text>
+
+        <!-- Parallel Node Branch Point -->
+        <circle cx="290" cy="50" r="4" fill="#1e293b"/>
+        <line x1="290" y1="50" x2="350" y2="50" stroke="#000" stroke-width="2"/>
+        
+        <!-- Junction Capacitance Cj -->
+        <line x1="350" y1="50" x2="350" y2="85" stroke="#000" stroke-width="2"/>
+        <line x1="335" y1="85" x2="365" y2="85" stroke="#ea580c" stroke-width="3" stroke-linecap="round"/>
+        <line x1="335" y1="93" x2="365" y2="93" stroke="#ea580c" stroke-width="3" stroke-linecap="round"/>
+        <line x1="350" y1="93" x2="350" y2="130" stroke="#000" stroke-width="2"/>
+        <text x="375" y="93" font-size="14" font-family="sans-serif" font-weight="bold" fill="#ea580c">Cj</text>
+
+        <!-- Negative Resistance -Rj -->
+        <line x1="290" y1="50" x2="290" y2="70" stroke="#000" stroke-width="2"/>
+        <path d="M 290,70 L 290,76 L 282,80 L 298,88 L 282,96 L 298,104 L 282,112 L 290,116 L 290,130" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="290" cy="130" r="4" fill="#1e293b"/>
+        <text x="268" y="100" font-size="14" font-family="sans-serif" font-weight="bold" fill="#dc2626" text-anchor="end">- Rj</text>
+
+        <!-- Parallel branch joins and returns -->
+        <line x1="290" y1="130" x2="350" y2="130" stroke="#000" stroke-width="2"/>
+        <line x1="290" y1="130" x2="40" y2="130" stroke="#000" stroke-width="2"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Resistive Cutoff Frequency: f_co = (1 / (2 * pi * R * Cj)) * sqrt((R / Rs) - 1)</div>
+    <div class="formula">Self-Resonant Frequency: f_xo = (1 / (2 * pi)) * sqrt((1 / (Ls * Cj)) - (1 / (R * Cj)²))</div>
+    <p>The resistive cutoff frequency specifies the upper limit where the diode's net real impedance becomes positive, losing its amplification properties. The self-resonant frequency represents the boundary where lead inductances balance junction capacitances completely.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Sizing parameters with R = 100 Ω, Cj = 5 pF, Rs = 5 Ω, and Ls = 2 nH.</div>
+    <div class="formulaBox">Step 1: Convert component units into base scientific notations (Cj = 5 * 10^-12 F, Ls = 2 * 10^-9 H).</div>
+    <div class="formulaBox">Step 2: Solve the resistive cutoff frequency: f_co = (1 / (2 * pi * 100 * 5*10^-12)) * sqrt((100 / 5) - 1).</div>
+    <div class="formulaBox">Step 3: Execute step calculations: f_co = 3.183 * 10^8 * sqrt(19) = 1.424 GHz.</div>
+    <div class="formulaBox">Step 4: Solve the self-resonant frequency: f_xo = (1 / (2 * pi)) * sqrt((1 / (2*10^-9 * 5*10^-12)) - (1 / (100 * 5*10^-12)^2)).</div>
+    <div class="formulaBox">Step 5: Execute step calculations: f_xo = (1 / (2 * pi)) * sqrt(10^20 - 4*10^18) = 1.559 GHz.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the negative differential resistance value (R) of your tunnel diode in Ohms.</div>
+      <div class="aboutStep">Enter the junction capacitance (Cj) across the depletion layer in picofarads (pF).</div>
+      <div class="aboutStep">Specify the parasitic series ohmic resistance (Rs) of the semiconductor contacts in Ohms.</div>
+      <div class="aboutStep">Input the parasitic lead inductance (Ls) of the component packaging in nanohenries (nH).</div>
+      <div class="aboutStep">Click Calculate to evaluate the resistive cutoff limit (f_co) and the self-resonant frequency (f_xo) in Megahertz (MHz).</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Model microwave switching boundaries, parasitic limits, and active oscillation frequency parameters with CalcBoy's professional suite.</strong>
+      <p>This calculator determines the resistive cutoff frequency and self-resonant frequency boundaries of a heavily doped Esaki tunnel diode.</p>
+    </div>
+    <p>A tunnel diode—originally developed by Leo Esaki in 1957—is a specialized semiconductor device characterized by its heavily doped p-n junction. This extreme doping profile results in an extremely thin depletion layer (often less than 10 nanometers wide). At low forward bias potentials, charge carriers can cross this barrier almost instantaneously via a quantum mechanical phenomenon known as quantum tunneling. This gives rise to a distinct N-shaped current-voltage (V-I) curve featuring a region of Negative Differential Resistance (NDR), where increasing voltage leads to a decrease in current [6].</p>
+    <p>This NDR region allows the tunnel diode to act as an active component—meaning it can function as an oscillator, amplifier, or high-speed switch [6]. Because quantum tunneling is an extremely fast electronic process, tunnel diodes can operate well into the microwave and millimeter-wave spectrum [6]. However, physical packaging limitations and internal material properties introduce parasitic elements that restrict the upper frequency boundary.</p>
+    <p>As shown in the equivalent circuit model, a real tunnel diode includes parasitic series contact resistance (Rs), parasitic lead package inductance (Ls), and a transition junction capacitance (Cj) in parallel with the negative differential resistance (-Rj) [6]. These parameters define two distinct frequency limits: the resistive cutoff frequency, above which the diode can no longer exhibit negative resistance to power external loads, and the self-resonant frequency, where the parasitic inductance balances out junction capacitances. This CalcBoy design tool evaluates these boundaries systematically, enabling microwave circuit designers to plan stable oscillators and active mixers safely.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Typical Applications</span>UHF/VHF active oscillators, high-speed digital pulse switches, microwave mixers, and low-noise amplifiers.</div>
+      <div class="aboutMiniCard"><span>Calculated Deliverables</span>Resistive cutoff frequency (f_co) and parasitic self-resonant frequency (f_xo) in Megahertz (MHz).</div>
+      <div class="aboutMiniCard"><span>Target Audience</span>RF and microwave hardware designers, telecom systems engineers, and solid-state physics students.</div>
+      <div class="aboutMiniCard"><span>Esaki Limit Tip</span>To achieve stable oscillations, ensure your operating point is strictly biased in the center of the negative resistance region between Vp and Vv.</div>
+    </div>
+    <div class="aboutNote">Warning: Parasitic packaging inductance can cause unintended parasitic oscillations. Keep physical circuit trace leads as short as possible during microwave PCB layout.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <p><strong>1. What is the fundamental difference between the resistive cutoff frequency and self-resonant frequency of a tunnel diode?</strong></p>
+    <p>The resistive cutoff frequency is the limit above which the real part of the diode's input impedance becomes positive, meaning it can no longer generate active power. The self-resonant frequency is the limit where the lead inductance and junction capacitance resonate, causing the net reactance to become zero.</p>
+
+    <p><strong>2. Why is negative differential resistance (NDR) crucial in tunnel diodes?</strong></p>
+    <p>Unlike standard resistors that dissipate energy, a device with negative differential resistance can deliver energy to a circuit. This property allows the tunnel diode to cancel out loss resistances in adjacent tanks, sustaining continuous high-frequency oscillations.</p>
+
+    <p><strong>3. What physical factors determine the junction capacitance (Cj) of a tunnel diode?</strong></p>
+    <p>Junction capacitance is determined by the cross-sectional area of the p-n junction and the width of the depletion layer. Because tunnel diodes are heavily doped, their depletion layers are extremely thin, resulting in higher capacitance per unit area compared to standard diodes.</p>
+
+    <p><strong>4. Why do high-frequency tunnel diode applications require very low series inductance (Ls)?</strong></p>
+    <p>Series packaging inductance limits the high-frequency operating boundary. If Ls is too high, the self-resonant frequency drops significantly, causing the diode to behave inductively before reaching its full resistive amplification limits.</p>
+
+    <p><strong>5. Can a tunnel diode be used as a standard rectifier?</strong></p>
+    <p>While physically possible, tunnel diodes are highly inefficient as standard rectifiers. Their heavy doping levels create massive reverse currents and low breakdown limits, making them strictly optimized for high-speed switching and RF oscillations.</p>
+
+    <p><strong>6. How does the peak-to-valley current ratio (PVCR) affect performance?</strong></p>
+    <p>The PVCR is the ratio of peak tunneling current (Ip) to valley current (Iv). A higher ratio indicates a wider, more distinct negative resistance region, which translates directly to greater power efficiency and signal swing in oscillator circuits.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong><a href="https://calcboy.com/tool/ohms-law-calculator" target="_blank" style="text-decoration:none;color:inherit;">Ohm's Law Calculator</a></strong>Solve current, voltage, resistance, and power relationships.</div>
+      <div class="linkCard"><strong><a href="https://calcboy.com/tool/parallel-resistor-calculator" target="_blank" style="text-decoration:none;color:inherit;">Parallel Resistor Calculator</a></strong>Calculate the equivalent resistance of parallel resistors.</div>
+      <div class="linkCard"><strong><a href="https://calcboy.com/tool/resonant-frequency-calculator" target="_blank" style="text-decoration:none;color:inherit;">Resonant Frequency Calculator</a></strong>Calculate standard LC resonant frequencies.</div>
+      <div class="linkCard"><strong><a href="https://calcboy.com/tool/wire-cable-voltage-drop-calculator" target="_blank" style="text-decoration:none;color:inherit;">Wire Cable Voltage Drop Calculator</a></strong>Calculate potential drops across electrical lines.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function calc() {
+  // Direct element retrieval by ID bypasses any sandboxed browser form conflicts
+  var R_el = document.getElementById("number1");
+  var Cj_el = document.getElementById("number2");
+  var Rs_el = document.getElementById("number3");
+  var Ls_el = document.getElementById("number4");
+
+  if (!R_el || !Cj_el || !Rs_el || !Ls_el) {
+    console.error("Input elements not successfully loaded in the DOM.");
+    return;
+  }
+
+  var R = Number(R_el.value);
+  var Cj = Number(Cj_el.value);
+  var Rs = Number(Rs_el.value);
+  var Ls = Number(Ls_el.value);
+
+  if (isNaN(R) || isNaN(Cj) || isNaN(Rs) || isNaN(Ls) || R <= 0 || Cj <= 0 || Rs <= 0 || Ls <= 0) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  // Check condition to prevent imaginary square root of negative numbers (R/Rs must be greater than 1)
+  if (R <= Rs) {
+    document.getElementById("errorBox").innerText = "Invalid calculation: Negative Resistance (R) must be strictly greater than Series Resistance (Rs).";
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+  document.getElementById("errorBox").style.display = "none";
+
+  // Match the exact scale factors and math equation sequence from the source
+  var Cj_scaled = Cj * Math.pow(10, -12);
+  var Ls_scaled = Ls * Math.pow(10, -9);
+
+  var m1 = (R / Rs) - 1;
+  var c1 = (1 / (2 * Math.PI * R * Cj_scaled)) * Math.pow(m1, 0.5);
+
+  var m2 = R * Cj_scaled;
+  var m3 = (1 / (Ls_scaled * Cj_scaled)) - (1 / Math.pow(m2, 2));
+
+  if (m3 < 0) {
+    document.getElementById("errorBox").innerText = "Invalid calculation: Self-resonant condition not met (imaginary frequency). Verify Ls and Cj parameters.";
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  // Sourced formula uses standard 3.14 constant here
+  var c2 = (1 / (2 * 3.14)) * Math.pow(m3, 0.5);
+
+  c1 = c1 / Math.pow(10, 6);
+  c2 = c2 / Math.pow(10, 6);
+
+  var res_freq_el = document.getElementById("resistive_frequency");
+  var reso_freq_el = document.getElementById("resonant_frequency");
+
+  if (res_freq_el) res_freq_el.value = isFinite(c1) ? c1.toFixed(3) + " MHz" : "-";
+  if (reso_freq_el) reso_freq_el.value = isFinite(c2) ? c2.toFixed(3) + " MHz" : "-";
+}
+
+function clearResults() {
+  var ids = ["resistive_frequency", "resonant_frequency"];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+  document.getElementById("errorBox").style.display = "none";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. What is the fundamental difference between the resistive cutoff frequency and self-resonant frequency of a tunnel diode?","acceptedAnswer":{"@type":"Answer","text":"The resistive cutoff frequency is the limit above which the real part of the diode's input impedance becomes positive, meaning it can no longer generate active power. The self-resonant frequency is the limit where the lead inductance and junction capacitance resonate, causing the net reactance to become zero."}},
+{"@type":"Question","name":"2. Why is negative differential resistance (NDR) crucial in tunnel diodes?","acceptedAnswer":{"@type":"Answer","text":"Unlike standard resistors that dissipate energy, a device with negative differential resistance can deliver energy to a circuit. This property allows the tunnel diode to cancel out loss resistances in adjacent tanks, sustaining continuous high-frequency oscillations."}},
+{"@type":"Question","name":"3. What physical factors determine the junction capacitance (Cj) of a tunnel diode?","acceptedAnswer":{"@type":"Answer","text":"Junction capacitance is determined by the cross-sectional area of the p-n junction and the width of the depletion layer. Because tunnel diodes are heavily doped, their depletion layers are extremely thin, resulting in higher capacitance per unit area compared to standard diodes."}},
+{"@type":"Question","name":"4. Why do high-frequency tunnel diode applications require very low series inductance (Ls)?","acceptedAnswer":{"@type":"Answer","text":"Series packaging inductance limits the high-frequency operating boundary. If Ls is too high, the self-resonant frequency drops significantly, causing the diode to behave inductively before reaching its full resistive amplification limits."}},
+{"@type":"Question","name":"5. Can a tunnel diode be used as a standard rectifier?","acceptedAnswer":{"@type":"Answer","text":"While physically possible, tunnel diodes are highly inefficient as standard rectifiers. Their heavy doping levels create massive reverse currents and low breakdown limits, making them strictly optimized for high-speed switching and RF oscillations."}},
+{"@type":"Question","name":"6. How does the peak-to-valley current ratio (PVCR) affect performance?","acceptedAnswer":{"@type":"Answer","text":"The PVCR is the ratio of peak tunneling current (Ip) to valley current (Iv). A higher ratio indicates a wider, more distinct negative resistance region, which translates directly to greater power efficiency and signal swing in oscillator circuits."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Tunnel Diode Calculator","item":"https://calcboy.com/tool/tunnel-diode-calculator"}
+]
+}
+</script>
+
+</body>
+</html>
