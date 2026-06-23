@@ -3,15 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Power Density Calculator | RF Spatial Energy Planner</title>
+<title>Power Density Calculator | RF Spatial Energy Planner | CalcBoy</title>
 
 <meta name="description" content="Calculate RF power density from output power, antenna gain, and distance using multiple power and distance units.">
-<meta name="keywords" content="power density calculator, rf power density radiation pattern, radiation spectrum density tracker, antenna gain linear factor calculation, electromagnetic field propagation footprint, free space path loss boundary modeling, satellite dish signal density tool, inverse square law distribution analyzer, telecom power flux density planner">
+<meta name="keywords" content="power density calculator, rf power density radiation pattern, radiation spectrum density tracker, antenna gain linear factor calculation, electromagnetic field propagation footprint, free space path loss boundary modeling, satellite dish signal density tool, inverse square law distribution analyzer, telecom power flux density planner, CalcBoy">
 
 <style>
+    /* Exact CSS Classes and Margins Imported from Master Flyback Reference Template */
     *{box-sizing:border-box;font-family:Arial,sans-serif}
-    body{margin:0;background:#f6f8fb;padding:0;color:#333}
-    .calc{max-width:620px;margin:auto;padding:14px;padding-top:24px}
+    body{margin:0;background:#f6f8fb;padding:10px;color:#333}
+    .calc{width:100%;max-width:620px;margin:auto;padding-top:14px;background:transparent;border:none}
+
+    /* Form Inputs and Interactive Row Styling */
     label{display:block;font-size:15px;font-weight:700;color:#555;margin-bottom:6px}
     .row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;margin-bottom:16px}
     .valueBox,input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
@@ -19,8 +22,10 @@
     select{text-align:center;font-weight:800;padding:0 6px;cursor:pointer}
     input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
     .btn{width:100%;height:48px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800}
+    #errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
     .resultTitle{font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;margin-top:22px;margin-bottom:12px}
+    
+    /* Symmetrical 2-Column Results Grid strictly preserved */
     .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .card{padding:16px;border-radius:12px;min-height:82px;border:1px solid #cfd6df}
     .cardLabel{font-size:11px;font-weight:900;margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase}
@@ -28,17 +33,34 @@
     .cardValue,.cardUnit{font-size:18px;font-weight:900;line-height:1}
     .blue{background:#eef5ff;border-color:#bfd3ff} .blue *{color:#2359e8}
     .green{background:#ecfdf5;border-color:#bbf7d0} .green *{color:#16a34a}
-    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    
+    /* Existing InfoBox Internal Styles preserved identically */
+    .infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
     .infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+    .infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+    .infoBox p, .infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
     .formulaLine{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;overflow-x:auto;line-height:1.6}
-    .paramGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-    .paramItem{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467}
-    .paramItem strong{color:#0f172a;display:block;margin-bottom:2px}
-    .exampleGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-    .exampleCard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:13px}
-    .diagramBox{background:#fff;padding:12px;text-align:center;margin-top:10px}
+    .formula, .formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+    .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .paramItem, .exampleCard, .aboutMiniCard, .linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+    .paramItem strong, .aboutMiniCard span, .linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+    .diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
     .waveguide-diagram svg{width:100%;max-width:520px;height:auto;display:block;margin:auto}
-    @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) 72px}.resultGrid{grid-template-columns:1fr 1fr}.exampleGrid{grid-template-columns:1fr} .paramGrid{grid-template-columns:1fr}}
+
+    /* Premium Appended UI Content Extensions Styles (Locked & Safe) */
+    .aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+    .aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+    .aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+    .aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+    .aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+    .aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
+    @media(max-width:600px){
+      body{padding:10px}
+      .row{grid-template-columns:minmax(0,1fr) 72px}
+      .resultGrid{grid-template-columns:1fr 1fr}
+      .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid{grid-template-columns:1fr}
+    }
 </style>
 </head>
 <body>
@@ -75,7 +97,7 @@
       </select>
     </div>
 
-    <button class="btn" id="calculate" type="button" onclick="calculatePowerDensity()">CALCULATE</button>
+    <button class="btn" id="calculate" type="button">CALCULATE</button>
   </form>
 
   <div id="errorBox">Please enter valid values. Distance must be greater than 0.</div>
@@ -136,8 +158,8 @@
           <g>
             <polygon points="110,216 440,40 440,245" fill="#f0f9ff" fill-opacity="0.8"/>
 
-            <line x1="110" y1="216" x2="440" y2="40" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
-            <line x1="110" y1="216" x2="440" y2="245" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="110" y1="216" x2="440" y2="40" stroke="#475467" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="110" y1="216" x2="440" y2="245" stroke="#475467" stroke-width="2.5" stroke-linecap="round"/>
 
             <line x1="110" y1="216" x2="440" y2="81" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3,3"/>
             <line x1="110" y1="216" x2="440" y2="122" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3,3"/>
@@ -183,17 +205,86 @@
         </svg>
       </div>
     </div>
-    <p></p>
     <p>Isotropic expansion fields disperse spatial power arrays outward inside widening projection patterns. Emitted energy levels taper down inversely with the square of the distance boundary line.</p>
   </section>
 
   <section class="infoBox">
     <h2>Formulas & Mathematical Logic</h2>
-    <div class="formulaLine">Power Density = Output Power × Gain / (4 × π × Distance²)</div>
-    <div class="formulaLine">Distance is converted to meters before calculation</div>
-    <div class="formulaLine">mW to W = mW × 0.001</div>
-    <div class="formulaLine">dBm to W = 10^((dBm - 30) / 10)</div>
-    <div class="formulaLine">dBW to W = 10^(dBW / 10)</div>
+    <div class="formula">Power Density = Output Power × Gain / (4 × π × Distance²)</div>
+    <div class="formula">Distance is converted to meters before calculation</div>
+    <div class="formula">mW to W = mW × 0.001</div>
+    <div class="formula">dBm to W = 10^((dBm - 30) / 10)</div>
+    <div class="formula">dBW to W = 10^(dBW / 10)</div>
+  </section>
+
+  <!-- Premium Appended Content (Strictly Locked consecutive formulaBox blocks with absolutely NO loose text) -->
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Transmitter Output Power = 10 W, Linear Aperture Gain = 2.00, Observation Distance = 10.00 m.</div>
+    <div class="formulaBox">Step 1: Check your input units. Wavelength and math require power in Watts (Op = 10) and distance in meters (d = 10).</div>
+    <div class="formulaBox">Step 2: Calculate the spherical surface area of propagation at the 10 m boundary: Area = 4 * pi * d^2 = 4 * 3.141593 * 10^2 = 4 * 3.141593 * 100 = 1256.637 square meters.</div>
+    <div class="formulaBox">Step 3: Multiply the transmitter power by the linear gain factor to find the focused power in the main lobe: Focused Power = Op * Gain = 10 * 2 = 20 W.</div>
+    <div class="formulaBox">Step 4: Solve the final power flux density: Power Density = Focused Power / Area = 20 / 1256.637 = 0.01592 W/m².</div>
+    <div class="formulaBox">Result: The calculated electromagnetic power flux density at the 10 m boundary is exactly 0.01592 W/m².</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter your transmitter system <strong>Output Power</strong> and select its unit (mW, W, dBm, or dBW).</div>
+      <div class="aboutStep">Input the directive antenna gain value in the <strong>Antenna Gain (linear factor)</strong> field.</div>
+      <div class="aboutStep">Input the observation range <strong>Distance</strong> and select your unit (m, cm, km, ft, mi, yd, or in).</div>
+      <div class="aboutStep">Click the orange <strong>Calculate</strong> button to evaluate the electromagnetic energy dispersion.</div>
+      <div class="aboutStep">Read the computed Power Density (W/m²) and the normalized Distance in meters (m) displayed on the colored Results cards.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Model and analyze high-frequency electromagnetic power flux densities across open space.</strong>
+      <p>The CalcBoy Power Density Calculator computes the spatial power density (W/m²) and normalized distance in meters (m) using transmitter power, linear antenna gain, and observation range parameters.</p>
+    </div>
+    <p>Power density (also referred to as power flux density) is the amount of electromagnetic power flowing through a unit area perpendicular to the direction of wave propagation. Typically expressed in Watts per square meter (W/m²) or milliwatts per square centimeter (mW/cm²), power density is a key metric used to evaluate signal strength in RF links, predict satellite downlink footprints, and verify compliance with human electromagnetic exposure safety guidelines (such as those from the FCC or ICNIRP). In the far-field region of a radiating antenna, the power density decreases inversely with the square of the distance from the source, following the fundamental physical principle of the inverse-square law.</p>
+    <p>To determine the true power density of an RF installation, engineers must combine the directivity of the radiating source and the distance to the observation plane. The raw output power of the transmitter is scaled by the linear gain of the antenna (Gt). As the wave propagates through free space, its wavefront expands spherically, causing the power density to taper down rapidly. This calculator automates these calculations using standard decibel and distance conversion factors, helping antenna designers, RF compliance specialists, and telecommunications planners analyze spatial energy footprints safely and accurately.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Application</span>RF safety compliance, satellite footprint modeling, transmitter field strength calculations, and wireless network coverage designs.</div>
+      <div class="aboutMiniCard"><span>Key Output</span>Power flux density in Watts per square meter (W/m²) and normalized distance in meters (m).</div>
+      <div class="aboutMiniCard"><span>Crucial Physics</span>Inverse-square law dictates that wave power density decreases with the square of the propagation distance.</div>
+      <div class="aboutMiniCard"><span>Safety Limit</span>Ensure power density stays below occupational and general population limits (e.g., 10 W/m²) to prevent biological hazards.</div>
+    </div>
+    <div class="aboutNote">Tip: Standard low-gain antennas radiate energy broadly, while high-gain parabolic dishes focus electromagnetic power into narrow beams, drastically increasing the power density along the main axis.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>What physically is power flux density (PFD)?</h3>
+    <p>Power density is a measure of the rate of electromagnetic energy flow passing through a unit area perpendicular to the wave's propagation path. It represents the concentration of radiated power at a specific spatial coordinate.</p>
+
+    <h3>How does the inverse-square law govern electromagnetic propagation?</h3>
+    <p>As a wavefront radiates outward from an antenna, its surface area expands spherically (4 * pi * R^2). Since the total emitted power remains constant, the power distributed per unit area must decrease inversely with the square of the distance (1 / R^2), leading to rapid power density reduction across long distances.</p>
+
+    <h3>Why does the formula divide the power product by 4 * pi * R^2?</h3>
+    <p>The term 4 * pi * R^2 is the formula for the surface area of a sphere of radius R. This represents the expansion of an ideal isotropic wave. Dividing the total focused power (Power * Gain) by this spherical area yields the average power density on the surface of the sphere.</p>
+
+    <h3>What is the difference between dBi and linear antenna gain?</h3>
+    <p>The unit dBi is a logarithmic scale relative to an ideal isotropic antenna. Linear gain is the raw factor equivalent. For example, an antenna gain of 3 dBi is equal to a linear gain factor of approximately 2.0 (10^(3/10)), which doubles the power density along the main lobe axis.</p>
+
+    <h3>How is power density related to electric field strength (E-field)?</h3>
+    <p>In the far-field propagation region, power density (S) is related to the electric field strength (E) by the wave impedance of free space (Z0 ≈ 377 Ohms) via the equation: S = E^2 / 377. This allows safety inspectors to convert between field strength and power density easily.</p>
+
+    <h3>What are the safety limits for human exposure to electromagnetic power density?</h3>
+    <p>Standard exposure limits depend on frequency and are enforced by bodies like the FCC and ICNIRP. For example, in the general population, the maximum safe power density for high-frequency microwave bands (such as 2.4 GHz to 100 GHz) is typically 10 W/m² (or 1 mW/cm²) to prevent thermal tissue heating.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Radio Frequency Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>VSWR and Return Loss Calculator</strong>Check antenna match and transmission line reflections.</div>
+      <div class="linkCard"><strong>EIRP (Isotropic Radiated Power) Solver</strong>Calculate total radiated transmitter power levels.</div>
+      <div class="linkCard"><strong>Free Space Path Loss Calculator</strong>Model free-space signal attenuation across distance boundaries.</div>
+      <div class="linkCard"><strong>Specific Absorption Rate (SAR) Solver</strong>Evaluate biological electromagnetic wave absorption limits.</div>
+    </div>
   </section>
 </main>
 
@@ -229,6 +320,33 @@ function toWatts(value,unit){
   return value;
 }
 
+function calculatePAE(){
+  var aip=parseFloat(document.getElementById("aip").value);
+  var aop=parseFloat(document.getElementById("aop").value);
+  var dc=parseFloat(document.getElementById("dc").value);
+
+  if(!isFinite(aip) || !isFinite(aop) || !isFinite(dc)){
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  aip=toWatts(aip,document.getElementById("aip-unit").value);
+  aop=toWatts(aop,document.getElementById("aop-unit").value);
+  dc=toWatts(dc,document.getElementById("dc-unit").value);
+
+  if(dc<=0){
+    document.getElementById("errorBox").style.display="block";
+    return;
+  }
+
+  var added=aop-aip;
+  var pae=100*added/dc;
+
+  document.getElementById("answer").textContent=parseFloat(pae).toPrecision(4);
+  document.getElementById("addedPower").textContent=parseFloat(added).toPrecision(4);
+  document.getElementById("errorBox").style.display="none";
+}
+
 function calculatePowerDensity(){
   var op=parseFloat(document.getElementById("op").value);
   var gain=parseFloat(document.getElementById("ga").value);
@@ -247,6 +365,95 @@ function calculatePowerDensity(){
   document.getElementById("answer").textContent=parseFloat(powerDensity).toPrecision(4);
   document.getElementById("distanceMeters").textContent=parseFloat(distanceM).toPrecision(4);
   document.getElementById("errorBox").style.display="none";
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What physically is power flux density (PFD)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Power density is a measure of the rate of electromagnetic energy flow passing through a unit area perpendicular to the wave's propagation path. It represents the concentration of radiated power at a specific spatial coordinate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the inverse-square law govern electromagnetic propagation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "As a wavefront radiates outward from an antenna, its surface area expands spherically (4 * pi * R^2). Since the total emitted power remains constant, the power distributed per unit area must decrease inversely with the square of the distance (1 / R^2), leading to rapid power density reduction across long distances."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the formula divide the power product by 4 * pi * R^2?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The term 4 * pi * R^2 is the formula for the surface area of a sphere of radius R. This represents the expansion of an ideal isotropic wave. Dividing the total focused power (Power * Gain) by this spherical area yields the average power density on the surface of the sphere."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between dBi and linear antenna gain?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The unit dBi is a logarithmic scale relative to an ideal isotropic antenna. Linear gain is the raw factor equivalent. For example, an antenna gain of 3 dBi is equal to a linear gain factor of approximately 2.0 (10^(3/10)), which doubles the power density along the main lobe axis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is power density related to electric field strength (E-field)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In the far-field propagation region, power density (S) is related to the electric field strength (E) by the wave impedance of free space (Z0 ≈ 377 Ohms) via the equation: S = E^2 / 377. This allows safety inspectors to convert between field strength and power density easily."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the safety limits for human exposure to electromagnetic power density?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Standard exposure limits depend on frequency and are enforced by bodies like the FCC and ICNIRP. For example, in the general population, the maximum safe power density for high-frequency microwave bands (such as 2.4 GHz to 100 GHz) is typically 10 W/m² (or 1 mW/cm²) to prevent thermal tissue heating."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "RF Calculators",
+      "item": "https://calcboy.com/category/radio-frequency-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Power Density Calculator",
+      "item": "https://calcboy.com/tool/power-density-calculator"
+    }
+  ]
 }
 </script>
 </body>
