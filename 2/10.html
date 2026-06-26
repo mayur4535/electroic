@@ -1,115 +1,566 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Op-Amp Slew Rate Calculator | CalcBoy</title>
+<meta name="description" content="Calculate Op-Amp Slew Rate from frequency and peak voltage parameters. Verify input-output signal slope delays with our online calculator.">
+<meta name="keywords" content="op-amp slew rate calculator, slew rate formula, op-amp slope delay, slew rate equation, voltage follower buffer, CalcBoy">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
 body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f6f8fb;
+  color: #333;
+}
+#slewrate-calc, .calc {
+  width: 100% !important;
+  max-width: 620px !important;
+  margin: auto;
+  padding: 14px 10px !important;
+  background: transparent;
+  border: none;
+  box-sizing: border-box;
+}
+#slewrate-calc * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 82px;
+  gap: 8px;
+  align-items: center;
+}
+input, select {
   width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
 }
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+input:focus, select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, .12);
 }
-
-body { 
-  background: ; 
+.unit-box {
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
 }
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    text-align:center;
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-
-</style>	
-<script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- rfw_rsp -->
-<script type="text/javascript" language="javascript">// <![CDATA[
-function calc1()
-{
-Fr=Number(document.calculator1.number1.value);
-V=Number(document.calculator1.number2.value);
-c1 = 2*Math.PI*Fr*V/Math.pow(10,6);
-document.calculator1.op_amp_slew_rate.value=c1;
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 14px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
-// ]]></script>
-
-
-
-
-<form name="calculator1">
-
-
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
-
-
-          <label><font>Frequency</sub> </font><font face="Arial" size="5"> </font></label><input name="number1" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; height:68.5; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">Hz</label> 
-
-
-
- 
-<h1 style="font-size:50;"></h1>
-          <label><font> Voltage</sub> </font><font face="Arial" size="5">(Max. Peak) </font></label><input  name="number2" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; height:68.5; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label> 
-
-</fieldset>
-<br>
- <fieldset><legend><div colspan="2" align="center" height="19"><input type="Button" onClick="javascript:calc1();" value="Calculate" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
+button {
+  width: 100%;
+  height: 45px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(90deg, #ff7a18, #ff4b00);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 15px;
+}
+#errorBox {
+  display: none;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 800;
   text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></div></div>
-</div></legend></fieldset> 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>      
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Outputs</h3></div></legend>
+  border: 2px solid #dc2626;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fef2f2;
+}
+.result-title {
+  margin-top: 30px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #7b8794;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.result-card {
+  min-height: 82px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #cfd6df;
+}
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
 
+.result-label {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: .5px;
+}
+.result-value {
+  font-size: 16px;
+  font-weight: 900;
+  word-break: break-word;
+  line-height: 1.2;
+  min-height: 22px;
+}
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.diagramBox {
+  background: #fff;
+  padding: 16px;
+  text-align: center;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.diagramBox svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+.aboutLead {
+  background: linear-gradient(135deg, #eef5ff, #fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid #059669;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff7a18;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
 
-            
-          <label><font>Op-Amp<br> Slew Rate</sub> </font><font face="Arial" size="5"></font></label><input type="text" name="op_amp_slew_rate" size="17" class="intro"  style="position: absolute;   width:250; right: 210px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:50px;  height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:180px;">volt<sub>/&micro;s</label>
-</form>
+<div id="slewrate-calc">
+
+  <div class="calc-grid">
+    <div class="subTitle" style="border-top: none; margin-top: 0;">Operational Parameters</div>
+    <div>
+      <label class="calc-label">Frequency</label>
+      <div class="calc-row">
+        <input id="f_val" type="text" oninput="clearError()">
+        <div class="unit-box">Hz</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">Voltage (Max. Peak)</label>
+      <div class="calc-row">
+        <input id="v_val" type="text" oninput="clearError()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="computeSlewRate()">CALCULATE</button>
+
+  <div id="errorBox">Please enter valid numeric values. Empty or text fields are not allowed.</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue">
+      <div class="result-label">Op-Amp Slew Rate</div>
+      <div class="result-value"><span id="res_slew">--</span></div>
+    </div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Frequency (Hz)</strong>The operational frequency of the input sinusoidal signal wave.</div>
+      <div class="paramItem"><strong>Peak Voltage (V)</strong>The maximum peak amplitude of the input signal voltage waveform.</div>
+      <div class="paramItem"><strong>Slew Rate (V/µs)</strong>The maximum rate of output voltage change that the op-amp can support.</div>
+      <div class="paramItem"><strong>Signal Distortion</strong>If signal demands exceed the slew rate, sinusoidal waves compress into triangle waves.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Audio Amplifier Audits</strong></p>
+        <p>Determine slew rate thresholds for high-fidelity audio systems driving 20 kHz signals at 10V peak levels.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Function Generator Matching</strong></p>
+        <p>Find the required op-amp response to duplicate square waves without sloping edge delay distortions.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>ADC Driver Buffering</strong></p>
+        <p>Optimize voltage followers to track rapid analog sensor transient transitions perfectly.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>High Speed Line Drivers</strong></p>
+        <p>Analyze line transmitters to prevent trapezoidal rise delays on high-frequency communication channels.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Slew rate (SR) defines the maximum speed at which an operational amplifier can change its output voltage. If the rate of change of the input signal exceeds the op-amp's slew rate limit, the output waveform becomes distorted, turning sharp square edges into sloped trapezoidal patterns.</p>
+
+    <div class="diagramBox">
+      <!-- Same-to-Same Slew Rate Waveform and Unity Buffer CAD Diagram -->
+      <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Op-Amp Slew Rate Signal and Circuit Schematic">
+        <!-- Pure White Background -->
+        <rect width="100%" height="100%" fill="#fff" />
+        
+        <style>
+          .axis {stroke:#111827;stroke-width:2.2;stroke-linecap:round}
+          .vin-line {stroke:#7c3aed;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .vout-line {stroke:#b91c1c;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .wire {stroke:#000;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .opamp {fill:#e5e7eb;stroke:#000;stroke-width:2.2}
+          .cad-lbl {font-family:'Times New Roman', Times, serif;font-size:14px;font-weight:900}
+          .small-lbl {font-family:Arial, sans-serif;font-size:10px;font-weight:900;fill:#000}
+        </style>
+
+        <defs>
+          <circle id="node-dot" cx="0" cy="0" r="3.5" fill="#000" />
+          <circle id="term-circ" cx="0" cy="0" r="3" stroke="#000" stroke-width="1.5" fill="#fff" />
+          <marker id="axis-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#111827" />
+          </marker>
+        </defs>
+
+        <!-- LEFT SIDE: Slew Rate Waveform (Exactly 4 Rises/Falls per line) -->
+        <!-- Axes -->
+        <line x1="30" y1="180" x2="30" y2="30" class="axis" marker-end="url(#axis-arrow)" /> <!-- Y-Axis -->
+        <line x1="30" y1="110" x2="230" y2="110" class="axis" marker-end="url(#axis-arrow)" /> <!-- X-Axis -->
+        <text x="25" y="24" class="cad-lbl" fill="#000">V</text>
+        <text x="245" y="114" class="cad-lbl" fill="#000">t (µs)</text>
+
+        <!-- VIN Square Wave (Purple - Exactly 4 Vertical Transitions) -->
+        <path d="M 30,160 H 50 V 50 H 95 V 160 H 140 V 50 H 185 V 160 H 225" class="vin-line" />
+        <text x="95" y="44" class="cad-lbl" fill="#7c3aed">VIN</text>
+
+        <!-- VOUT Slew-Limited Wave (Red - Exactly 4 Sloped Transitions) -->
+        <path d="M 30,160 H 50 L 65,50 H 95 L 110,160 H 140 L 155,50 H 185 L 200,160 H 225" class="vout-line" />
+        <text x="180" y="44" class="cad-lbl" fill="#b91c1c">VOUT</text>
+
+        <!-- RIGHT SIDE: Voltage Follower Buffer Circuit -->
+        <!-- Op-Amp Triangle -->
+        <polygon points="350,75 350,175 420,125" class="opamp" />
+        <text x="360" y="112" class="cad-lbl" font-size="20">-</text>
+        <text x="360" y="152" class="cad-lbl" font-size="20">+</text>
+
+        <!-- Input Connection (VIN) -->
+        <line x1="305" y1="150" x2="350" y2="150" class="wire" />
+        <use href="#term-circ" x="305" y="150" />
+        <text x="265" y="154" class="cad-lbl">VIN</text>
+
+        <!-- Output Connection (VOUT) -->
+        <line x1="420" y1="125" x2="475" y2="125" class="wire" />
+        <use href="#node-dot" x="450" y="125" />
+        <use href="#term-circ" x="475" y="125" />
+        <text x="470" y="141" class="cad-lbl">VOUT</text>
+
+        <!-- Feedback wire (Unity gain loop: Output to Negative Input) -->
+        <line x1="350" y1="100" x2="315" y2="100" class="wire" />
+        <line x1="315" y1="100" x2="315" y2="50" class="wire" />
+        <line x1="315" y1="50" x2="450" y2="50" class="wire" />
+        <line x1="450" y1="50" x2="450" y2="125" class="wire" />
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Peak Change Rate Equation: dv/dt |max = 2 * π * f * Vp</div>
+    <div class="formula">Logarithmic Slew Rate conversion (V/µs): IIP3_dBm = 10 * log10(AIP3) -> SR = (2 * π * f * Vp) / 10^6</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the active source signaling Frequency in Hz.</div>
+      <div class="aboutStep">Enter the maximum target peak Voltage amplitude in Volts.</div>
+      <div class="aboutStep">Click the orange **CALCULATE** button. The minimum required op-amp slew rate is calculated instantly below.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Instantly determine the required slew rate for analog operational amplifier stages.</strong>
+      <p>The CalcBoy Op-Amp Slew Rate Calculator models sinusoidal signals to determine the minimum speed at which an amplifier output must transition to prevent slope-limiting distortion.</p>
+    </div>
+    <p>Operational amplifiers (op-amps) have internal physical limitations that restrict how quickly their output voltage can change. This speed limit is called the Slew Rate, typically expressed in Volts per microsecond (V/µs). If a signal demands a voltage change faster than this rate, the output will lag behind the input, distorting the waveform into a triangle shape.</p>
+    <p>By entering the frequency and peak voltage, this calculator uses derivative slope analysis to determine the maximum rate of change, helping you select a compatible op-amp for audio, data acquisition, and high-frequency communication circuits.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Slope Limitation</span>Exceeding the slew rate limit introduces phase lag and non-linear harmonic distortion.</div>
+      <div class="aboutMiniCard"><span>Voltage Follower</span>A unity-gain buffer is highly sensitive to slew rate limitations as the output swings fully.</div>
+      <div class="aboutMiniCard"><span>Peak Rate of Change</span>The rate of change is greatest at the zero-crossing point of a sine wave.</div>
+      <div class="aboutMiniCard"><span>Design Headroom</span>It is recommended to choose an op-amp with a slew rate 1.5 to 2 times higher than calculated.</div>
+    </div>
+    <div class="aboutNote">Key Observation: For square waves, the slew rate directly dictates the output rise and fall times, turning sharp edges into a sloped trapezoidal pattern.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is the slew rate of an operational amplifier?</strong></h3>
+    <p>Slew rate (SR) is the maximum rate of change of the output voltage of an op-amp, usually expressed in volts per microsecond (V/µs). It represents how fast the output can respond to rapid changes at the input.</p>
+
+    <h3><strong>2. What happens if the signal frequency exceeds the slew rate limit?</strong></h3>
+    <p>When the signal demands a rate of change faster than the op-amp's slew rate, the output can no longer track the input. Sinusoidal waves will distort and turn into triangle waves, causing loss of signal integrity.</p>
+
+    <h3><strong>3. Why is the slew rate calculated at the zero-crossing of a sine wave?</strong></h3>
+    <p>For a sinusoidal wave, the rate of change is mathematically greatest at the zero-crossing point. Therefore, the peak slope is defined by 2*π*f*Vp, which represents the worst-case slew demand.</p>
+
+    <h3><strong>4. How can I reduce slew rate distortion in my circuit?</strong></h3>
+    <p>You can mitigate slew rate distortion by reducing the input signal frequency, lowering the peak output voltage amplitude, or selecting a higher performance op-amp with a faster slew rate rating.</p>
+
+    <h3><strong>5. What is the typical slew rate of a standard LM741 op-amp?</strong></h3>
+    <p>A standard legacy LM741 op-amp has a relatively slow slew rate of approximately 0.5 V/µs. In contrast, high-speed modern op-amps can easily feature slew rates exceeding 100 V/µs.</p>
+
+    <h3><strong>6. How does the closed-loop gain affect slew rate limiting?</strong></h3>
+    <p>While slew rate is largely an internal physical limit of the op-amp, higher closed-loop gains reduce the bandwidth of the amplifier, which can indirectly slow down input transitions before slew-rate limits are reached.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Op-amp Bandwidth Calculator</strong>Determine unity-gain cutoff frequencies.</div>
+      <div class="linkCard"><strong>Rise Time to Bandwidth Tool</strong>Translate signal slope rise times to bandwidth.</div>
+      <div class="linkCard"><strong>Sine Wave Peak-to-Peak Solver</strong>Convert RMS, average, and peak voltages.</div>
+      <div class="linkCard"><strong>Decibels to Volts Converter</strong>Translate logarithmic ratios to absolute voltages.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function clearError() {
+  document.getElementById("errorBox").style.display = "none";
+}
+
+function isInvalidText(str) {
+  if (str === "") return false;
+  return isNaN(parseFloat(str)) || !isFinite(str);
+}
+
+function computeSlewRate() {
+  var f_str = document.getElementById("f_val").value.trim();
+  var v_str = document.getElementById("v_val").value.trim();
+
+  // Clear previous errors
+  document.getElementById("errorBox").style.display = "none";
+
+  // STRICT LOCK: Triggers error if ANY input field has invalid non-numeric text format
+  if (isInvalidText(f_str) || isInvalidText(v_str)) {
+    document.getElementById("errorBox").style.display = "block";
+    return;
+  }
+
+  // STRICT LOCK: Triggers error if input fields are missing/empty
+  if (f_str === "" || v_str === "") {
+    document.getElementById("errorBox").style.display = "block";
+    return;
+  }
+
+  var Fr = parseFloat(f_str);
+  var V = parseFloat(v_str);
+
+  // STRICT LOCK: Double checks parses are clean
+  if (isNaN(Fr) || isNaN(V)) {
+    document.getElementById("errorBox").style.display = "block";
+    return;
+  }
+
+  document.getElementById("errorBox").style.display = "none";
+
+  // Calculate Slew Rate (V/µs)
+  var sr = (2 * Math.PI * Fr * V) / Math.pow(10, 6);
+
+  document.getElementById("res_slew").innerText = sr.toPrecision(4) + " V/µs";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. What is the slew rate of an operational amplifier?","acceptedAnswer":{"@type":"Answer","text":"Slew rate (SR) is the maximum rate of change of the output voltage of an op-amp, usually expressed in volts per microsecond (V/µs). It represents how fast the output can respond to rapid changes at the input."}},
+{"@type":"Question","name":"2. What happens if the signal frequency exceeds the slew rate limit?","acceptedAnswer":{"@type":"Answer","text":"When the signal demands a rate of change faster than the op-amp's slew rate, the output can no longer track the input. Sinusoidal waves will distort and turn into triangle waves, causing loss of signal integrity."}},
+{"@type":"Question","name":"3. Why is the slew rate calculated at the zero-crossing of a sine wave?","acceptedAnswer":{"@type":"Answer","text":"For a sinusoidal wave, the rate of change is mathematically greatest at the zero-crossing point. Therefore, the peak slope is defined by 2*π*f*Vp, which represents the worst-case slew demand."}},
+{"@type":"Question","name":"4. How can I reduce slew rate distortion in my circuit?","acceptedAnswer":{"@type":"Answer","text":"You can mitigate slew rate distortion by reducing the input signal frequency, lowering the peak output voltage amplitude, or selecting a higher performance op-amp with a faster slew rate rating."}},
+{"@type":"Question","name":"5. What is the typical slew rate of a standard LM741 op-amp?","acceptedAnswer":{"@type":"Answer","text":"A standard legacy LM741 op-amp has a relatively slow slew rate of approximately 0.5 V/µs. In contrast, high-speed modern op-amps can easily feature slew rates exceeding 100 V/µs."}},
+{"@type":"Question","name":"6. How does the closed-loop gain affect slew rate limiting?","acceptedAnswer":{"@type":"Answer","text":"While slew rate is largely an internal physical limit of the op-amp, higher closed-loop gains reduce the bandwidth of the amplifier, which can indirectly slow down input transitions before slew-rate limits are reached."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Op-Amp Slew Rate Calculator","item":"https://calcboy.com/tool/op-amp-slew-rate-calculator"}
+]
+}
+</script>
+
+</body>
+</html>
