@@ -1,154 +1,628 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>JFET Buffer Bias Calculator | CalcBoy</title>
+<meta name="description" content="Calculate the bias parameters of a JFET source follower buffer stage including drain-source current (IDS), gate-source voltage (VGS), and source resistor (RS).">
+<meta name="keywords" content="jfet buffer calculator, jfet source follower calculator, jfet bias calculator, jfet common source buffer, source follower resistor calculator, idss jfet calculator, CalcBoy">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f6f8fb;
+  color: #333;
+}
+#jfet-buffer-calc, .calc {
+  width: 100% !important;
+  max-width: 620px !important;
+  margin: auto;
+  padding: 14px 10px !important;
+  background: transparent;
+  border: none;
+  box-sizing: border-box;
+}
+#jfet-buffer-calc * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 82px;
+  gap: 8px;
+  align-items: center;
+}
+input, select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+}
+input:focus, select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, .12);
+}
+.unit-box {
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
+}
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 14px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
+}
+button {
+  width: 100%;
+  height: 45px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(90deg, #ff7a18, #ff4b00);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 15px;
+}
+#errorBox {
+  display: none;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  border: 2px solid #dc2626;
   padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+  border-radius: 8px;
+  background: #fef2f2;
 }
+.result-title {
+  margin-top: 30px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #7b8794;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.result-card {
+  min-height: 82px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #cfd6df;
+}
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
 
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
+.result-label {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: .5px;
+}
+.result-value {
+  font-size: 16px;
+  font-weight: 900;
+  word-break: break-word;
+  line-height: 1.2;
+  min-height: 22px;
+}
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.diagramBox {
+  background: #fff;
+  padding: 16px;
+  text-align: center;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.diagramBox svg {
   width: 100%;
+  max-width: 560px;
+  height: auto;
+  display: block;
+  margin: auto;
 }
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.aboutLead {
+  background: linear-gradient(135deg, #eef5ff, #fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
 }
-
-body { 
-  background: ; 
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
 }
-.intro{
-    width:250px;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    text-align:center;
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+.aboutNote {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid #059669;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff7a18;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
+}
 </style>
-				                  
-				                  
+</head>
+<body>
 
+<div id="jfet-buffer-calc">
 
+  <div class="calc-grid">
+    <div class="subTitle" style="border-top: none; margin-top: 0;">Device Parameters</div>
+    <div>
+      <label class="calc-label">VDD (Supply Voltage)</label>
+      <div class="calc-row">
+        <input id="vdd_val" type="number" step="any" oninput="clearError()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">VRS (Desired Source Voltage Drop)</label>
+      <div class="calc-row">
+        <input id="vrs_val" type="number" step="any" oninput="clearError()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">Vp or VGS(off) (Pinch-off Voltage)</label>
+      <div class="calc-row">
+        <input id="vp_val" type="number" step="any" oninput="clearError()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">IDSS (Zero Gate Voltage Drain Current)</label>
+      <div class="calc-row">
+        <input id="idss_val" type="number" step="any" oninput="clearError()">
+        <div class="unit-box">mA</div>
+      </div>
+    </div>
+  </div>
 
-<script language="JavaScript">
+  <button type="button" onclick="computeJFET()">CALCULATE</button>
 
+  <div id="errorBox">Please enter valid numeric values. Empty or text fields are not allowed.</div>
 
+  <div class="result-title">RESULTS</div>
 
-function Compute(form) {
-	with(Math) {
-		var GIGA= 1000000000;
-		var MEGA= 1000000;
-		var KILO= 1000;
-		
-		var VDD= Number(form.VDD.value);
-		var VRS= Number(form.VRS.value);	
-		var Vp= Number(form.Vp.value);		
-		var IDSS= Number(form.IDSS.value);		
-		var Precision= 3;
-		
-		VGS= -VRS;
-		IDS= IDSS*(1-VGS/Vp)*(1-VGS/Vp);
-		RS= -VGS/IDS*KILO;
+  <div class="result-grid">
+    <div class="result-card blue">
+      <div class="result-label">IDS (Drain Current)</div>
+      <div class="result-value"><span id="res_ids">--</span></div>
+    </div>
+    <div class="result-card green">
+      <div class="result-label">RS (Source Resistor)</div>
+      <div class="result-value"><span id="res_rs">--</span></div>
+    </div>
+    <div class="result-card purple">
+      <div class="result-label">VGS (Gate-Source Voltage)</div>
+      <div class="result-value"><span id="res_vgs">--</span></div>
+    </div>
+  </div>
 
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Supply Voltage (VDD)</strong>The positive power supply rail connected directly to the JFET drain terminal.</div>
+      <div class="paramItem"><strong>Source Drop (VRS)</strong>The target DC voltage drop desired across the physical source biasing resistor.</div>
+      <div class="paramItem"><strong>Pinch-off Voltage (Vp)</strong>Threshold gate-to-source voltage where JFET channel current is completely cut off.</div>
+      <div class="paramItem"><strong>Saturation Current (IDSS)</strong>Max channel current flowing when the gate terminal is directly shorted to the source.</div>
+    </div>
+  </section>
 
-		form.IDS.value= IDS.toFixed(Precision);		
-		form.VGS.value= VGS.toFixed(Precision);		
-		form.RS.value= RS.toFixed(Precision);		
-	}
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>High Input Impedance Buffer</strong></p>
+        <p>Establish high analog impedance matching stages for sensitive piezoelectric, guitar, or RF sensor outputs.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Source Follower Bias Planning</strong></p>
+        <p>Swiftly design Rs parameters to secure stable gate-to-source bias points ($V_{GS}$) across temperature shifts.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Pinch-off Threshold Swaps</strong></p>
+        <p>Analyze how swapping JFETs with different Pinch-off values ($V_{GS(off)}$) affects quiescent operating currents.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Audio Line Driver Design</strong></p>
+        <p>Safely plan voltage followers to drive low-impedance coaxial line loads without signal clipping.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A JFET Source Follower (Common Drain) amplifier is recognized for its high input impedance, low output impedance, and near-unity voltage gain. This behavior makes it ideal as a buffer stage to prevent loading effects between high-impedance signal sources and low-impedance loads.</p>
+
+    <div class="diagramBox">
+      <!-- Same-to-Same Schematic CAD Diagram with Pure White Background and Burgundy Text -->
+      <svg viewBox="0 0 500 295" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="JFET Buffer Bias CAD Schematic">
+        
+        <defs>
+          <!-- Classic US CAD Schematic Resistors (G गहरे नीले रंग में) -->
+          <g id="schem-res-h">
+            <line x1="-20" y1="0" x2="-12" y2="0" stroke="#002b5c" stroke-width="1.8" />
+            <path d="M -12 0 L -10 -4 L -6 4 L -2 -4 L 2 4 L 6 -4 L 10 4 L 12 0" fill="none" stroke="#002b5c" stroke-width="1.8" stroke-linejoin="round" />
+            <line x1="12" y1="0" x2="20" y2="0" stroke="#002b5c" stroke-width="1.8" />
+          </g>
+          
+          <g id="schem-res-v">
+            <line x1="0" y1="-20" x2="0" y2="-12" stroke="#002b5c" stroke-width="1.8" />
+            <path d="M 0 -12 L -4 -10 L 4 -6 L -4 -2 L 4 2 L -4 6 L 4 10 L 0 12" fill="none" stroke="#002b5c" stroke-width="1.8" stroke-linejoin="round" />
+            <line x1="0" y1="12" x2="0" y2="20" stroke="#002b5c" stroke-width="1.8" />
+          </g>
+          
+          <!-- CAD Terminal Small Circle -->
+          <circle id="term-circle" cx="0" cy="0" r="3" stroke="#002b5c" stroke-width="1.8" fill="#fff" />
+          
+          <!-- Standard Ground symbol -->
+          <g id="ground-bar">
+            <line x1="-12" y1="0" x2="12" y2="0" stroke="#002b5c" stroke-width="2.5" />
+            <line x1="-8" y1="4" x2="8" y2="4" stroke="#002b5c" stroke-width="2" />
+            <line x1="-4" y1="8" x2="4" y2="8" stroke="#002b5c" stroke-width="1.5" />
+          </g>
+
+          <!-- Capacitor Symbol -->
+          <g id="cap-h">
+            <line x1="-20" y1="0" x2="-4" y2="0" stroke="#002b5c" stroke-width="1.8" />
+            <line x1="-4" y1="-12" x2="-4" y2="12" stroke="#002b5c" stroke-width="2" />
+            <line x1="4" y1="-12" x2="4" y2="12" stroke="#002b5c" stroke-width="2" />
+            <line x1="4" y1="0" x2="20" y2="0" stroke="#002b5c" stroke-width="1.8" />
+          </g>
+        </defs>
+
+        <!-- Pure White Background -->
+        <rect width="100%" height="100%" fill="#fff" />
+
+        <style>
+          .wire {stroke:#002b5c;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .cad-lbl {font-family:'Times New Roman', Times, serif;font-size:15px;font-weight:900;fill:#800020}
+          .small-lbl {font-family:Arial, sans-serif;font-size:11px;font-weight:900;fill:#334155}
+        </style>
+
+        <!-- JFET Q1 Symbol (N-Channel JFET Same-to-Same) -->
+        <line x1="250" y1="95" x2="250" y2="145" stroke="#002b5c" stroke-width="3" /> <!-- Channel Bar -->
+        <line x1="210" y1="120" x2="250" y2="120" stroke="#002b5c" stroke-width="1.8" /> <!-- Gate Wire -->
+        <polygon points="250,120 240,116 240,124" fill="#002b5c" /> <!-- Gate Arrow pointing right -->
+        <path d="M 250 100 V 60" class="wire" /> <!-- Drain line -->
+        <path d="M 250 140 V 160" class="wire" /> <!-- Source line -->
+        <text x="215" y="100" class="cad-lbl">Q1</text>
+
+        <!-- VDD Supply top -->
+        <use href="#term-circle" x="250" y="60" />
+        <text x="250" y="45" class="cad-lbl" text-anchor="middle">VDD</text>
+
+        <!-- Input signal (SIG_IN) & C1 -->
+        <line x1="95" y1="120" x2="170" y2="120" class="wire" />
+        <use href="#cap-h" x="130" y="120" />
+        <use href="#term-circle" x="95" y="120" />
+        <text x="25" y="125" class="cad-lbl">SIG_IN</text>
+        <text x="130" y="95" class="cad-lbl" text-anchor="middle">C1</text>
+        <text x="110" y="155" class="small-lbl">0.1uF</text>
+
+        <!-- RG (Gate Resistor to Ground Wire) -->
+        <line x1="170" y1="120" x2="170" y2="250" class="wire" />
+        <use href="#schem-res-v" x="170" y="185" />
+        <text x="188" y="190" class="cad-lbl">RG</text>
+
+        <!-- Connection to JFET Gate -->
+        <line x1="170" y1="120" x2="210" y2="120" class="wire" />
+
+        <!-- Source path split (RS and C2 Output) -->
+        <line x1="250" y1="160" x2="415" y2="160" class="wire" />
+        <use href="#cap-h" x="330" y="160" />
+        <use href="#term-circle" x="415" y="160" />
+        <text x="425" y="165" class="cad-lbl" text-anchor="start">SIG_OUT</text>
+        <text x="330" y="135" class="cad-lbl" text-anchor="middle">C2</text>
+        <text x="345" y="195" class="small-lbl">0.1uF</text>
+
+        <!-- RS (Source Resistor to Ground Wire) -->
+        <line x1="250" y1="160" x2="250" y2="250" class="wire" />
+        <use href="#schem-res-v" x="250" y="210" />
+        <text x="268" y="215" class="cad-lbl">RS</text>
+
+        <!-- Horizontal Ground Wire (Same-to-Same Loop) -->
+        <line x1="170" y1="250" x2="250" y2="250" class="wire" />
+        <line x1="210" y1="250" x2="210" y2="260" class="wire" />
+        <use href="#ground-bar" x="210" y="260" />
+        <text x="210" y="285" class="small-lbl" text-anchor="middle" font-weight="900">GND</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Gate-Source Voltage: VGS = -VRS</div>
+    <div class="formula">Drain Current (Shockley's Equation): IDS = IDSS * (1 - VGS / Vp)^2</div>
+    <div class="formula">Source Resistor value (Ohm's Law): RS = (-VGS / IDS) * 1000</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter your Positive Supply Voltage (VP). This defines your circuit rail boundaries.</div>
+      <div class="aboutStep">Ensure the Negative Supply (VN) is configured properly (usually grounded, i.e., 0V).</div>
+      <div class="aboutStep">Enter desired DC source drop potential (VRS) and JFET threshold specs (Pinch-off Vp, and IDSS).</div>
+      <div class="aboutStep">Click the orange **CALCULATE** button to run calculations. Results will populate instantly below in their respective boxes.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Instantly determine the required source resistor (RS) and quiescent operating current.</strong>
+      <p>The CalcBoy JFET Buffer Bias Calculator models N-channel JFET active voltage follower/buffer networks, executing standard loop equations to secure precise biasing configurations.</p>
+    </div>
+    <p>Field Effect Transistors (JFETs) are optimal buffer elements because their reverse-biased gate PN junctions present an extremely high input impedance, preventing signal loading. This specific self-biasing source follower topology regulates quiescent current naturally without needing a dual-rail supply layout.</p>
+    <p>This utility uses the mathematical relation known as Shockley's Equation to solve for drain current. Finding the required source resistor value prevents signal clipping, making it easier to match impedance between stages in audio and high-frequency RF lineups.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Impedance Matching</span>Maintains high input impedance on gate loops while lowering output impedance.</div>
+      <div class="aboutMiniCard"><span>Voltage Gain</span>Unity gain configuration (Av is typically slightly less than 1).</div>
+      <div class="aboutMiniCard"><span>Ideal Application</span>Audio preamplifiers, instrument buffers, RF impedance matching, and sensor front-ends.</div>
+      <div class="aboutMiniCard"><span>Transistor Swap Tip</span>Always match the pinch-off parameters with the manufacturer datasheets for accuracy.</div>
+    </div>
+    <div class="aboutNote">Note: Ensure that the desired source voltage drop VRS is mathematically smaller than the absolute pinch-off voltage Vp, otherwise the JFET channel will remain completely cut off.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. Why is a JFET source follower called a buffer?</strong></h3>
+    <p>It acts as a buffer because it has an exceptionally high input impedance and a low output impedance. This isolates the source stage from downstream loading, protecting signal amplitude.</p>
+
+    <h3><strong>2. How does self-biasing work in this source follower circuit?</strong></h3>
+    <p>The gate is held at DC ground via RG. As current flows through RS, the source voltage rises above ground. This makes the gate negative with respect to the source, establishing the negative VGS needed for stable biasing.</p>
+
+    <h3><strong>3. Can I use positive values for the pinch-off voltage Vp in calculations?</strong></h3>
+    <p>N-channel JFETs require negative pinch-off voltages (Vp) to restrict current flow. Enter the correct negative polarity as listed in the transistor datasheet.</p>
+
+    <h3><strong>4. What does IDSS represent?</strong></h3>
+    <p>IDSS represents the maximum possible drain current of the JFET when gate-to-source voltage (VGS) is zero. It is a critical benchmark value for JFET channel performance.</p>
+
+    <h3><strong>5. Why does my computed source resistance value show up as extremely high?</strong></h3>
+    <p>If your target source voltage drop (VRS) is set very close to the pinch-off voltage (Vp), the JFET channel begins to choke, reducing the active channel current (IDS) and requiring a larger source resistor.</p>
+
+    <h3><strong>6. How do I select the gate resistor RG value?</strong></h3>
+    <p>The gate resistor RG is typically chosen to be very large (usually between 1MΩ and 10MΩ). This maximizes the input impedance of the buffer stage without altering the DC bias point.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>JFET Common Source Amplifier Tool</strong>Design active JFET gain stages with source degeneration.</div>
+      <div class="linkCard"><strong>BJT Emitter Follower Calculator</strong>Design bipolar transistor impedance buffer loops.</div>
+      <div class="linkCard"><strong>Voltage Divider Tool</strong>Configure reference voltage dividers.</div>
+      <div class="linkCard"><strong>Ohm's Law Solver</strong>Solve voltage, current, and loop resistance equations.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function clearError() {
+  document.getElementById("errorBox").style.display = "none";
 }
 
+function clearResults() {
+  document.getElementById("res_ids").innerText = "--";
+  document.getElementById("res_rs").innerText = "--";
+  document.getElementById("res_vgs").innerText = "--";
+}
 
+function computeJFET() {
+  var vdd_str = document.getElementById("vdd_val").value.trim();
+  var vrs_str = document.getElementById("vrs_val").value.trim();
+  var vp_str = document.getElementById("vp_val").value.trim();
+  var idss_str = document.getElementById("idss_val").value.trim();
 
+  // STRICT LOCK: ONLY show error if field is blank
+  if (vdd_str === "" || vrs_str === "" || vp_str === "" || idss_str === "") {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
+  var vdd = parseFloat(vdd_str);
+  var vrs = parseFloat(vrs_str);
+  var vp = parseFloat(vp_str);
+  var idss = parseFloat(idss_str);
+
+  // STRICT LOCK: ONLY show error if field is non-numeric
+  if (isNaN(vdd) || isNaN(vrs) || isNaN(vp) || isNaN(idss)) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  document.getElementById("errorBox").style.display = "none";
+
+  var vgs = -vrs;
+  var ids = idss * Math.pow((1 - vgs / vp), 2);
+  var rs = (-vgs / ids) * 1000;
+
+  document.getElementById("res_ids").innerText = ids.toFixed(3) + " mA";
+  document.getElementById("res_vgs").innerText = vgs.toFixed(3) + " V";
+  document.getElementById("res_rs").innerText = rs.toFixed(3) + " Ω";
+}
 </script>
 
-</head>
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. Why is a JFET source follower called a buffer?","acceptedAnswer":{"@type":"Answer","text":"It acts as a buffer because it has an exceptionally high input impedance and a low output impedance. This isolates the source stage from downstream loading, protecting signal amplitude."}},
+{"@type":"Question","name":"2. How does self-biasing work in this source follower circuit?","acceptedAnswer":{"@type":"Answer","text":"The gate is held at DC ground via RG. As current flows through RS, the source voltage rises above ground. This makes the gate negative with respect to the source, establishing the negative VGS needed for stable biasing."}},
+{"@type":"Question","name":"3. Can I use positive values for the pinch-off voltage Vp in calculations?","acceptedAnswer":{"@type":"Answer","text":"N-channel JFETs require negative pinch-off voltages (Vp) to restrict current flow. Enter the correct negative polarity as listed in the transistor datasheet."}},
+{"@type":"Question","name":"4. What does IDSS represent?","acceptedAnswer":{"@type":"Answer","text":"IDSS represents the maximum possible drain current of the JFET when gate-to-source voltage (VGS) is zero. It is a critical benchmark value for JFET channel performance."}},
+{"@type":"Question","name":"5. Why does my computed source resistance value show up as extremely high?","acceptedAnswer":{"@type":"Answer","text":"If your target source voltage drop (VRS) is set very close to the pinch-off voltage (Vp), the JFET channel begins to choke, reducing the active channel current (IDS) and requiring a larger source resistor."}},
+{"@type":"Question","name":"6. How do I select the gate resistor RG value?","acceptedAnswer":{"@type":"Answer","text":"The gate resistor RG is typically chosen to be very large (usually between 1MΩ and 10MΩ). This maximizes the input impedance of the buffer stage without altering the DC bias point."}}
+]
+}
+</script>
 
-<body topmargin="0" leftmargin="0">
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"JFET Buffer Bias Calculator","item":"https://calcboy.com/tool/jfet-buffer-bias-calculator"}
+]
+}
+</script>
 
-    
-
-      <form method="POST" name="ParamForm" action="">
-      <div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>
-
-<fieldset><legend>
-<h3>Inputs</h3></legend>
-
-               
-          <label><font>VDD</sub> </font><font face="Arial" size="5"></font></label><input  name="VDD" size="17" class="intro" style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; heigh:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>  
-
-                          <h1 style="font-size:40px;"></h1>
-          <label><font>V<sub>RS</sub> </font><font face="Arial" size="5">(Desired)</font></label><input type="text" name="VRS" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; heigh:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>  
-
-                                            <h1 style="font-size:28px;"></h1>
-          <label><font>V<sub>p or V<sub>GS</sub> </font><font face="Arial" size="5">(off)</font></label><input  name="Vp" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; heigh:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>  
-
-
-                                                   <h1 style="font-size:18px;"></h1>
-          <label><font>I<sub>DSS</sub> </font><font face="Arial" size="5">(Zero Gate Voltage Drain Current)</font></label><input  name="IDSS" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; heigh:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">mA</label>  
-       
-</fieldset>
-     
-     <br>
-            
-     
-           
-          <fieldset><legend><div colspan="2" align="center" height="19"><input type="Button" onClick="Compute(document.ParamForm)" value="Calculate" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></div></div>
-</div></legend></fieldset><div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Outputs</h3></div></legend>
-
-
-          <label><font>I<sub>DS</sub> </font><font face="Arial" size="5"></font></label><input type="text" name="IDS" size="17" class="intro"style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">mA</label>  
-
-
-
-          
-                                                  <h1 style="font-size:25px;"></h1>
-          <label><font>R<sub>s</sub> </font><font face="Arial" size="5"></font></label><input type="text" name="RS" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; height:68; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>                
-
-
-    
-                                                   <h1 style="font-size:25px;"></h1>
-          <label><font>V<sub>GS</sub> </font><font face="Arial" size="5"></font></label><input type="text" name="VGS" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label> 
-   
-
-
-</fieldset>
-      </form>
+</body>
+</html>
