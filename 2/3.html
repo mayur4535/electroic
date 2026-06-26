@@ -1,444 +1,955 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BJT Transistor Bias Calculator | CalcBoy</title>
+<meta name="description" content="Calculate and design BJT transistor bias networks including Voltage Divider, Emitter Bias, Collector Feedback, and Fixed Bias.">
+<meta name="keywords" content="transistor biasing calculator, BJT biasing calculator, voltage divider bias, fixed bias, collector feedback bias, emitter feedback, Q-point calculator, active region BJT, CalcBoy">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
 body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f6f8fb;
+  color: #333;
+}
+#transistor-biasing-calc, #transistor-biasing-calc * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+#transistor-biasing-calc {
+  width: 100% !important;
+  max-width: 620px !important;
+  margin: auto;
+  padding: 14px 10px !important;
+  background: transparent;
+  border: none;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 82px;
+  gap: 8px;
+  align-items: center;
+}
+input, select {
   width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
 }
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+input:focus, select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, .12);
 }
-
-body { 
-  background: ; 
+.unit-box {
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
 }
-.intro2{right:100;}
-
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-
-</style>
-<script type="text/javascript">// <![CDATA[
-function ShowBiasType() {
-	var type= Number(document.getElementById('BiasType').value);
-	switch(type) {
-		case 1:
-			document.getElementById('a1').style.display= "";
-			document.getElementById('b1').style.display= "";
-			document.getElementById('c1').style.display= "none";
-			document.getElementById('d1').style.display= "none";
-			document.getElementById('i1').style.display= "none";
-			document.getElementById('i2').style.display= "";
-			document.getElementById('RB').value= 1;
-			document.getElementById('R1').value= 0;
-			document.getElementById('R2').value= 0;
-		break;		
-		case 2:
-			document.getElementById('a1').style.display= "none";
-			document.getElementById('b1').style.display= "none";
-			document.getElementById('c1').style.display= "";
-			document.getElementById('d1').style.display= "";
-			document.getElementById('i1').style.display= "";
-			document.getElementById('i2').style.display= "none";
-			document.getElementById('RB').value= 0;
-			document.getElementById('R1').value= 10;
-			document.getElementById('R2').value= 2;
-		break;
-	}
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
-
-
-function Compute(form) {
-	with(Math) {
-		var KILO= 1000;
-		var MEGA= KILO*KILO;
-		var PICO= 1/(MEGA*MEGA);
-		var RB= Number(form.RB.value)*KILO;
-		var RC= Number(form.RC.value)*KILO;
-		var RE1= Number(form.RE1.value)*KILO;
-		var RE2= Number(form.RE2.value)*KILO;		
-		var R1= Number(form.R1.value)*KILO;
-		var R2= Number(form.R2.value)*KILO;
-		var Beta= Number(form.Beta.value);
-		var Vbe= Number(form.Vbe.value);
-		var VP= Number(form.VP.value);
-		var Vin= Number(form.Vin.value);
-		var Ft= Number(form.Ft.value)*MEGA;
-		var Cbe= Number(form.Cbe.value)*PICO;				
-		var Ccb= Number(form.Ccb.value)*PICO;		
-		var Rs= Number(form.Rs.value);		
-		var RL= Number(form.RL.value);			
-		
-		var Precision= 5;
-		var Rin;
-		var RE= RE1+RE2;
-	
-		if(R1) {
-				RB= R1*R2/(R1+R2);
-				Vin= VP*R2/(R1+R2);
-		}	
-		
-		Rout=  RL*RC/(RL+RC);
-		
-		
-
-		Ib= (Vin-Vbe)/(RB+Beta*RE);
-		Ic= Beta*Ib;
-		Ve= Ic*RE;
-		Vb= Ve+Vbe;
-		Vc= VP - Ic*RC;
-		
-		if(Vc<Ve) {
-			form.Saturated.checked= true;
-			form.CutOff.checked= false;
-			// in saturation, VC=VE and we have a voltage divider
-			Ve= VP*RE/(RE+RC);
-			Vc= Ve;
-			Vb= Ve+Vbe;
-			Ic= VP/(RE+RC);
-		} else if(Vin<Vb) {
-			form.CutOff.checked= true;
-			form.Saturated.checked= false;
-			Vc= VP;
-			Ve= 0;
-			Vb= Vbe;
-			Ic= 0;
-			Ib= 0;
-			
-		}else {
-			form.Saturated.checked= false;
-			form.CutOff.checked= false;
-		}
-		
-		gm= Ic/.025;
-		rpi= Beta/gm;
-		
-		Rin= RB*Rs/(RB+Rs);
-				
-		if( Ccb && Ft) { 		// we can find Cbe from Ft an Ccb
-			Cbe= gm/(Ft*2*PI)-Ccb;
-		}
-		
-		Cmce= Ccb*(1+gm*Rout);
-		BWce= 1/((Cbe+Cmce)*Rin)/(2*PI);
-		
-
-
-		var Rcc= 1/( 1/Rs + 1/((1+gm*RE)*rpi) );
-		var BWcc= 1/((Ccb+ Cbe/(1+gm*RE))*Rcc)/(2*PI);
-		
-		
-	
-		var Rincc= 1/( 1/((Beta+1)*((RE2*RL)/(RE2+RL))) + 1/RB);
-		
-		var Ree= rpi+(Beta+1)*RE2;
-		var Rince= RB*Ree/(RB+Ree);
-
-		
-		if(RE2) {
-			Ace= Rout/RE2;
-		} else {
-			Ace= gm*Rout;
-		}
-		
-		Acc= Rincc/(Rincc+Rs);
-		
-		
-		Rincc= Rincc/KILO; 	//convert to Kohms
-		
-		Ib*= KILO; // convert to mA
-		Ic*= KILO;
-
-		Cmce= Cmce/PICO;
-		Cbe= Cbe/PICO;
-		BWce= BWce/MEGA;
-		BWcc= BWcc/MEGA
-		
-		Rref= (rpi+ Rin)/(Beta+1);
-		
-		Rocc=  RE2*Rref/(RE2+Rref);
-		
-		var Roce= RC; 
-
-		form.Rincc.value= Rincc.toPrecision(Precision);	
-		form.Rince.value= Rince.toPrecision(Precision);			
-		form.Ace.value= Ace.toPrecision(Precision);		
-		form.Acc.value= Acc.toPrecision(Precision);				
-		form.Cmce.value= Cmce.toPrecision(Precision);
-		form.Cbe.value= Cbe.toPrecision(Precision);
-		form.BWce.value= BWce.toPrecision(Precision);
-		form.BWcc.value= BWcc.toPrecision(Precision);		
-		form.rpi.value= rpi.toPrecision(Precision);
-		form.gm.value= gm.toPrecision(Precision);
-		form.Ib.value= Ib.toPrecision(Precision);
-		form.Ic.value= Ic.toPrecision(Precision);
-		form.Ve.value= Ve.toPrecision(Precision);
-		form.Vb.value= Vb.toPrecision(Precision);
-		form.Vc.value= Vc.toPrecision(Precision);
-		form.Rocc.value= Rocc.toPrecision(Precision);		
-		form.Roce.value= Roce.toPrecision(Precision);		
-		
-		
-	}
+button {
+  width: 100%;
+  height: 45px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(90deg, #ff7a18, #ff4b00);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 15px;
 }
-
-function PageLoad() {
-	ShowBiasType();
-}
-// ]]></script>
-
-
-
-
-<form action="" method="POST" name="ParamForm">
-
-
-
-
-
-<div class="container-fluid"><form id="tool"><fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
-
-
-          <label><font>BASE</sub> </font><font face="Arial" size="5">  (Bias Type)</font></label><select id="BiasType" name="BiasType" size="1" onchange="ShowBiasType();" class="intro" value="1" style="position: absolute;   width:500; right: 10px;"class="form-control" type="number" /><option selected="selected" value="1">Series Resistor</option> <option value="2">Voltage Divider</option> </select>
-      
-  <h1 style="font-size:35;"></h1>
-          <label><font>R<sub>B</sub> </font><font face="Arial" size="5">  (Base resistor)</font></label><input  name="RB" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label class="intro2"style="padding: 5px ;  position: absolute;right: 10px; height:68.5; text-align:center; font-size:60px;    border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label> 
-
-   <h1 style="font-size:24;"></h1>
-          <label><font>V<sub>B</sub> </font><font face="Arial" size="5">  (Bias Voltage)</font></label><input  name="Vin" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; height:68.5; text-align:center; font-size:60px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-
-  <h1 style="font-size:25;"></h1>
-          <label><font>R<sub>1</sub> </font><font face="Arial" size="5">  </font></label><input  name="R1" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label class="intro2"style="padding: 5px ;  position: absolute;right: 10px; height:68.5; text-align:center; font-size:60px;    border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label> 
-
-   <h1 style="font-size:24;"></h1>
-          <label><font>R<sub>2</sub> </font><font face="Arial" size="5">  </font></label><input  name="R2" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; height:68.5; text-align:center; font-size:60px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label>
-
-
-
-
-
-
-  
-   
-
-    <h1 style="font-size:26;"></h1>
-          <label><font>R<sub>C</sub> </font><font face="Arial" size="5">(Collector resistor) </font></label><input  name="RC" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; height:68.5; text-align:center; font-size:60px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label>
-
-     <h1 style="font-size:27;"></h1>
-          <label><font>R<sub>E1</sub> </font><font face="Arial" size="5">(Emitter resistor 1)Bypassed</font></label><input  name="RE1" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  height:68.5; text-align:center; font-size:60px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label>
-
-        <h1 style="font-size:28;"></h1>
-          <label><font>R<sub>E2</sub> </font><font face="Arial" size="5">(Emitter resistor 2) Gain control</font></label><input " name="RE2" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; height:68.5; text-align:center; font-size:60px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label>
-
-    
-        <h1 style="font-size:29;"></h1>
-          <label><font>VP</sub> </font><font face="Arial" size="5">(Supply Voltage)</font></label><input  name="VP" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  height:68.5; text-align:center; font-size:60px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-
-        <h1 style="font-size:43;"></h1>
-          <label><font>Beta</sub> </font><font face="Arial" size="5">(DC Current Gain)</font></label><input  name="Beta" size="17" class="intro"  style="position: absolute;   width:370; right: 10px;"class="form-control" type="number" />
-       
-        <h1 style="font-size:44;"></h1>
-          <label><font>V<sub>BE </sub> </font><font face="Arial" size="5">(Base to emitter drop)</font></label><input name="Vbe" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; height:68.5; text-align:center; font-size:60px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-
-                <h1 style="font-size:30;"></h1>
-          <label><font>R<sub>s</sub> </font><font face="Arial" size="5">(Source Resistance)</font></label><input  name="Rs" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; height:68.5; text-align:center; font-size:60px;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-
-        <h1 style="font-size:30;"></h1>
-          <label><font>R<sub>L</sub> </font><font face="Arial" size="5">(Load resistor)</font></label><input  name="RL" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  height:68.5; text-align:center; font-size:60px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-
-              <h1 style="font-size:30;"></h1>
-          <label><font>f<sub>T</sub> </font><font face="Arial" size="5">(Current Gain BW Product)</font></label><input  name="Ft" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:40px; height:68.5; text-align:center;   border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">MHz</label>
-
-           
-              <h1 style="font-size:30;"></h1>
-          <label><font>C<sub>CB</sub> </font><font face="Arial" size="5">(Collector-Base Cap.)Optional</font></label><input  name="Ccb" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:50px;  height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">PF</label>
-
-              <h1 style="font-size:32;"></h1>
-          <label><font>C<sub>BE</sub> </font><font face="Arial" size="5">(Base-Emitter Cap.)Optional</font></label><input  name="Cbe" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:50px; height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">PF</label>
-
-
-</fieldset>
-<br>
- <fieldset><legend><div colspan="2" align="center" height="19"><input type="Button" onClick="Compute(document.ParamForm)" value="Calculate" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
+#errorBox {
+  display: none;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 800;
   text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></div></div>
-</div></legend></fieldset> 
-      
+  border: 2px solid #dc2626;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fef2f2;
+}
+.result-title {
+  margin-top: 30px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #7b8794;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.result-card {
+  min-height: 82px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #cfd6df;
+}
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
 
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Outputs</h3></div></legend>
+.result-label {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: .5px;
+}
+.result-value {
+  font-size: 16px;
+  font-weight: 900;
+  word-break: break-word;
+  line-height: 1.2;
+  min-height: 22px;
+}
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.diagramBox {
+  background: #fff;
+  padding: 16px;
+  text-align: center;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.diagramBox svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+.aboutLead {
+  background: linear-gradient(135deg, #eef5ff, #fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid #059669;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+  line-height: 1.6;
+}
+@media(max-width:600px){
+  body { padding: 0 !important; }
+  #transistor-biasing-calc { padding: 14px 10px !important; }
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
+}
+</style>
+</head>
+<body>
 
+<div id="transistor-biasing-calc">
 
-              <h1 style="font-size:50;"></h1>
-          <label><font>Vc</sub> </font><font face="Arial" size="5">(Collector Voltage)</font></label><input type="text" name="Vc" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
+  <div class="calc-grid">
+    <div class="subTitle">Select Biasing Mode</div>
+    <div>
+      <label class="calc-label">Bias Configuration</label>
+      <div class="calc-row" style="grid-template-columns: 1fr;">
+        <select id="biasMode" onchange="switchBiasMode()">
+          <option value="voltageDivider" selected>Voltage-Divider Bias (Calculate IC, VCE, VB)</option>
+          <option value="emitterBias">Emitter Bias (Calculate IC, VCE, VE)</option>
+          <option value="collectorFeedback">Collector Feedback Bias (Calculate IC, VCE, IB)</option>
+          <option value="fixedBias">Fixed Bias (Calculate IC, VCE, IB)</option>
+          <option value="stability">Stability Factor (Calculate S for Voltage-Divider)</option>
+          <option value="designVD">Design Voltage-Divider (Calculate R1, R2 for target IC)</option>
+        </select>
+      </div>
+    </div>
 
+    <!-- 1. Voltage Divider Bias Inputs -->
+    <div id="inputsVoltageDivider" class="calc-grid">
+      <div class="subTitle">Parameters</div>
+      <div><label class="calc-label">VCC (Supply Voltage)</label><div class="calc-row"><input id="vcc_vd" type="number" step="any" value="12"><div class="unit-box">V</div></div></div>
+      <div><label class="calc-label">R1 (Upper Divider)</label><div class="calc-row"><input id="r1_vd" type="number" step="any" value="10"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">R2 (Lower Divider)</label><div class="calc-row"><input id="r2_vd" type="number" step="any" value="2.2"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">RC (Collector Resistor)</label><div class="calc-row"><input id="rc_vd" type="number" step="any" value="2.7"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">RE (Emitter Resistor)</label><div class="calc-row"><input id="re_vd" type="number" step="any" value="1"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">β (Current Gain)</label><div class="calc-row"><input id="beta_vd" type="number" step="any" value="100"><div class="unit-box">gain</div></div></div>
+      <div><label class="calc-label">VBE (Base-Emitter Voltage)</label><div class="calc-row"><input id="vbe_vd" type="number" step="any" value="0.7"><div class="unit-box">V</div></div></div>
+    </div>
 
+    <!-- 2. Emitter Bias Inputs -->
+    <div id="inputsEmitterBias" class="calc-grid" style="display: none;">
+      <div class="subTitle">Parameters</div>
+      <div><label class="calc-label">VCC (Supply Voltage)</label><div class="calc-row"><input id="vcc_eb" type="number" step="any" value="12"><div class="unit-box">V</div></div></div>
+      <div><label class="calc-label">VEE (Negative Supply)</label><div class="calc-row"><input id="vee_eb" type="number" step="any" value="-12"><div class="unit-box">V</div></div></div>
+      <div><label class="calc-label">RB (Base Resistor)</label><div class="calc-row"><input id="rb_eb" type="number" step="any" value="100"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">RC (Collector Resistor)</label><div class="calc-row"><input id="rc_eb" type="number" step="any" value="2.7"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">RE (Emitter Resistor)</label><div class="calc-row"><input id="re_eb" type="number" step="any" value="1"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">β (Current Gain)</label><div class="calc-row"><input id="beta_eb" type="number" step="any" value="100"><div class="unit-box">gain</div></div></div>
+      <div><label class="calc-label">VBE (Base-Emitter Voltage)</label><div class="calc-row"><input id="vbe_eb" type="number" step="any" value="0.7"><div class="unit-box">V</div></div></div>
+    </div>
 
-      
-              <h1 style="font-size:40;"></h1>
-          <label><font>Ve</sub> </font><font face="Arial" size="5">(Emitter Voltage)</font></label><input type="text" name="Ve" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; height:68.5; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
+    <!-- 3. Collector Feedback Inputs -->
+    <div id="inputsCollectorFeedback" class="calc-grid" style="display: none;">
+      <div class="subTitle">Parameters</div>
+      <div><label class="calc-label">VCC (Supply Voltage)</label><div class="calc-row"><input id="vcc_cf" type="number" step="any" value="12"><div class="unit-box">V</div></div></div>
+      <div><label class="calc-label">RB (Base Resistor)</label><div class="calc-row"><input id="rb_cf" type="number" step="any" value="100"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">RC (Collector Resistor)</label><div class="calc-row"><input id="rc_cf" type="number" step="any" value="2.7"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">β (Current Gain)</label><div class="calc-row"><input id="beta_cf" type="number" step="any" value="100"><div class="unit-box">gain</div></div></div>
+      <div><label class="calc-label">VBE (Base-Emitter Voltage)</label><div class="calc-row"><input id="vbe_cf" type="number" step="any" value="0.7"><div class="unit-box">V</div></div></div>
+    </div>
 
+    <!-- 4. Fixed Bias Inputs -->
+    <div id="inputsFixedBias" class="calc-grid" style="display: none;">
+      <div class="subTitle">Parameters</div>
+      <div><label class="calc-label">VCC (Supply Voltage)</label><div class="calc-row"><input id="vcc_fb" type="number" step="any" value="12"><div class="unit-box">V</div></div></div>
+      <div><label class="calc-label">RB (Base Resistor)</label><div class="calc-row"><input id="rb_fb" type="number" step="any" value="100"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">RC (Collector Resistor)</label><div class="calc-row"><input id="rc_fb" type="number" step="any" value="2.7"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">β (Current Gain)</label><div class="calc-row"><input id="beta_fb" type="number" step="any" value="100"><div class="unit-box">gain</div></div></div>
+      <div><label class="calc-label">VBE (Base-Emitter Voltage)</label><div class="calc-row"><input id="vbe_fb" type="number" step="any" value="0.7"><div class="unit-box">V</div></div></div>
+    </div>
 
-                         <h1 style="font-size:40;"></h1>
-          <label><font>Vb</sub> </font><font face="Arial" size="5">(Base Voltage)</font></label><input type="text" name="Vb" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
+    <!-- 5. Stability Factor Inputs -->
+    <div id="inputsStability" class="calc-grid" style="display: none;">
+      <div class="subTitle">Parameters</div>
+      <div><label class="calc-label">R1 (Upper Divider)</label><div class="calc-row"><input id="r1_stab" type="number" step="any" value="10"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">R2 (Lower Divider)</label><div class="calc-row"><input id="r2_stab" type="number" step="any" value="2.2"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">RC (Collector Resistor)</label><div class="calc-row"><input id="rc_stab" type="number" step="any" value="2.7"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">RE (Emitter Resistor)</label><div class="calc-row"><input id="re_stab" type="number" step="any" value="1"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">β (Current Gain)</label><div class="calc-row"><input id="beta_stab" type="number" step="any" value="100"><div class="unit-box">gain</div></div></div>
+    </div>
 
+    <!-- 6. Design Voltage-Divider Inputs -->
+    <div id="inputsDesignVD" class="calc-grid" style="display: none;">
+      <div class="subTitle">Parameters</div>
+      <div><label class="calc-label">VCC (Supply Voltage)</label><div class="calc-row"><input id="vcc_design" type="number" step="any" value="12"><div class="unit-box">V</div></div></div>
+      <div><label class="calc-label">Target IC (Collector Current)</label><div class="calc-row"><input id="ic_design" type="number" step="any" value="2"><div class="unit-box">mA</div></div></div>
+      <div><label class="calc-label">RC (Collector Resistor)</label><div class="calc-row"><input id="rc_design" type="number" step="any" value="2.7"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">RE (Emitter Resistor)</label><div class="calc-row"><input id="re_design" type="number" step="any" value="1"><div class="unit-box">kΩ</div></div></div>
+      <div><label class="calc-label">β (Current Gain)</label><div class="calc-row"><input id="beta_design" type="number" step="any" value="100"><div class="unit-box">gain</div></div></div>
+      <div><label class="calc-label">VBE (Base-Emitter Voltage)</label><div class="calc-row"><input id="vbe_design" type="number" step="any" value="0.7"><div class="unit-box">V</div></div></div>
+      <div><label class="calc-label">Stiffness Factor</label><div class="calc-row"><input id="stiffness_design" type="number" step="any" value="10"><div class="unit-box">factor</div></div></div>
+    </div>
+  </div>
 
-           <h1 style="font-size:40;"></h1>
-          <label><font>Ic</sub> </font><font face="Arial" size="5">(Collector Current)</font></label><input type="text" name="Ic" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">mA</label>
+  <button type="button" onclick="calculateBJT()">CALCULATE</button>
 
-                   <h1 style="font-size:40;"></h1>
-          <label><font>Ib</sub> </font><font face="Arial" size="5">(Base Current)</font></label><input type="text" name="Ib" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">mA</label>
+  <div id="errorBox">Please enter valid values. Supply voltage, gain, and resistor values must be positive non-zero numbers.</div>
 
+  <div class="result-title">RESULTS</div>
 
-                 <h1 style="font-size:42;"></h1>
-          <label><font>g<sub>m</sub> </font><font face="Arial" size="5">(Transconductance)</font></label><input type="text" name="gm" size="17" class="intro"  style="position: absolute;   width:370; right: 10px;"class="form-control" type="number" />
+  <div class="result-grid" id="resultsBlock">
+    <div class="result-card orange"><div class="result-label">Base Voltage (VB)</div><div class="result-value" id="result_vb">--</div></div>
+    <div class="result-card green"><div class="result-label">Emitter Voltage (VE)</div><div class="result-value" id="result_ve">--</div></div>
+    <div class="result-card blue"><div class="result-label">Collector Current (IC)</div><div class="result-value" id="result_ic">--</div></div>
+    <div class="result-card purple"><div class="result-label">Base Current (IB)</div><div class="result-value" id="result_ib">--</div></div>
+    <div class="result-card orange"><div class="result-label">Collector-Emitter Voltage (VCE)</div><div class="result-value" id="result_vce">--</div></div>
+    <div class="result-card green"><div class="result-label">Operating Region</div><div class="result-value" id="result_region">--</div></div>
+    <div class="result-card blue" id="extraResult1" style="display: none;"><div class="result-label" id="extra1Label">Calculated R1</div><div class="result-value" id="result_extra1">--</div></div>
+    <div class="result-card purple" id="extraResult2" style="display: none;"><div class="result-label" id="extra2Label">Calculated R2</div><div class="result-value" id="result_extra2">--</div></div>
+  </div>
 
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Supply Voltage (Vcc)</strong>The positive voltage rail that powers the collector load and bias networks in our BJT circuit loops.</div>
+      <div class="paramItem"><strong>Collector Resistor (Rc)</strong>Limits current entering the collector terminal and sets quiescent output potentials.</div>
+      <div class="paramItem"><strong>Gain (ß / hFE)</strong>The current amplification factor that dictates base-to-collector loop current relations.</div>
+      <div class="paramItem"><strong>Base-Emitter Drop (Vbe)</strong>Silicon diode threshold voltage, typically modeled as a stable 0.7V forward-bias barrier.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Voltage Divider Setup</strong></p>
+        <p>The preferred choice for high analog stability. Minimizes Q-point shift even if gain parameters deviate during workload fluctuations.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Saturated Switch Design</strong></p>
+        <p>Set inputs to drive Vce down to approximately 0.2V, establishing a highly saturated closed switch condition.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Stability Analysis</strong></p>
+        <p>Analyze how temperature changes alter overall leakage and how negative emitter feedback stabilizes operating lines.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>BJT Loop Check</strong></p>
+        <p>Excellent for quickly verifying academic assignments or cross-checking circuit board node diagnostics during repair cycles.</p>
+      </div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A BJT requires precise quiescent point (Q-point) alignment to operate as an analog amplifier without experiencing signal cutoff or saturation anomalies.</p>
 
-                  <h1 style="font-size:30;"></h1>
-          <label><font>r<sub>&pi;</sub> </font><font face="Arial" size="5">(Input Resistance of BJT at low freq)</font></label><input type="text" name="rpi" size="17" class="intro"  style="position: absolute;   width:370; right: 10px;"class="form-control" type="number" />
-       
+    <div class="diagramBox">
+      <!-- Colorful BJT Transistor Bias Interactive Calculator Schematic matching the reference layout -->
+      <svg viewBox="0 0 900 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BJT Transistor Bias Interactive Calculator Schematic">
+        <rect width="900" height="540" fill="#fff" rx="12"/>
+        
+        <style>
+          .wire{stroke:#1e3a8a;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .box-header{font-family:Arial,sans-serif;font-size:15px;font-weight:900;fill:#fff;text-anchor:middle}
+          .box-text{font-family:Arial,sans-serif;font-size:11px;font-weight:800;fill:#1e293b}
+          .value-ph{font-family:Arial,sans-serif;font-size:11px;font-weight:900;fill:#ef4444}
+          .label{font-family:Arial,sans-serif;font-size:13px;font-weight:900;fill:#2563eb}
+          .formula-text{font-family:Arial,sans-serif;font-size:13px;font-weight:900;fill:#1e293b}
+          .formula-title{font-family:Arial,sans-serif;font-size:13px;font-weight:900;fill:#16a34a;text-anchor:middle}
+          .arrow-line{stroke:#ef4444;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+        </style>
 
+        <defs>
+          <!-- Gradients for premium UI boxes -->
+          <linearGradient id="boxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f0f9ff" />
+            <stop offset="100%" stop-color="#e0f2fe" />
+          </linearGradient>
+          <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0284c7" />
+            <stop offset="100%" stop-color="#0369a1" />
+          </linearGradient>
+          <linearGradient id="triGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#eff6ff" />
+            <stop offset="100%" stop-color="#dbeafe" />
+          </linearGradient>
+          <linearGradient id="formulaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f0fdf4" />
+            <stop offset="100%" stop-color="#dcfce7" />
+          </linearGradient>
 
-         
-
-
-
-<br>
-<hr>
-
-<span class="ids"><input type="checkbox" name="Saturated" value="ON" /><font size="30px">Saturated</font><input type="checkbox" name="CutOff" value="ON" /><font size="30px">CutOff</font></span>
-<hr>
-
-<fieldset><legend> 
-<p align="center"><span style="color: #030303;"><strong><font face="Arial"  size="10">CE (Common Emitter) Configuration Parameters</font></strong></span></p></legend>
-
-              
-          <label><font>A</sub> </font><font face="Arial" size="5">(Amplifier Voltage Gain)</font></label><input type="text" name="Ace" size="17" class="intro"  style="position: absolute;   width:367; right: 64px;"class="form-control" type="number" />
-      
-
-
-                <h1 style="font-size:40;"></h1>
-          <label><font>R<sub>in</sub> </font><font face="Arial" size="5"></font></label><input type="text" name="Rince" size="17" class="intro"  style="position: absolute;   width:250; right: 183px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 63px;font-size:60px; height:68.5; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-
-
-                      <h1 style="font-size:30;"></h1>
-          <label><font>C<sub>MCE</sub> </font><font face="Arial" size="5">(Miller Capacitance)
-</font></label><input type="text" name="Cmce" size="17" class="intro"  style="position: absolute;   width:250; right: 183px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 63px;font-size:60px;  height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">PF</label>
-
-
-                                    <h1 style="font-size:30;"></h1>
-          <label><font>BW<sub>CE</sub> </font><font face="Arial" size="5">
-</font></label><input type="text" name="BWce" size="17" class="intro"  style="position: absolute;   width:250; right: 183px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 63px;font-size:40px; height:68.5; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">MHz</label>
-
-
-             
-                                    <h1 style="font-size:30;"></h1>
-          <label><font>R<sub>O</sub> </font><font face="Arial" size="5">
-</font></label><input type="text" name="Roce" size="17" class="intro"  style="position: absolute;   width:250; right: 183px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 63px;font-size:60px; height:68.5; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-
-</fieldset>
-
-<fieldset><legend> 
-<p align="center"><span style="color: #030303;"><strong><font face="Arial"  size="10">CC (Common Collector) Configuration Parameters</font></strong></span></p></legend> 
-
-                                         
-          <label><font>A</sub> </font><font face="Arial" size="5">(Amplifier Voltage Gain)
-</font></label><input type="text" name="Acc" size="17" class="intro"  style="position: absolute;   width:367; right: 67px;"class="form-control" type="number" />
-       
-
-
-                                                  <h1 style="font-size:40;"></h1>
-          <label><font>R<sub>in</sub> </font><font face="Arial" size="5">
-</font></label><input type="text" name="Rincc" size="17" class="intro"  style="position: absolute;   width:250; right: 183px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 63px;font-size:60px;  height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-
-
-                                                               <h1 style="font-size:30;"></h1>
-          <label><font>BW<sub>CC</sub> </font><font face="Arial" size="5">
-</font></label><input type="text" name="BWcc" size="17" class="intro"  style="position: absolute;   width:250; right: 183px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 63px;font-size:40px; height:68.5; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">MHz</label>
-
-
+          <!-- Marker for sleek red pointer lines -->
+          <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#ef4444" />
+          </marker>
           
-                                                               <h1 style="font-size:30;"></h1>
-          <label><font>R<sub>O</sub> </font><font face="Arial" size="5">
-</font></label><input type="text" name="Rocc" size="17" class="intro"  style="position: absolute;   width:250; right: 183px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 63px;font-size:60px;  height:68.5; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
+          <!-- Black wire junction dots -->
+          <circle id="dot" cx="0" cy="0" r="4" fill="#0f172a" />
+          
+          <!-- Colorful US standard horizontal resistor -->
+          <g id="res_h">
+            <line x1="-30" y1="0" x2="-15" y2="0" stroke="#1e3a8a" stroke-width="2.5" />
+            <line x1="15" y1="0" x2="30" y2="0" stroke="#1e3a8a" stroke-width="2.5" />
+            <rect x="-15" y="-6" width="30" height="12" rx="2" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5" />
+            <rect x="-9" y="-6" width="3.5" height="12" fill="#ef4444" />
+            <rect x="-2" y="-6" width="3.5" height="12" fill="#3b82f6" />
+            <rect x="5" y="-6" width="3.5" height="12" fill="#854d0e" />
+          </g>
+          
+          <!-- Colorful US standard vertical resistor -->
+          <g id="res_v">
+            <line x1="0" y1="-30" x2="0" y2="-15" stroke="#1e3a8a" stroke-width="2.5" />
+            <line x1="0" y1="15" x2="0" y2="30" stroke="#1e3a8a" stroke-width="2.5" />
+            <rect x="-6" y="-15" width="12" height="30" rx="2" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5" />
+            <rect x="-6" y="-9" width="12" height="3.5" fill="#ef4444" />
+            <rect x="-6" y="-2" width="12" height="3.5" fill="#3b82f6" />
+            <rect x="-6" y="5" width="12" height="3.5" fill="#854d0e" />
+          </g>
 
-</form>
+          <!-- Standard Ground symbol -->
+          <g id="ground">
+            <line x1="0" y1="0" x2="0" y2="10" stroke="#1e3a8a" stroke-width="2.5" />
+            <line x1="-12" y1="10" x2="12" y2="10" stroke="#1e3a8a" stroke-width="2.5" />
+            <line x1="-8" y1="15" x2="8" y2="15" stroke="#1e3a8a" stroke-width="2" />
+            <line x1="-4" y1="20" x2="4" y2="20" stroke="#1e3a8a" stroke-width="1.5" />
+          </g>
+        </defs>
 
-</fieldset>
+        <!-- INPUTS BOX (Left Side) -->
+        <rect x="15" y="60" width="245" height="270" fill="url(#boxGrad)" stroke="#0284c7" stroke-width="1.5" rx="8" />
+        <path d="M 15 68 A 8 8 0 0 1 23 60 H 252 A 8 8 0 0 1 260 68 V 90 H 15 Z" fill="url(#headerGrad)" />
+        <text x="137" y="79" class="box-header">INPUTS</text>
+        
+        <text x="25" y="112" class="box-text">VCC (Power Supply Voltage)</text>
+        <!-- Dynamic interactive-like slider graphic -->
+        <line x1="25" y1="130" x2="250" y2="130" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
+        <line x1="25" y1="130" x2="95" y2="130" stroke="#ea580c" stroke-width="4" stroke-linecap="round" />
+        <rect x="90" y="122" width="10" height="16" rx="2" fill="#ea580c" stroke="#c2410c" stroke-width="1" />
+        
+        <text x="25" y="165" class="box-text">RB (Base Resistor)</text>
+        <text x="25" y="198" class="box-text">RC (Collector Resistor)</text>
+        <text x="25" y="231" class="box-text">RE (Collector Resistor)</text>
+        <text x="25" y="264" class="box-text">BETA (Transistor Gain)</text>
+        <text x="25" y="297" class="box-text">VBE (Base-Emitter Voltage)</text>
 
+        <!-- OUTPUTS BOX (Right Side) -->
+        <rect x="640" y="60" width="245" height="270" fill="url(#boxGrad)" stroke="#0284c7" stroke-width="1.5" rx="8" />
+        <path d="M 640 68 A 8 8 0 0 1 648 60 H 877 A 8 8 0 0 1 885 68 V 90 H 640 Z" fill="url(#headerGrad)" />
+        <text x="762" y="79" class="box-header">OUTPUTS</text>
+        
+        <text x="650" y="115" class="box-text">IB (Base Current) = <tspan class="value-ph">[VALUE] A</tspan></text>
+        <text x="650" y="145" class="box-text">IC (Collector Current) = <tspan class="value-ph">[VALUE] A</tspan></text>
+        <text x="650" y="175" class="box-text">IE (Collector Current) = <tspan class="value-ph">[VALUE] A</tspan></text>
+        <text x="650" y="205" class="box-text">VCE (Emitter-Emitter Voltage) = <tspan class="value-ph">[VALUE] A</tspan></text>
+        <text x="650" y="235" class="box-text">VC (Emitter Voltage) = <tspan class="value-ph">[VALUE] V</tspan></text>
+        <text x="650" y="265" class="box-text">VE (Emitter Voltage) = <tspan class="value-ph">[VALUE] V</tspan></text>
+        <text x="650" y="295" class="box-text">VE (Emitter Voltage) = <tspan class="value-ph">[VALUE] V</tspan></text>
+
+        <!-- CENTER CIRCUIT BRIDGE DIAGRAM -->
+        <!-- Connection wires -->
+        <path d="M 350 90 H 550" class="wire"/>
+        <path d="M 350 330 H 550" class="wire"/>
+        <path d="M 350 90 V 330" class="wire"/>
+        <path d="M 550 90 V 330" class="wire"/>
+        
+        <!-- Central active block connection (Left node to Triangle input) -->
+        <path d="M 350 210 H 410" class="wire"/>
+        <!-- Central active block connection (Triangle output to Right node) -->
+        <path d="M 470 210 H 550" class="wire"/>
+
+        <!-- Placing colorful horizontal resistors -->
+        <use href="#res_h" x="450" y="90" />
+        <use href="#res_h" x="450" y="330" />
+
+        <!-- Placing colorful vertical resistors -->
+        <use href="#res_v" x="350" y="150" />
+        <use href="#res_v" x="350" y="270" />
+        <use href="#res_v" x="550" y="150" />
+        <use href="#res_v" x="550" y="270" />
+
+        <!-- Placing Grounds -->
+        <use href="#ground" x="350" y="330" />
+        <use href="#ground" x="550" y="330" />
+
+        <!-- Placing Connection Dots -->
+        <use href="#dot" x="350" y="210" />
+        <use href="#dot" x="550" y="210" />
+        <use href="#dot" x="350" y="90" />
+        <use href="#dot" x="550" y="90" />
+        <use href="#dot" x="350" y="330" />
+        <use href="#dot" x="550" y="330" />
+
+        <!-- Triangle Block (Op-Amp styled Q1) -->
+        <polygon points="410,175 470,210 410,245" fill="url(#triGrad)" stroke="#0284c7" stroke-width="2.5" />
+        <!-- Small arrow inside -->
+        <path d="M 425 210 H 448" stroke="#0284c7" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        <polygon points="448,210 442,206 442,214" fill="#0284c7" />
+
+        <!-- Block labels -->
+        <text x="440" y="165" class="label" text-anchor="middle">Q</text>
+        <text x="480" y="205" class="label">Q1</text>
+        <!-- Curved arrow "1" -->
+        <path d="M 432 250 Q 442 260 452 250" stroke="#1e3a8a" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+        <text x="456" y="258" class="small" font-size="11px" font-weight="900" fill="#1e3a8a">1</text>
+
+        <!-- Resistor Label text -->
+        <text x="450" y="70" class="label" text-anchor="middle" fill="#0284c7">VCC</text>
+        <text x="312" y="155" class="label" text-anchor="end">RC</text>
+        <text x="312" y="275" class="label" text-anchor="end">RE</text>
+        <text x="588" y="155" class="label" text-anchor="start">RE</text>
+        <text x="588" y="275" class="label" text-anchor="start">RE</text>
+
+        <!-- INPUT ARROWS (Red pointer lines pointing to circuit junctions) -->
+        <path d="M 235 110 H 325 M 325 110 V 90" class="arrow-line" marker-end="url(#arrow)" />
+        <path d="M 215 163 H 325" class="arrow-line" marker-end="url(#arrow)" />
+        <path d="M 230 196 H 325" class="arrow-line" marker-end="url(#arrow)" />
+        <path d="M 230 229 H 325" class="arrow-line" marker-end="url(#arrow)" />
+        <path d="M 245 295 H 325 M 325 295 V 325" class="arrow-line" marker-end="url(#arrow)" />
+
+        <!-- OUTPUT ARROWS -->
+        <path d="M 645 112 H 585 M 585 112 V 130" class="arrow-line" marker-end="url(#arrow)" />
+        <path d="M 645 205 H 568" class="arrow-line" marker-end="url(#arrow)" />
+        <path d="M 645 295 H 585 M 585 295 V 285" class="arrow-line" marker-end="url(#arrow)" />
+
+        <!-- KEY FORMULAS BOX (Bottom) -->
+        <rect x="200" y="380" width="500" height="135" fill="url(#formulaGrad)" stroke="#16a34a" stroke-width="1.5" rx="8" />
+        <text x="450" y="405" class="formula-title">KEY FORMULAS</text>
+        <text x="310" y="435" class="formula-text">IB = (VCC - VBE) / (RB + (BETA + 1) * RE)</text>
+        
+        <!-- Big red formula arrow -->
+        <path d="M 235 465 H 375" class="arrow-line" marker-end="url(#arrow)" stroke-width="3" />
+        <text x="400" y="470" class="formula-text" font-size="14px">IC = BETA * IB</text>
+        
+        <text x="350" y="500" class="formula-text">VCE = VCC - IC * (RC + RE)</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Voltage Divider Base Voltage: Vb = Vcc * R2 / (R1 + R2)</div>
+    <div class="formula">Collector Current: Ic = (Vb - Vbe) / Re</div>
+    <div class="formula">Collector-Emitter Voltage: Vce = Vcc - Ic * (Rc + Re)</div>
+    <div class="formula">Stability Factor S (for Voltage Divider): S = (1 + Beta) / (1 + Beta * (Re / (Re + Rth))) where Rth = (R1 * R2) / (R1 + R2)</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    
+    <h3><strong>1. What is the most common biasing technique for a BJT transistor?</strong></h3>
+    <p>Voltage divider biasing is the most common BJT biasing technique. It stabilizes the base terminal potential regardless of variations in current gain or thermal drift conditions.</p>
+
+    <h3><strong>2. Why is fixed bias rarely used in commercial analog designs?</strong></h3>
+    <p>Fixed bias provides no thermal stabilization feedback. If temperature rises or if you swap the transistor for one with a slightly different gain (Beta), the Q-point shifts dramatically, potentially pushing the transistor into saturation or cutoff.</p>
+
+    <h3><strong>3. What is the significance of the Q-point of a transistor?</strong></h3>
+    <p>The Q-point (Quiescent point) is the steady-state DC operating point of the transistor when no AC input signal is applied. It is defined by the values of collector current (Ic) and collector-emitter voltage (Vce).</p>
+
+    <h3><strong>4. How does Emitter Feedback improve BJT stability?</strong></h3>
+    <p>Emitter feedback introduces a resistor (Re) at the emitter terminal. Any upward shift in collector current raises the voltage drop across Re, reducing the available base-emitter forward voltage (Vbe) and safely regulating the base current.</p>
+
+    <h3><strong>5. What is the typical value of silicon base-emitter drop (Vbe)?</strong></h3>
+    <p>Standard silicon PN junctions require a forward bias potential of approximately 0.6V to 0.7V to establish significant conduction through the base-emitter terminal path.</p>
+
+    <h3><strong>6. How do I calculate the base currents in a voltage divider bias circuit?</strong></h3>
+    <p>Using Thevenin's theorem, we simplify the resistive divider on the base terminal into an equivalent voltage source (Vth) and series resistor (Rth). We then evaluate the resulting Kirchhoff loop currents across the base-emitter path.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>BJT Switch Saturation Calculator</strong>Calculate Rb parameters for saturated switching networks.</div>
+      <div class="linkCard"><strong>Voltage Divider Calculator</strong>Design dual-resistor reference voltage dividers.</div>
+      <div class="linkCard"><strong>Ohm's Law Calculator</strong>Process basic voltage, current, and loop resistance equations.</div>
+      <div class="linkCard"><strong>LED series Resistor Calculator</strong>Design current-limiting resistor loops for LEDs safely.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function switchBiasMode() {
+  var mode = document.getElementById('biasMode').value;
+  
+  // Hide all sections first
+  document.getElementById('inputsVoltageDivider').style.display = 'none';
+  document.getElementById('inputsEmitterBias').style.display = 'none';
+  document.getElementById('inputsCollectorFeedback').style.display = 'none';
+  document.getElementById('inputsFixedBias').style.display = 'none';
+  document.getElementById('inputsStability').style.display = 'none';
+  document.getElementById('inputsDesignVD').style.display = 'none';
+  
+  // Show selected section
+  if (mode === 'voltageDivider') {
+    document.getElementById('inputsVoltageDivider').style.display = 'grid';
+  } else if (mode === 'emitterBias') {
+    document.getElementById('inputsEmitterBias').style.display = 'grid';
+  } else if (mode === 'collectorFeedback') {
+    document.getElementById('inputsCollectorFeedback').style.display = 'grid';
+  } else if (mode === 'fixedBias') {
+    document.getElementById('inputsFixedBias').style.display = 'grid';
+  } else if (mode === 'stability') {
+    document.getElementById('inputsStability').style.display = 'grid';
+  } else if (mode === 'designVD') {
+    document.getElementById('inputsDesignVD').style.display = 'grid';
+  }
+
+  // Clear output values
+  document.getElementById('result_vb').textContent = '--';
+  document.getElementById('result_ve').textContent = '--';
+  document.getElementById('result_ic').textContent = '--';
+  document.getElementById('result_ib').textContent = '--';
+  document.getElementById('result_vce').textContent = '--';
+  document.getElementById('result_region').textContent = '--';
+  document.getElementById('extraResult1').style.display = 'none';
+  document.getElementById('extraResult2').style.display = 'none';
+}
+
+function calculateBJT() {
+  var mode = document.getElementById('biasMode').value;
+  
+  if (mode === 'voltageDivider') {
+    calculateVoltageDivider();
+  } else if (mode === 'emitterBias') {
+    calculateEmitterBias();
+  } else if (mode === 'collectorFeedback') {
+    calculateCollectorFeedback();
+  } else if (mode === 'fixedBias') {
+    calculateFixedBias();
+  } else if (mode === 'stability') {
+    calculateStability();
+  } else if (mode === 'designVD') {
+    calculateDesign();
+  }
+}
+
+function calculateVoltageDivider() {
+  var vcc = parseFloat(document.getElementById('vcc_vd').value);
+  var r1 = parseFloat(document.getElementById('r1_vd').value);
+  var r2 = parseFloat(document.getElementById('r2_vd').value);
+  var rc = parseFloat(document.getElementById('rc_vd').value);
+  var re = parseFloat(document.getElementById('re_vd').value);
+  var beta = parseFloat(document.getElementById('beta_vd').value);
+  var vbe = parseFloat(document.getElementById('vbe_vd').value);
+  
+  if (vcc <= 0 || r1 <= 0 || r2 <= 0 || rc <= 0 || re <= 0 || beta <= 0 || isNaN(vcc) || isNaN(r1) || isNaN(r2) || isNaN(rc) || isNaN(re) || isNaN(beta)) {
+    alert('All parameters must be positive numbers.');
+    return;
+  }
+  
+  var vb = vcc * r2 / (r1 + r2);
+  var ve = vb - vbe;
+  var ie = ve / re;
+  var ic = ie;
+  var ib = ic / beta;
+  var vc = vcc - ic * rc;
+  var vce = vc - ve;
+  
+  var region = 'Active';
+  if (vce < 0.2) {
+    region = 'Saturation';
+  } else if (vce > vcc - 1) {
+    region = 'Cutoff';
+  }
+  
+  document.getElementById('result_vb').textContent = vb.toFixed(3) + ' V';
+  document.getElementById('result_ve').textContent = ve.toFixed(3) + ' V';
+  document.getElementById('result_ic').textContent = ic.toFixed(3) + ' mA';
+  document.getElementById('result_ib').textContent = (ib * 1000).toFixed(3) + ' µA';
+  document.getElementById('result_vce').textContent = vce.toFixed(3) + ' V';
+  document.getElementById('result_region').textContent = region;
+  document.getElementById('extraResult1').style.display = 'none';
+  document.getElementById('extraResult2').style.display = 'none';
+}
+
+function calculateEmitterBias() {
+  var vcc = parseFloat(document.getElementById('vcc_eb').value);
+  var vee = parseFloat(document.getElementById('vee_eb').value);
+  var rb = parseFloat(document.getElementById('rb_eb').value);
+  var rc = parseFloat(document.getElementById('rc_eb').value);
+  var re = parseFloat(document.getElementById('re_eb').value);
+  var beta = parseFloat(document.getElementById('beta_eb').value);
+  var vbe = parseFloat(document.getElementById('vbe_eb').value);
+  
+  if (rb <= 0 || rc <= 0 || re <= 0 || beta <= 0 || isNaN(rb) || isNaN(rc) || isNaN(re) || isNaN(beta)) {
+    alert('All resistor and beta values must be positive.');
+    return;
+  }
+  
+  var ib = (0 - vee - vbe) / (rb + (beta + 1) * re);
+  var ic = beta * ib;
+  var ie = (beta + 1) * ib;
+  var ve = -vee + ie * re;
+  var vb = ve + vbe;
+  var vc = vcc - ic * rc;
+  var vce = vc - ve;
+  
+  var region = 'Active';
+  if (vce < 0.2) {
+    region = 'Saturation';
+  } else if (ic < 0.01) {
+    region = 'Cutoff';
+  }
+  
+  document.getElementById('result_vb').textContent = vb.toFixed(3) + ' V';
+  document.getElementById('result_ve').textContent = ve.toFixed(3) + ' V';
+  document.getElementById('result_ic').textContent = ic.toFixed(3) + ' mA';
+  document.getElementById('result_ib').textContent = (ib * 1000).toFixed(3) + ' µA';
+  document.getElementById('result_vce').textContent = vce.toFixed(3) + ' V';
+  document.getElementById('result_region').textContent = region;
+  document.getElementById('extraResult1').style.display = 'none';
+  document.getElementById('extraResult2').style.display = 'none';
+}
+
+function calculateCollectorFeedback() {
+  var vcc = parseFloat(document.getElementById('vcc_cf').value);
+  var rb = parseFloat(document.getElementById('rb_cf').value);
+  var rc = parseFloat(document.getElementById('rc_cf').value);
+  var beta = parseFloat(document.getElementById('beta_cf').value);
+  var vbe = parseFloat(document.getElementById('vbe_cf').value);
+  
+  if (vcc <= 0 || rb <= 0 || rc <= 0 || beta <= 0 || isNaN(vcc) || isNaN(rb) || isNaN(rc) || isNaN(beta)) {
+    alert('All values must be positive.');
+    return;
+  }
+  
+  var ic = (vcc - vbe) / (rc + rb / beta);
+  var ib = ic / beta;
+  var vc = vcc - ic * rc;
+  var vce = vc;
+  var vb = vc;
+  var ve = 0;
+  
+  var region = 'Active';
+  if (vce < 0.2) {
+    region = 'Saturation';
+  } else if (ic < 0.01) {
+    region = 'Cutoff';
+  }
+  
+  document.getElementById('result_vb').textContent = vb.toFixed(3) + ' V';
+  document.getElementById('result_ve').textContent = ve.toFixed(3) + ' V';
+  document.getElementById('result_ic').textContent = ic.toFixed(3) + ' mA';
+  document.getElementById('result_ib').textContent = (ib * 1000).toFixed(3) + ' µA';
+  document.getElementById('result_vce').textContent = vce.toFixed(3) + ' V';
+  document.getElementById('result_region').textContent = region;
+  document.getElementById('extraResult1').style.display = 'none';
+  document.getElementById('extraResult2').style.display = 'none';
+}
+
+function calculateFixedBias() {
+  var vcc = parseFloat(document.getElementById('vcc_fb').value);
+  var rb = parseFloat(document.getElementById('rb_fb').value);
+  var rc = parseFloat(document.getElementById('rc_fb').value);
+  var beta = parseFloat(document.getElementById('beta_fb').value);
+  var vbe = parseFloat(document.getElementById('vbe_fb').value);
+  
+  if (vcc <= 0 || rb <= 0 || rc <= 0 || beta <= 0 || isNaN(vcc) || isNaN(rb) || isNaN(rc) || isNaN(beta)) {
+    alert('All values must be positive.');
+    return;
+  }
+  
+  var ib = (vcc - vbe) / rb;
+  var ic = beta * ib;
+  var vce = vcc - ic * rc;
+  var vb = vbe;
+  var ve = 0;
+  
+  var region = 'Active';
+  if (vce < 0.2) {
+    region = 'Saturation';
+  } else if (ic < 0.01) {
+    region = 'Cutoff';
+  }
+  
+  document.getElementById('result_vb').textContent = vb.toFixed(3) + ' V';
+  document.getElementById('result_ve').textContent = ve.toFixed(3) + ' V';
+  document.getElementById('result_ic').textContent = ic.toFixed(3) + ' mA';
+  document.getElementById('result_ib').textContent = (ib * 1000).toFixed(3) + ' µA';
+  document.getElementById('result_vce').textContent = vce.toFixed(3) + ' V';
+  document.getElementById('result_region').textContent = region;
+  document.getElementById('extraResult1').style.display = 'none';
+  document.getElementById('extraResult2').style.display = 'none';
+}
+
+function calculateStability() {
+  var r1 = parseFloat(document.getElementById('r1_stab').value);
+  var r2 = parseFloat(document.getElementById('r2_stab').value);
+  var rc = parseFloat(document.getElementById('rc_stab').value);
+  var re = parseFloat(document.getElementById('re_stab').value);
+  var beta = parseFloat(document.getElementById('beta_stab').value);
+  
+  if (r1 <= 0 || r2 <= 0 || rc <= 0 || re <= 0 || beta <= 0 || isNaN(r1) || isNaN(r2) || isNaN(rc) || isNaN(re) || isNaN(beta)) {
+    alert('All values must be positive.');
+    return;
+  }
+  
+  var rth = (r1 * r2) / (r1 + r2);
+  var stabilityFactor = (1 + beta) / (1 + beta * (re / (re + rth)));
+  
+  var quality = 'Poor';
+  if (stabilityFactor < 5) {
+    quality = 'Excellent';
+  } else if (stabilityFactor < 15) {
+    quality = 'Good';
+  } else if (stabilityFactor < 30) {
+    quality = 'Fair';
+  }
+  
+  document.getElementById('result_vb').textContent = '--';
+  document.getElementById('result_ve').textContent = '--';
+  document.getElementById('result_ic').textContent = '--';
+  document.getElementById('result_ib').textContent = '--';
+  document.getElementById('result_vce').textContent = '--';
+  
+  document.getElementById('extra1Label').textContent = 'Stability Factor (S):';
+  document.getElementById('result_extra1').textContent = stabilityFactor.toFixed(2);
+  document.getElementById('extraResult1').style.display = 'block';
+  
+  document.getElementById('extra2Label').textContent = 'Bias Stability Quality:';
+  document.getElementById('result_extra2').textContent = quality;
+  document.getElementById('extraResult2').style.display = 'block';
+  
+  document.getElementById('result_region').textContent = 'S measures IC sensitivity to beta variation';
+}
+
+function calculateDesign() {
+  var vcc = parseFloat(document.getElementById('vcc_design').value);
+  var icTarget = parseFloat(document.getElementById('ic_design').value);
+  var rc = parseFloat(document.getElementById('rc_design').value);
+  var re = parseFloat(document.getElementById('re_design').value);
+  var beta = parseFloat(document.getElementById('beta_design').value);
+  var vbe = parseFloat(document.getElementById('vbe_design').value);
+  var stiffness = parseFloat(document.getElementById('stiffness_design').value);
+  
+  if (vcc <= 0 || icTarget <= 0 || rc <= 0 || re <= 0 || beta <= 0 || stiffness <= 0 || isNaN(vcc) || isNaN(icTarget) || isNaN(rc) || isNaN(re) || isNaN(beta) || isNaN(stiffness)) {
+    alert('All values must be positive.');
+    return;
+  }
+  
+  var ve = icTarget * re;
+  var vb = ve + vbe;
+  var ib = icTarget / beta;
+  var i2 = stiffness * ib;
+  var r2 = vb / i2;
+  var i1 = i2 + ib;
+  var r1 = (vcc - vb) / i1;
+  var vce = vcc - icTarget * (rc + re);
+  
+  var region = 'Active';
+  if (vce < 0.2) {
+    region = 'Saturation (reduce RC or RE)';
+  }
+  
+  document.getElementById('result_vb').textContent = vb.toFixed(3) + ' V';
+  document.getElementById('result_ve').textContent = ve.toFixed(3) + ' V';
+  document.getElementById('result_ic').textContent = icTarget.toFixed(3) + ' mA';
+  document.getElementById('result_ib').textContent = (ib * 1000).toFixed(3) + ' µA';
+  document.getElementById('result_vce').textContent = vce.toFixed(3) + ' V';
+  
+  document.getElementById('extra1Label').textContent = 'Calculated R1:';
+  document.getElementById('result_extra1').textContent = r1.toFixed(2) + ' kΩ';
+  document.getElementById('extraResult1').style.display = 'block';
+  
+  document.getElementById('extra2Label').textContent = 'Calculated R2:';
+  document.getElementById('result_extra2').textContent = r2.toFixed(2) + ' kΩ';
+  document.getElementById('extraResult2').style.display = 'block';
+  
+  document.getElementById('result_region').textContent = region;
+}
+
+// Initial view reset
+window.onload = function() {
+  switchBiasMode();
+};
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. What is the most common biasing technique for a BJT transistor?","acceptedAnswer":{"@type":"Answer","text":"Voltage divider biasing is the most common and robust BJT biasing technique. It creates a stable base voltage that is almost entirely independent of the transistor's current gain (Beta) and temperature changes."}},
+{"@type":"Question","name":"2. Why is fixed bias rarely used in commercial analog designs?","acceptedAnswer":{"@type":"Answer","text":"Fixed bias provides no thermal stabilization feedback. If temperature rises or if you swap the transistor for one with a slightly different gain (Beta), the Q-point shifts dramatically, potentially pushing the transistor into saturation or cutoff."}},
+{"@type":"Question","name":"3. What is the significance of the Q-point of a transistor?","acceptedAnswer":{"@type":"Answer","text":"The Q-point (Quiescent point) is the steady-state DC operating point of the transistor when no AC input signal is applied. It is defined by the values of collector current (Ic) and collector-emitter voltage (Vce)."}},
+{"@type":"Question","name":"4. How does Emitter Feedback improve BJT stability?","acceptedAnswer":{"@type":"Answer","text":"Emitter feedback introduces a resistor (Re) at the emitter terminal. Any upward shift in collector current raises the voltage drop across Re, reducing the available base-emitter forward voltage (Vbe) and safely regulating the base current."}},
+{"@type":"Question","name":"5. What is the typical value of silicon base-emitter drop (Vbe)?","acceptedAnswer":{"@type":"Answer","text":"Standard silicon PN junctions require a forward bias potential of approximately 0.6V to 0.7V to establish significant conduction through the base-emitter terminal path."}},
+{"@type":"Question","name":"6. How do I calculate the base currents in a voltage divider bias circuit?","acceptedAnswer":{"@type":"Answer","text":"Using Thevenin's theorem, we simplify the resistive divider on the base terminal into an equivalent voltage source (Vth) and series resistor (Rth). We then evaluate the resulting Kirchhoff loop currents across the base-emitter path."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"BJT Transistor Biasing Calculator","item":"https://calcboy.com/tool/bjt-transistor-biasing-calculator"}
+]
+}
+</script>
+
+</body>
+</html>
