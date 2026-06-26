@@ -1,189 +1,658 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200px;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    text-align:center;
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-</style>			                  
-		
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NE555 Astable Multivibrator Frequency and Duty Cycle Calculator | CalcBoy</title>
+<meta name="description" content="Calculate frequency, duty cycle, resistor and capacitor values for an NE555 Astable Multivibrator circuit with this bidirectional design and analysis tool.">
+<meta name="keywords" content="ne555 calculator, astable multivibrator calculator, 555 timer frequency calculator, 555 duty cycle, schmitt trigger astable, CalcBoy">
+<style>
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f6f8fb;
+  color: #333;
+}
+#ne555-astable-calc, .calc {
+  width: 100% !important;
+  max-width: 620px !important;
+  margin: auto;
+  padding: 14px 10px !important;
+  background: transparent;
+  border: none;
+  box-sizing: border-box;
+}
+#ne555-astable-calc * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 82px;
+  gap: 8px;
+  align-items: center;
+}
+input, select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+}
+input:focus, select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, .12);
+}
+.unit-box {
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
+}
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 14px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
+}
+button {
+  width: 100%;
+  height: 45px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(90deg, #ff7a18, #ff4b00);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 15px;
+}
+#errorBox {
+  display: none;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  border: 2px solid #dc2626;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fef2f2;
+}
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.checkbox-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.checkbox-row label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4b5563;
+  cursor: pointer;
+}
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.diagramBox {
+  background: #fff;
+  padding: 16px;
+  text-align: center;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.diagramBox svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+.aboutLead {
+  background: linear-gradient(135deg, #eef5ff, #fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid #059669;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff7a18;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
 
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<div id="ne555-astable-calc">
 
-<META  name="description" content="Air Core Coil Inductor Inductance Calculator.">
+  <div class="calc-grid">
+    <div class="subTitle" style="border-top: none; margin-top: 0;">Timing Parameters</div>
+    <div>
+      <label class="calc-label">Frequency</label>
+      <div class="calc-row">
+        <input id="f_val" type="text" oninput="clearError()">
+        <div class="unit-box">kHz</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">Duty Cycle</label>
+      <div class="calc-row">
+        <input id="duty_val" type="text" oninput="clearError()">
+        <div class="unit-box">%</div>
+      </div>
+    </div>
+    
+    <div class="checkbox-row">
+      <input type="checkbox" id="invert_checkbox" disabled>
+      <label for="invert_checkbox">Invert Output</label>
+    </div>
 
-<META  name="keywords" content="Air, Core,Coil,Inductance, Inductor, Electronics, Calculator">
-				                  
-				                  
+    <div class="subTitle">Component Values</div>
+    <div>
+      <label class="calc-label">R1 (RA Resistor)</label>
+      <div class="calc-row">
+        <input id="ra_val" type="text" oninput="clearError()">
+        <div class="unit-box">kΩ</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">R2 (RB Resistor)</label>
+      <div class="calc-row">
+        <input id="rb_val" type="text" oninput="clearError()">
+        <div class="unit-box">kΩ</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">C1 (Timing Capacitor)</label>
+      <div class="calc-row">
+        <input id="c_val" type="text" oninput="clearError()">
+        <div class="unit-box">µF</div>
+      </div>
+    </div>
+  </div>
 
-<script language="JavaScript">
+  <button type="button" onclick="computeAstable()">CALCULATE</button>
 
+  <div id="errorBox">Please enter valid numeric values. Empty or text fields are not allowed.</div>
 
-function Compute(form) {
-	with(Math) {
-		var Kilo= 1000;
-		var Meg= Kilo*Kilo;
-		var micro= 1/Meg;
-		var Pico= 1/(Meg*Meg);
-		var Nano= 1/(Meg*Kilo);
-		var Precision= 3;
-		
-		var F= Number(form.F.value)*Kilo;
-		var Duty= Number(form.Duty.value)/100;
-		var RA= Number(form.RA.value)*Kilo;
-		var RB= Number(form.RB.value)*Kilo;
-		var C= Number(form.C.value)*micro;
-		
-		if(Duty<.5) {
-			form.Invert.checked= true;
-			Duty=1-Duty;
-		}
-		else form.Invert.checked= false;
-		
-		if(C!=0  && F!=0 && Duty!=0) {
-			RA= 1.44*(2*Duty-1)/(F*C);
-			RB= 1.44*(1-Duty)/(F*C);
-		} else 
-		if(F!=0 && Duty!=0) {
-			if(F>100*Kilo) C= .001*micro;
-			else if(F>10*Kilo) C= .01*micro;
-			else if(F>1*Kilo) C= .1*micro;
-			else if(F>100) C= 1*micro;
-			else if(F>10) C= 10*micro;
-			else if(F>1) C= 100*micro;
-			RA= 1.44*(2*Duty-1)/(F*C);
-			RB= 1.44*(1-Duty)/(F*C);
-		} else 
-		if(RA!=0 && RB!=0 && C!=0) {
-			F= 1.44/((RA+RB*2)*C);
-			Duty=  (RA + RB)/((RA + RB*2));
-		} 
-		
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Frequency (kHz)</strong>The target oscillation speed. Multiplied by 1000 to convert to Hz.</div>
+      <div class="paramItem"><strong>Duty Cycle (%)</strong>The active-high ratio of the pulse. Internally scaled to a decimal fraction.</div>
+      <div class="paramItem"><strong>Resistors R1 & R2 (kΩ)</strong>Resistors managing the active capacitor charging and discharging loops.</div>
+      <div class="paramItem"><strong>Capacitor C1 (µF)</strong>The timing capacitor determining the overall cycle duration.</div>
+    </div>
+  </section>
 
-		
-		C= C/micro;
-		RA= RA/Kilo;
-		RB= RB/Kilo;
-		F= F/Kilo;
-		Duty= Duty*100;
-				
-		form.C.value= C.toPrecision(Precision);
-		form.RA.value= RA.toPrecision(Precision);
-		form.RB.value= RB.toPrecision(Precision);		
-		form.F.value= F.toPrecision(Precision);
-		form.Duty.value= Duty.toPrecision(Precision);		
-	}
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Blinker Light Timing</strong></p>
+        <p>Analyze component requirements for standard 1 Hz blinker loops using a standard 10 µF capacitor.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Audio Generator Design</strong></p>
+        <p>Calculate target R1 and R2 values to generate a clear 1 kHz tone for active piezo buzzer drivers.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Pulse Width Audits</strong></p>
+        <p>Input fixed resistor values to verify exact duty cycles and prevent thermal saturation on downstream loads.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Clock Generator Setup</strong></p>
+        <p>Quickly configure a highly reliable 100 kHz square wave generator for digital logic clock inputs.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>In an astable multivibrator configuration, the NE555 timer oscillates continuously between high and low output states. Capacitor C1 charges through R1 + R2, and discharges solely through R2, setting up a stable pulse-train.</p>
+
+    <div class="diagramBox">
+      <!-- Same-to-Same NE555 Astable Schematic with Pure White Background and RED Resistors -->
+      <svg viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NE555 Astable Schematic">
+        <rect width="100%" height="100%" fill="#fff" />
+        
+        <style>
+          .wire {stroke:#002b5c;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .resistor {stroke:#dc2626;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .cad-lbl {font-family:'Times New Roman', Times, serif;font-size:15px;font-weight:900;fill:#800020}
+          .small-lbl {font-family:Arial, sans-serif;font-size:11px;font-weight:900;fill:#000}
+          .box-chip {fill:#fff;stroke:#002b5c;stroke-width:1.8}
+        </style>
+
+        <defs>
+          <circle id="junc" cx="0" cy="0" r="3.5" fill="#800020" />
+          <circle id="term" cx="0" cy="0" r="3" stroke="#002b5c" stroke-width="1.5" fill="#fff" />
+          <g id="ground">
+            <line x1="-12" y1="0" x2="12" y2="0" stroke="#002b5c" stroke-width="2.2" />
+            <line x1="-8" y1="4" x2="8" y2="4" stroke="#002b5c" stroke-width="1.8" />
+            <line x1="-4" y1="8" x2="4" y2="8" stroke="#002b5c" stroke-width="1.5" />
+          </g>
+          <g id="cap-v">
+            <line x1="0" y1="-20" x2="0" y2="-4" stroke="#002b5c" stroke-width="1.5" />
+            <line x1="-12" y1="-4" x2="12" y2="-4" stroke="#002b5c" stroke-width="2" />
+            <line x1="-12" y1="4" x2="12" y2="4" stroke="#002b5c" stroke-width="2" />
+            <line x1="0" y1="4" x2="0" y2="20" stroke="#002b5c" stroke-width="1.5" />
+          </g>
+        </defs>
+
+        <!-- NE555 Chip Body -->
+        <rect x="210" y="100" width="130" height="110" class="box-chip" />
+        <text x="260" y="93" class="cad-lbl">U3</text>
+
+        <!-- Pins inside the Chip -->
+        <text x="220" y="125" class="small-lbl">RESET</text>
+        <text x="220" y="150" class="small-lbl">DISCH</text>
+        <text x="220" y="175" class="small-lbl">THRESH</text>
+        <text x="220" y="200" class="small-lbl">TRIG</text>
+        
+        <text x="330" y="125" class="small-lbl" text-anchor="end">VCC</text>
+        <text x="330" y="150" class="small-lbl" text-anchor="end">OUT</text>
+        <text x="330" y="175" class="small-lbl" text-anchor="end">CONT</text>
+        <text x="330" y="200" class="small-lbl" text-anchor="end">GND</text>
+
+        <!-- Pin numbers -->
+        <text x="195" y="118" class="small-lbl">4</text>
+        <circle cx="205" cy="120" r="3" stroke="#002b5c" stroke-width="1.5" fill="#fff" /> <!-- Active low Reset circle -->
+        <text x="195" y="146" class="small-lbl">7</text>
+        <text x="195" y="169" class="small-lbl">6</text>
+        <text x="195" y="194" class="small-lbl">2</text>
+        
+        <text x="345" y="118" class="small-lbl">8</text>
+        <text x="345" y="146" class="small-lbl">3</text>
+        <text x="345" y="169" class="small-lbl">5</text>
+        <text x="345" y="194" class="small-lbl">1</text>
+
+        <!-- Top Power Supply rail (VP) -->
+        <line x1="90" y1="70" x2="380" y2="70" class="wire" />
+        <use href="#term" x="380" y="70" />
+        <text x="380" y="55" class="cad-lbl" text-anchor="middle">VP</text>
+
+        <!-- Top Supply wire to Pin 8 (VCC) & Pin 4 (RESET) -->
+        <line x1="340" y1="120" x2="365" y2="120" class="wire" />
+        <line x1="365" y1="120" x2="365" y2="70" class="wire" />
+        <use href="#junc" x="365" y="70" />
+
+        <line x1="200" y1="120" x2="165" y2="120" class="wire" />
+        <line x1="165" y1="120" x2="165" y2="70" class="wire" />
+        <use href="#junc" x="165" y="70" />
+
+        <!-- RA Resistor (VP down to Node 7) -->
+        <line x1="90" y1="70" x2="90" y2="148" class="wire" />
+        <use href="#junc" x="90" y="70" />
+        <path d="M 90 90 L 86 94 L 94 98 L 86 102 L 94 106 L 86 110 L 94 114 L 90 118" class="resistor" />
+        <text x="105" y="108" class="cad-lbl">RA</text>
+
+        <!-- Connections from Node 7 (DISCH) to the Divider -->
+        <line x1="90" y1="148" x2="210" y2="148" class="wire" />
+        <use href="#junc" x="90" y="148" />
+
+        <!-- RB Resistor -->
+        <line x1="90" y1="148" x2="90" y2="228" class="wire" />
+        <path d="M 90 168 L 86 172 L 94 176 L 86 180 L 94 184 L 86 188 L 94 192 L 90 196" class="resistor" />
+        <text x="105" y="186" class="cad-lbl">RB</text>
+
+        <!-- Connecting Pin 6 (THRESH) and Pin 2 (TRIG) together -->
+        <line x1="210" y1="170" x2="155" y2="170" class="wire" />
+        <line x1="210" y1="195" x2="155" y2="195" class="wire" />
+        <line x1="155" y1="170" x2="155" y2="195" class="wire" />
+        <use href="#junc" x="155" y="195" />
+
+        <!-- Connection from Node 6/2 loop to the main divider node -->
+        <line x1="155" y1="195" x2="90" y2="228" class="wire" />
+        <use href="#junc" x="90" y="228" />
+
+        <!-- Capacitor C to Ground -->
+        <line x1="90" y1="228" x2="90" y2="295" class="wire" />
+        <use href="#cap-v" x="90" y="260" />
+        <text x="110" y="265" class="cad-lbl">C</text>
+        <use href="#ground" x="90" y="295" />
+
+        <!-- Pin 5 (CONT) Stub -->
+        <line x1="340" y1="170" x2="360" y2="170" class="wire" />
+
+        <!-- Pin 1 (GND) to Ground -->
+        <line x1="340" y1="195" x2="355" y2="195" class="wire" />
+        <line x1="355" y1="195" x2="355" y2="245" class="wire" />
+        <use href="#ground" x="355" y="245" />
+
+        <!-- Output OUT wire -->
+        <line x1="340" y1="148" x2="455" y2="148" class="wire" />
+        <text x="462" y="152" class="cad-lbl">OUT</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Astable Frequency (F): F = 1.44 / ((RA + 2 * RB) * C)</div>
+    <div class="formula">Duty Cycle (High/Total): Duty = (RA + RB) / (RA + 2 * RB)</div>
+    <div class="formula">Design Mode RA calculation: RA = 1.44 * (2 * Duty - 1) / (F * C)</div>
+    <div class="formula">Design Mode RB calculation: RB = 1.44 * (1 - Duty) / (F * C)</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">To design a circuit: Enter the target Frequency (F) and Duty Cycle (%). If C1 is left blank, the utility will automatically configure a suitable capacitor based on the target frequency range.</div>
+      <div class="aboutStep">To analyze a circuit: Enter fixed values for resistors R1 (RA), R2 (RB), and capacitor C1. Leaving Frequency and Duty Cycle blank will make it calculate them.</div>
+      <div class="aboutStep">Click the orange **CALCULATE** button to run calculations. Results will populate directly inside the opposite boxes.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Optimize clock division registers for MSP430 low-power microcontroller USCI UART interfaces.</strong>
+      <p>The CalcBoy MSP430 UART Register Calculator evaluates baud rate registers (UxBR0, UxBR1) and calculates the optimal 8-bit modulation key (UxMCTL) to keep bit errors to a minimum.</p>
+    </div>
+    <p>The NE555 timer is one of the most widely used integrated circuits for clock generation, timing pulses, and tone generation. In astable mode, the chip functions as a free-running oscillator without requiring an external trigger source. This configuration charges the timing capacitor through R1 and R2, but discharges it solely through R2 into the active internal discharge transistor (Pin 7).</p>
+    <p>This calculator adapts to your workflow. If you supply target timing requirements (frequency and duty), it calculates the matching component values. If you input existing components, it calculates the corresponding timing parameters, simplifying prototyping.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Impedance Protection</span>R1 (RA) should be at least 1 kΩ to protect Pin 7 from current overload during the discharge phase.</div>
+      <div class="aboutMiniCard"><span>Hysteresis Limits</span>The capacitor voltage cycles between 1/3 and 2/3 of the supply voltage rail.</div>
+      <div class="aboutMiniCard"><span>Unity Constraint</span>Standard 555 astable configurations must have a duty cycle greater than 50% due to the asymmetric charge/discharge paths.</div>
+      <div class="aboutMiniCard"><span>Active Inversion</span>If the calculated duty cycle falls below 50%, the inverting logic is activated and the target frame is reversed.</div>
+    </div>
+    <div class="aboutNote">Observation: To design duty cycles extremely close to 50%, keep R1 (RA) significantly smaller than R2 (RB), or place a signal diode across R2 to bypass it during the charge cycle.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. Why is the duty cycle in a standard 555 astable oscillator always greater than 50%?</strong></h3>
+    <p>The capacitor charges through both RA and RB, but discharges solely through RB. Because the charge path (RA + RB) is always larger than the discharge path (RB), the output high-time is always longer than the low-time, resulting in a duty cycle above 50%.</p>
+
+    <h3><strong>2. How can I achieve a duty cycle of less than 50%?</strong></h3>
+    <p>To configure a duty cycle below 50%, place a signal diode (like a 1N4148) in parallel with RB, pointing down toward Pin 6. This bypasses RB during the charge cycle, allowing the capacitor to charge quickly through RA and discharge through RB.</p>
+
+    <h3><strong>3. How does the calculator select a capacitor C1 if I leave it blank?</strong></h3>
+    <p>The utility evaluates your target frequency and selects a standard decade capacitor value (from 0.001 µF up to 100 µF) that keeps the corresponding resistor values inside a practical, easy-to-source range (1 kΩ to 1 MΩ).</p>
+
+    <h3><strong>4. Why is the output voltage drop not factored into the timing equations?</strong></h3>
+    <p>The internal comparator thresholds are set at 1/3 and 2/3 of the supply voltage. Because both the charging rate and the comparator trip points scale proportionally with the supply voltage, the timing frequency is independent of the supply voltage.</p>
+
+    <h3><strong>5. What is the maximum frequency limit of a standard NE555 timer?</strong></h3>
+    <p>Standard bipolar NE555 timers operate reliably up to approximately 100 kHz to 200 kHz. CMOS versions (like the LMC555) can operate at much higher frequencies, up to 1 MHz or 2 MHz.</p>
+
+    <h3><strong>6. Why should RA be at least 1 kΩ?</strong></h3>
+    <p>During the discharge cycle, Pin 7 is internally shorted to ground to drain the capacitor. If RA is too small, excessive current will flow directly from the supply rail into Pin 7, which can damage the internal transistor.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>NE555 Monostable Calculator</strong>Design single-pulse timer delay stages.</div>
+      <div class="linkCard"><strong>Operational Amplifier Gain Solver</strong>Calculate op-amp gain and scaling.</div>
+      <div class="linkCard"><strong>RC Time Constant Calculator</strong>Determine charging speeds of RC networks.</div>
+      <div class="linkCard"><strong>Resistor Color Code Tool</strong>Identify component values from color bands.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function clearError() {
+  document.getElementById("errorBox").style.display = "none";
 }
 
+function isInvalidText(str) {
+  if (str === "") return false;
+  return isNaN(parseFloat(str)) || !isFinite(str);
+}
 
+function computeAstable() {
+  var f_str = document.getElementById("f_val").value.trim();
+  var duty_str = document.getElementById("duty_val").value.trim();
+  var ra_str = document.getElementById("ra_val").value.trim();
+  var rb_str = document.getElementById("rb_val").value.trim();
+  var c_str = document.getElementById("c_val").value.trim();
 
+  // Clear previous errors
+  document.getElementById("errorBox").style.display = "none";
+
+  // STRICT LOCK: Triggers error if ANY input field has invalid non-numeric text format
+  if (isInvalidText(f_str) || isInvalidText(duty_str) || isInvalidText(ra_str) || isInvalidText(rb_str) || isInvalidText(c_str)) {
+    document.getElementById("errorBox").style.display = "block";
+    return;
+  }
+
+  var has_components = (ra_str !== "" && rb_str !== "" && c_str !== "");
+  var has_timing = (f_str !== "" && duty_str !== "");
+
+  // STRICT LOCK: Triggers error if both component inputs AND timing inputs are missing/incomplete
+  if (!has_components && !has_timing) {
+    document.getElementById("errorBox").style.display = "block";
+    return;
+  }
+
+  var Kilo = 1000;
+  var Meg = Kilo * Kilo;
+  var micro = 1 / Meg;
+  var Precision = 3;
+
+  var F = parseFloat(f_str) * Kilo;
+  var Duty = parseFloat(duty_str) / 100;
+  var RA = parseFloat(ra_str) * Kilo;
+  var RB = parseFloat(rb_str) * Kilo;
+  var C = parseFloat(c_str) * micro;
+
+  if (Duty < 0.5) {
+    document.getElementById("invert_checkbox").checked = true;
+    Duty = 1 - Duty;
+  } else {
+    document.getElementById("invert_checkbox").checked = false;
+  }
+
+  // Calculate based on which set of variables is complete
+  if (!isNaN(C) && C !== 0 && F !== 0 && Duty !== 0) {
+    RA = 1.44 * (2 * Duty - 1) / (F * C);
+    RB = 1.44 * (1 - Duty) / (F * C);
+  } else if (F !== 0 && Duty !== 0) {
+    if (F > 100 * Kilo) C = 0.001 * micro;
+    else if (F > 10 * Kilo) C = 0.01 * micro;
+    else if (F > 1 * Kilo) C = 0.1 * micro;
+    else if (F > 100) C = 1 * micro;
+    else if (F > 10) C = 10 * micro;
+    else if (F > 1) C = 100 * micro;
+    RA = 1.44 * (2 * Duty - 1) / (F * C);
+    RB = 1.44 * (1 - Duty) / (F * C);
+  } else if (RA !== 0 && RB !== 0 && C !== 0) {
+    F = 1.44 / ((RA + RB * 2) * C);
+    Duty = (RA + RB) / (RA + RB * 2);
+  }
+
+  C = C / micro;
+  RA = RA / Kilo;
+  RB = RB / Kilo;
+  F = F / Kilo;
+  Duty = Duty * 100;
+
+  // Set the values back into the input boxes in-place
+  document.getElementById("c_val").value = C.toPrecision(Precision);
+  document.getElementById("ra_val").value = RA.toPrecision(Precision);
+  document.getElementById("rb_val").value = RB.toPrecision(Precision);
+  document.getElementById("f_val").value = F.toPrecision(Precision);
+  document.getElementById("duty_val").value = Duty.toPrecision(Precision);
+}
 </script>
 
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. Why is the duty cycle in a standard 555 astable oscillator always greater than 50%?","acceptedAnswer":{"@type":"Answer","text":"The capacitor charges through both RA and RB, but discharges solely through RB. Because the charge path (RA + RB) is always larger than the discharge path (RB), the output high-time is always longer than the low-time, resulting in a duty cycle above 50%."}},
+{"@type":"Question","name":"2. How can I achieve a duty cycle of less than 50%?","acceptedAnswer":{"@type":"Answer","text":"To configure a duty cycle below 50%, place a signal diode (like a 1N4148) in parallel with RB, pointing down toward Pin 6. This bypasses RB during the charge cycle, allowing the capacitor to charge quickly through RA and discharge through RB."}},
+{"@type":"Question","name":"3. How does the calculator select a capacitor C1 if I leave it blank?","acceptedAnswer":{"@type":"Answer","text":"The utility evaluates your target frequency and selects a standard decade capacitor value (from 0.001 µF up to 100 µF) that keeps the corresponding resistor values inside a practical, easy-to-source range (1 kΩ to 1 MΩ)."}},
+{"@type":"Question","name":"4. Why is the output voltage drop not factored into the timing equations?","acceptedAnswer":{"@type":"Answer","text":"The internal comparator thresholds are set at 1/3 and 2/3 of the supply voltage. Because both the charging rate and the comparator trip points scale proportionally with the supply voltage, the timing frequency is independent of the supply voltage."}},
+{"@type":"Question","name":"5. What is the maximum frequency limit of a standard NE555 timer?","acceptedAnswer":{"@type":"Answer","text":"Standard bipolar NE555 timers operate reliably up to approximately 100 kHz to 200 kHz. CMOS versions (like the LMC555) can operate at much higher frequencies, up to 1 MHz or 2 MHz."}},
+{"@type":"Question","name":"6. Why should RA be at least 1 kΩ?","acceptedAnswer":{"@type":"Answer","text":"During the discharge cycle, Pin 7 is internally shorted to ground to drain the capacitor. If RA is too small, excessive current will flow directly from the supply rail into Pin 7, which can damage the internal transistor."}}
+]
+}
+</script>
 
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"NE555 Astable Multivibrator Calculator","item":"https://calcboy.com/tool/ne555-astable-multivibrator-frequency-and-duty-cycle-calculator"}
+]
+}
+</script>
 
-
-</head>
-
-
- 
-      
- 
-
-
-
-
-
-    
-      <form method="POST" name="ParamForm">
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>   
-
-
-          <label><font>Frequency</sub> </font><font face="Arial" size="5">  </font></label><input  name="F" size="17" class="intro"  style="position: absolute;   width:250; right: 145px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:50px;  text-align:center; height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">KHz</label>
-
-   <h1 style="font-size:45px;"></h1>
-          <label><font>Duty Cycle</sub> </font><font face="Arial" size="5">  </font></label><input  name="Duty" size="17" class="intro"  style="position: absolute;   width:250; right: 145px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;   text-align:center; height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">%</label>
-
-  
-
-   <h1 style="font-size:45px;"></h1>
-          <label><font>Invert
-              Output</sub> </font><font face="Arial" size="5">  </font></label><input type="checkbox" style="height:100px; width:100;padding: 5px ;  position: absolute;right: 160px;" name="Invert" value="ON">
-       
-
-
-
-        <h1 style="font-size:55px;"></h1>
-          <label><font>R1</sub> </font><font face="Arial" size="5">  </font></label><input  name="RA" size="17" class="intro"  style="position: absolute;   width:250; right: 145px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;   text-align:center; height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">k&Omega;</label>
-
-         <h1 style="font-size:45px;"></h1>
-          <label><font>R2</sub> </font><font face="Arial" size="5">  </font></label><input  name="RB" size="17" class="intro"  style="position: absolute;   width:250; right: 145px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;   text-align:center; height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">k&Omega;</label>
-        
-         <h1 style="font-size:45px;"></h1>
-          <label><font>C1</sub> </font><font face="Arial" size="5">  </font></label><input  name="C" size="17" class="intro"  style="position: absolute;   width:250; right: 145px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;   text-align:center; height:68.5px; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:110px;">uF</label>
-
-       </fieldset>
-<br>
- <fieldset><legend><div colspan="2" align="center" height="19"><input type="Button" onClick="Compute(document.ParamForm)" value="Calculate" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></div></div>
-</div></legend></fieldset> 
-      
-
- 
-       
-
-      </form>
-   
+</body>
+</html>
