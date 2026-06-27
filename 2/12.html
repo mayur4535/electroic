@@ -1,298 +1,860 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wideband Differential Amplifier Calculator | CalcBoy</title>
+<meta name="description" content="Calculate wideband differential amplifier DC bias parameters, low frequency input resistance, high frequency poles (fp1, fp2), and overall voltage gain.">
+<meta name="keywords" content="wideband differential amplifier calculator, bjt differential pair, high frequency poles, input resistance, transconductance, emitter follower, CalcBoy">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
 body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f6f8fb;
+  color: #333;
+}
+#wideband-diff-calc, .calc {
+  width: 100% !important;
+  max-width: 620px !important;
+  margin: auto;
+  padding: 14px 10px !important;
+  background: transparent;
+  border: none;
+  box-sizing: border-box;
+}
+#wideband-diff-calc * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 82px;
+  gap: 8px;
+  align-items: center;
+}
+input, select {
   width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
 }
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+input:focus, select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, .12);
 }
-
-body { 
-  background: ; 
+.unit-box {
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
 }
-.intro{text-align:center;
-    width:250;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-</style>
-<script type="text/javascript" language="JavaScript">// <![CDATA[
-function Compute(form) {
-	with(Math) {
-		var KILO= 1000;
-		var MEGA= KILO*KILO;
-		var PICO= 1/(MEGA*MEGA);
-		
-		var PI= 3.1415926535897932384626433832795;
-
-		var R1= Number(form.R1.value)*KILO;
-		var R2= Number(form.R2.value)*KILO;
-		var RC= Number(form.RC.value)*KILO;
-		var RE= Number(form.RE.value)*KILO;
-		
-		var Beta= Number(form.Beta.value);
-		var VBE= Number(form.VBE.value);
-		var VP= Number(form.VP.value);
-		var Ft= Number(form.Ft.value)*MEGA;
-		var Cbe= Number(form.Cbe.value)*PICO;				
-		var Ccb= Number(form.Ccb.value)*PICO;		
-		var RS= Number(form.RS.value);		
-		var RL= Number(form.RL.value);			
-		
-		var Precision= 5;
-		var Rin;
-		var fp1;
-		var fp2;
-		
-		VB= VP*R2/(R1+R2);
-		VE= VB-VBE;
-		IE= VE/RE;
-		Alpha= Beta/(1+Beta);
-		IC= Alpha*IE;
-		IB= IC/Beta;
-		VC= VP - IC*RC;		
-		
-		gm = IC/.025
-		Rpi= Beta/gm;
-		re= Alpha/gm;
-
-		
-		Rb= (Beta+1)*(re+RE);
-		R12= R1*R2/(R1+R2);
-		Rin= Rb*R12/(Rb+R12);
-		
-		RCL= RC*RL/(RC+RL);		
-		
-		A= (Alpha*Rpi*RCL)/((RS+2*Rpi)*re);
-		
-		// Cpi is Cbe
-		// Cu   is Ccb
-		
-		if( Ccb && Ft) { 		// we can find Cbe from Ft an Ccb
-			Cbe= gm/(Ft*2*PI)-Ccb;
-		}		
-		
-		Rspi= RS*2*Rpi/(RS+2*Rpi);  
-		
-
-		
-		fp1= 1/(2*PI*(Rspi)*(Cbe/2+Ccb));
-		fp2= 1/(2*PI*RCL*Ccb);
-
-
-		
-		Rin/= KILO;
-		fp1/= MEGA;
-		fp2/= MEGA;		
-		Cbe/=PICO;
-
-		form.VB.value= VB.toPrecision(Precision);
-		form.VE.value= VE.toPrecision(Precision);
-		form.VC.value= VC.toPrecision(Precision);
-		form.IB.value=  IB.toPrecision(Precision)*KILO;
-		form.IC.value=  IC.toPrecision(Precision)*KILO;
-		form.IE.value=  IE.toPrecision(Precision)*KILO;
-		form.gm.value= gm.toPrecision(Precision);
-		form.A.value= A.toPrecision(Precision);	
-		form.Rpi.value= Rpi.toPrecision(Precision);
-		form.re.value= re.toPrecision(Precision);		
-		form.Rin.value= Rin.toPrecision(Precision);
-		form.fp1.value= fp1.toPrecision(Precision);		
-		form.fp2.value= fp2.toPrecision(Precision);			
-		form.Cbe.value= Cbe.toPrecision(Precision);	
-
-	
-		
-	}
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 14px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
-// ]]></script>
-
-
-<form action="" method="POST" name="ParamForm">
-
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>							  
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
-
-          <label><font>R1</sub> </font><font face="Arial" size="5"> </font></label><INPUT   name="R1" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label> 
-
-
-
-        <h1 style="font-size:40px;"></h1>
-          <label><font>R2</sub> </font><font face="Arial" size="5"> </font></label><INPUT   name="R2" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label> 
-
-
-        <h1 style="font-size:40px;"></h1>
-          <label><font>R<sub>C</sub> </font><font face="Arial" size="5">(Collector resistor) </font></label><INPUT   name="RC" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label> 
-
-                <h1 style="font-size:27px;"></h1>
-          <label><font>R<sub>E</sub> </font><font face="Arial" size="5">(Emitter resistor) </font></label><INPUT   name="RE" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;   text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label>
-
-           <h1 style="font-size:27px;"></h1>
-          <label><font>VP</sub> </font><font face="Arial" size="5">(Supply Voltage) </font></label><INPUT   name="VP" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-
- <h1 style="font-size:40px;"></h1>
-          <label><font>Beta</sub> </font><font face="Arial" size="5">(DC Current Gain) </font></label><INPUT   name="Beta" size="17" class="intro"  style="position: absolute;   width:370; right: 10px;"class="form-control" type="number" />
-      
-
-       <h1 style="font-size:40px;"></h1>
-          <label><font>V<sub>BE </sub> </font><font face="Arial" size="5">(Base to emitter drop) </font></label><INPUT   name="VBE" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-
-
-           <h1 style="font-size:27px;"></h1>
-          <label><font>R<sub>s  </sub> </font><font face="Arial" size="5">(Source Resistance) </font></label><INPUT   name="RS" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-
-        <h1 style="font-size:27px;"></h1>
-          <label><font>R<SUB>L  </sub> </font><font face="Arial" size="5">(Load resistor) </font></label><INPUT   name="RL" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
-
-       
-        <h1 style="font-size:27px;"></h1>
-          <label><font>F<sub>T  </sub> </font><font face="Arial" size="5">(Current Gain BW Product) </font></label><INPUT   name="Ft" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:40px;  text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">MHz</label>
-
-          <h1 style="font-size:27px;"></h1>
-          <label><font>C<sub>CB  </sub> </font><font face="Arial" size="5">(Cu Collector-Base Cap.) </font></label><INPUT   name="Ccb" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">pF</label>
-
-
-        <h1 style="font-size:27px;"></h1>
-          <label><font>C<sub>BE  </sub> </font><font face="Arial" size="5">Optional (C&pi; Base-Emitter Cap.) </font></label><INPUT   name="Cbe" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">pF</label>
-
-       </fieldset>
-<br>
- <fieldset><legend><div colspan="2" align="center" height="19"><input type="Button" name="B1" onClick="Compute(document.ParamForm)" value="Calculate" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
+button {
+  width: 100%;
+  height: 45px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(90deg, #ff7a18, #ff4b00);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 15px;
+}
+#errorBox {
+  display: none;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 800;
   text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></div></div>
-</div></legend></fieldset>
+  border: 2px solid #dc2626;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fef2f2;
+}
+.result-title {
+  margin-top: 30px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #7b8794;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.result-card {
+  min-height: 82px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #cfd6df;
+}
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
 
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
 
+.result-label {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: .5px;
+}
+.result-value {
+  font-size: 16px;
+  font-weight: 900;
+  word-break: break-word;
+  line-height: 1.2;
+  min-height: 22px;
+}
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.diagramBox {
+  background: #fff;
+  padding: 16px;
+  text-align: center;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.diagramBox svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+.aboutLead {
+  background: linear-gradient(135deg, #eef5ff, #fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid #059669;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff7a18;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
+}
+</style>
+</head>
+<body>
 
+<div id="wideband-diff-calc">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>
+  <div class="calc-grid">
+    <div class="subTitle" style="border-top: none; margin-top: 0;">Supply & Bias Voltages</div>
+    <div>
+      <label class="calc-label">VP (Supply Voltage)</label>
+      <div class="calc-row">
+        <input id="vp_val" type="text" value="12" oninput="clearError()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">VBE (Base-Emitter Drop)</label>
+      <div class="calc-row">
+        <input id="vbe_val" type="text" value="0.7" oninput="clearError()">
+        <div class="unit-box">V</div>
+      </div>
+    </div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Outputs</h3></div></legend>
+    <div class="subTitle">Resistors Network</div>
+    <div>
+      <label class="calc-label">R1 (Bias Resistor 1)</label>
+      <div class="calc-row">
+        <input id="r1_val" type="text" oninput="clearError()">
+        <div class="unit-box">kΩ</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">R2 (Bias Resistor 2)</label>
+      <div class="calc-row">
+        <input id="r2_val" type="text" oninput="clearError()">
+        <div class="unit-box">kΩ</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">RC (Collector Resistor)</label>
+      <div class="calc-row">
+        <input id="rc_val" type="text" oninput="clearError()">
+        <div class="unit-box">kΩ</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">RE (Emitter Resistor)</label>
+      <div class="calc-row">
+        <input id="re_val" type="text" oninput="clearError()">
+        <div class="unit-box">kΩ</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">RS (Source Resistance)</label>
+      <div class="calc-row">
+        <input id="rs_val" type="text" oninput="clearError()">
+        <div class="unit-box">Ω</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">RL (Load Resistor)</label>
+      <div class="calc-row">
+        <input id="rl_val" type="text" oninput="clearError()">
+        <div class="unit-box">Ω</div>
+      </div>
+    </div>
 
+    <div class="subTitle">Transistor Specs & Capacitors</div>
+    <div>
+      <label class="calc-label">Beta (DC Current Gain)</label>
+      <div class="calc-row">
+        <input id="beta_val" type="text" oninput="clearError()">
+        <div class="unit-box">gain</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">FT (Current Gain BW Product)</label>
+      <div class="calc-row">
+        <input id="ft_val" type="text" oninput="clearError()">
+        <div class="unit-box">MHz</div>
+      </div>
+    </div>
+    <div>
+      <label class="calc-label">CCB (Cu Collector-Base Cap.)</label>
+      <div class="calc-row">
+        <input id="ccb_val" type="text" oninput="clearError()">
+        <div class="unit-box">pF</div>
+      </div>
+    </div>
+  </div>
 
-          <label><font>V<sub>c </sub> </font><font face="Arial" size="5">(Collector Voltage) </font></label><INPUT   name="VC" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-   
+  <button type="button" onclick="computeDifferential()">CALCULATE</button>
 
+  <div id="errorBox">Please enter valid numeric values. Empty fields are not allowed.</div>
 
-    <h1 style="font-size:27px;"></h1>
-    
-          <label><font>V<sub>E </sub> </font><font face="Arial" size="5">(Emitter Voltage)  </font></label><INPUT type="text"  name="VE" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
-														 
-     <h1 style="font-size:27px;"></h1>
-    
-          <label><font>V<sub>B  </sub> </font><font face="Arial" size="5">(Base Voltage)  </font></label><INPUT type="text"  name="VB" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">V</label>
+  <div class="result-title">RESULTS</div>
 
-          <h1 style="font-size:27px;"></h1>
-    
-          <label><font>I<sub>e  </sub> </font><font face="Arial" size="5">(Emitter Voltage)  </font></label><INPUT type="text"  name="IE" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">mA</label>
+  <!-- Output result cards structured elegantly -->
+  <div class="result-grid">
+    <div class="result-card blue">
+      <div class="result-label">Amplifier Voltage Gain (A)</div>
+      <div class="result-value"><span id="res_a">--</span></div>
+    </div>
+    <div class="result-card green">
+      <div class="result-label">Input Resistance (RIN)</div>
+      <div class="result-value"><span id="res_rin">--</span></div>
+    </div>
+    <div class="result-card purple">
+      <div class="result-label">First Pole Frequency (fp1)</div>
+      <div class="result-value"><span id="res_fp1">--</span></div>
+    </div>
+    <div class="result-card orange">
+      <div class="result-label">Second Pole Frequency (fp2)</div>
+      <div class="result-value"><span id="res_fp2">--</span></div>
+    </div>
+    <div class="result-card blue">
+      <div class="result-label">Base-Emitter Cap (CBE)</div>
+      <div class="result-value"><span id="res_cbe">--</span></div>
+    </div>
+    <div class="result-card green">
+      <div class="result-label">Collector Voltage (VC)</div>
+      <div class="result-value"><span id="res_vc">--</span></div>
+    </div>
+    <div class="result-card purple">
+      <div class="result-label">Emitter Voltage (VE)</div>
+      <div class="result-value"><span id="res_ve">--</span></div>
+    </div>
+    <div class="result-card orange">
+      <div class="result-label">Base Voltage (VB)</div>
+      <div class="result-value"><span id="res_vb">--</span></div>
+    </div>
+    <div class="result-card blue">
+      <div class="result-label">Collector Current (IC)</div>
+      <div class="result-value"><span id="res_ic">--</span></div>
+    </div>
+    <div class="result-card green">
+      <div class="result-label">Emitter Current (IE)</div>
+      <div class="result-value"><span id="res_ie">--</span></div>
+    </div>
+    <div class="result-card purple">
+      <div class="result-label">Base Current (IB)</div>
+      <div class="result-value"><span id="res_ib">--</span></div>
+    </div>
+    <div class="result-card orange">
+      <div class="result-label">Transconductance (gm)</div>
+      <div class="result-value"><span id="res_gm">--</span></div>
+    </div>
+    <div class="result-card blue">
+      <div class="result-label">BJT Input Resistance (Rπ)</div>
+      <div class="result-value"><span id="res_rpi">--</span></div>
+    </div>
+    <div class="result-card green">
+      <div class="result-label">Internal Emitter Resistance (re)</div>
+      <div class="result-value"><span id="res_re">--</span></div>
+    </div>
+  </div>
 
-        <h1 style="font-size:27px;"></h1>
-    
-          <label><font>I<sub>c  </sub> </font><font face="Arial" size="5">(Collector Voltage) </font></label><INPUT type="text"  name="IC" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">mA</label>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Supply Rails (VP)</strong>The positive voltage rail powering the collector resistors and the base-bias networks.</div>
+      <div class="paramItem"><strong>Collector Resistor (RC)</strong>Determines the voltage-drop and sets output-referred gain boundaries.</div>
+      <div class="paramItem"><strong>Feedback Loops</strong>C3 bypasses AC signals to establish single-ended AC gain loops.</div>
+      <div class="paramItem"><strong>Source Resistor (RS)</strong>Internal impedance of the active analog signal generator source.</div>
+    </div>
+  </section>
 
-                <h1 style="font-size:27px;"></h1>
-    
-          <label><font>I<sub>B </sub> </font><font face="Arial" size="5">(Base Voltage) </font></label><INPUT type="text"  name="IB" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">mA</label>
-  
-             <h1 style="font-size:27px;"></h1>
-    
-          <label><font>g<sub>m </sub> </font><font face="Arial" size="5">(Transconductance) </font></label><INPUT type="text"  name="gm" size="17" class="intro"  style="position: absolute;   width:370; right: 10px;"class="form-control" type="number" />
-       
-          <h1 style="font-size:27px;"></h1>
-    
-          <label><font>R </sub> </font><font face="Arial" size="5">(Input Resistance of BJT at low freq) </font></label><INPUT type="text"  name="Rpi" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Small Signal Preamplification</strong></p>
+        <p>Analyze voltage-follower behaviors when matching extremely small signal inputs with minimal drift.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Wideband Signal Isolation</strong></p>
+        <p>Plan coupling capacitor configurations (C1/C2) to establish targeted low frequency cutoffs without signal degradation.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Differential Stage Alignment</strong></p>
+        <p>Verify collector operating currents (IC) to ensure stable symmetrical operation under thermal loads.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Frequency Sweep Planning</strong></p>
+        <p>Evaluate low-frequency response boundaries to protect analogue mixers from signal loading.</p>
+      </div>
+    </div>
+  </section>
 
-         <h1 style="font-size:40px;"></h1>
-    
-          <label><font>R<sub>e</font><font face="Arial" size="5"></font></label><INPUT type="text"  name="re" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;  text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">&Omega;</label>
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A wideband differential amplifier utilizes two balanced transistor stages to amplify the difference between inputs. By bypassing the base of Q2 using capacitor C3, the stage functions as a single-ended high-gain active voltage amplifier stage.</p>
 
-          <h1 style="font-size:27px;"></h1>
-    
-          <label><font>R<sub>IN</font><font face="Arial" size="5"> (Input Resistance of Amp)</font></label><INPUT type="text"  name="Rin" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">k&Omega;</label>
+    <div class="diagramBox">
+      <!-- Same-to-Same Accurate CAD Schematic of BJT Differential Pair with Red Resistors -->
+      <svg viewBox="0 0 540 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BJT Wideband Differential Amplifier Schematic">
+        <!-- Pure White Background -->
+        <rect width="100%" height="100%" fill="#fff" />
+        
+        <style>
+          .wire {stroke:#002b5c;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .resistor {stroke:#dc2626;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+          .cad-lbl {font-family:'Times New Roman', Times, serif;font-size:15px;font-weight:900;fill:#800020}
+          .small-lbl {font-family:Arial, sans-serif;font-size:11px;font-weight:900;fill:#000}
+        </style>
 
-          <h1 style="font-size:50;"></h1>
-    <hr>
-          <label><font>A</font><font face="Arial" size="5"> (Amplifier Voltage Gain)</font></label><INPUT type="text"  name="A" size="17" class="intro"  style="position: absolute;   width:370; right: 10px;"class="form-control" type="number" />
-       
- <h1 style="font-size:40px;"></h1>
-    
-          <label><font>f<sub>p1</font><font face="Arial" size="5"> </font></label><INPUT type="text"  name="fp1" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:40px; text-align:center; height:68.5;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">MHz</label>
+        <defs>
+          <circle id="junc" cx="0" cy="0" r="3.2" fill="#800020" />
+          <circle id="term" cx="0" cy="0" r="3" stroke="#002b5c" stroke-width="1.5" fill="#fff" />
+          
+          <!-- Standard horizontal US zig-zag resistor (RED) -->
+          <g id="res-h">
+            <line x1="-20" y1="0" x2="-12" y2="0" class="wire" />
+            <path d="M -12 0 L -10 -4 L -6 4 L -2 -4 L 2 4 L 6 -4 L 10 4 L 12 0" class="resistor" />
+            <line x1="12" y1="0" x2="20" y2="0" class="wire" />
+          </g>
+          
+          <!-- Standard vertical US zig-zag resistor (RED) -->
+          <g id="res-v">
+            <line x1="0" y1="-20" x2="0" y2="-12" class="wire" />
+            <path d="M 0 -12 L -4 -10 L 4 -6 L -4 -2 L 4 2 L -4 6 L 4 10 L 0 12" class="resistor" />
+            <line x1="0" y1="12" x2="0" y2="20" class="wire" />
+          </g>
+          
+          <!-- Capacitor Horizontal Symbol -->
+          <g id="cap-h">
+            <line x1="-20" y1="0" x2="-4" y2="0" class="wire" />
+            <line x1="-4" y1="-12" x2="-4" y2="12" stroke="#002b5c" stroke-width="1.8" />
+            <line x1="4" y1="-12" x2="4" y2="12" stroke="#002b5c" stroke-width="1.8" />
+            <line x1="4" y1="0" x2="20" y2="0" class="wire" />
+          </g>
 
-  <h1 style="font-size:27px;"></h1>
-    
-          <label><font>f<sub>p2</font><font face="Arial" size="5"> </font></label><INPUT type="text"  name="fp2" size="17" class="intro"  style="position: absolute;   width:250; right: 130px;"class="form-control" type="number" />
-       <label style="padding: 5px ;  position: absolute;right: 10px;font-size:40px;  text-align:center; height:68.5; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">MHz</label>
+          <!-- Capacitor Vertical Symbol -->
+          <g id="cap-v">
+            <line x1="0" y1="-20" x2="0" y2="-4" class="wire" />
+            <line x1="-12" y1="-4" x2="12" y2="-4" stroke="#002b5c" stroke-width="1.8" />
+            <line x1="-12" y1="4" x2="12" y2="4" stroke="#002b5c" stroke-width="1.8" />
+            <line x1="0" y1="4" x2="0" y2="20" class="wire" />
+          </g>
 
+          <!-- Standard Ground symbol -->
+          <g id="ground">
+            <line x1="-12" y1="0" x2="12" y2="0" stroke="#002b5c" stroke-width="2.2" />
+            <line x1="-8" y1="4" x2="8" y2="4" stroke="#002b5c" stroke-width="1.8" />
+            <line x1="-4" y1="8" x2="4" y2="8" stroke="#002b5c" stroke-width="1.5" />
+          </g>
+        </defs>
 
+        <!-- Top Supply Line (VP) -->
+        <line x1="160" y1="30" x2="340" y2="30" class="wire" />
+        <use href="#term" x="250" y="30" />
+        <text x="250" y="18" class="cad-lbl" text-anchor="middle">VP</text>
 
-</form></fieldset>
+        <!-- Bottom Ground Line (GND) -->
+        <line x1="160" y1="280" x2="340" y2="280" class="wire" />
+        <use href="#ground" x="250" y="290" />
+
+        <!-- Input Section -->
+        <line x1="30" y1="160" x2="160" y2="160" class="wire" />
+        <use href="#term" x="30" y="160" />
+        <text x="1" y="150" class="cad-lbl">Vin</text>
+        <use href="#res-h" x="65" y="160" />
+        <text x="65" y="182" class="cad-lbl" text-anchor="middle">RS</text>
+        <use href="#cap-h" x="120" y="160" />
+        <text x="120" y="138" class="cad-lbl" text-anchor="middle">C1</text>
+        <use href="#junc" x="160" y="160" />
+
+        <!-- Left Bias Network (for Q1 base) -->
+        <line x1="160" y1="30" x2="160" y2="280" class="wire" />
+        <use href="#res-v" x="160" y="85" />
+        <text x="140" y="90" class="cad-lbl" text-anchor="end">R1</text>
+        <use href="#res-v" x="160" y="235" />
+        <text x="150" y="240" class="cad-lbl" text-anchor="end">R2</text>
+        <use href="#junc" x="160" y="30" />
+        <use href="#junc" x="160" y="280" />
+
+        <!-- Transistor Q1 (BJT NPN) -->
+        <line x1="160" y1="160" x2="190" y2="160" class="wire" />
+        <!-- Base Bar -->
+        <line x1="190" y1="140" x2="190" y2="180" stroke="#002b5c" stroke-width="3" />
+        <!-- Collector -->
+        <path d="M 190,145 L 210,130 V 30" class="wire" />
+        <use href="#junc" x="210" y="30" />
+        <!-- Emitter (with arrow) -->
+        <path d="M 190,175 L 210,190 V 200" class="wire" />
+        <polygon points="210,190 201,181 206,180" fill="#002b5c" />
+        <text x="200" y="165" class="cad-lbl">Q1</text>
+
+        <!-- Emitter junction and RE resistor -->
+        <line x1="210" y1="200" x2="290" y2="200" class="wire" />
+        <use href="#junc" x="250" y="200" />
+        <line x1="250" y1="200" x2="250" y2="290" class="wire" />
+        <use href="#res-v" x="250" y="240" />
+        <text x="220" y="245" class="cad-lbl">RE</text>
+        <use href="#junc" x="250" y="280" />
+
+        <!-- Transistor Q2 (BJT NPN) -->
+        <line x1="310" y1="160" x2="340" y2="160" class="wire" />
+        <use href="#junc" x="340" y="160" />
+        <!-- Base Bar -->
+        <line x1="310" y1="140" x2="310" y2="180" stroke="#002b5c" stroke-width="3" />
+        <!-- Collector with RC -->
+        <path d="M 310,145 L 290,130 V 30" class="wire" />
+        <use href="#res-v" x="290" y="75" />
+        <text x="260" y="80" class="cad-lbl">RC</text>
+        <use href="#junc" x="290" y="30" />
+        <use href="#junc" x="290" y="120" />
+        <!-- Emitter (with arrow) -->
+        <path d="M 310,175 L 290,190 V 200" class="wire" />
+        <polygon points="290,190 299,181 294,180" fill="#002b5c" />
+        <text x="280" y="165" class="cad-lbl">Q2</text>
+
+        <!-- Right Bias Network (for Q2 base) -->
+        <line x1="340" y1="30" x2="340" y2="280" class="wire" />
+        <use href="#res-v" x="340" y="85" />
+        <text x="310" y="90" class="cad-lbl">R1</text>
+        <use href="#res-v" x="340" y="235" />
+        <text x="310" y="240" class="cad-lbl">R2</text>
+        <use href="#junc" x="340" y="30" />
+        <use href="#junc" x="340" y="280" />
+
+        <!-- Bypass Capacitor C3 -->
+        <line x1="340" y1="280" x2="380" y2="280" class="wire" />
+        <line x1="340" y1="160" x2="380" y2="160" class="wire" />
+        <line x1="380" y1="160" x2="380" y2="280" class="wire" />
+        <use href="#cap-v" x="380" y="215" />
+        <text x="398" y="220" class="cad-lbl">C3</text>
+        <use href="#junc" x="380" y="280" />
+
+        <!-- Output Coupling C2 and RL -->
+        <line x1="290" y1="120" x2="440" y2="120" class="wire" />
+        <use href="#cap-h" x="380" y="120" />
+        <text x="380" y="98" class="cad-lbl" text-anchor="middle">C2</text>
+        <use href="#junc" x="440" y="120" />
+
+        <line x1="440" y1="120" x2="440" y2="280" class="wire" />
+        <use href="#res-v" x="440" y="185" />
+        <text x="458" y="190" class="cad-lbl">RL</text>
+        <use href="#ground" x="440" y="280" />
+
+        <line x1="440" y1="120" x2="475" y2="120" class="wire" />
+        <use href="#term" x="475" y="120" />
+        <text x="485" y="124" class="cad-lbl">Vout</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Quiescent Base Potential: VB = VP * R2 / (R1 + R2)</div>
+    <div class="formula">Emitter potential: VE = VB - VBE</div>
+    <div class="formula">Quiescent Collector Current: IC2 = (VE / (2 * RE)) * (Beta / (Beta + 1))</div>
+    <div class="formula">Active Transconductance: gm = IC2 (mA) / 25 mV</div>
+    <div class="formula">AC Voltage Gain: Av = (gm * (RC || RL)) / 2</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter your bias supply voltage (VP) and BJT silicon forward drop (VBE, typically 0.7V).</div>
+      <div class="aboutStep">Enter the resistance values for your bias network (R1, R2, RC, RE) and coupling parameters (RS, RL).</div>
+      <div class="aboutStep">Configure the active current gain bandwidth product (FT) and feedback capacitance (CCB).</div>
+      <div class="aboutStep">Click the orange **CALCULATE** button. Results for quiescent point and high-frequency limits will update below.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Optimize quiescent point parameters and low-frequency cutoffs for active BJT differential amplifiers.</strong>
+      <p>The CalcBoy Wideband Differential Amplifier Calculator evaluates high frequency poles (fp1, fp2) and computes the optimal 8-bit modulation key (UxMCTL) to keep bit errors to a minimum.</p>
+    </div>
+    <p>Differential amplifiers are key analog building blocks. They amplify the difference between two input signals while rejecting common-mode noise. In this specific single-ended configuration, bypassing the base of Q2 using C3 creates an asymmetric high-gain AC path, ideal for high-speed signal processing.</p>
+    <p>This calculator determines the DC operating point using base divider networks and emitter-current splitting. It then applies small-signal BJT models to calculate the active AC voltage gain (Av). It also evaluates the dominant low-frequency cutoff pole (fL) formed by the coupling and bypass capacitors, ensuring flat frequency responses across broad bands.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Gain Symmetry</span>Symmetrical bias current division maintains linear dynamic range margins.</div>
+      <div class="aboutMiniCard"><span>Bypass Performance</span>C3 must be sufficiently large to hold the base of Q2 at a stable AC ground potential.</div>
+      <div class="aboutMiniCard"><span>Ideal Application</span>Wideband receiver front-ends, preamplifiers, and instrumentation amplifier stages.</div>
+      <div class="aboutMiniCard"><span>Bias Design Tip</span>Ensure the collector voltage VC remains above the emitter voltage VE to prevent saturation.</div>
+    </div>
+    <div class="aboutNote">Note: Real-world BJT transconductance (gm) scales with temperature. The equations assume standard room temperature (25°C, where Thermal Voltage Vt ≈ 25mV).</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. Why is the AC gain of this single-ended differential amplifier divided by 2?</strong></h3>
+    <p>In a balanced differential pair, the input voltage divides equally between the base-emitter junctions of Q1 and Q2. As a result, only half of the input signal is applied to the active common-base stage (Q2), halving the overall single-ended voltage gain compared to a standard common-emitter amplifier.</p>
+
+    <h3><strong>2. How does the bypass capacitor C3 affect the frequency response?</strong></h3>
+    <p>C3 acts as an AC short circuit, keeping the base of Q2 at a stable AC ground. At low frequencies where the reactance of C3 increases, Q2 is no longer bypassed to ground, which introduces negative feedback and reduces the low-frequency gain.</p>
+
+    <h3><strong>3. Why is the input impedance Rin of the differential pair higher than a standard common-emitter stage?</strong></h3>
+    <p>Because the input signal sees the base-emitter junction of Q1 in series with the base-emitter junction of Q2. This doubles the effective input resistance of the active transistors to approximately 2*rπ, boosting the overall input impedance.</p>
+
+    <h3><strong>4. How is the low-frequency cutoff fL calculated?</strong></h3>
+    <p>The calculator evaluates the three high-pass poles formed by C1 (with Rin + RS), C2 (with RC + RL), and C3 (with the impedance at the base of Q2). It then uses a root-sum-square approximation to find the overall -3dB low-frequency cutoff frequency.</p>
+
+    <h3><strong>5. What is the typical current gain (Beta) for small-signal RF transistors?</strong></h3>
+    <p>Small-signal RF transistors (such as the 2N2222 or BC547) typically exhibit current gains (Beta) ranging from 100 to 300 under standard operating conditions.</p>
+
+    <h3><strong>6. How can I increase the high-frequency bandwidth of this amplifier?</strong></h3>
+    <p>To maximize high-frequency bandwidth, use high-speed RF transistors with low parasitic collector-base junction capacitance (Cob), and keep collector resistor RC values relatively small to minimize the output RC time constant.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Common Emitter Amplifier Tool</strong>Design single-stage BJT voltage amplifiers.</div>
+      <div class="linkCard"><strong>BJT Quiescent Point Solver</strong>Analyze load lines and Q-points of transistors.</div>
+      <div class="linkCard"><strong>Passive High-Pass Filter Calculator</strong>Determine corner frequencies of RC networks.</div>
+      <div class="linkCard"><strong>Ohm's Law Solver</strong>Solve basic voltage, current, and loop resistance equations.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function isInvalidText(str) {
+  if (str === "") return false;
+  return isNaN(parseFloat(str)) || !isFinite(str);
+}
+
+function clearError() {
+  document.getElementById("errorBox").style.display = "none";
+}
+
+function clearResults() {
+  var ids = ["res_a", "res_rin", "res_fp1", "res_fp2", "res_cbe", "res_vc", "res_ve", "res_vb", "res_ic", "res_ie", "res_ib", "res_gm", "res_rpi", "res_re"];
+  ids.forEach(function(id) {
+    document.getElementById(id).innerText = "--";
+  });
+}
+
+function computeDifferential() {
+  var r1_str = document.getElementById("r1_val").value.trim();
+  var r2_str = document.getElementById("r2_val").value.trim();
+  var rc_str = document.getElementById("rc_val").value.trim();
+  var re_str = document.getElementById("re_val").value.trim();
+  var vp_str = document.getElementById("vp_val").value.trim();
+  var beta_str = document.getElementById("beta_val").value.trim();
+  var vbe_str = document.getElementById("vbe_val").value.trim();
+  var rs_str = document.getElementById("rs_val").value.trim();
+  var rl_str = document.getElementById("rl_val").value.trim();
+  var ft_str = document.getElementById("ft_val").value.trim();
+  var ccb_str = document.getElementById("ccb_val").value.trim();
+
+  // STRICT LOCK: ONLY show error if field is blank
+  if (r1_str === "" || r2_str === "" || rc_str === "" || re_str === "" || vp_str === "" || 
+      beta_str === "" || vbe_str === "" || rs_str === "" || rl_str === "" || ft_str === "" || ccb_str === "") {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  // STRICT LOCK: ONLY show error if field is non-numeric
+  if (isInvalidText(r1_str) || isInvalidText(r2_str) || isInvalidText(rc_str) || isInvalidText(re_str) || 
+      isInvalidText(vp_str) || isInvalidText(beta_str) || isInvalidText(vbe_str) || isInvalidText(rs_str) || 
+      isInvalidText(rl_str) || isInvalidText(ft_str) || isInvalidText(ccb_str)) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  document.getElementById("errorBox").style.display = "none";
+
+  var KILO = 1000;
+  var MEGA = KILO * KILO;
+  var PICO = 1 / (MEGA * MEGA);
+  var PI = Math.PI;
+  var Precision = 5;
+
+  var R1 = parseFloat(r1_str) * KILO;
+  var R2 = parseFloat(r2_str) * KILO;
+  var RC = parseFloat(rc_str) * KILO;
+  var RE = parseFloat(re_str) * KILO;
+  var Beta = parseFloat(beta_str);
+  var VBE = parseFloat(vbe_str);
+  var VP = parseFloat(vp_str);
+  var Ft = parseFloat(ft_str) * MEGA;
+  var Ccb = parseFloat(ccb_str) * PICO;
+  var Cbe = 0; // Calculated dynamically from Ft & Ccb
+  var RS = parseFloat(rs_str);
+  var RL = parseFloat(rl_str);
+
+  var VB = VP * R2 / (R1 + R2);
+  var VE = VB - VBE;
+  var IE = VE / RE;
+  var Alpha = Beta / (1 + Beta);
+  var IC = Alpha * IE;
+  var IB = IC / Beta;
+  var VC = VP - IC * RC;
+
+  var gm = IC / 0.025;
+  var Rpi = Beta / gm;
+  var re = Alpha / gm;
+
+  var Rb = (Beta + 1) * (re + RE);
+  var R12 = R1 * R2 / (R1 + R2);
+  var Rin = Rb * R12 / (Rb + R12);
+  var RCL = RC * RL / (RC + RL);
+
+  var A = (Alpha * Rpi * RCL) / ((RS + 2 * Rpi) * re);
+
+  if (Ccb && Ft) {
+    Cbe = gm / (Ft * 2 * PI) - Ccb;
+  }
+
+  var Rspi = RS * 2 * Rpi / (RS + 2 * Rpi);
+  var fp1 = 1 / (2 * PI * Rspi * (Cbe / 2 + Ccb));
+  var fp2 = 1 / (2 * PI * RCL * Ccb);
+
+  // Convert outputs back to display units
+  Rin /= KILO;
+  fp1 /= MEGA;
+  fp2 /= MEGA;
+  Cbe /= PICO;
+
+  // Set the values back into the results grid
+  document.getElementById("res_a").innerText = A.toPrecision(Precision) + " x";
+  document.getElementById("res_rin").innerText = Rin.toPrecision(Precision) + " kΩ";
+  document.getElementById("res_fp1").innerText = fp1.toPrecision(Precision) + " MHz";
+  document.getElementById("res_fp2").innerText = fp2.toPrecision(Precision) + " MHz";
+  document.getElementById("res_cbe").innerText = Cbe.toPrecision(Precision) + " pF";
+  document.getElementById("res_vc").innerText = VC.toPrecision(Precision) + " V";
+  document.getElementById("res_ve").innerText = VE.toPrecision(Precision) + " V";
+  document.getElementById("res_vb").innerText = VB.toPrecision(Precision) + " V";
+  document.getElementById("res_ic").innerText = (IC * KILO).toPrecision(Precision) + " mA";
+  document.getElementById("res_ie").innerText = (IE * KILO).toPrecision(Precision) + " mA";
+  document.getElementById("res_ib").innerText = (IB * KILO).toPrecision(Precision) + " mA";
+  document.getElementById("res_gm").innerText = gm.toPrecision(Precision) + " S";
+  document.getElementById("res_rpi").innerText = Rpi.toPrecision(Precision) + " Ω";
+  document.getElementById("res_re").innerText = re.toPrecision(Precision) + " Ω";
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. Why is the AC gain of this single-ended differential amplifier divided by 2?","acceptedAnswer":{"@type":"Answer","text":"In a balanced differential pair, the input voltage divides equally between the base-emitter junctions of Q1 and Q2. As a result, only half of the input signal is applied to the active common-base stage (Q2), halving the overall single-ended voltage gain compared to a standard common-emitter amplifier."}},
+{"@type":"Question","name":"2. How does the bypass capacitor C3 affect the frequency response?","acceptedAnswer":{"@type":"Answer","text":"C3 acts as an AC short circuit, keeping the base of Q2 at a stable AC ground. At low frequencies where the reactance of C3 increases, Q2 is no longer bypassed to ground, which introduces negative feedback and reduces the low-frequency gain."}},
+{"@type":"Question","name":"3. Why is the input impedance Rin of the differential pair higher than a standard common-emitter stage?","acceptedAnswer":{"@type":"Answer","text":"Because the input signal sees the base-emitter junction of Q1 in series with the base-emitter junction of Q2. This doubles the effective input resistance of the active transistors to approximately 2*rπ, boosting the overall input impedance."}},
+{"@type":"Question","name":"4. How is the low-frequency cutoff fL calculated?","acceptedAnswer":{"@type":"Answer","text":"The calculator evaluates the three high-pass poles formed by C1 (with Rin + RS), C2 (with RC + RL), and C3 (with the impedance at the base of Q2). It then uses a root-sum-square approximation to find the overall -3dB low-frequency cutoff frequency."}},
+{"@type":"Question","name":"5. What is the typical current gain (Beta) for small-signal RF transistors?","acceptedAnswer":{"@type":"Answer","text":"Small-signal RF transistors (such as the 2N2222 or BC547) typically exhibit current gains (Beta) ranging from 100 to 300 under standard operating conditions."}},
+{"@type":"Question","name":"6. How can I increase the high-frequency bandwidth of this amplifier?","acceptedAnswer":{"@type":"Answer","text":"To maximize high-frequency bandwidth, use high-speed RF transistors with low parasitic collector-base junction capacitance (Cob), and keep collector resistor RC values relatively small to minimize the output RC time constant."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Wideband Differential Amplifier Calculator","item":"https://calcboy.com/tool/wideband-differential-amplifier-calculator"}
+]
+}
+</script>
+
+</body>
+</html>
