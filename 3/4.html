@@ -1,130 +1,435 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>dBu to mV/m Field Strength Converter | CalcBoy</title>
+<meta name="description" content="Convert between dBu (dBµV/m) and mV/m (millivolts per meter) electric field strength. Calculate equivalent values in V/m and µV/m instantly.">
+<meta name="keywords" content="dBu to mVm, mVm to dBu, field strength converter, dbmicrovolts per meter, millivolts per meter, RF field strength, antenna propagation, CalcBoy">
+<style>
+#field-calc, #field-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#field-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; text-align: center; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
 
-<div id="body" class="width">
-<section id="content" class="two-column with-right-sidebar">
-<article>
+/* Restored Input & Select UI Styles */
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
 
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- rfw_rsp -->
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc1()
-{
-a=Number(document.calculator1.number1.value);
-fac = a/20;
-c = Math.pow(10,fac);
-c = c/1000;
-document.calculator1.mV_per_meter.value=c;
+button.calc-btn { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.gate-selector-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; margin-bottom: 10px; }
+.gate-tab-btn { padding: 12px 6px; background: #fff; border: 2px solid #cfd6df; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; color: #475467; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.gate-tab-btn:hover { border-color: #ff7a18; color: #ff7a18; }
+.gate-tab-btn.active { background: #ff7a18; color: #fff; border-color: #ff4b00; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-</SCRIPT>
-<FORM name="calculator1">
+</style>
+</head>
+<body>
 
+<div id="field-calc">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
+  <div class="calc-grid">
+    <div class="subTitle">Field Strength Parameters</div>
 
+    <div>
+      <label class="calc-label">Select Conversion Mode</label>
+      <div class="gate-selector-grid">
+        <button class="gate-tab-btn active" id="tab_DBU_to_MVM" onclick="selectMode('DBU_to_MVM')">dBu to mV/m</button>
+        <button class="gate-tab-btn" id="tab_MVM_to_DBU" onclick="selectMode('MVM_to_DBU')">mV/m to dBu</button>
+      </div>
+    </div>
 
-<label for="f">dBu<font face="Arial" size="6"></font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:350; right: 10px;"class="form-control" type="number" />
+    <div>
+      <label class="calc-label">Electric Field Strength</label>
+      <div class="calc-row">
+        <input id="input_val" type="number" step="any" oninput="clearResults()">
+        <div class="unit-box" id="unit_label">dBu</div>
+      </div>
+    </div>
+  </div>
 
+  <button type="button" class="calc-btn" onclick="computeFieldStrength()">CONVERT</button>
 
-</fieldset></div>
+  <div id="errorBox">Please enter a valid positive numeric field strength value.</div>
 
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc1();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <div class="result-title">RESULTS</div>
 
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Converted Strength</div><div class="result-value"><span id="converted_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Strength in µV/m</div><div class="result-value"><span id="uvm_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Strength in V/m</div><div class="result-value"><span id="vm_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Strength in dBmV/m</div><div class="result-value"><span id="dbmvm_out"></span></div></div>
+  </div>
 
-<h3>Outputs</h3></div></legend>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Field Strength Input</strong>The numerical magnitude of the electric field intensity. In linear mV/m mode, values must be strictly positive and greater than zero.</div>
+      <div class="paramItem"><strong>dBu (dBµV/m)</strong>The absolute logarithmic field strength unit, referenced to 1 microvolt per meter (1 µV/m). Standard for FM/TV broadcast contour calculations.</div>
+      <div class="paramItem"><strong>mV/m (Millivolts/meter)</strong>The linear electric field strength unit. 1 mV/m is equivalent to exactly 1000 µV/m, which maps to 60 dBu of intensity.</div>
+      <div class="paramItem"><strong>Propagation Indicators</strong>Renders converted outputs alongside standard µV/m, V/m, and logarithmic dBmV/m variants instantly.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>FM Radio Protected Contour</strong></p>
+        <p>The FCC protects commercial FM services to their 60 dBu contour limit. Convert this to see the linear equivalent (exactly 1.0 mV/m).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Fringe Coverage Boundary</strong></p>
+        <p>Fringe urban broadcast reception is often calculated down to 40 dBu. Convert this to millivolts (approx. 0.1 mV/m or 100 µV/m).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>AM Transmitter Site</strong></p>
+        <p>An AM broadcast antenna generates a field strength of 137.5 mV/m nearby. Convert this to dBu to assess dB-scale levels (approx. 102.7 dBu).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Receiver Sensitivity Check</strong></p>
+        <p>Convert shortwave receiver sensitivity specified in microvolts to logarithmic dBu to map coverage limits across terrains.</p>
+      </div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Electric field strength measures the intensity of an electromagnetic wave propagating from a transmitter tower. Wires and signal wavefronts are mapped below to show the logarithmic relationship between dBu and linear mV/m.</p>
 
-<label for="f">mV/m<font face="Arial" size="6"></font></label><input  name="mV_per_meter" class="intro"  style="position: absolute;   text-align:center; width:350; right: 10px;"class="form-control" type="number" />
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" id="field-diagram">
+        <rect width="520" height="220" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Logarithmic Scale Line -->
+        <line x1="40" y1="110" x2="480" y2="110" stroke="#475467" stroke-width="3" />
+        
+        <!-- Markers -->
+        <!-- Point 1 (1 µV/m) -->
+        <line x1="80" y1="100" x2="80" y2="120" stroke="#475467" stroke-width="2" />
+        <text x="80" y="80" fill="#2359e8" font-weight="900" font-size="10" text-anchor="middle">0 dBu</text>
+        <text x="80" y="145" fill="#7c3aed" font-weight="900" font-size="10" text-anchor="middle">-60 dBmV/m</text>
+        <text x="80" y="175" fill="#16a34a" font-weight="900" font-size="10" text-anchor="middle">1 µV/m</text>
 
-</fieldset></div>
+        <!-- Point 2 (1 mV/m) -->
+        <line x1="260" y1="100" x2="260" y2="120" stroke="#475467" stroke-width="2" />
+        <text x="260" y="80" fill="#2359e8" font-weight="900" font-size="10" text-anchor="middle">60 dBu</text>
+        <text x="260" y="145" fill="#7c3aed" font-weight="900" font-size="10" text-anchor="middle">0 dBmV/m</text>
+        <text x="260" y="175" fill="#16a34a" font-weight="900" font-size="10" text-anchor="middle">1 mV/m</text>
 
+        <!-- Point 3 (1 V/m) -->
+        <line x1="440" y1="100" x2="440" y2="120" stroke="#475467" stroke-width="2" />
+        <text x="440" y="80" fill="#2359e8" font-weight="900" font-size="10" text-anchor="middle">120 dBu</text>
+        <text x="440" y="145" fill="#7c3aed" font-weight="900" font-size="10" text-anchor="middle">60 dBmV/m</text>
+        <text x="440" y="175" fill="#16a34a" font-weight="900" font-size="10" text-anchor="middle">1 V/m</text>
 
-</FORM>
+        <!-- Alignment indicators -->
+        <path d="M 80,85 V 135" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5" />
+        <path d="M 260,85 V 135" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5" />
+        <path d="M 440,85 V 135" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5" />
 
+        <!-- Legend -->
+        <text x="260" y="210" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">Logarithmic Field Strength Comparison Matrix</text>
+      </svg>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">dBu to mV/m Conversion: mV/m = (10^(dBu / 20)) / 1000</div>
+    <div class="formula">mV/m to dBu Conversion: dBu = 20 · log10(mV/m × 1000)</div>
+    <div class="formula">dBu to dBmV/m Conversion: dBmV/m = dBu - 60</div>
+    <div class="formulaBox">
+      Step-by-Step Conversion Example (80 dBu to mV/m):<br>
+      • Source: 80 dBu, Conversion: dBu to mV/m<br>
+      • Step 1: Calculate microvolts per meter. µV/m = 10^(80 / 20) = 10^4 = 10,000 µV/m<br>
+      • Step 2: Divide by 1000 to convert to mV/m. mV/m = 10,000 / 1000 = 10 mV/m<br>
+      • Step 3: Convert to Volts per meter. V/m = 10 mV/m / 1000 = 0.01 V/m<br>
+      • Step 4: Determine standard dBmV/m level. dBmV/m = 80 - 60 = 20 dBmV/m
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the desired conversion direction using the top segment tabs.</div>
+      <div class="aboutStep">Enter the numerical field strength level value into the input field.</div>
+      <div class="aboutStep">Click the CONVERT button to execute the calculations.</div>
+      <div class="aboutStep">Observe the converted field strength value displayed inside the results panel.</div>
+      <div class="aboutStep">Examine reference values in µV/m, V/m, and dBmV/m shown below.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Standardize electric field strength measurements across broadcasting and antenna propagation networks.</strong>
+      <p>The CalcBoy dBu to mV/m Field Strength Converter translates field intensity values instantly, generating logarithmic equivalents and corresponding physical outputs in V/m, µV/m, and dBmV/m.</p>
+    </div>
+    <p>Electric field strength measures the intensity of an electromagnetic wave propagating from a transmitter tower. Because electromagnetic signals decay exponentially over distance, measuring field strength on a linear microvolt or millivolt scale can lead to unwieldy numbers. Logarithmic units simplify these calculations, enabling engineers to add or subtract decibels directly to account for gains and losses along a signal path.</p>
+    <p>The system supports absolute field strength units optimized for broadcasting. Decibel-microvolts per meter (dBµV/m, often written as dBu) are referenced to exactly 1 microvolt per meter (1 µV/m) of field strength, commonly utilized in commercial FM and television service contour calculations. Millivolts per meter (mV/m) represent the linear field strength, where 1 mV/m equals exactly 1000 µV/m, resulting in a constant logarithmic offset of 60 dB relative to standard dBu.</p>
+    <p>Using this calculator, telecommunications engineers, antenna designers, RF technicians, and students can evaluate signal field strength parameters accurately across both logarithmic and linear metrics.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Broadcast contour analysis, antenna propagation surveys, cell site path analysis, and signal strength verification.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks converted values alongside absolute physical metrics in V/m, µV/m, and dBmV/m.</div>
+      <div class="aboutMiniCard"><span>Precision Math</span>Logarithmic evaluations use exact double-precision calculations to prevent rounding drift.</div>
+      <div class="aboutMiniCard"><span>Universal Standard</span>Supports both high-power commercial broadcast contours and high-sensitivity receiver metrics.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: To quickly estimate path calculations, remember that adding 6 dB doubles the voltage field strength, while adding 20 dB increases the field strength tenfold.</div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What does the unit dBu represent in field strength?</strong></h3>
+    <p>In RF and broadcast engineering, dBu stands for decibels relative to 1 microvolt per meter (dBµV/m), representing the absolute intensity of an electric field at a receiving location.</p>
 
+    <h3><strong>2. Why are logarithmic decibel units used instead of millivolts?</strong></h3>
+    <p>Logarithmic units simplify signal calculations. They convert complex multiplication and division operations (representing propagation attenuation and antenna factor) into simple addition and subtraction across transmission paths.</p>
 
+    <h3><strong>3. What does 60 dBu represent?</strong></h3>
+    <p>60 dBu represents exactly 1 millivolt per meter (1 mV/m) of physical field strength. This is the standard primary coverage limit protected by the FCC for commercial FM radio stations.</p>
 
+    <h3><strong>4. How does negative dBu relate to field strength?</strong></h3>
+    <p>Negative decibel values represent field strength levels below the reference threshold. For example, -20 dBu is equivalent to 0.1 microvolts per meter (0.1 µV/m).</p>
 
+    <h3><strong>5. What is the relation between dBu and dBmV/m?</strong></h3>
+    <p>dBmV/m is referenced to 1 millivolt per meter (1 mV/m). Since 1 millivolt equals 1000 microvolts, the difference between the two units is exactly 60 dB (dBmV/m = dBu - 60).</p>
 
+    <h3><strong>6. Can we have 0 mV/m in logarithmic decibel calculations?</strong></h3>
+    <p>No. Physically, 0 mV/m represents an absolute absence of electric field, which corresponds to negative infinity on a logarithmic dBu scale. Therefore, inputs for linear field strength must be strictly positive and greater than zero.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Antenna Factor Calculator</strong>Convert received terminal voltage to corresponding incident field strength.</div>
+      <div class="linkCard"><strong>RF Link Budget Calculator</strong>Calculate overall signal margins across transmitter-receiver paths.</div>
+      <div class="linkCard"><strong>dBm to Voltage Converter</strong>Translate logarithmic power levels to equivalent RMS voltage.</div>
+      <div class="linkCard"><strong>Free Space Path Loss Calculator</strong>Determine electromagnetic signal decay over distance.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// State manager for current active conversion mode (Default is DBU_to_MVM)
+var activeMode = "DBU_to_MVM";
+
+function val(id) {
+  return document.getElementById(id).value;
+}
+
+function put(id, val, unit, precision) {
+  var num = Number(val);
+  document.getElementById(id).innerText = num.toPrecision(precision || 5) + (unit ? (" " + unit) : "");
+}
+
+function clearResults() {
+  ["converted_out", "uvm_out", "vm_out", "dbmvm_out"].forEach(function(id) {
+    document.getElementById(id).innerText = "";
+  });
+  document.getElementById("errorBox").style.display = "none";
+}
+
+function selectMode(modeName) {
+  activeMode = modeName;
+  
+  // Update segment active states visually
+  ["DBU_to_MVM", "MVM_to_DBU"].forEach(function(m) {
+    var btn = document.getElementById("tab_" + m);
+    if (m === modeName) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+
+  // Update input unit label
+  var unitLabel = document.getElementById("unit_label");
+  if (modeName === "DBU_to_MVM") {
+    unitLabel.innerText = "dBu";
+  } else {
+    unitLabel.innerText = "mV/m";
+  }
+  
+  clearResults();
+}
+
+function computeFieldStrength() {
+  var inputRaw = val("input_val");
+
+  // Validation: Check for empty, missing, or non-numeric values
+  if (inputRaw === "" || isNaN(inputRaw)) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  var value = Number(inputRaw);
+  var convertedVal = 0;
+  var uvm = 0;
+  var vm = 0;
+  var dbmvm = 0;
+
+  if (activeMode === "DBU_to_MVM") {
+    // dBu to mV/m (Negative dBu values are allowed normally)
+    uvm = Math.pow(10, value / 20);
+    convertedVal = uvm / 1000;
+    vm = convertedVal / 1000;
+    dbmvm = value - 60;
+  } else {
+    // mV/m to dBu
+    // Log of non-positive numbers is mathematically invalid
+    if (value <= 0) {
+      document.getElementById("errorBox").style.display = "block";
+      clearResults();
+      return;
+    }
+    uvm = value * 1000;
+    convertedVal = 20 * Math.log10(uvm);
+    vm = value / 1000;
+    dbmvm = convertedVal - 60;
+  }
+
+  document.getElementById("errorBox").style.display = "none";
+
+  // Display outputs in results grid
+  var destUnit = (activeMode === "DBU_to_MVM") ? "mV/m" : "dBu";
+  put("converted_out", (activeMode === "DBU_to_MVM" ? convertedVal : convertedVal), destUnit, 6);
+  put("uvm_out", uvm, "µV/m", 6);
+  put("vm_out", vm, "V/m", 6);
+  put("dbmvm_out", dbmvm, "dBmV/m", 6);
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does the unit dBu represent in field strength?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In RF and broadcast engineering, dBu stands for decibels relative to 1 microvolt per meter (dBµV/m), representing the absolute intensity of an electric field at a receiving location."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are logarithmic decibel units used instead of millivolts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Logarithmic units simplify signal calculations. They convert complex multiplication and division operations (representing propagation attenuation and antenna factor) into simple addition and subtraction across transmission paths."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does 60 dBu represent?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "60 dBu represents exactly 1 millivolt per meter (1 mV/m) of physical field strength. This is the standard primary coverage limit protected by the FCC for commercial FM radio stations."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does negative dBu relate to field strength?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Negative decibel values represent field strength levels below the reference threshold. For example, -20 dBu is equivalent to 0.1 microvolts per meter (0.1 µV/m)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the relation between dBu and dBmV/m?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "dBmV/m is referenced to 1 millivolt per meter (1 mV/m). Since 1 millivolt equals 1000 microvolts, the difference between the two units is exactly 60 dB (dBmV/m = dBu - 60)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can we have 0 mV/m in logarithmic decibel calculations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Physically, 0 mV/m represents an absolute absence of electric field, which corresponds to negative infinity on a logarithmic dBu scale. Therefore, inputs for linear field strength must be strictly positive and greater than zero."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "dBu to mV/m Field Strength Converter",
+      "item": "https://calcboy.com/tool/dbu-to-mvm-converter"
+    }
+  ]
+}
+</script>
 
 </body>
 </html>
