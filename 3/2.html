@@ -1,132 +1,400 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 70px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-
-</style>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<div class="clear"></div>
-</nav>
-</div>
-<div class="clear"></div>
-</header>
-<div id="intro">
-<div class="width">
-<div class="intro-content">
-
-</div>
-</div>
-</div>
-<div id="body" class="width">
-<section id="content" class="two-column with-right-sidebar">
-<article>
-
-
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-a=Number(document.calculator.number1.value);
-c=a-30;
-document.calculator.dBW.value=c;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>dBm to dBW to dbm Converter | CalcBoy</title>
+<meta name="description" content="Convert decibels relative to milliwatts (dBm) to decibels relative to watts (dBW) and calculate physical power equivalents in Watts and milliwatts instantly.">
+<meta name="keywords" content="dBm to dBW, dBW to dBm, dbm converter, dbw converter, rf power converter, milliwatts to watts, decibels calculator, CalcBoy">
+<style>
+#db-calc, #db-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#db-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+select.unit-selector { padding: 0 8px; cursor: pointer; font-weight: 700; color: #374151; background-color: #eee; border: 1px solid #cfd6df; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box, select.unit-selector { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-</SCRIPT>
+</style>
+</head>
+<body>
 
+<div id="db-calc">
 
+  <div class="calc-grid">
+    <div class="subTitle">Decibel Conversion Parameters</div>
 
-<FORM name="calculator">
+    <div>
+      <label class="calc-label">Power Level to Convert</label>
+      <div class="calc-row">
+        <input id="input_val" type="number" step="any" oninput="clearResults()">
+        <div class="unit-box">Value</div>
+      </div>
+    </div>
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
+    <div>
+      <label class="calc-label">Conversion Mode</label>
+      <div class="calc-row">
+        <select id="conv_mode" class="unit-selector" onchange="clearResults()">
+          <option value="dbm_to_dbw" selected>dBm to dBW</option>
+          <option value="dbw_to_dbm">dBW to dBm</option>
+        </select>
+        <div class="unit-box">Mode</div>
+      </div>
+    </div>
+  </div>
 
+  <button type="button" onclick="computeDecibels()">CONVERT</button>
 
-<label for="f">dBm<font face="Arial" size="6"></font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:350; right: 10px;"class="form-control" type="number" />
+  <div id="errorBox">Please enter a valid numeric power level.</div>
 
+  <div class="result-title">RESULTS</div>
 
-</fieldset>
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Converted Power</div><div class="result-value"><span id="converted_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Power in Watts (W)</div><div class="result-value"><span id="watts_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Power in Milliwatts (mW)</div><div class="result-value"><span id="mw_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Power in Microwatts (µW)</div><div class="result-value"><span id="uw_out"></span></div></div>
+  </div>
 
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></div></div>
-</div></legend></fieldset>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Power Level Input</strong>The magnitude of the RF or audio signal power. Supports negative decibel values (such as receiver sensitivity limits of -90 dBm).</div>
+      <div class="paramItem"><strong>dBm (Decibel-Milliwatts)</strong>An absolute power unit referenced to 1 milliwatt of power. Widely used in cellular, Wi-Fi, and fiber-optic networks.</div>
+      <div class="paramItem"><strong>dBW (Decibel-Watts)</strong>An absolute power unit referenced to 1 Watt of power. Commonly used in satellite, radar, and broadcasting networks.</div>
+      <div class="paramItem"><strong>Multi-Unit Outputs</strong>Displays converted decibel values alongside corresponding physical metrics in Watts, milliwatts, and microwatts.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Standard Wi-Fi Router</strong></p>
+        <p>A typical Wi-Fi transmitter operates at 20 dBm. Convert this to dBW to identify its decibel-watt equivalent (approx. -10 dBW or 100 mW).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Cellular Signal Strength</strong></p>
+        <p>A receiver signal level of -70 dBm converts to -100 dBW, representing highly sensitive signal tracking (0.1 microwatts).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Broadcast TV Transmitter</strong></p>
+        <p>A high-power radar transmitter operating at 30 dBW converts directly to 60 dBm, which is equivalent to exactly 1000 Watts.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Microwave Link Testing</strong></p>
+        <p>Convert small waveguide power steps to evaluate network attenuation thresholds across long-distance relays.</p>
+      </div>
+    </div>
+  </section>
 
-<h3>Outputs</h3></div></legend>
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Decibels are logarithmic units expressing the ratio of a physical quantity (power) to a specified reference level. The visual scale below illustrates the direct logarithmic alignment between dBW, dBm, and physical Watts.</p>
 
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" id="decibel-diagram">
+        <rect width="520" height="220" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Logarithmic Scale Line -->
+        <line x1="40" y1="110" x2="480" y2="110" stroke="#475467" stroke-width="3" />
+        
+        <!-- Markers -->
+        <!-- Point 1 (1 mW) -->
+        <line x1="80" y1="100" x2="80" y2="120" stroke="#475467" stroke-width="2" />
+        <text x="80" y="80" fill="#2359e8" font-weight="900" font-size="10" text-anchor="middle">-30 dBW</text>
+        <text x="80" y="145" fill="#7c3aed" font-weight="900" font-size="10" text-anchor="middle">0 dBm</text>
+        <text x="80" y="175" fill="#16a34a" font-weight="900" font-size="10" text-anchor="middle">1 mW</text>
 
+        <!-- Point 2 (1 W) -->
+        <line x1="260" y1="100" x2="260" y2="120" stroke="#475467" stroke-width="2" />
+        <text x="260" y="80" fill="#2359e8" font-weight="900" font-size="10" text-anchor="middle">0 dBW</text>
+        <text x="260" y="145" fill="#7c3aed" font-weight="900" font-size="10" text-anchor="middle">30 dBm</text>
+        <text x="260" y="175" fill="#16a34a" font-weight="900" font-size="10" text-anchor="middle">1 W</text>
 
-<label for="f">dBW<font face="Arial" size="6"></font></label><input  name="dBW" class="intro"  style="position: absolute;   text-align:center; width:350; right: 10px;"class="form-control" type="number" />
+        <!-- Point 3 (1 kW) -->
+        <line x1="440" y1="100" x2="440" y2="120" stroke="#475467" stroke-width="2" />
+        <text x="440" y="80" fill="#2359e8" font-weight="900" font-size="10" text-anchor="middle">30 dBW</text>
+        <text x="440" y="145" fill="#7c3aed" font-weight="900" font-size="10" text-anchor="middle">60 dBm</text>
+        <text x="440" y="175" fill="#16a34a" font-weight="900" font-size="10" text-anchor="middle">1 kW</text>
 
-</fieldset>
-</FORM>
-<br/>
+        <!-- Alignment indicators -->
+        <path d="M 80,85 V 135" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5" />
+        <path d="M 260,85 V 135" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5" />
+        <path d="M 440,85 V 135" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5" />
+
+        <!-- Legend -->
+        <text x="260" y="210" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">Logarithmic Scaling Comparison Matrix</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">dBm to dBW Conversion: dBW = dBm - 30</div>
+    <div class="formula">dBW to dBm Conversion: dBm = dBW + 30</div>
+    <div class="formula">Calculate Power in Watts (from dBW): Power (W) = 10^(dBW / 10)</div>
+    <div class="formula">Calculate Power in Milliwatts (from dBm): Power (mW) = 10^(dBm / 10)</div>
+    <div class="formulaBox">
+      Step-by-Step Conversion Example (20 dBm to dBW & Watts):<br>
+      • Source: 20 dBm, Conversion: dBm to dBW<br>
+      • Step 1: Calculate dBW level. dBW = 20 - 30 = -10 dBW<br>
+      • Step 2: Calculate milliwatts. Power (mW) = 10^(20 / 10) = 10^2 = 100 mW<br>
+      • Step 3: Convert to Watts. Power (W) = 100 mW / 1000 = 0.1 W<br>
+      • Step 4: Convert to microwatts. Power (µW) = 100 mW × 1000 = 100,000 µW
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the numerical power level value into the input field. Negative values are accepted.</div>
+      <div class="aboutStep">Select the desired conversion mode from the "Conversion Mode" dropdown menu (dBm to dBW or vice-versa).</div>
+      <div class="aboutStep">Click the CONVERT button to execute the logarithmic calculations.</div>
+      <div class="aboutStep">Observe the converted decibel value displayed inside the results panel.</div>
+      <div class="aboutStep">Examine the corresponding physical power metrics in Watts, milliwatts, and microwatts shown below.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Standardize decibel power metrics across RF, microwave, and fiber optic systems.</strong>
+      <p>The CalcBoy dBm to dBW Converter translates power levels instantly, generating logarithmic equivalents and corresponding physical power outputs in Watts and milliwatts.</p>
+    </div>
+    <p>Decibels are logarithmic units expressing the ratio of a physical quantity (power) to a specified reference level. Because electromagnetic waves decay exponentially over distance, measuring power on a linear Watt scale can lead to unwieldy numbers. Logarithmic units simplify these calculations, enabling engineers to add or subtract decibels directly to account for gains and losses along a signal path.</p>
+    <p>The system supports two fundamental absolute power units. Decibel-milliwatts (dBm) are referenced to exactly 1 milliwatt of power, commonly utilized in low-power wireless networks such as cellular links, Wi-Fi relays, and fiber optic transmitters. Decibel-watts (dBW) are referenced to exactly 1 Watt of power, implemented in high-power applications including television transmitters, radar systems, and satellite transponders. Because 1 Watt is equivalent to exactly 1000 milliwatts, the difference between dBm and dBW is a constant offset of 30 dB.</p>
+    <p>Using this calculator, telecommunications engineers, antenna designers, RF technicians, and students can evaluate signal power parameters accurately across both logarithmic and linear metrics.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Antenna alignment, wireless link budgets, cell site path analysis, and microwave signal testing.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks converted decibels alongside absolute physical metrics in Watts, milliwatts, and microwatts.</div>
+      <div class="aboutMiniCard"><span>Precision Math</span>Logarithmic evaluations use exact double-precision calculations to prevent rounding drift.</div>
+      <div class="aboutMiniCard"><span>Universal Standard</span>Supports both high-power industrial dBW scales and low-power micro-system dBm thresholds.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: To quickly estimate path calculations, remember that adding 3 dB doubles the physical power, while adding 10 dB increases the power tenfold.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is the difference between dBm and dBW?</strong></h3>
+    <p>dBm is referenced to 1 milliwatt (mW), while dBW is referenced to 1 Watt (W). Since 1 Watt equals 1000 milliwatts, the difference between the two units is exactly 30 dB (dBW = dBm - 30).</p>
+
+    <h3><strong>2. Why are logarithmic decibel units used instead of Watts?</strong></h3>
+    <p>Logarithmic units simplify signal calculations. They convert complex multiplication and division operations (representing gains and losses) into simple addition and subtraction across transmission paths.</p>
+
+    <h3><strong>3. What does 0 dBm represent?</strong></h3>
+    <p>0 dBm represents exactly 1 milliwatt (1 mW) of physical power. Similarly, 0 dBW represents exactly 1 Watt (1 W) of physical power.</p>
+
+    <h3><strong>4. How does cellular signal strength relate to dBm?</strong></h3>
+    <p>Cellular signal strength is measured in negative dBm values due to signal attenuation. A signal of -50 dBm represents strong reception, while -110 dBm represents weak reception near the cell edge.</p>
+
+    <h3><strong>5. What is standard receiver sensitivity?</strong></h3>
+    <p>Receiver sensitivity is the lowest power level at which a receiver can reliably process data. Typical Wi-Fi receivers possess a sensitivity threshold around -85 dBm to -95 dBm.</p>
+
+    <h3><strong>6. Can negative decibel values represent physical power?</strong></h3>
+    <p>Yes. Negative decibel values represent power levels below the reference threshold. For example, -10 dBm is equivalent to 0.1 milliwatts (100 microwatts).</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>RF Link Budget Calculator</strong>Calculate overall signal margins across transmitter-receiver paths.</div>
+      <div class="linkCard"><strong>dBm to Voltage Converter</strong>Translate logarithmic power levels to equivalent RMS voltage.</div>
+      <div class="linkCard"><strong>VSWR Calculator</strong>Evaluate signal reflection parameters along coaxial lines.</div>
+      <div class="linkCard"><strong>Coaxial Cable Attenuation Calculator</strong>Determine signal loss across specific cable types.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function val(id) {
+  return document.getElementById(id).value;
+}
+
+function put(id, val, unit, precision) {
+  var num = Number(val);
+  document.getElementById(id).innerText = num.toPrecision(precision || 5) + (unit ? (" " + unit) : "");
+}
+
+function clearResults() {
+  ["converted_out", "watts_out", "mw_out", "uw_out"].forEach(function(id) {
+    document.getElementById(id).innerText = "";
+  });
+  document.getElementById("errorBox").style.display = "none";
+}
+
+function computeDecibels() {
+  var inputRaw = val("input_val");
+
+  // Validation: Check for empty, missing, or non-numeric values
+  if (inputRaw === "" || isNaN(inputRaw)) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  var value = Number(inputRaw);
+  var mode = val("conv_mode");
+
+  var convertedVal = 0;
+  var watts = 0;
+  var milliwatts = 0;
+  var microwatts = 0;
+
+  // Perform calculation depending on direction (Negative values allowed normally)
+  if (mode === "dbm_to_dbw") {
+    convertedVal = value - 30;
+    milliwatts = Math.pow(10, value / 10);
+    watts = milliwatts / 1000;
+  } else {
+    convertedVal = value + 30;
+    watts = Math.pow(10, value / 10);
+    milliwatts = watts * 1000;
+  }
+  microwatts = milliwatts * 1000;
+
+  document.getElementById("errorBox").style.display = "none";
+
+  // Display outputs in results grid
+  var destUnit = (mode === "dbm_to_dbw") ? "dBW" : "dBm";
+  put("converted_out", convertedVal, destUnit, 6);
+  put("watts_out", watts, "W", 6);
+  put("mw_out", milliwatts, "mW", 6);
+  put("uw_out", microwatts, "µW", 6);
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between dBm and dBW?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "dBm is referenced to 1 milliwatt (mW), while dBW is referenced to 1 Watt (W). Since 1 Watt equals 1000 milliwatts, the difference between the two units is exactly 30 dB (dBW = dBm - 30)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are logarithmic decibel units used instead of Watts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Logarithmic units simplify signal calculations. They convert complex multiplication and division operations (representing gains and losses) into simple addition and subtraction across transmission paths."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does 0 dBm represent?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "0 dBm represents exactly 1 milliwatt (1 mW) of physical power. Similarly, 0 dBW represents exactly 1 Watt (1 W) of physical power."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does cellular signal strength relate to dBm?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cellular signal strength is measured in negative dBm values due to signal attenuation. A signal of -50 dBm represents strong reception, while -110 dBm represents weak reception near the cell edge."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is standard receiver sensitivity?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Receiver sensitivity is the lowest power level at which a receiver can reliably process data. Typical Wi-Fi receivers possess a sensitivity threshold around -85 dBm to -95 dBm."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can negative decibel values represent physical power?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Negative decibel values represent power levels below the reference threshold. For example, -10 dBm is equivalent to 0.1 milliwatts (100 microwatts)."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "dBm to dBW Converter",
+      "item": "https://calcboy.com/tool/dbm-to-dbw-converter"
+    }
+  ]
+}
+</script>
 
 </body>
 </html>
