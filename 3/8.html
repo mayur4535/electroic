@@ -1,126 +1,460 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ppm to Hz Converter | CalcBoy</title>
+<meta name="description" content="Convert frequency stability/offset between parts per million (ppm) and Hertz (Hz). Evaluate percentage error, frequency limits, and offset boundaries.">
+<meta name="keywords" content="ppm to hz, hz to ppm, frequency stability converter, parts per million to hertz, tcxo stability calculator, crystal oscillator accuracy, CalcBoy">
+<style>
+#ppm-calc, #ppm-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#ppm-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; text-align: center; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
 
-<div id="body" class="width">
-<section id="content" class="two-column with-right-sidebar">
-<article>
+/* Input & Select UI Styles */
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
 
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- rfw_rsp -->
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-Fr=Number(document.calculator.number1.value);
-PPM=Number(document.calculator.number2.value);
-c1 =  ( ((Fr*(Math.pow(10,9)))* PPM )/ (Math.pow(10,6)) );
-document.calculator.freq.value=c1;
+button.calc-btn { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.gate-selector-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; margin-bottom: 10px; }
+.gate-tab-btn { padding: 12px 6px; background: #fff; border: 2px solid #cfd6df; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; color: #475467; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.gate-tab-btn:hover { border-color: #ff7a18; color: #ff7a18; }
+.gate-tab-btn.active { background: #ff7a18; color: #fff; border-color: #ff4b00; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-</SCRIPT>
-<FORM name="calculator">
+</style>
+</head>
+<body>
 
+<div id="ppm-calc">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
+  <div class="calc-grid">
+    <div class="subTitle">Oscillator Stability Parameters</div>
 
+    <div>
+      <label class="calc-label">Select Conversion Direction</label>
+      <div class="gate-selector-grid">
+        <button class="gate-tab-btn active" id="tab_PPM_to_HZ" onclick="selectMode('PPM_to_HZ')">ppm to Hz</button>
+        <button class="gate-tab-btn" id="tab_HZ_to_PPM" onclick="selectMode('HZ_to_PPM')">Hz to ppm</button>
+      </div>
+    </div>
 
-<label for="f">RF <font face="Arial" size="6"> (Carrier Frequency)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:250; right: 130px;"class="form-control" type="number" />
- <label style="padding: 5px ;  position: absolute;right: 10px;font-size:50px;  height:68.5px; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">GHz</label>
+    <div>
+      <label class="calc-label">Carrier Frequency</label>
+      <div class="calc-row">
+        <input id="input_carrier" type="number" step="any" placeholder="e.g. 100" oninput="clearResults()">
+        <select id="carrier_unit" onchange="clearResults()">
+          <option value="1">Hz</option>
+          <option value="1000">kHz</option>
+          <option value="1000000" selected>MHz</option>
+          <option value="1000000000">GHz</option>
+          <option value="1000000000000">THz</option>
+        </select>
+      </div>
+    </div>
 
-<h1 style="font-size:25;"></h1>
-<label for="f">Frequency<font face="Arial" size="6"></font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:250; right: 130px;"class="form-control" type="number" />
- <label style="padding: 5px ;  position: absolute;right: 10px;font-size:42px;   height:68.5px; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:100px;">ppm</label>
+    <div>
+      <label class="calc-label" id="input_label_text">Stability (ppm)</label>
+      <div class="calc-row">
+        <input id="input_val" type="number" step="any" placeholder="e.g. 2.5" oninput="clearResults()">
+        <div class="unit-box" id="unit_label">ppm</div>
+      </div>
+    </div>
+  </div>
 
-<h1 style="font-size:50;"></h1>
-</fieldset></div>
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" name="bt1" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <button type="button" class="calc-btn" onclick="computeStability()">CONVERT</button>
 
+  <div id="errorBox">Please enter valid positive values. Carrier frequency must be greater than zero.</div>
 
-<h3>Outputs</h3></div></legend>
+  <div class="result-title">RESULTS</div>
 
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Converted Offset</div><div class="result-value"><span id="converted_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Stability Error (%)</div><div class="result-value"><span id="percent_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Minimum Frequency</div><div class="result-value"><span id="min_freq_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Maximum Frequency</div><div class="result-value"><span id="max_freq_out"></span></div></div>
+  </div>
 
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Carrier Frequency</strong>The nominal operating frequency of the transmitter, receiver, or reference crystal. Unit multipliers (Hz to THz) adjust the scale.</div>
+      <div class="paramItem"><strong>Stability (ppm)</strong>Parts Per Million (ppm) represents the maximum frequency drift allowed relative to the nominal frequency. Standard crystals exhibit 10 to 50 ppm drift.</div>
+      <div class="paramItem"><strong>Stability (Hz)</strong>The absolute frequency offset in Hertz (Hz) caused by oscillator drift or environmental factors.</div>
+      <div class="paramItem"><strong>Frequency Boundaries</strong>Calculates the maximum and minimum operational frequency bounds ($F_c \pm \Delta f$) resulting from oscillator deviation.</div>
+    </div>
+  </section>
 
-<label for="f">Frequency<font face="Arial" size="6"></font></label><input  name="freq" class="intro"  style="position: absolute;  text-align:center; width:250; right: 130px;"class="form-control" type="number" />
- <label style="padding: 5px ;  position: absolute;right: 10px;font-size:60px;   height:68.5px; text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; text-align:center;width:100px;">Hz</label>
-</fieldset></div>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>GPS Reference OCXO</strong></p>
+        <p>An Oven Controlled Crystal Oscillator (OCXO) at 10 MHz offers 0.05 ppm stability. The absolute frequency offset is only 0.5 Hz.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Standard Wi-Fi 6E Chipset</strong></p>
+        <p>A standard 6 GHz Wi-Fi transmitter allows up to ±20 ppm drift. The absolute offset can reach up to 120 kHz, requiring robust receiver tracking filters.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>FM Radio Broadcast</strong></p>
+        <p>An FM station operating at 100 MHz is regulated to within ±2000 Hz. The relative stability requirement is equal to exactly 20 ppm.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>RF Link Budget Guard Bands</strong></p>
+        <p>Calculate absolute drift margins at GHz levels to define guard band gaps between adjacent high-speed microwave channels.</p>
+      </div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Frequency stability indicates how much an oscillator drifts from its nominal target frequency. Environmental parameters (such as temperature, voltage, and aging) cause a deviation window ($\pm \Delta f$) around the carrier frequency ($F_c$).</p>
 
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" id="stability-diagram">
+        <rect width="520" height="220" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- nominal Wave -->
+        <path d="M 40,110 Q 90,30 140,110 T 240,110 T 340,110 T 440,110" fill="none" stroke="#2359e8" stroke-dasharray="1,1" stroke-width="2" />
+        
+        <!-- shifted Wave -->
+        <path d="M 50,110 Q 100,30 150,110 T 250,110 T 350,110 T 450,110" fill="none" stroke="#ea580c" stroke-width="2.5" />
+        <line x1="30" y1="110" x2="490" y2="110" stroke="#94a3b8" stroke-width="1.5" />
 
-</FORM>
+        <!-- Boundaries -->
+        <line x1="140" y1="50" x2="140" y2="170" stroke="#2359e8" stroke-dasharray="3,3" stroke-width="1.5" />
+        <line x1="150" y1="50" x2="150" y2="170" stroke="#ea580c" stroke-dasharray="3,3" stroke-width="1.5" />
+        
+        <!-- Tolerance Arrow -->
+        <path d="M 140,70 H 150" stroke="#ea580c" stroke-width="2" />
+        <text x="185" y="70" fill="#ea580c" font-weight="900" font-size="10" text-anchor="middle">±Δf (ppm)</text>
 
+        <!-- Labels -->
+        <text x="140" y="185" fill="#2359e8" font-weight="900" font-size="10" text-anchor="middle">Fc (Nominal)</text>
+        <text x="260" y="205" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">Oscillator Drift and Guard Band Boundaries</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Convert Carrier to Hz: Fc_Hz = Carrier × Multiplier</div>
+    <div class="formula">ppm to Hz Offset: Δf_Hz = (Fc_Hz × ppm) / 1,000,000</div>
+    <div class="formula">Hz to ppm Offset: ppm = (Δf_Hz / Fc_Hz) × 1,000,000</div>
+    <div class="formula">Stability Error Percentage: Error (%) = ppm / 10,000</div>
+    <div class="formulaBox">
+      Step-by-Step Conversion Example (100 MHz at 2.5 ppm to Hz):<br>
+      • Step 1: Convert Carrier to Hz: 100 MHz = 100,000,000 Hz<br>
+      • Step 2: Apply ppm scale: 100,000,000 × (2.5 / 1,000,000) = 250 Hz<br>
+      • Step 3: Compute percentage error: 2.5 / 10,000 = 0.00025%<br>
+      • Step 4: Determine boundaries: Min = 99.99975 MHz, Max = 100.00025 MHz
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the desired conversion direction using the top segment tabs.</div>
+      <div class="aboutStep">Enter your nominal operating carrier frequency and select its unit scale (Hz, kHz, MHz, GHz, THz).</div>
+      <div class="aboutStep">Enter the stability value (either in ppm or Hz, depending on the active mode).</div>
+      <div class="aboutStep">Click the CONVERT button to compute the frequency parameters.</div>
+      <div class="aboutStep">Review the converted offset, percentage error, and maximum/minimum frequency bounds inside the results panel.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Translate frequency tolerances between relative ppm limits and absolute Hertz offsets.</strong>
+      <p>The CalcBoy ppm to Hz Converter calculates oscillator stability limits, generating standard physical frequency offsets, tolerance bounds, and percentage errors.</p>
+    </div>
+    <p>In RF (Radio Frequency) design, electrical engineering, and communications, frequency stability is a critical parameter. It represents how much an oscillator's frequency drifts over time due to aging, temperature variations, and supply voltage fluctuations. Because this drift is directly proportional to the operating frequency, it is conventionally expressed in parts per million (ppm), a relative unit. This allows engineers to compare the quality of different crystal oscillators independent of their design frequency.</p>
+    <p>However, when designing filters, guard bands, and demodulator circuits, engineers need to translate this relative ppm value into an absolute frequency offset in Hertz (Hz). For example, a 10 ppm drift on a 10 MHz reference crystal results in a tiny 100 Hz shift. However, that same 10 ppm drift on a 10 GHz microwave satellite transponder causes a massive 100 kHz frequency shift, requiring significantly wider guard bands or active carrier recovery loops.</p>
+    <p>This calculator performs precise logarithmic translations across standard communication units, giving hardware designers, telecom engineers, and RF technicians a reliable tool to analyze oscillator tolerances and plan microwave links.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Crystal oscillator analysis (TCXO, OCXO), microwave guard band planning, and receiver filter design.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Displays absolute frequency offsets in Hz, relative stability errors in %, and maximum/minimum operational boundaries.</div>
+      <div class="aboutMiniCard"><span>Flexible Scales</span>Features fully adjustable carrier frequency multipliers ranging from Hz to THz.</div>
+      <div class="aboutMiniCard"><span>Bidirectional Converter</span>Supports conversion from ppm to Hz as well as from absolute Hz offsets to ppm.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: TCXO (Temperature Compensated Crystal Oscillators) typically provide stability under ±2.5 ppm, while high-performance OCXO systems can achieve stability below ±0.05 ppm.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What does ppm mean in frequency stability?</strong></h3>
+    <p>PPM stands for Parts Per Million. It is a relative unit used to express frequency stability. For example, a stability of 1 ppm means the frequency can drift by one-millionth of the nominal frequency for every million Hertz.</p>
+
+    <h3><strong>2. How do you convert ppm to Hz?</strong></h3>
+    <p>To convert ppm to Hz, multiply the nominal frequency (in Hz) by the stability value in ppm, and then divide the result by 1,000,000 (Δf_Hz = (Fc_Hz × ppm) / 1,000,000).</p>
+
+    <h3><strong>3. Why does absolute frequency drift increase at higher carrier frequencies?</strong></h3>
+    <p>Since ppm is a relative unit, the absolute offset in Hz is directly proportional to the operating frequency. A 10 ppm crystal drifts by 100 Hz at 10 MHz, but drifts by 10,000 Hz (10 kHz) at 1 GHz.</p>
+
+    <h3><strong>4. What is the difference between a TCXO and an OCXO?</strong></h3>
+    <p>A TCXO (Temperature Compensated Crystal Oscillator) uses internal circuitry to compensate for temperature drift, typically achieving ±1 to ±5 ppm stability. An OCXO (Oven Controlled Crystal Oscillator) places the crystal in a heated enclosure maintained at a constant temperature, achieving stability below ±0.05 ppm.</p>
+
+    <h3><strong>5. How does temperature affect crystal stability?</strong></h3>
+    <p>Temperature changes alter the physical dimensions and elasticity of quartz crystals, changing their mechanical resonant frequency. This physical drift is the primary cause of frequency instability in uncompensated crystal oscillators.</p>
+
+    <h3><strong>6. Why is oscillator stability critical in digital communications?</strong></h3>
+    <p>Digital modulation systems (like QAM or OFDM) require precise synchronization between the transmitter and receiver. Excessive frequency drift causes phase noise, constellation rotation, and inter-carrier interference, leading to packet losses.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Wavelength to Frequency Converter</strong>Calculate electromagnetic wavelength based on operating frequency.</div>
+      <div class="linkCard"><strong>Coaxial Cable Phase Delay Calculator</strong>Determine signal transit delay times based on cable properties.</div>
+      <div class="linkCard"><strong>RF Link Budget Calculator</strong>Evaluate transmission path margins across complex networks.</div>
+      <div class="linkCard"><strong>Phase Noise to Jitter Converter</strong>Convert integrated phase noise values into equivalent time jitter.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// State manager for current active conversion mode (Default is PPM_to_HZ)
+var activeMode = "PPM_to_HZ";
+
+function val(id) {
+  return document.getElementById(id).value;
+}
+
+function put(id, val, unit, precision) {
+  var valueBox = document.getElementById(id);
+  if (typeof val === "string") {
+    valueBox.innerText = val;
+  } else {
+    valueBox.innerText = Number(val).toPrecision(precision || 5) + (unit ? (" " + unit) : "");
+  }
+}
+
+function clearResults() {
+  ["converted_out", "percent_out", "min_freq_out", "max_freq_out"].forEach(function(id) {
+    document.getElementById(id).innerText = "";
+  });
+  document.getElementById("errorBox").style.display = "none";
+}
+
+function selectMode(modeName) {
+  activeMode = modeName;
+  
+  // Update segment active states visually
+  ["PPM_to_HZ", "HZ_to_PPM"].forEach(function(m) {
+    var btn = document.getElementById("tab_" + m);
+    if (m === modeName) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+
+  // Update input label and unit label dynamically
+  var inputLabelText = document.getElementById("input_label_text");
+  var unitLabel = document.getElementById("unit_label");
+  if (modeName === "PPM_to_HZ") {
+    inputLabelText.innerText = "Stability (ppm)";
+    unitLabel.innerText = "ppm";
+  } else {
+    inputLabelText.innerText = "Frequency Offset (Hz)";
+    unitLabel.innerText = "Hz";
+  }
+  
+  clearResults();
+}
+
+function computeStability() {
+  var rawCarrier = val("input_carrier");
+  var rawVal = val("input_val");
+
+  // Validation checks: blank fields, non-numeric values, or out of bound values (Negative stability is allowed normally)
+  if (rawCarrier === "" || isNaN(rawCarrier) || rawVal === "" || isNaN(rawVal)) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  var carrier = Number(rawCarrier);
+  var value = Number(rawVal);
+  var carrierMult = Number(val("carrier_unit"));
+
+  if (carrier <= 0) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  // Calculate actual frequency in Hertz
+  var carrierHz = carrier * carrierMult;
+
+  var deltaHz = 0;
+  var ppmVal = 0;
+  var convertedVal = 0;
+
+  if (activeMode === "PPM_to_HZ") {
+    // ppm to Hz
+    ppmVal = value;
+    deltaHz = (carrierHz * value) / 1000000.0;
+    convertedVal = deltaHz;
+  } else {
+    // Hz to ppm
+    deltaHz = value;
+    ppmVal = (value / carrierHz) * 1000000.0;
+    convertedVal = ppmVal;
+  }
+
+  // Calculate percentage error and frequency bounds
+  var percentError = ppmVal / 10000.0;
+  var minFreqHz = carrierHz - Math.abs(deltaHz);
+  var maxFreqHz = carrierHz + Math.abs(deltaHz);
+
+  // Convert bounds back to the selected carrier unit for display consistency
+  var minFreqSelected = minFreqHz / carrierMult;
+  var maxFreqSelected = maxFreqHz / carrierMult;
+
+  var carrierUnitText = document.getElementById("carrier_unit").options[document.getElementById("carrier_unit").selectedIndex].text;
+
+  document.getElementById("errorBox").style.display = "none";
+
+  // Display outputs inside results panel
+  var destUnit = (activeMode === "PPM_to_HZ") ? "Hz" : "ppm";
+  put("converted_out", convertedVal, destUnit, 6);
+  put("percent_out", percentError, "%", 6);
+  put("min_freq_out", minFreqSelected, carrierUnitText, 6);
+  put("max_freq_out", maxFreqSelected, carrierUnitText, 6);
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does ppm mean in frequency stability?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "PPM stands for Parts Per Million. It is a relative unit used to express frequency stability. For example, a stability of 1 ppm means the frequency can drift by one-millionth of the nominal frequency for every million Hertz."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you convert ppm to Hz?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To convert ppm to Hz, multiply the nominal frequency (in Hz) by the stability value in ppm, and then divide the result by 1,000,000 (Δf_Hz = (Fc_Hz × ppm) / 1,000,000)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does absolute frequency drift increase at higher carrier frequencies?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Since ppm is a relative unit, the absolute offset in Hz is directly proportional to the operating frequency. A 10 ppm crystal drifts by 100 Hz at 10 MHz, but drifts by 10,000 Hz (10 kHz) at 1 GHz."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between a TCXO and an OCXO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A TCXO (Temperature Compensated Crystal Oscillator) uses internal circuitry to compensate for temperature drift, typically achieving ±1 to ±5 ppm stability. An OCXO (Oven Controlled Crystal Oscillator) places the crystal in a heated enclosure maintained at a constant temperature, achieving stability below ±0.05 ppm."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does temperature affect crystal stability?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Temperature changes alter the physical dimensions and elasticity of quartz crystals, changing their mechanical resonant frequency. This physical drift is the primary cause of frequency instability in uncompensated crystal oscillators."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is oscillator stability critical in digital communications?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Digital modulation systems (like QAM or OFDM) require precise synchronization between the transmitter and receiver. Excessive frequency drift causes phase noise, constellation rotation, and inter-carrier interference, leading to packet losses."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "ppm to Hz Converter",
+      "item": "https://calcboy.com/tool/ppm-to-hz-converter"
+    }
+  ]
+}
+</script>
 
 </body>
 </html>
