@@ -1,153 +1,485 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Degrees Minutes Seconds to Decimal Degrees Calculator | CalcBoy</title>
+<meta name="description" content="Convert between Degrees, Minutes, Seconds (DMS) and Decimal Degrees (DD) coordinates. Calculate equivalent radians, gradians, and standard GIS formats instantly.">
+<meta name="keywords" content="DMS to decimal degrees, decimal degrees to DMS, coordinate converter, latitude longitude converter, GPS coordinates calculator, angle converter, CalcBoy">
+<style>
+#dms-calc, #dms-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#dms-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; text-align: center; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
 
-<div id="body" class="width">
-<section id="content" class="two-column with-right-sidebar">
-<article>
+/* Input & Select UI Styles */
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
 
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- rfw_rsp -->
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc1()
-{
-a1=Number(document.calculator1.number1.value);
-a2=Number(document.calculator1.number2.value);
-a3=Number(document.calculator1.number3.value);
-c = ( a1 + (a2/60) + (a3/3600) );
-document.calculator1.decimal_degree.value=c;
+button.calc-btn { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.gate-selector-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; margin-bottom: 10px; }
+.gate-tab-btn { padding: 12px 6px; background: #fff; border: 2px solid #cfd6df; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; color: #475467; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.gate-tab-btn:hover { border-color: #ff7a18; color: #ff7a18; }
+.gate-tab-btn.active { background: #ff7a18; color: #fff; border-color: #ff4b00; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-</SCRIPT>
-<FORM name="calculator1">
+</style>
+</head>
+<body>
 
+<div id="dms-calc">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
+  <div class="calc-grid">
+    <div class="subTitle">Coordinate Conversion Parameters</div>
 
+    <div>
+      <label class="calc-label">Select Conversion Mode</label>
+      <div class="gate-selector-grid">
+        <button class="gate-tab-btn active" id="tab_DMS_to_DD" onclick="selectMode('DMS_to_DD')">DMS to Decimal Degrees</button>
+        <button class="gate-tab-btn" id="tab_DD_to_DMS" onclick="selectMode('DD_to_DMS')">Decimal Degrees to DMS</button>
+      </div>
+    </div>
 
-<label for="f">Degrees<font face="Arial" size="6"></font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:350; right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:25;"></h1>
-<label for="f">Minutes<font face="Arial" size="6"></font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:350; right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:25;"></h1>
+    <!-- DMS Inputs Container -->
+    <div id="dms_inputs_container" class="calc-grid">
+      <div>
+        <label class="calc-label">Degrees</label>
+        <div class="calc-row">
+          <input id="input_deg" type="number" step="1" placeholder="e.g. 45" oninput="clearResults()">
+          <div class="unit-box">Degrees°</div>
+        </div>
+      </div>
+      <div>
+        <label class="calc-label">Minutes</label>
+        <div class="calc-row">
+          <input id="input_min" type="number" step="any" placeholder="0 to 59" oninput="clearResults()">
+          <div class="unit-box">Minutes'</div>
+        </div>
+      </div>
+      <div>
+        <label class="calc-label">Seconds</label>
+        <div class="calc-row">
+          <input id="input_sec" type="number" step="any" placeholder="0 to 59" oninput="clearResults()">
+          <div class="unit-box">Seconds"</div>
+        </div>
+      </div>
+    </div>
 
-<label for="f">Seconds<font face="Arial" size="6"></font></label><input  name="number3" class="intro"  style="position: absolute;  text-align:center; width:350; right: 10px;"class="form-control" type="number" />
+    <!-- Decimal Degrees Input Container -->
+    <div id="dd_inputs_container" class="calc-grid" style="display: none;">
+      <div>
+        <label class="calc-label">Decimal Degrees</label>
+        <div class="calc-row">
+          <input id="input_dd" type="number" step="any" placeholder="e.g. 45.5042" oninput="clearResults()">
+          <div class="unit-box">DD°</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <button type="button" class="calc-btn" onclick="computeCoordinates()">CONVERT</button>
 
-</fieldset></div>
+  <div id="errorBox">Please enter valid numeric angle values. Minutes and seconds must be between 0 and 59.99.</div>
 
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" value="CALCULATE" onclick="javascript:calc1();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <div class="result-title">RESULTS</div>
 
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Converted Angle</div><div class="result-value"><span id="converted_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Angle in Radians</div><div class="result-value"><span id="radians_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Angle in Gradians</div><div class="result-value"><span id="gradians_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Directional Equivalent</div><div class="result-value"><span id="direction_out"></span></div></div>
+  </div>
 
-<h3>Outputs</h3></div></legend>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Degrees (D)</strong>The integer portion of the angular coordinate. Can be positive or negative to represent coordinates across northern/southern or eastern/western hemispheres.</div>
+      <div class="paramItem"><strong>Minutes (M)</strong>The primary subdivision of a degree. One degree contains exactly 60 minutes. Input values must be between 0 and 59.99.</div>
+      <div class="paramItem"><strong>Seconds (S)</strong>The secondary subdivision of a degree. One minute contains exactly 60 seconds. Input values must be between 0 and 59.99.</div>
+      <div class="paramItem"><strong>Decimal Degrees (DD)</strong>The coordinate represented in absolute decimal format. Standard for digital mapping databases and GIS software.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>GPS Navigation Point</strong></p>
+        <p>Convert 45° 30' 15" DMS to Decimal Degrees to input coordinates directly into Google Maps or aviation flight logs (approx. 45.50417°).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>GIS Database Integration</strong></p>
+        <p>Convert a decimal coordinate of -122.4194° (representing San Francisco longitude) back to DMS format to verify structural survey plates (approx. -122° 25' 9.84").</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Astronomy Star Charting</strong></p>
+        <p>Convert celestial declination coordinates expressed in degrees, arcminutes, and arcseconds to calculate absolute radial offsets.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Civil Survey Alignment</strong></p>
+        <p>Convert boundary corner angles to radians or gradians to align theodolite instruments on construction grids.</p>
+      </div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A degree is a measurement of a plane angle, representing 1/360 of a full rotation. For high-precision mapping and geography, degrees are subdivided into sexagesimal units where one degree contains 60 minutes, and one minute contains 60 seconds.</p>
 
-<label for="f">Decimal <font face="Arial" size="8">(Degree)</font></label><input  name="decimal_degree" class="intro"  style="position: absolute;   text-align:center; width:350; right: 10px;"class="form-control" type="number" />
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" id="angle-diagram">
+        <rect width="520" height="220" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Angular Arc representation -->
+        <circle cx="120" cy="110" r="80" fill="none" stroke="#e2e8f0" stroke-width="3" />
+        <path d="M 120,110 L 200,110" stroke="#475467" stroke-width="2" />
+        <path d="M 120,110 L 176,54" stroke="#475467" stroke-width="2" />
+        <path d="M 170,110 A 50,50 0 0,0 155,75" fill="none" stroke="#ff7a18" stroke-width="3" />
+        
+        <!-- Globe latitude lines -->
+        <path d="M 40,110 H 200" stroke="#94a3b8" stroke-dasharray="2,2" stroke-width="1.5" />
+        <path d="M 120,30 V 190" stroke="#94a3b8" stroke-dasharray="2,2" stroke-width="1.5" />
 
-</fieldset></div>
+        <text x="120" y="25" fill="#475467" font-weight="900" font-size="9" text-anchor="middle">NORTH POLE</text>
+        <text x="165" y="95" fill="#ea580c" font-weight="900" font-size="10">Angle (θ)</text>
 
+        <!-- Dynamic subdivisions box -->
+        <rect x="240" y="45" width="250" height="130" rx="8" fill="#f8fafc" stroke="#cfd6df" stroke-width="1.5" />
+        <text x="365" y="70" fill="#1e293b" font-weight="900" font-size="12" text-anchor="middle">ANGULAR SUBDIVISIONS</text>
+        <line x1="250" y1="80" x2="480" y2="80" stroke="#e2e8f0" stroke-width="1" />
+        
+        <text x="260" y="105" fill="#475467" font-weight="900" font-size="11" text-anchor="start">1 Degree (1°) = 60 Minutes (60')</text>
+        <text x="260" y="130" fill="#475467" font-weight="900" font-size="11" text-anchor="start">1 Minute (1') = 60 Seconds (60")</text>
+        <text x="260" y="155" fill="#475467" font-weight="900" font-size="11" text-anchor="start">1 Degree (1°) = 3600 Seconds (3600")</text>
+      </svg>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">DMS to Decimal Degrees: DD = Sign(Degrees) × (abs(Degrees) + (Minutes / 60) + (Seconds / 3600))</div>
+    <div class="formula">Decimal Degrees to DMS Degrees: Degrees = Integer(DD)</div>
+    <div class="formula">Decimal Degrees to DMS Minutes: Minutes = Integer((abs(DD) - abs(Degrees)) × 60)</div>
+    <div class="formula flex">Decimal Degrees to DMS Seconds: Seconds = ((abs(DD) - abs(Degrees)) × 60 - Minutes) × 60</div>
+    <div class="formulaBox">
+      Step-by-Step Conversion Example (45° 30' 15" to DD):<br>
+      • Source: D = 45, M = 30, S = 15<br>
+      • Step 1: Divide minutes by 60. 30 / 60 = 0.5°<br>
+      • Step 2: Divide seconds by 3600. 15 / 3600 = 0.004167°<br>
+      • Step 3: Sum the parts. DD = 45 + 0.5 + 0.004167 = 45.504167°<br>
+      • Step 4: Convert to Radians. Radians = 45.504167 × (π / 180) = 0.794205 rad<br>
+      • Step 5: Convert to Gradians. Gradians = 45.504167 × (200 / 180) = 50.560186 grad
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the desired conversion direction using the top segment tabs.</div>
+      <div class="aboutStep">If using DMS to DD mode, enter values for Degrees, Minutes, and Seconds.</div>
+      <div class="aboutStep">If using DD to DMS mode, enter the decimal degree value into the DD input field.</div>
+      <div class="aboutStep">Click the CONVERT button to execute the calculations.</div>
+      <div class="aboutStep">Observe the converted coordinate results alongside standard Radians and Gradians.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Standardize geographical coordinates across GPS, cartography, and surveying systems.</strong>
+      <p>The CalcBoy Degrees Minutes Seconds to Decimal Degrees Calculator translates angular coordinates instantly, generating standardized equivalents across digital GIS formats, radians, and gradians.</p>
+    </div>
+    <p>Angular coordinates are represented in two primary formats across technical fields. GPS units, surveying blueprints, and old-world paper maps traditionally express coordinates in Degrees, Minutes, and Seconds (DMS). However, digital mapping software, GIS databases, and Web Map Tile services (like Google Maps or Leaflet API) process coordinates as unified Decimal Degrees (DD). This calculator bridges these coordinate standards into a single, unified interface.</p>
+    <p>The conversion system operates by mapping units relative to standard sexagesimal divisions. When converting negative coordinates (representing Southern latitudes or Western longitudes), the mathematical sign is preserved across the entire coordinate block to prevent calculation drift. This mathematically rigorous approach ensures compatibility with professional cartographic platforms such as ArcGIS, QGIS, and CAD software.</p>
+    <p>Using this calculator, civil surveyors, GIS specialists, marine navigators, and science students can execute calculations quickly and reliably across standard coordinate systems.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Geographic information systems (GIS), civil surveying, marine navigation, and astronomy.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks converted coordinates alongside absolute physical metrics in Radians, Gradians, and Hemispheres.</div>
+      <div class="aboutMiniCard"><span>Precision Math</span>Logarithmic evaluations use exact double-precision calculations to prevent rounding drift.</div>
+      <div class="aboutMiniCard"><span>Universal Standard</span>Supports both traditional sexagesimal DMS values and modern digital decimal formats.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: When entering coordinates for the Southern or Western hemisphere, apply a negative sign (-) to the Degrees or Decimal Degrees input.</div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is the difference between DMS and Decimal Degrees?</strong></h3>
+    <p>DMS represents coordinates in sexagesimal format (Degrees, Minutes, Seconds), similar to hours, minutes, and seconds of time. Decimal Degrees represents the entire angle as a single decimal number, making it easier for computer systems to calculate distances.</p>
 
+    <h3><strong>2. Why are coordinates sometimes negative?</strong></h3>
+    <p>In standard geographic systems, negative latitude values represent locations in the Southern Hemisphere, while negative longitude values represent locations in the Western Hemisphere (relative to the Prime Meridian).</p>
 
+    <h3><strong>3. How accurate is a second of latitude?</strong></h3>
+    <p>At the equator, one degree of latitude is approximately 111 kilometers (69 miles). One minute is approximately 1.85 kilometers (1.15 miles), and one second is approximately 30.8 meters (101 feet).</p>
 
+    <h3><strong>4. How is the sign of negative degrees handled?</strong></h3>
+    <p>For negative coordinates, the negative sign is applied to the final calculated decimal value. For example, -45° 30' 0" is calculated as -(45 + 30/60) = -45.5°. The minutes and seconds are treated as absolute values before the sign is applied.</p>
 
+    <h3><strong>5. What are Radians and Gradians?</strong></h3>
+    <p>Radians are the standard SI unit for angular measurements, used extensively in physics and calculus. Gradians (or gons) are a decimal division of angles where a right angle is exactly 100 gradians and a full circle is 400 gradians, commonly used in European surveying.</p>
 
+    <h3><strong>6. How many decimal places are needed for GPS accuracy?</strong></h3>
+    <p>For high-precision GPS positioning, five decimal places in Decimal Degrees provide accuracy down to approximately 1.1 meters at the equator. Six decimal places improve resolution down to approximately 11 centimeters.</p>
+  </section>
 
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>GPS Coordinate Distance Calculator</strong>Determine the great-circle distance between two coordinate points.</div>
+      <div class="linkCard"><strong>Degrees to Radians Converter</strong>Translate angles between degrees, radians, and gradians.</div>
+      <div class="linkCard"><strong>UTM to Latitude Longitude Converter</strong>Convert Universal Transverse Mercator grid coordinates to geographic coordinates.</div>
+      <div class="linkCard"><strong>Bearing and Distance Calculator</strong>Compute final target coordinates from a source point and bearing.</div>
+    </div>
+  </section>
 
+</div>
 
+<script>
+// State manager for current active conversion mode (Default is DMS_to_DD)
+var activeMode = "DMS_to_DD";
 
+function val(id) {
+  return document.getElementById(id).value;
+}
 
+function put(id, val, unit, precision) {
+  var num = Number(val);
+  document.getElementById(id).innerText = num.toPrecision(precision || 6) + (unit ? (" " + unit) : "");
+}
 
+function clearResults() {
+  ["converted_out", "radians_out", "gradians_out", "direction_out"].forEach(function(id) {
+    document.getElementById(id).innerText = "";
+  });
+  document.getElementById("errorBox").style.display = "none";
+}
 
+function selectMode(modeName) {
+  activeMode = modeName;
+  
+  // Update segment active states visually
+  ["DMS_to_DD", "DD_to_DMS"].forEach(function(m) {
+    var btn = document.getElementById("tab_" + m);
+    if (m === modeName) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
 
+  // Toggle visible inputs based on active mode
+  if (modeName === "DMS_to_DD") {
+    document.getElementById("dms_inputs_container").style.display = "grid";
+    document.getElementById("dd_inputs_container").style.display = "none";
+  } else {
+    document.getElementById("dms_inputs_container").style.display = "none";
+    document.getElementById("dd_inputs_container").style.display = "grid";
+  }
+  
+  clearResults();
+}
 
+function computeCoordinates() {
+  var convertedVal = "";
+  var radians = 0;
+  var gradians = 0;
+  var directionStr = "";
+  var decimalDeg = 0;
 
+  if (activeMode === "DMS_to_DD") {
+    var rawDeg = val("input_deg");
+    var rawMin = val("input_min");
+    var rawSec = val("input_sec");
 
-</FORM>
-<br/>
+    // Default empty fields to zero
+    var deg = rawDeg === "" ? 0 : Number(rawDeg);
+    var min = rawMin === "" ? 0 : Number(rawMin);
+    var sec = rawSec === "" ? 0 : Number(rawSec);
+
+    // Validation: Check for invalid numeric values or out of bounds minutes/seconds [0, 60)
+    if (isNaN(deg) || isNaN(min) || isNaN(sec) || min < 0 || min >= 60 || sec < 0 || sec >= 60) {
+      document.getElementById("errorBox").style.display = "block";
+      clearResults();
+      return;
+    }
+
+    // Mathematical sign preservation for negative coordinates (GIS standard)
+    var sign = deg < 0 ? -1 : 1;
+    decimalDeg = sign * (Math.abs(deg) + (min / 60.0) + (sec / 3600.0));
+    
+    convertedVal = decimalDeg.toPrecision(8) + "°";
+  } else {
+    var rawDD = val("input_dd");
+
+    if (rawDD === "" || isNaN(rawDD)) {
+      document.getElementById("errorBox").style.display = "block";
+      clearResults();
+      return;
+    }
+
+    decimalDeg = Number(rawDD);
+
+    // Decimal Degrees to DMS calculation (GIS standards)
+    var sign = decimalDeg < 0 ? -1 : 1;
+    var absDD = Math.abs(decimalDeg);
+
+    var deg = Math.floor(absDD);
+    var remMin = (absDD - deg) * 60.0;
+    var min = Math.floor(remMin);
+    var sec = (remMin - min) * 60.0;
+
+    // Restore sign to degrees
+    var signedDeg = deg * sign;
+
+    convertedVal = signedDeg + "° " + min + "' " + sec.toFixed(2) + '"';
+  }
+
+  // Calculate alternative angular units
+  radians = decimalDeg * (Math.PI / 180.0);
+  gradians = decimalDeg * (200.0 / 180.0);
+
+  // Directional hemisphere equivalents (E/W or N/S examples)
+  var latDir = decimalDeg >= 0 ? "North (N)" : "South (S)";
+  var lonDir = decimalDeg >= 0 ? "East (E)" : "West (W)";
+  directionStr = latDir + " / " + lonDir;
+
+  document.getElementById("errorBox").style.display = "none";
+
+  // Display outputs in results grid
+  document.getElementById("converted_out").innerText = convertedVal;
+  put("radians_out", radians, "rad", 6);
+  put("gradians_out", gradians, "grad", 6);
+  document.getElementById("direction_out").innerText = directionStr;
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between DMS and Decimal Degrees?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "DMS represents coordinates in sexagesimal format (Degrees, Minutes, Seconds), similar to hours, minutes, and seconds of time. Decimal Degrees represents the entire angle as a single decimal number, making it easier for computer systems to calculate distances."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are coordinates sometimes negative?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In standard geographic systems, negative latitude values represent locations in the Southern Hemisphere, while negative longitude values represent locations in the Western Hemisphere (relative to the Prime Meridian)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate is a second of latitude?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At the equator, one degree of latitude is approximately 111 kilometers (69 miles). One minute is approximately 1.85 kilometers (1.15 miles), and one second is approximately 30.8 meters (101 feet)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the sign of negative degrees handled?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For negative coordinates, the negative sign is applied to the final calculated decimal value. For example, -45° 30' 0" is calculated as -(45 + 30/60) = -45.5°. The minutes and seconds are treated as absolute values before the sign is applied."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are Radians and Gradians?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Radians are the standard SI unit for angular measurements, used extensively in physics and calculus. Gradians (or gons) are a decimal division of angles where a right angle is exactly 100 gradians and a full circle is 400 gradians, commonly used in European surveying."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many decimal places are needed for GPS accuracy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For high-precision GPS positioning, five decimal places in Decimal Degrees provide accuracy down to approximately 1.1 meters at the equator. Six decimal places improve resolution down to approximately 11 centimeters."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Degrees Minutes Seconds to Decimal Degrees Calculator",
+      "item": "https://calcboy.com/tool/dms-to-decimal-degrees-calculator"
+    }
+  ]
+}
+</script>
 
 </body>
 </html>
