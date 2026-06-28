@@ -1,361 +1,490 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script><link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>555 Timer Astable Circuit Calculator | CalcBoy</title>
+<meta name="description" content="Design an astable 555 timer circuit. Calculate output frequency, total period, duty cycle, mark-space ratio, and high/low timing intervals instantly.">
+<meta name="keywords" content="555 timer calculator, astable multivibrator calculator, 555 astable duty cycle, ne555 frequency calculator, 555 pulse generator, mark space ratio calculator, 555 oscillator calculator, CalcBoy">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#astable-calc, #astable-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#astable-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+select.unit-selector { padding: 0 8px; cursor: pointer; font-weight: 700; color: #374151; background-color: #eee; border: 1px solid #cfd6df; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 522px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.svg_text_display { font-size: 12px; font-weight: bold; font-family: Arial, sans-serif; }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0,1fr) 72px; }
+  .unit-box, select.unit-selector { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    text-align:center;
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
-<div class="mx-4">
-<div class="bootstrap3-legacy">
-<div class="container-fluid">
+</head>
+<body>
 
+<div id="astable-calc">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>
-<div id="top-box" class="hidden-xs">
+  <div class="calc-grid">
+    <div class="subTitle">Timing Components</div>
 
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend><form id="tool">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+    <div>
+      <label class="calc-label">Capacitor (C)</label>
+      <div class="calc-row">
+        <input id="C" type="number" step="any" oninput="clearResults()">
+        <select id="C_unit" class="unit-selector" onchange="clearResults()">
+          <option value="0.000000001">nF</option>
+          <option value="0.000001" selected>µF</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Resistance (R1)</label>
+      <div class="calc-row">
+        <input id="R1" type="number" step="any" oninput="clearResults()">
+        <select id="R1_unit" class="unit-selector" onchange="clearResults()">
+          <option value="1">Ω</option>
+          <option value="1000" selected>kΩ</option>
+          <option value="1000000">MΩ</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Resistance (R2)</label>
+      <div class="calc-row">
+        <input id="R2" type="number" step="any" oninput="clearResults()">
+        <select id="R2_unit" class="unit-selector" onchange="clearResults()">
+          <option value="1">Ω</option>
+          <option value="1000" selected>kΩ</option>
+          <option value="1000000">MΩ</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="computeAstable()">CALCULATE</button>
+
+  <div id="errorBox">Please enter valid values. Capacitance, R1, and R2 inputs are required.</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Output Frequency</div><div class="result-value"><span id="frequency"></span></div></div>
+    <div class="result-card green"><div class="result-label">Total Period</div><div class="result-value"><span id="period"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Duty Cycle</div><div class="result-value"><span id="duty_cycle"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Mark-Space Ratio</div><div class="result-value"><span id="mark_space_ratio"></span></div></div>
+    <div class="result-card blue"><div class="result-label">Time High (T1)</div><div class="result-value"><span id="time_high"></span></div></div>
+    <div class="result-card green"><div class="result-label">Time Low (T0)</div><div class="result-value"><span id="time_low"></span></div></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Capacitor (C)</strong>This timing capacitor, connected to pin 2 and 6, accumulates and discharges voltage through the resistor network to establish the oscillation cycle.</div>
+      <div class="paramItem"><strong>Resistor (R1)</strong>Connected between VCC and the discharge pin (Pin 7). This resistor limits discharge current and helps establish high-state time.</div>
+      <div class="paramItem"><strong>Resistor (R2)</strong>Connected between discharge (Pin 7) and threshold/trigger. Determines charge rate combined with R1, and dictates absolute discharge rate alone.</div>
+      <div class="paramItem"><strong>Unit Selections</strong>Adapt calculations for high or low frequency ranges using Farad scale variations (nF, µF) and resistance bounds (Ω, kΩ, MΩ).</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>1 kHz Square Wave Generator</strong></p>
+        <p>Set C = 0.1 µF, R1 = 1.44 kΩ, and R2 = 6.48 kΩ to configure a precise 1 kilohertz clock output pulse.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Slow Visual LED Flasher</strong></p>
+        <p>Use C = 10 µF, R1 = 10 kΩ, and R2 = 33 kΩ to output visual LED blink sequences at approximately 3 pulses per second.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Audible Alert Beeper</strong></p>
+        <p>Combine C = 10 nF, R1 = 4.7 kΩ, and R2 = 47 kΩ to output a solid tone of approximately 1.5 kHz for small piezo speakers.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Pulse-Width Control Base</strong></p>
+        <p>Choose high R2 values relative to R1 to achieve symmetric oscillations approximating a clean 50% duty-cycle signal.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>An astable multivibrator is a self-triggering square wave oscillator. The charging path runs through R1 and R2 to C, until threshold pin 6 detects 2/3 of VCC. Then discharge transistor pin 7 goes active, draining charge from C exclusively through R2 until pin 2 detects 1/3 VCC. The cycle then repeats indefinitely.</p>
+
+    <div class="diagramBox">
+      <svg width="100%" height="100%" viewBox="0 0 522 352" fill="none" xmlns="http://www.w3.org/2000/svg" id="astable-svg-circuit">
+        <rect width="522" height="352" fill="#ffffff" rx="12" />
+        <path d="M231 58H81V298H231V58Z" fill="#F5F5F5" stroke="black" stroke-width="2"></path>
+        <path d="M162 317H160V319H162V317Z" fill="black"></path>
+        <path d="M161 299V317" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M62 117H60V119H62V117Z" fill="black"></path>
+        <path d="M62 118H80" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M152 37H150V39H152V37Z" fill="black"></path>
+        <path d="M151 39V57" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M252 97H250V99H252V97Z" fill="black"></path>
+        <path d="M232 98H250" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M252 217H250V219H252V217Z" fill="black"></path>
+        <path d="M232 218H250" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M62 197H60V199H62V197Z" fill="black"></path>
+        <path d="M62 198H80" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M62 237H60V239H62V237Z" fill="black"></path>
+        <path d="M62 238H80" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M151 19V37" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M141 18H161" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M151 40C152.105 40 153 39.1046 153 38C153 36.8954 152.105 36 151 36C149.895 36 149 36.8954 149 38C149 39.1046 149.895 40 151 40Z" fill="black" stroke="black" stroke-width="2"></path>
+        <path d="M32 47H30V49H32V47Z" fill="black"></path>
+        <path d="M32 107H30V109H32V107Z" fill="black"></path>
+        <path d="M31 60L38 63L31 66" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 66L24 69L31 72" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 72L38 75L31 78" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 78L24 81L31 84" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 84L38 87L31 90" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 90L24 93L31 96" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 49V59" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M31 97V107" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M31 108V118H61" stroke="black" stroke-width="2" stroke-miterlimit="10"></path>
+        <path d="M32 37H30V39H32V37Z" fill="black"></path>
+        <path d="M31 19V37" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M21 18H41" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M31 38V48" stroke="black" stroke-width="2" stroke-miterlimit="10"></path>
+        <path d="M32 127H30V129H32V127Z" fill="black"></path>
+        <path d="M32 187H30V189H32V187Z" fill="black"></path>
+        <path d="M31 140L38 143L31 146" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 146L24 149L31 152" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 152L38 155L31 158" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 158L24 161L31 164" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 164L38 167L31 170" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 170L24 173L31 176" stroke="#dc2626" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M31 129V139" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M31 177V187" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M31 128V120" stroke="black" stroke-width="2" stroke-miterlimit="10"></path>
+        <path d="M31 120C32.1046 120 33 119.105 33 118C33 116.895 32.1046 116 31 116C29.8954 116 29 116.895 29 118C29 119.105 29.8954 120 31 120Z" fill="black" stroke="black" stroke-width="2"></path>
+        <path d="M31 188V198H61" stroke="black" stroke-width="2" stroke-miterlimit="10"></path>
+        <path d="M31 200V238H61" stroke="black" stroke-width="2" stroke-miterlimit="10"></path>
+        <path d="M31 200C32.1046 200 33 199.105 33 198C33 196.895 32.1046 196 31 196C29.8954 196 29 196.895 29 198C29 199.105 29.8954 200 31 200Z" fill="black" stroke="black" stroke-width="2"></path>
+        <path d="M32 267H30V269H32V267Z" fill="black"></path>
+        <path d="M32 317H30V319H32V317Z" fill="black"></path>
+        <path d="M21 273C21 283 21 283 21 283" stroke="black" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M16 278C26 278 26 278 26 278" stroke="black" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M20 289C42 289 42 289 42 289" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M20 301C25.92 295.56 35.99 295.65 42 301" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M31 269V288" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M31 298V317" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M31 268V240" stroke="black" stroke-width="2" stroke-miterlimit="10"></path>
+        <path d="M31 240C32.1046 240 33 239.105 33 238C33 236.895 32.1046 236 31 236C29.8954 236 29 236.895 29 238C29 239.105 29.8954 240 31 240Z" fill="black" stroke="black" stroke-width="2"></path>
+        <path d="M32 317H30V319H32V317Z" fill="black"></path>
+        <path d="M20 339C42.02 339 42.02 339 42.02 339" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M24 345C33.57 345 38 345 38 345" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M28 351C31.12 351 34 351 34 351" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M31 319V337" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M162 317H160V319H162V317Z" fill="black"></path>
+        <path d="M150 339C172.02 339 172.02 339 172.02 339" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M154 345C163.57 345 168 345 168 345" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M158 351C161.12 351 164 351 164 351" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"></path>
+        <path d="M161 319V337" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M251 98H261V38H153" stroke="black" stroke-width="2" stroke-miterlimit="10"></path>
+        <path d="M151 40C152.105 40 153 39.1046 153 38C153 36.8954 152.105 36 151 36C149.895 36 149 36.8954 149 38C149 39.1046 149.895 40 151 40Z" fill="black" stroke="black" stroke-width="2"></path>
+        <path d="M276 218H293.5V283L396.5 283V218L499 218V283H521" stroke="#2563eb" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M190.108 168.95L193.116 168.639C193.202 169.319 193.456 169.86 193.879 170.261C194.301 170.655 194.788 170.852 195.34 170.852C195.97 170.852 196.504 170.597 196.94 170.089C197.377 169.573 197.596 168.8 197.596 167.769C197.596 166.802 197.377 166.078 196.94 165.599C196.511 165.112 195.949 164.868 195.254 164.868C194.387 164.868 193.61 165.251 192.923 166.018L190.474 165.663L192.021 157.467H200.002V160.292H194.309L193.836 162.967C194.509 162.63 195.197 162.462 195.898 162.462C197.238 162.462 198.373 162.949 199.304 163.923C200.235 164.897 200.7 166.161 200.7 167.715C200.7 169.011 200.324 170.168 199.572 171.185C198.548 172.574 197.127 173.269 195.308 173.269C193.854 173.269 192.669 172.878 191.752 172.098C190.835 171.317 190.287 170.268 190.108 168.95ZM202.354 168.95L205.362 168.639C205.448 169.319 205.702 169.86 206.125 170.261C206.548 170.655 207.035 170.852 207.586 170.852C208.216 170.852 208.75 170.597 209.187 170.089C209.623 169.573 209.842 168.8 209.842 167.769C209.842 166.802 209.623 166.078 209.187 165.599C208.757 165.112 208.195 164.868 207.5 164.868C206.633 164.868 205.856 165.251 205.169 166.018L202.72 165.663L204.267 157.467H212.248V160.292H206.555L206.082 162.967C206.755 162.63 207.443 162.462 208.145 162.462C209.484 162.462 210.619 162.949 211.55 163.923C212.481 164.897 212.946 166.161 212.946 167.715C212.946 169.011 212.57 170.168 211.818 171.185C210.794 172.574 209.373 173.269 207.554 173.269C206.1 173.269 204.915 172.878 203.998 172.098C203.081 171.317 202.534 170.268 202.354 168.95ZM214.601 168.95L217.608 168.639C217.694 169.319 217.949 169.86 218.371 170.261C218.794 170.655 219.281 170.852 219.832 170.852C220.462 170.852 220.996 170.597 221.433 170.089C221.869 169.573 222.088 168.8 222.088 167.769C222.088 166.802 221.869 166.078 221.433 165.599C221.003 165.112 220.441 164.868 219.746 164.868C218.88 164.868 218.103 165.251 217.415 166.018L214.966 165.663L216.513 157.467H224.494V160.292H218.801L218.328 162.967C219.001 162.63 219.689 162.462 220.391 162.462C221.73 162.462 222.865 162.949 223.796 163.923C224.727 164.897 225.192 166.161 225.192 167.715C225.192 169.011 224.816 170.168 224.064 171.185C223.04 172.574 221.619 173.269 219.8 173.269C218.346 173.269 217.161 172.878 216.244 172.098C215.327 171.317 214.78 170.268 214.601 168.95Z" fill="#2563eb"></path>
+        <path d="M266.092 218H250" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <path d="M261.444 223.36L266.792 218.002L261.444 212.645" stroke="black" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path>
+        <text x="447" y="212" fill="#2563eb" text-anchor="middle" id="th-value-svg" class="svg_text_display">_____ MILLISECONDS</text>
+        <text x="345" y="309" fill="#2563eb" text-anchor="middle" id="tl-value-svg" class="svg_text_display">_____ MILLISECONDS</text>
+        <text x="30" y="11" fill="black" text-anchor="middle" font-weight="bold" font-size="15px">V<tspan dy="3" font-size=".7em" dx="-5"> cc</tspan></text>
+        <text x="155" y="11" fill="black" text-anchor="middle" font-weight="bold" font-size="15px">V<tspan dy="3" font-size=".7em" dx="-5">  cc</tspan></text>
+        <text x="14" y="82" fill="black" text-anchor="middle" font-weight="bold" font-size="15px">R  <tspan dy="3" font-size=".7em" dx="-5">  1</tspan></text>
+        <text x="14" y="161" fill="black" text-anchor="middle" font-weight="bold" font-size="15px">R  <tspan dy="3" font-size=".7em" dx="-5"> 2</tspan></text>
+        <text x="8" y="296" fill="black" text-anchor="middle" font-weight="bold" font-size="15px">C <tspan dy="3" font-size=".7em" dx="-5"> 1</tspan></text>
+        <text x="150" y="71" fill="black" text-anchor="middle" class="svg_text_display">8 (VCC)</text>
+        <text x="210" y="96" fill="black" text-anchor="middle" class="svg_text_display">(RESET)  4</text>
+        <text x="118" y="115" fill="black" text-anchor="middle" class="svg_text_display">7  (DISCHARGE)</text>
+        <text x="118.5" y="195" fill="black" text-anchor="middle" class="svg_text_display">6 (THRESHOLD)</text>
+        <text x="205" y="216" fill="black" text-anchor="middle" class="svg_text_display">(OUTPUT)  3</text>
+        <text x="109" y="235" fill="black" text-anchor="middle" class="svg_text_display">2 (TRIGGER)</text>
+        <text x="161" y="292" fill="black" text-anchor="middle" class="svg_text_display">1 (GND)</text>
+        <text x="347" y="297" fill="black" text-anchor="middle" class="svg_text_display">TIME LOW</text>
+        <text x="447" y="201" fill="black" text-anchor="middle" class="svg_text_display">TIME HIGH</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Charging Time (Time High State): T1 = 0.694 × (R1 + R2) × C × 1000 (in ms)</div>
+    <div class="formula">Discharging Time (Time Low State): T0 = 0.694 × R2 × C × 1000 (in ms)</div>
+    <div class="formula">Total Signal Period: T = T1 + T0 = 0.694 × (R1 + 2 × R2) × C × 1000 (in ms)</div>
+    <div class="formula">Output Signal Frequency: f = 1.44 / ((R1 + 2 × R2) × C) (in Hz)</div>
+    <div class="formula">Output Duty Cycle: Duty Cycle % = T1 / (T1 + T0) × 100</div>
+    <div class="formula">Mark-Space Ratio: Ratio = T1 / T0</div>
+    <div class="formulaBox">
+      Step-by-Step Example:<br>
+      Consider C = 1 µF, R1 = 1 kΩ, R2 = 1 kΩ.<br>
+      Step 1: Convert units to base values. C = 0.000001 F, R1 = 1000 Ω, R2 = 1000 Ω.<br>
+      Step 2: Calculate charging interval T1: 0.694 × (1000 + 1000) × 0.000001 × 1000 = 1.388 ms.<br>
+      Step 3: Calculate discharging interval T0: 0.694 × 1000 × 0.000001 × 1000 = 0.694 ms.<br>
+      Step 4: Combine intervals for total period: 1.388 + 0.694 = 2.082 ms.<br>
+      Step 5: Determine output frequency: 1.44 / ((1000 + 2000) × 0.000001) = 480 Hz.<br>
+      Step 6: Compute Duty Cycle: 1.388 / (1.388 + 0.694) × 100 = 66.67%.<br>
+      Step 7: Find Mark-Space Ratio: 1.388 / 0.694 = 2.00.
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the timing capacitance value and select the appropriate metric unit (nF or µF).</div>
+      <div class="aboutStep">Input resistance value R1 along with the resistance metric (Ω, kΩ, or MΩ).</div>
+      <div class="aboutStep">Input resistance value R2 alongside its specific metric scale.</div>
+      <div class="aboutStep">Click Calculate to run the 555 timing algorithm. Results display immediately below.</div>
+      <div class="aboutStep">Examine the interactive circuit visual to see how the High and Low output times align.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Establish stable output clock frequencies with the 555 astable multivibrator.</strong>
+      <p>The CalcBoy 555 Timer Astable Circuit Calculator analyzes component configurations to generate operational frequency, period, duty cycle, active pulse durations, and signal ratios.</p>
+    </div>
+    <p>The NE555 integrated circuit is one of the most widely used analog timer configurations in electronics design history. In its astable configuration, the 555 functions as a self-running relaxation oscillator, generating continuous square-wave pulses without requiring external triggering. It is commonly implemented in clocks, LED flashers, tone generators, pulse width modulators, and sequential timing networks.</p>
+    <p>This designer uses classic physical properties of resistor-capacitor charging curves to output the timing intervals. In an astable network, charging happens through both R1 and R2 to the main capacitor, while discharging bypasses R1, draining stored charge through R2 alone directly into Pin 7. Thus, the active output state high interval will always exceed the state low interval in a standard configuration.</p>
+    <p>Using this interface allows engineers, developers, and hobbyists to align component targets safely prior to hardware builds. It operates as a dependable design aid for circuit construction, checking, and system development.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Best Applications</span>Oscillators, custom PWM clocks, tone circuits, and LED flashing grids.</div>
+      <div class="aboutMiniCard"><span>Supported Metrics</span>Computes frequency, total period, active high/low durations, and mark-space ratio.</div>
+      <div class="aboutMiniCard"><span>Ideal Target Components</span>Calculates for 555, 556, and CMOS counterparts across classic voltage levels.</div>
+      <div class="aboutMiniCard"><span>Design Standard</span>Based on classic charging coefficient models for physical hardware planning.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: To approach a nearly symmetric 50% duty cycle, select an R2 value that is substantially larger than R1 (such as R1 = 1 kΩ and R2 = 100 kΩ).</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What does the astable 555 circuit do?</strong></h3>
+    <p>It creates a continuous, self-repeating square wave signal at Pin 3. It switches between high and low voltage states automatically without any external trigger pulse.</p>
+
+    <h3><strong>2. Why is the duty cycle of a standard astable 555 always above 50%?</strong></h3>
+    <p>In standard configurations, the capacitor charges through R1 and R2 but discharges solely through R2. Because the charging resistance is larger than the discharging resistance, the high-state interval is always longer than the low-state interval.</p>
+
+    <h3><strong>3. Can I get an exact 50% duty cycle with this circuit?</strong></h3>
+    <p>With a standard configuration, you can only approach 50% by making R2 much larger than R1. To achieve a true 50% duty cycle or lower, a steering diode must be connected in parallel with R2, allowing the capacitor to charge directly through R1 while bypassing R2.</p>
+
+    <h3><strong>4. How high in frequency can a typical 555 timer run?</strong></h3>
+    <p>Standard bipolar NE555 timers generally operate reliably up to 100 kHz to 500 kHz. Newer CMOS versions (such as the LMC555) can reach higher switching rates, often up to 1 MHz to 2 MHz.</p>
+
+    <h3><strong>5. What is the mark-space ratio?</strong></h3>
+    <p>The mark-space ratio is the ratio of the active high time (mark) to the active low time (space) of the generated output wave. It is mathematically calculated as T1 divided by T0.</p>
+
+    <h3><strong>6. How does changing the capacitor value affect the circuit?</strong></h3>
+    <p>Increasing the timing capacitance increases the time required to charge and discharge, which lengthens the signal period and lowers the output frequency. Decreasing the capacitance produces the opposite effect.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>555 Monostable Circuit Calculator</strong>Calculate single pulse delay durations and configurations.</div>
+      <div class="linkCard"><strong>RC Time Constant Calculator</strong>Estimate timing properties of standard resistor-capacitor paths.</div>
+      <div class="linkCard"><strong>Colpitts Oscillator Calculator</strong>Design LC-based RF oscillators for higher frequency ranges.</div>
+      <div class="linkCard"><strong>Duty Cycle Converter</strong>Translate frequency, period, and duty ratios easily.</div>
+    </div>
+  </section>
 
 </div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
 
-<label class="control-label" for="tool_capacitor">Capacitor<label style="font-size:30px;"> (C)</label> </label><input id="tool_capacitor" type="number" class="intro" style="position: absolute;
-  right: 150px; width:250;"class="form-control" type="number" />&nbsp;&nbsp;<select id="tool_capacitor_unit" class="intro" style="padding: 5px ;  position: absolute;
-  right: 10px; height:84; font-size:50px;   border:3px solid #aaa;border-radius:4px;margin:8px 0;
-    
-    
-    
-   width:130px;" class="form-control"> <option value="0.000000001"> (nF)NanoFarad</option>
-<option value="0.000001" selected="selected"> (μF)microFarad</option>
-</select>
-
-        <h1 style="font-size:35;"></h1>
-
-
-
-
-
-
-
-
-<div class="row">
-<div class="col-sm-12 col-xs-">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-
-<label class="control-label" for="tool_capacitor">Resistance<label style="font-size:30px;"> (R<sub>1</sub>)</label> </label><input id="tool_resistance_1" type="number" class="intro" style="position: absolute;
-  right: 150px; width:250;"class="form-control" type="number" />&nbsp;&nbsp;<select id="tool_resistance_1_unit" class="intro" style="padding: 5px ;  position: absolute;
-  right: 10px; height:84; font-size:50px;   border:3px solid #aaa;border-radius:4px;margin:8px 0;
-    
-    
-    
-   width:130px;" class="form-control"> <option value="1">Ω&nbsp;&nbsp;&nbsp;&nbsp; Ohms </option>
-<option value="1000" selected="selected"> kΩ &nbsp;&nbsp;&nbsp;kiloOhms</option>
-<option value="1000000"> MΩ MegaOhms</option>
-</select>
-
-        <h1 style="font-size:35;"></h1>
-
-
-
-
-
-</div>
-</div>
-</div>
-</div>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-
-<label class="control-label" for="tool_capacitor">Resistance<label style="font-size:30px;"> (R<sub>2</sub>)</label> </label><input id="tool_resistance_2" type="number" class="intro" style="position: absolute;
-  right: 150px; width:250;"class="form-control" type="number" />&nbsp;&nbsp;<select id="tool_resistance_2_unit" class="intro" style="padding: 5px ;  position: absolute;
-  right: 10px; height:84; font-size:50px;   border:3px solid #aaa;border-radius:4px;margin:8px 0;
-    
-    
-    
-   width:130px;" class="form-control"> <option value="1">Ω&nbsp;&nbsp;&nbsp; Ohms </option>
-<option value="1000" selected="selected"> kΩ&nbsp;&nbsp;&nbsp; kiloOhms</option>
-<option value="1000000"> MΩ MegaOhms</option>
-</select>
-
-        <h1 style="font-size:30;"></h1>
-
-
-
-
-</div>
-</div>
-</div>
-</div>
-</form>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-
-</fieldset>
- <h1 style="font-size:30;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><input id="tool_submit" class="btn btn-theme" type="button" value="Calculate" disabled="disabled" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset> 
-
-
-</form>
-
-
-
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-<label class="control-label" for="tool_capacitor">Frequency</label><input id="tool_frequency"  type="number" class="intro" style="position: absolute;
-  right: 150px; width:270;"class="form-control" type="number" />&nbsp;&nbsp;<label class="intro" style="padding: 5px ;  position: absolute;
-  right: 10px; height:84; font-size:70px;   text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:130px;" class="form-control">H<sub>z</sub></label>
-
-        <h1 style="font-size:35;"></h1>
-
-
-
-
-
-
-
-
-<label class="control-label" for="tool_capacitor">Period</label><input id="tool_period"  type="number" class="intro" style="position: absolute;
-  right: 150px; width:270;"class="form-control" type="number" />&nbsp;&nbsp;<label class="intro" style="padding: 5px ;  position: absolute;
-  right: 10px; height:84; font-size:70px;   text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:130px;" class="form-control">Ms</label>
-
-        <h1 style="font-size:35;"></h1>
-
-
-
-
-
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="tool_submit_container form-group has-warning">
-
-<label class="control-label" for="tool_capacitor">Duty Cycle</label><input id="tool_duty_cycle"  type="number" class="intro" style="position: absolute;
-  right: 150px; width:270;"class="form-control" type="number" />&nbsp;&nbsp;<label class="intro" style="padding: 5px ;  position: absolute;
-  right: 10px; height:84; font-size:70px;   text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:130px;" class="form-control">%</label>
-
-        <h1 style="font-size:35;"></h1>
-
-
-
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-</div>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="tool_submit_container form-group has-warning">
-<label class="control-label" for="tool_capacitor"> Ratio<label style="font-size:40;"> (Mark Space)</label></label><input id="tool_mark_space_ratio"  type="number" class="intro" style="position: absolute;
-  right: 10px; width:410;"class="form-control" type="number" />
-
-        <h1 style="font-size:35;"></h1>
-
-
-
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-</div>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="tool_submit_container form-group has-warning">
-
-<label class="control-label" for="tool_capacitor">Time High<label style="font-size:30px;">(T<sub>1</sub>)</label></label><input id="tool_time_high"  type="number" class="intro" style="position: absolute;
-  right: 150px; width:270;"class="form-control" type="number" />&nbsp;&nbsp;<label class="intro" style="padding: 5px ;  position: absolute;
-  right: 10px; height:84; font-size:70px;   text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:130px;" class="form-control">ms</label>
-
-        <h1 style="font-size:35;"></h1>
-
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-</div>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="tool_submit_container form-group has-warning">
-
-<label class="control-label" for="tool_capacitor">Time Low<label style="font-size:30px;">(T<sub>0</sub>)</label></label><input id="tool_time_low"  type="number" class="intro" style="position: absolute;
-  right: 150px; width:270;"class="form-control" type="number" />&nbsp;&nbsp;<label class="intro" style="padding: 5px ;  position: absolute;
-  right: 10px; height:84; font-size:70px;   text-align:center; border:3px solid #aaa;border-radius:4px;margin:8px 0; width:130px;" class="form-control">ms</label>
-
-        <h1 style="font-size:35;"></h1>
-
-
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-
-</div>
-</div>
-</div>
-</div>
-<script type="text/javascript">
-    ! function(t) {
-        "use strict";
-        t("#tool :input").keyup(function() {
-            var o = !1;
-            t("#tool :input").each(function() {
-                "" == t(this).val() && (o = !0)
-            }), o ? t("#tool_submit").attr("disabled", "disabled") : t("#tool_submit").removeAttr("disabled")
-        }), t("#tool_submit").on("click", function(o) {
-            o.preventDefault();
-            var a = t("#tool_capacitor"),
-                l = t("#tool_capacitor_unit"),
-                i = t("#tool_resistance_1"),
-                e = t("#tool_resistance_1_unit"),
-                _ = t("#tool_resistance_2"),
-                s = t("#tool_resistance_2_unit"),
-                n = t("#tool_frequency"),
-                v = t("#tool_period"),
-                c = t("#tool_duty_cycle"),
-                r = t("#tool_mark_space_ratio"),
-                u = t("#tool_time_high"),
-                d = t("#tool_time_low");
-            if (a.val() && l.val() && i.val() && e.val() && _.val() && s.val()) {
-                var m = a.val() * l.val(),
-		      b = i.val() * e.val(),
-		      p = _.val() * s.val(),
-		      f = (.694 * (b + p) * m) * 1000,
-	       	      h = (.694 * p * m) * 1000,
-                      y = f / 1000 + h / 1000,
-		      k = 1.44 /((b+2*p)*m) ,
-                      g = (.694 * (b + 2*p) * m) * 1000,
-                      w = f / (f + h) * 100,
-                      C = f / h;
-                      n.val(k.toPrecision(4)), v.val(g.toPrecision(4)), c.val(w.toPrecision(4)), r.val(C.toPrecision(4)), u.val(f.toPrecision(4)), d.val(h.toPrecision(4)), t(".tool_submit_container").removeClass("has-warning"), t(".tool_submit_container").addClass("has-success")
-            }		
-        })
-    }(jQuery);
+<script>
+function val(id){
+  return document.getElementById(id).value;
+}
+function put(id, val, unit, precision){
+  var num = Number(val);
+  document.getElementById(id).innerText = num.toPrecision(precision || 4) + (unit ? (" " + unit) : "");
+}
+function clearResults(){
+  ["frequency","period","duty_cycle","mark_space_ratio","time_high","time_low"].forEach(function(id){
+    document.getElementById(id).innerText = "";
+  });
+  document.getElementById("errorBox").style.display = "none";
+  document.getElementById("th-value-svg").textContent = "_____ MILLISECONDS";
+  document.getElementById("tl-value-svg").textContent = "_____ MILLISECONDS";
+}
+function computeAstable(){
+  var rawC = val("C");
+  var rawR1 = val("R1");
+  var rawR2 = val("R2");
+
+  // Validate for blank, empty, missing, or non-numeric values
+  if(rawC === "" || rawR1 === "" || rawR2 === "" || isNaN(rawC) || isNaN(rawR1) || isNaN(rawR2)){
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  var C_val = Number(rawC);
+  var C_unit = Number(val("C_unit"));
+  var R1_val = Number(rawR1);
+  var R1_unit = Number(val("R1_unit"));
+  var R2_val = Number(rawR2);
+  var R2_unit = Number(val("R2_unit"));
+
+  // Retrieve physical quantities (Keep negative results unmodified if present, as requested)
+  var m = C_val * C_unit;
+  var b = R1_val * R1_unit;
+  var p = R2_val * R2_unit;
+
+  // Preserve exact user logic math and coefficients (0.694 and 1.44)
+  var f = 0.694 * (b + p) * m * 1000;      // Time High in ms
+  var h = 0.694 * p * m * 1000;          // Time Low in ms
+  var g = 0.694 * (b + 2 * p) * m * 1000;  // Period in ms
+  var k = 1.44 / ((b + 2 * p) * m);      // Frequency in Hz
+  var w = (f / (f + h)) * 100;           // Duty Cycle in %
+  var ratio = f / h;                     // Mark Space Ratio
+
+  document.getElementById("errorBox").style.display = "none";
+
+  // Display values cleanly
+  put("frequency", k, "Hz", 4);
+  put("period", g, "ms", 4);
+  put("duty_cycle", w, "%", 4);
+  put("mark_space_ratio", ratio, "", 4);
+  put("time_high", f, "ms", 4);
+  put("time_low", h, "ms", 4);
+
+  // Dynamically update standard SVG graphic with the generated timing values
+  document.getElementById("th-value-svg").textContent = f.toPrecision(4) + " ms";
+  document.getElementById("tl-value-svg").textContent = h.toPrecision(4) + " ms";
+}
 </script>
-</div>
-</div>
-<script type="text/javascript">
-                    $(document).ready(function () {
-                        $('#tool_submit').on('click',function () {
-                            ga('send', 'event', 'calc-use', 'https://www.allaboutcircuits.com/tools/555-timer-astable-circuit', 'https://www.allaboutcircuits.com/tools/555-timer-astable-circuit');
-                        });
-                    });
-                </script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does the astable 555 circuit do?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It creates a continuous, self-repeating square wave signal at Pin 3. It switches between high and low voltage states automatically without any external trigger pulse."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the duty cycle of a standard astable 555 always above 50%?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In standard configurations, the capacitor charges through R1 and R2 but discharges solely through R2. Because the charging resistance is larger than the discharging resistance, the high-state interval is always longer than the low-state interval."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I get an exact 50% duty cycle with this circuit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "With a standard configuration, you can only approach 50% by making R2 much larger than R1. To achieve a true 50% duty cycle or lower, a steering diode must be connected in parallel with R2, allowing the capacitor to charge directly through R1 while bypassing R2."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How high in frequency can a typical 555 timer run?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Standard bipolar NE555 timers generally operate reliably up to 100 kHz to 500 kHz. Newer CMOS versions (such as the LMC555) can reach higher switching rates, often up to 1 MHz to 2 MHz."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the mark-space ratio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The mark-space ratio is the ratio of the active high time (mark) to the active low time (space) of the generated output wave. It is mathematically calculated as T1 divided by T0."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does changing the capacitor value affect the circuit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Increasing the timing capacitance increases the time required to charge and discharge, which lengthens the signal period and lowers the output frequency. Decreasing the capacitance produces the opposite effect."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "555 Timer Astable Circuit Calculator",
+      "item": "https://calcboy.com/tool/555-timer-astable-circuit-calculator"
+    }
+  ]
+}
+</script>
+
+</body>
+</html>
