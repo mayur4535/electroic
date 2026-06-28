@@ -1,255 +1,431 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-
-/* Style the tab */
-.tab {
-  overflow: hidden;
-  border: 10px solid #ccc;
- 
-  background-color: #f1f1f1;
-  text-align:center;
-}
-
-/* Style the buttons inside the tab */
-.tab button {
-  background-color: inherit;
-  
-  float:center;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 15px;
-  transition: 0.3s;
-  font-size: 70px;
-}
-
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #c4cc;
-}
-
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-  align:center;
-}
-.tab1 {
-border-radius: 25px;
-  background: #167A04;
-  padding: 20px; 
-  width: 100px;
-  height: 150px;
-  font-size:40px;
-  color:white;
-}
-
-
-</style>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SINAD to ENOB Converter | CalcBoy</title>
+<meta name="description" content="Convert between Signal-to-Noise-and-Distortion ratio (SINAD) and Effective Number of Bits (ENOB). Calculate equivalent ADC quantization steps and ideal SNR instantly.">
+<meta name="keywords" content="SINAD to ENOB, ENOB to SINAD, ADC resolution calculator, effective number of bits, signal to noise ratio, quantization noise calculator, CalcBoy">
+<style>
+#enob-calc, #enob-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#enob-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; text-align: center; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
 
-<div id="body" class="width">
-<section id="content" class="two-column with-right-sidebar">
-<article>
+/* Input & Select UI Styles */
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
 
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- rfw_rsp -->
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-SINAD_in=Number(document.calculator.number1.value);
-ENOB_out= (SINAD_in - 1.76 )/6.02 ;
-document.calculator.ENOB.value=ENOB_out;
+button.calc-btn { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.gate-selector-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; margin-bottom: 10px; }
+.gate-tab-btn { padding: 12px 6px; background: #fff; border: 2px solid #cfd6df; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; color: #475467; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.gate-tab-btn:hover { border-color: #ff7a18; color: #ff7a18; }
+.gate-tab-btn.active { background: #ff7a18; color: #fff; border-color: #ff4b00; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-</SCRIPT>
+</style>
+</head>
+<body>
 
-<SCRIPT language="javascript" type="text/javascript">
-function calc1()
-{
-ENOB_in=Number(document.calculator1.number2.value);
-SINAD_out= ( ENOB_in*6.02 ) + 1.76;
-document.calculator1.SINAD.value=SINAD_out;
+<div id="enob-calc">
+
+  <div class="calc-grid">
+    <div class="subTitle">Converter Parameters</div>
+
+    <div>
+      <label class="calc-label">Select Conversion Direction</label>
+      <div class="gate-selector-grid">
+        <button class="gate-tab-btn active" id="tab_SINAD_to_ENOB" onclick="selectMode('SINAD_to_ENOB')">SINAD to ENOB</button>
+        <button class="gate-tab-btn" id="tab_ENOB_to_SINAD" onclick="selectMode('ENOB_to_SINAD')">ENOB to SINAD</button>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label" id="input_label_text">SINAD Value (dB)</label>
+      <div class="calc-row">
+        <input id="input_val" type="number" step="any" placeholder="e.g. 70" oninput="clearResults()">
+        <div class="unit-box" id="unit_label">dB</div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="calc-btn" onclick="computeENOB()">CONVERT</button>
+
+  <div id="errorBox">Please enter a valid numeric value.</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Converted Value</div><div class="result-value"><span id="converted_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Quantization Levels</div><div class="result-value"><span id="quant_levels_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Ideal SNR (dB)</div><div class="result-value"><span id="snr_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Quantization Noise (dBFS)</div><div class="result-value"><span id="noise_out"></span></div></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>SINAD (dB)</strong>Signal-to-Noise-and-Distortion ratio. Includes thermal noise, harmonic components, and quantization noise relative to full-scale signal power.</div>
+      <div class="paramItem"><strong>ENOB (Bits)</strong>Effective Number of Bits. Quantifies the dynamic performance of an analog-to-digital converter (ADC) as compared to a mathematically ideal converter.</div>
+      <div class="paramItem"><strong>Quantization Levels</strong>The discrete amplitude steps ($2^{\text{ENOB}}$) resolved by the ADC. High level numbers indicate superior resolution.</div>
+      <div class="paramItem"><strong>Ideal SNR (Signal-to-Noise)</strong>The theoretical maximum signal-to-noise ratio achievable by a perfect ADC having an equivalent bit depth.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>12-bit Pipeline ADC</strong></p>
+        <p>A typical 12-bit ADC achieves a real-world SINAD of 70 dB. Converting this resolves the ENOB to 11.34 bits.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>High-Speed SDR Receiver</strong></p>
+        <p>An SDR receiver equipped with a 14-bit ADC yields an ENOB of 12.1 bits. This translates to an active SINAD requirement of 74.6 dB.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Ideal 16-bit DAC Calibration</strong></p>
+        <p>An ideal 16-bit converter provides a theoretical SINAD limit of 98.08 dB, capable of resolving 65,536 distinct voltage steps.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>DSP Signal Noise Threshold</strong></p>
+        <p>Analyze noise floors in digital spectral systems to configure appropriate decimation filtering coefficients.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Quantization noise is introduced during analog-to-digital conversion due to the rounding error between the continuous analog input and discrete digital levels. One bit yields 6.02 dB of dynamic range plus a constant offset of 1.76 dB.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" id="quantization-diagram">
+        <rect width="520" height="220" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Analog Sine Wave (Dotted blue) -->
+        <path d="M 40,110 Q 90,30 140,110 T 240,110 T 340,110 T 440,110" fill="none" stroke="#2359e8" stroke-dasharray="3,3" stroke-width="2" />
+        
+        <!-- Quantized Staircase Wave (Solid Orange) -->
+        <path d="M 40,110 H 65 V 70 H 90 V 45 H 115 V 45 H 140 V 70 H 165 V 110 H 190 V 150 H 215 V 175 H 240 V 175 H 265 V 150 H 290 V 110 H 315 V 70 H 340 V 45 H 365 V 45 H 390 V 70 H 415 V 110 H 440 V 150" fill="none" stroke="#ea580c" stroke-dasharray="none" stroke-width="2.5" />
+        <line x1="30" y1="110" x2="490" y2="110" stroke="#94a3b8" stroke-width="1.5" />
+
+        <!-- Quantization Steps Labels -->
+        <line x1="65" y1="110" x2="65" y2="70" stroke="#94a3b8" stroke-width="1" />
+        <line x1="90" y1="110" x2="90" y2="45" stroke="#94a3b8" stroke-width="1" />
+        
+        <text x="100" y="35" fill="#ea580c" font-weight="900" font-size="10">Quantized Steps</text>
+        <text x="210" y="25" fill="#2359e8" font-weight="900" font-size="10">Analog Signal</text>
+
+        <!-- Legend -->
+        <text x="260" y="205" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">Logarithmic Quantization Step Resolution Profile</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">SINAD to ENOB: ENOB = (SINAD - 1.76) / 6.02</div>
+    <div class="formula">ENOB to SINAD: SINAD = (ENOB × 6.02) + 1.76</div>
+    <div class="formula">Quantization Levels: Levels = 2^ENOB</div>
+    <div class="formula">Ideal Signal-to-Noise Ratio: SNR = (ENOB × 6.02) + 1.76 (dB)</div>
+    <div class="formulaBox">
+      Step-by-Step Conversion Example (70 dB SINAD to ENOB):<br>
+      • Step 1: Subtract ideal offset: 70 - 1.76 = 68.24 dB<br>
+      • Step 2: Divide by slope coefficient: 68.24 / 6.02 = 11.335 Bits<br>
+      • Step 3: Compute quantization levels: 2^11.335 = 2568 steps<br>
+      • Step 4: Quantization noise relative to peak: -(11.335 × 6.02 + 1.76) = -70.0 dBFS
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the desired conversion direction using the top segment tabs.</div>
+      <div class="aboutStep">Enter your known value (either SINAD in dB or ENOB in Bits, depending on the active mode).</div>
+      <div class="aboutStep">Click the CONVERT button to execute the calculations.</div>
+      <div class="aboutStep">Observe the converted results inside the results panel.</div>
+      <div class="aboutStep">Review the corresponding quantization levels, ideal SNR, and quantization noise.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Evaluate data converter performance across analog-to-digital (ADC) and digital-to-analog (DAC) networks.</strong>
+      <p>The CalcBoy SINAD to ENOB Converter translates dynamic parameters instantly, generating standard physical conversion metrics, quantization step numbers, and noise floors.</p>
+    </div>
+    <p>In digital signal processing (DSP) and telecommunications design, data converters act as crucial interfaces between real-world analog waveforms and digital silicon processors. Because real-world converters introduce thermal noise, clock jitter, and harmonic distortions, their active bit depth is always lower than their physical design resolution. This discrepancy is captured by the Effective Number of Bits (ENOB).</p>
+    <p>The mathematical relationship relies on the standardized full-scale sinusoidal signal-to-noise ratio. An ideal ADC's quantization error is uniformly distributed over the interval of one least significant bit (LSB). Integrating this noise power relative to a peak-to-peak sine wave yields the classic equation: SINAD = 6.02 × N + 1.76 dB. By inverting this, designers can identify the functional bit-resolution of any data converter based on measured laboratory SINAD values.</p>
+    <p>Using this calculator, system architects, RF engineers, DSP specialists, and electronics students can evaluate data converter specifications, trace quantization limits, and determine system dynamic range requirements.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>ADC testing, receiver design, software-defined radio (SDR) planning, and DSP noise margin modeling.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks converted values alongside discrete quantization levels, SNR bounds, and relative noise floors.</div>
+      <div class="aboutMiniCard"><span>Mathematical Precision</span>Calculations utilize the standard IEEE data converter test standards (IEEE Std 1241).</div>
+      <div class="aboutMiniCard"><span>Bidirectional Converter</span>Supports conversion from SINAD (dB) to ENOB (Bits) as well as from ENOB to SINAD.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: A real-world 16-bit ADC typically yields an ENOB around 12 to 14 bits due to thermal noise and clock phase jitter at high sampling rates.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is the difference between physical resolution and ENOB?</strong></h3>
+    <p>Physical resolution is the number of bits in the converter's digital register (e.g. 14 bits). ENOB (Effective Number of Bits) is the actual resolution achieved after subtracting errors from noise, harmonic distortion, and clock jitter.</p>
+
+    <h3><strong>2. How does the 1.76 dB offset factor arise in the equation?</strong></h3>
+    <p>The 1.76 dB constant represents the theoretical root-mean-square (RMS) quantization noise of an ideal ADC, assuming a continuous full-scale sinusoidal input and a uniform probability distribution of the quantization error.</p>
+
+    <h3><strong>3. Can ENOB be higher than the physical bit resolution?</strong></h3>
+    <p>No. A converter's ENOB is always less than or equal to its physical bit depth. Thermal noise, clock jitter, non-linearities, and analog input track-and-hold distortions inevitably degrade dynamic range.</p>
+
+    <h3><strong>4. What does the term SINAD represent?</strong></h3>
+    <p>SINAD stands for Signal-to-Noise-and-Distortion ratio. It is the ratio of total signal power to the combined power of all noise components, harmonic distortions, and quantization errors (excluding the DC offset).</p>
+
+    <h3><strong>5. How does sampling rate affect ENOB?</strong></h3>
+    <p>At very high sampling rates, clock jitter (phase noise) increases, which introduces timing errors during conversion. This timing uncertainty translates to amplitude noise on the input signal, decreasing the measured SINAD and ENOB.</p>
+
+    <h3><strong>6. Why is quantization noise expressed in dBFS?</strong></h3>
+    <p>dBFS stands for decibels relative to Full Scale. It is an amplitude level unit used to measure signals relative to the maximum analog input range the data converter can process without clipping.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>SFDR to ENOB Calculator</strong>Convert Spurious-Free Dynamic Range (SFDR) to effective bit limits.</div>
+      <div class="linkCard"><strong>ADC Noise Floor Calculator</strong>Determine the absolute thermal and quantization noise floor in nV/Hz.</div>
+      <div class="linkCard"><strong>Phase Jitter to SNR Calculator</strong>Evaluate SNR degradation due to clock phase noise and jitter.</div>
+      <div class="linkCard"><strong>Decibels to Voltage Converter</strong>Translate logarithmic power ratios into equivalent RMS voltages.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// State manager for current active conversion mode (Default is SINAD_to_ENOB)
+var activeMode = "SINAD_to_ENOB";
+
+function val(id) {
+  return document.getElementById(id).value;
 }
-</SCRIPT>
-<div class="tab">
-  <button class=  "tablinks" onclick="openCity(event, 'London')"><font class="tab1">SINAD To ENOB</font></button>
-  <button class="tablinks" onclick="openCity(event, 'Paris')"><font class="tab1">ENOB TO SINAD</font></button>
 
-</div>
+function put(id, val, unit, precision) {
+  var valueBox = document.getElementById(id);
+  if (typeof val === "string") {
+    valueBox.innerText = val;
+  } else {
+    valueBox.innerText = Number(val).toPrecision(precision || 5) + (unit ? (" " + unit) : "");
+  }
+}
 
+function clearResults() {
+  ["converted_out", "quant_levels_out", "snr_out", "noise_out"].forEach(function(id) {
+    document.getElementById(id).innerText = "";
+  });
+  document.getElementById("errorBox").style.display = "none";
+}
 
+function selectMode(modeName) {
+  activeMode = modeName;
+  
+  // Update segment active states visually
+  ["SINAD_to_ENOB", "ENOB_to_SINAD"].forEach(function(m) {
+    var btn = document.getElementById("tab_" + m);
+    if (m === modeName) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
 
+  // Update input label and unit label dynamically
+  var inputLabelText = document.getElementById("input_label_text");
+  var unitLabel = document.getElementById("unit_label");
+  if (modeName === "SINAD_to_ENOB") {
+    inputLabelText.innerText = "SINAD Value (dB)";
+    unitLabel.innerText = "dB";
+  } else {
+    inputLabelText.innerText = "ENOB Value (Bits)";
+    unitLabel.innerText = "Bits";
+  }
+  
+  clearResults();
+}
 
+function computeENOB() {
+  var inputRaw = val("input_val");
 
+  // Validation checks: blank fields, non-numeric values, or out of bound values (Negative value handled normally if valid)
+  if (inputRaw === "" || isNaN(inputRaw)) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
 
-<div id="London" class="tabcontent">
-<FORM name="calculator">
+  var value = Number(inputRaw);
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
+  var convertedVal = 0;
+  var enob = 0;
+  var sinad = 0;
+  var quantLevels = 0;
+  var snrVal = 0;
+  var noiseFloor = 0;
 
+  if (activeMode === "SINAD_to_ENOB") {
+    // SINAD to ENOB
+    // Preserve exact original formulas: ENOB = (SINAD - 1.76) / 6.02
+    enob = (value - 1.76) / 6.02;
+    convertedVal = enob;
+    sinad = value;
+  } else {
+    // ENOB to SINAD
+    // Preserve exact original formulas: SINAD = (ENOB * 6.02) + 1.76
+    sinad = (value * 6.02) + 1.76;
+    convertedVal = sinad;
+    enob = value;
+  }
 
-<label for="f">SINAD<font face="Arial" size="6"></font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 160px;"class="form-control" type="number" />
- <label style="padding: 5px ;  position: absolute;right: 1px;font-size:60px;   border:3px solid #aaa;border-radius:4px;margin:8px 0;text-align:center; width:140px;">dB</label>
+  // Calculate secondary dynamic range parameters
+  quantLevels = Math.pow(2, enob);
+  snrVal = sinad;
+  noiseFloor = -sinad;
 
-<h1 style="font-size:50;"></h1>
+  document.getElementById("errorBox").style.display = "none";
 
-</fieldset></div>
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" name="bt1" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  // Display outputs inside results panel
+  var destUnit = (activeMode === "SINAD_to_ENOB") ? "Bits" : "dB";
+  put("converted_out", convertedVal, destUnit, 6);
+  put("quant_levels_out", quantLevels, "steps", 6);
+  put("snr_out", snrVal, "dB", 6);
+  put("noise_out", noiseFloor, "dBFS", 6);
+}
+</script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between physical resolution and ENOB?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Physical resolution is the number of bits in the converter's digital register (e.g. 14 bits). ENOB (Effective Number of Bits) is the actual resolution achieved after subtracting errors from noise, harmonic distortion, and clock jitter."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the 1.76 dB offset factor arise in the equation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The 1.76 dB constant represents the theoretical root-mean-square (RMS) quantization noise of an ideal ADC, assuming a continuous full-scale sinusoidal input and a uniform probability distribution of the quantization error."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can ENOB be higher than the physical bit resolution?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. A converter's ENOB is always less than or equal to its physical bit depth. Thermal noise, clock jitter, non-linearities, and analog input track-and-hold distortions inevitably degrade dynamic range."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the term SINAD represent?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SINAD stands for Signal-to-Noise-and-Distortion ratio. It is the ratio of total signal power to the combined power of all noise components, harmonic distortions, and quantization errors (excluding the DC offset)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does sampling rate affect ENOB?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At very high sampling rates, clock jitter (phase noise) increases, which introduces timing errors during conversion. This timing uncertainty translates to amplitude noise on the input signal, decreasing the measured SINAD and ENOB."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is quantization noise expressed in dBFS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "dBFS stands for decibels relative to Full Scale. It is an amplitude level unit used to measure signals relative to the maximum analog input range the data converter can process without clipping."
+      }
+    }
+  ]
+}
+</script>
 
-<h3>Outputs</h3></div></legend>
-
-
-
-<label for="f">ENOB<font face="Arial" size="6"></font></label><input  name="ENOB" class="intro"  style="position: absolute;  text-align:center; width:300; right: 160px;"class="form-control" type="text" />
- <label style="padding: 5px ;  position: absolute;right: 1px;font-size:60px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; text-align:center;width:140px;">Bits</label>
-</fieldset></div>
-</FORM>
-</div>
-
-
-
-
-
-<div id="Paris" class="tabcontent">
-<FORM name="calculator1">
-
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
-
-
-<label for="f">ENOB<font face="Arial" size="6"></font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 160px;"class="form-control" type="number" />
- <label style="padding: 5px ;  position: absolute;right: 1px;font-size:60px;   border:3px solid #aaa;border-radius:4px;margin:8px 0;text-align:center; width:140px;">Bits</label>
-
-<h1 style="font-size:50;"></h1>
-
-</fieldset></div>
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" name="bt1" value="CALCULATE" onclick="javascript:calc1();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-
-
-<h3>Outputs</h3></div></legend>
-
-
-
-<label for="f">SINAD<font face="Arial" size="6"></font></label><input  name="SINAD" class="intro"  style="position: absolute;  text-align:center; width:300; right: 160px;"class="form-control" type="text" />
- <label style="padding: 5px ;  position: absolute;right: 1px;font-size:60px;   border:3px solid #aaa;border-radius:4px;margin:8px 0; text-align:center;width:140px;">dB</label>
-</fieldset></div>
-</FORM>
-</div>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "SINAD to ENOB Converter",
+      "item": "https://calcboy.com/tool/sinad-to-enob-converter"
+    }
+  ]
+}
+</script>
 
 </body>
 </html>
-
-<script>
-function openCity(evt, cityName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-</script>
