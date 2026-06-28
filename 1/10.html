@@ -1,298 +1,617 @@
-
-  
-
-
-
-  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bitwise 1-bit Universal Logic Gate Simulator | CalcBoy</title>
+<meta name="description" content="Simulate all 7 logic gates (AND, OR, NOT, NAND, NOR, XOR, XNOR) dynamically. Toggle binary inputs and select gates using our interactive tab selector.">
+<meta name="keywords" content="logic gate simulator, interactive truth table, digital logic calculator, boolean algebra simulator, standard gate simulation, online logic gate, CalcBoy">
 <style>
-@charset "UTF-8";
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400|Dosis:200,300,400);
-*,
-*:before,
-*:after {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
+#gate-calc, #gate-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#gate-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; text-align: center; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button.calc-btn { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.binary-selector { display: flex; gap: 8px; justify-content: center; margin-top: 8px; margin-bottom: 16px; }
+.bin-btn { width: 50px; height: 50px; border-radius: 100px; border: 3px solid #cfd6df; background: #dc2626; color: #fff; font-weight: 900; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.bin-btn.active { background: #16a34a; border-color: #15803d; }
+.bit-label { font-size: 11px; font-weight: 800; color: #94a3b8; display: block; text-align: center; margin-top: 4px; }
+.table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
+table.truth-table { width: 100%; border-collapse: collapse; text-align: center; background: #fff; }
+table.truth-table th, table.truth-table td { padding: 10px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
+table.truth-table th { background: #f8fafc; color: #334155; font-weight: 800; }
+table.truth-table tr.active-row { background: #ecfdf5 !important; color: #16a34a !important; font-weight: 800; border: 2px solid #bbf7d0; }
+.interactive-label { cursor: pointer; user-select: none; }
+.interactive-label:hover { filter: brightness(1.2); }
+.row-item { display: flex; flex-direction: column; align-items: center; }
 
-html,
-body {
-  background-color: #fff;
-  font-family: "Dosis";
-  color: #333;
+/* Gate selection tabs layout */
+.gate-selector-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 6px; margin-bottom: 10px; }
+@media (max-width: 500px) {
+  .gate-selector-grid { grid-template-columns: repeat(3, 1fr); }
 }
-
-h1, h2, h3, h4, h5, h6 {
-  margin: 60;
-  font-weight: 500;
-}
-
-header {
-  margin: 15px auto;
-  width: 500px;
-  text-align: center;
-}
-
-h2 {
-  margin-bottom: 25px;
-  text-indent: 10px;
-}
-
-a {
-  color: #333;
-}
-a:hover {
-  color: #33d68b;
-}
-
-.container {
-  margin: 50 auto 30px;
-  padding: 10px;
-  position: relative;
-    height: 200px;
-  background-color: lightgreen;
-  border-radius: 50px;
-  -webkit-box-shadow: 0 0 4px -1px #333;
-  -moz-box-shadow: 0 0 4px -1px #333;
-  box-shadow: 0 0 4px -1px #333;
-  overflow: hidden; border: 3px solid black;border-color:grey;
-}
-
-.box {margin-top: -98px;
-  margin-left: 30px;
-  display: block;
-  position: relative;
-  float: left;
-  width: 150px;
-  height: 100px;align:center;
-  background-color: red;border-radius: 160px;border: 1px solid black;
-  border-radius: 100px;
-  -webkit-transition: all 0.4s ease;
-  -moz-transition: all 0.4s ease;
-  -ms-transition: all 0.4s ease;
-  -o-transition: all 0.4s ease;
-  transition: all 0.4s ease;
-  overflow: hidden;
-  cursor: pointer;
-
-
-
-}
-.box:after {
-  margin: auto;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-radius: 100px;
-  background-color: GREEN;
-  content: "";
-  -webkit-transition: all 0.1s ease;
-  -moz-transition: all 0.1s ease;
-  -ms-transition: all 0.1s ease;
-  -o-transition: all 0.1s ease;
-  transition: all 0.1s ease;
-  z-index: 50;
-}
-.box:hover:after {
-  width: 100%;
-  height: 100%;
-  border-radius: 100px;
-}
-
-.light {
-  margin-right: 50px;margin-top: -122px;
-  position: relative;
-  float: right;
-  width: 150px;
-  height: 150px;
-  background-color: RED;border-radius: 160px;border: 1px solid black;
-  border-radius: 50%; 
-  overflow: hidden; 
-}
-.light:after {
-  margin: auto;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  background-color: GREEN;
-  border-radius: 50%;
-  -webkit-transition: all 0.1s ease;
-  -moz-transition: all 0.1s ease;
-  -ms-transition: all 0.1s ease;
-  -o-transition: all 0.1s ease;
-  transition: all 0.1s ease;
-  content: "";
-}
-
-input[type=checkbox] {
-  display: none;
-}
-
-#box-AND-1:checked ~ label[for=box-AND-1]:before,
-#box-AND-2:checked ~ label[for=box-AND-2]:before,
-#box-OR-1:checked ~ label[for=box-OR-1]:before,
-#box-OR-2:checked ~ label[for=box-OR-2]:before,
-#box-NOT-1:checked ~ label[for=box-NOT-1]:before,
-#box-NAND-1:checked ~ label[for=box-NAND-1]:before,
-#box-NAND-2:checked ~ label[for=box-NAND-2]:before,
-#box-NOR-1:checked ~ label[for=box-NOR-1]:before,
-#box-NOR-2:checked ~ label[for=box-NOR-2]:before,
-#box-XOR-1:checked ~ label[for=box-XOR-1]:before,
-#box-XOR-2:checked ~ label[for=box-XOR-2]:before,
-#box-XNOR-1:checked ~ label[for=box-XNOR-1]:before,
-#box-XNOR-2:checked ~ label[for=box-XNOR-2]:before {
-  margin: auto;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: GREEN;
-  text-align: center;d
-  line-height: 50px;
-  font-family: "FontAwesome";
-  font-size: 70;
-  color: white;  border-radius: 150px;border: 5px solid black;
-  content: "1";
-  z-index: 60; 
-}
-
-#box-AND-1:checked + #box-AND-2:checked ~ .light-AND:after {
-  width: 100%;
-  height: 100%;
-}
-
-#box-OR-1:checked ~ .light-OR:after,
-#box-OR-2:checked ~ .light-OR:after {
-  width: 100%;
-  height: 100%;
-}
-
-#box-NOT-1:not(:checked) ~ .light-NOT:after {
-  width: 100%;
-  height: 100%;
-}
-
-#box-NAND-1:not(:checked) + #box-NAND-2:not(:checked) ~ .light-NAND:after,
-#box-NAND-1:checked ~ .light-NAND:after,
-#box-NAND-2:checked ~ .light-NAND:after {
-  width: 100%;
-  height: 100%;
-}
-
-#box-NAND-1:checked + #box-NAND-2:checked ~ .light-NAND:after {
-  width: 0%;
-  height: 0%;
-}
-
-#box-NOR-1:not(:checked) + #box-NOR-2:not(:checked) ~ .light-NOR:after {
-  width: 100%;
-  height: 100%;
-}
-
-#box-XOR-1:checked ~ .light-XOR:after,
-#box-XOR-2:checked ~ .light-XOR:after {
-  width: 100%;
-  height: 100%;
-}
-
-#box-XOR-1:not(:checked) + #box-XOR-2:not(:checked) ~ .light-XOR:after,
-#box-XOR-1:checked + #box-XOR-2:checked ~ .light-XOR:after {
-  width: 0%;
-  height: 0%;
-}
-
-#box-XNOR-1:not(:checked) + #box-XNOR-2:not(:checked) ~ .light-XNOR:after,
-#box-XNOR-1:checked + #box-XNOR-2:checked ~ .light-XNOR:after {
-  width: 100%;
-  height: 100%;
-}
-.h2{text-align:center;}
+.gate-tab-btn { padding: 12px 6px; background: #fff; border: 2px solid #cfd6df; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s; color: #475467; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.gate-tab-btn:hover { border-color: #ff7a18; color: #ff7a18; }
+.gate-tab-btn.active { background: #ff7a18; color: #fff; border-color: #ff4b00; }
 </style>
-
-  <script>
-  window.console = window.console || function(t) {};
-</script>
-
-  
-  
-  <script>
-  if (document.location.search.match(/type=embed/gi)) {
-    window.parent.postMessage("resize", "*");
-  }
-</script>
-
-
 </head>
+<body>
 
-<body translate="no" >
-  <header>
+<div id="gate-calc">
 
-</header>
-<div class="container">
-  <h2 style="text-align:center;font-size:40px; margin-top: px;"><b>AND GATE</b></h2>
-  <input type="checkbox" checked="checked" id="box-AND-1"/>
-  <input type="checkbox" id="box-AND-2"/>
-  <label class="box" for="box-AND-1"></label>
-  <label class="box" for="box-AND-2"></label>
-  <div class="light light-AND"></div>
-</div>
-<div class="container">
-  <h2 style="text-align:center;font-size:40px;"><b>OR GATE</b></h2>
-  <input type="checkbox" id="box-OR-1"/>
-  <input type="checkbox" id="box-OR-2"/>
-  <label class="box" for="box-OR-1"></label>
-  <label class="box" for="box-OR-2"></label>
-  <div class="light light-OR"></div>
-</div>
-<div class="container">
-  <h2 style="text-align:center;font-size:40px;"><b>NOT GATE</b></h2>
-  <input type="checkbox" id="box-NOT-1"/>
-  <label class="box" for="box-NOT-1"></label>
-  <div class="light light-NOT"></div>
-</div>
-<div class="container">
-  <h2 style="text-align:center;font-size:40px;"><b>NAND GATE</b></h2>
-  <input type="checkbox" id="box-NAND-1"/>
-  <input type="checkbox" id="box-NAND-2"/>
-  <label class="box" for="box-NAND-1"></label>
-  <label class="box" for="box-NAND-2"></label>
-  <div class="light light-NAND"></div>
-</div>
-<div class="container">
-  <h2 style="text-align:center;font-size:40px;"><b>NOR GATE</b></h2>
-  <input type="checkbox" id="box-NOR-1"/>
-  <input type="checkbox" id="box-NOR-2"/>
-  <label class="box" for="box-NOR-1"></label>
-  <label class="box" for="box-NOR-2"></label>
-  <div class="light light-NOR"></div>
-</div>
-<div class="container">
-  <h2 style="text-align:center;font-size:40px;"><b>XOR GATE</b></h2>
-  <input type="checkbox" id="box-XOR-1"/>
-  <input type="checkbox" id="box-XOR-2"/>
-  <label class="box" for="box-XOR-1"></label>
-  <label class="box" for="box-XOR-2"></label>
-  <div class="light light-XOR"></div>
-</div>
-<div class="container">
-  <h2 style="text-align:center;font-size:40px;"><b>XNOR GATE</b></h2>
-  <input type="checkbox" id="box-XNOR-1"/>
-  <input type="checkbox" id="box-XNOR-2"/>
-  <label class="box" for="box-XNOR-1"></label>
-  <label class="box" for="box-XNOR-2"></label>
-  <div class="light light-XNOR"></div>
+  <div class="calc-grid">
+    <div class="subTitle">Interactive Logic Gate Controls</div>
+
+    <div>
+      <label class="calc-label">Select Active Logic Gate</label>
+      <div class="gate-selector-grid">
+        <button class="gate-tab-btn active" id="tab_AND" onclick="selectGate('AND')">AND</button>
+        <button class="gate-tab-btn" id="tab_OR" onclick="selectGate('OR')">OR</button>
+        <button class="gate-tab-btn" id="tab_NOT" onclick="selectGate('NOT')">NOT</button>
+        <button class="gate-tab-btn" id="tab_NAND" onclick="selectGate('NAND')">NAND</button>
+        <button class="gate-tab-btn" id="tab_NOR" onclick="selectGate('NOR')">NOR</button>
+        <button class="gate-tab-btn" id="tab_XOR" onclick="selectGate('XOR')">XOR</button>
+        <button class="gate-tab-btn" id="tab_XNOR" onclick="selectGate('XNOR')">XNOR</button>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label" style="margin-bottom: 12px;">Toggle Input Switches</label>
+      <div class="binary-selector">
+        <div class="row-item">
+          <button class="bin-btn" id="btn_a" onclick="toggleBit('btn_a')">0</button>
+          <span class="bit-label">Input A</span>
+        </div>
+        <div class="row-item" id="row_input_b">
+          <button class="bin-btn" id="btn_b" onclick="toggleBit('btn_b')">0</button>
+          <span class="bit-label">Input B</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="calc-btn" onclick="runSimulation()">SIMULATE STATE</button>
+
+  <div id="errorBox">Please select valid binary values (0 or 1).</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Boolean Output (Y)</div><div class="result-value"><span id="y_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Output Level</div><div class="result-value"><span id="y_level"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Logical Expression</div><div class="result-value"><span id="log_expr"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Active Truth Row</div><div class="result-value"><span id="active_row_lbl"></span></div></div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="truth-table">
+      <thead>
+        <tr id="table_header">
+          <th>Input A</th>
+          <th>Input B</th>
+          <th>Output Y</th>
+        </tr>
+      </thead>
+      <tbody id="table_body">
+      </tbody>
+    </table>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Input A (Switch)</strong>The primary binary logic input. Clicking the round switch toggles between low/0 (Red) and high/1 (Green).</div>
+      <div class="paramItem"><strong>Input B (Switch)</strong>The secondary logic input. Toggles between low/0 and high/1. Automatically disabled/hidden in NOT gate mode.</div>
+      <div class="paramItem"><strong>Gate Selector</strong>Choose from standard operations: AND, OR, NOT, NAND, NOR, XOR, or XNOR. This dynamically adapts the truth table.</div>
+      <div class="paramItem"><strong>Active Row Mapping</strong> Renders the complete truth table matrix on screen, highlighting the active row matching current inputs.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>AND Security Gate</strong></p>
+        <p>Requires both Sensor A and Sensor B to be triggered (1) before the output safety lock Y is released (1).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>OR Alarm System</strong></p>
+        <p>Triggers output alert Y (1) if either Front Door Sensor A (1) OR Window Sensor B (1) is active.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>NOT Inverter Module</strong></p>
+        <p>Inverts controller signals. An active-low reset pin relies on NOT logic to initiate CPU sequences.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>XOR Half-Adder sum</strong></p>
+        <p>Combines single-bit inputs to generate standard arithmetic sum outputs (s = A ⊕ B).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>This universal logic gate simulator maps binary inputs directly to standard circuit representations. Wires dynamically light up in orange to indicate high-voltage logic 1 states, matching physical logic analyzer operations.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" id="gate-diagram">
+        <rect width="520" height="220" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Wiring traces -->
+        <path id="path_a" d="M 50,70 H 180" stroke="#64748b" stroke-width="3" fill="none" />
+        <path id="path_b" d="M 50,150 H 180" stroke="#64748b" stroke-width="3" fill="none" />
+        <path id="path_y" d="M 330,110 H 470" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Dynamic Gate Symbols -->
+        <g id="sym_AND">
+          <path d="M 180,60 H 240 A 50,50 0 0 1 240,160 H 180 Z" stroke="#1e293b" stroke-width="3.5" fill="#eef5ff" />
+        </g>
+        <g id="sym_OR" style="display: none;">
+          <path d="M 170,60 C 200,70 200,150 170,160 C 215,160 255,130 285,110 C 255,90 215,60 170,60 Z" stroke="#1e293b" stroke-width="3.5" fill="#eef5ff" />
+        </g>
+        <g id="sym_NOT" style="display: none;">
+          <polygon points="180,60 180,160 260,110" stroke="#1e293b" stroke-width="3.5" fill="#eef5ff" />
+          <circle cx="270" cy="110" r="10" stroke="#1e293b" stroke-width="3.5" fill="#ffffff" />
+        </g>
+        <g id="sym_NAND" style="display: none;">
+          <path d="M 180,60 H 240 A 50,50 0 0 1 240,160 H 180 Z" stroke="#1e293b" stroke-width="3.5" fill="#eef5ff" />
+          <circle cx="300" cy="110" r="10" stroke="#1e293b" stroke-width="3.5" fill="#ffffff" />
+        </g>
+        <g id="sym_NOR" style="display: none;">
+          <path d="M 170,60 C 200,70 200,150 170,160 C 215,160 255,130 285,110 C 255,90 215,60 170,60 Z" stroke="#1e293b" stroke-width="3.5" fill="#eef5ff" />
+          <circle cx="295" cy="110" r="10" stroke="#1e293b" stroke-width="3.5" fill="#ffffff" />
+        </g>
+        <g id="sym_XOR" style="display: none;">
+          <path d="M 155,60 C 185,70 185,150 155,160" stroke="#1e293b" stroke-width="3.5" fill="none" />
+          <path d="M 170,60 C 200,70 200,150 170,160 C 215,160 255,130 285,110 C 255,90 215,60 170,60 Z" stroke="#1e293b" stroke-width="3.5" fill="#eef5ff" />
+        </g>
+        <g id="sym_XNOR" style="display: none;">
+          <path d="M 155,60 C 185,70 185,150 155,160" stroke="#1e293b" stroke-width="3.5" fill="none" />
+          <path d="M 170,60 C 200,70 200,150 170,160 C 215,160 255,130 285,110 C 255,90 215,60 170,60 Z" stroke="#1e293b" stroke-width="3.5" fill="#eef5ff" />
+          <circle cx="295" cy="110" r="10" stroke="#1e293b" stroke-width="3.5" fill="#ffffff" />
+        </g>
+
+        <!-- Interactive Node Pins -->
+        <!-- Input A Port -->
+        <g class="interactive-label" onclick="togglePin('btn_a')">
+          <circle cx="50" cy="70" r="14" fill="#16a34a" id="svg_node_a_circle" stroke="#000" stroke-width="2" />
+          <text id="svg_node_a" x="50" y="74" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="50" y="97" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">A</text>
+
+        <!-- Input B Port -->
+        <g id="grp_node_b" class="interactive-label" onclick="togglePin('btn_b')">
+          <circle cx="50" cy="150" r="14" fill="#16a34a" id="svg_node_b_circle" stroke="#000" stroke-width="2" />
+          <text id="svg_node_b" x="50" y="154" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text id="lbl_node_b" x="50" y="177" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">B</text>
+
+        <!-- Output Y Port -->
+        <circle cx="470" cy="110" r="14" fill="#16a34a" id="svg_node_y_circle" stroke="#000" stroke-width="2" />
+        <text id="svg_node_y" x="470" y="114" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        <text x="470" y="132" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">Y</text>
+
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">AND Gate: Y = A · B</div>
+    <div class="formula">OR Gate: Y = A + B</div>
+    <div class="formula">NOT Gate: Y = A'</div>
+    <div class="formula">NAND Gate: Y = (A · B)'</div>
+    <div class="formula">NOR Gate: Y = (A + B)'</div>
+    <div class="formula">XOR Gate: Y = A ⊕ B</div>
+    <div class="formula flex">XNOR Gate: Y = (A ⊕ B)'</div>
+    <div class="formulaBox">
+      Step-by-Step Logic Example (XOR Gate):<br>
+      • Inputs configured: A = 1, B = 0<br>
+      • Formula: Y = A ⊕ B = (A · B') + (A' · B)<br>
+      • Substitution: Y = (1 · 1) + (0 · 0) = 1 + 0 = 1 (Logical High Output)
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Select the logic gate type you want to simulate from the tab button selection grid.</div>
+      <div class="aboutStep">Click the rounded green/red toggle buttons under the switches section to toggle inputs between 0 and 1.</div>
+      <div class="aboutStep">Alternatively, toggle the inputs directly on the circuit diagram by clicking the labeled node ports.</div>
+      <div class="aboutStep">Click the SIMULATE STATE button to process the boolean logic calculations.</div>
+      <div class="aboutStep">Observe the highlighted active row on the truth table and dynamic circuit colors (active lines turn orange).</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Simulate and analyze fundamental digital logic gate networks.</strong>
+      <p>The CalcBoy Logic Gates Truth Tables Calculator evaluates active gate types, resolving outputs, logical expressions, and highlighted truth tables dynamically.</p>
+    </div>
+    <p>In digital electronics, logic gates are physical devices implementing Boolean functions; they perform logical operations on one or more binary inputs and produce a single binary output. These operations form the foundation of processor logic, computer memory systems, digital controllers, and high-level software algorithms. This simulator supports all seven classic logic gates used in modern silicon processor designs.</p>
+    <p>AND, OR, NOT, NAND, NOR, XOR, and XNOR gates behave in strict accordance with standard Boolean logic laws. For example, an AND gate outputs high only when all inputs are high, while an XOR gate behaves as a difference detector, outputting high only when its inputs differ. Conversely, XNOR serves as an equivalence detector, evaluating to 1 only when inputs are identical.</p>
+    <p>This simulator assists hardware developers, digital systems students, and software engineers in verifying logic states, tracing propagation routing pathways, and understanding binary logic matrices.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Processor logic verification, classroom logic training, and debugging digital circuits.</div>
+      <div class="aboutMiniCard"><span>Comprehensive Tracking</span>Renders active sum states, Boolean outputs, and fully-mapped active rows.</div>
+      <div class="aboutMiniCard"><span>Interactive UI</span>Tap on schematic inputs to evaluate active signal pathways in real-time.</div>
+      <div class="aboutMiniCard"><span>Engineering Standards</span>Fully compliant with IEEE digital logic and Boolean algebra standards.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: Combine several NAND or NOR gates together to synthesize any other logic gate type; these are known as universal logic gates.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is a logic gate truth table?</strong></h3>
+    <p>A truth table is a mathematical matrix that lists all possible combinations of binary inputs for a logic gate alongside the resulting outputs, representing the full operational logic of that gate.</p>
+
+    <h3><strong>2. Why are NAND and NOR gates called universal gates?</strong></h3>
+    <p>NAND and NOR gates are called universal logic gates because any other standard boolean logic function (including AND, OR, NOT, XOR, XNOR) can be created using combinations of only NAND or NOR gates.</p>
+
+    <h3><strong>3. How does an XOR gate behave compared to an OR gate?</strong></h3>
+    <p>An OR gate outputs high (1) when at least one input is high, including when both inputs are high. An XOR (Exclusive-OR) gate outputs high only when inputs are different, resolving to low (0) when both inputs are high.</p>
+
+    <h3><strong>4. Why is the NOT gate called an inverter?</strong></h3>
+    <p>A NOT gate is called an inverter because it only accepts one input and outputs the exact logical inverse of that input. A low (0) input yields a high (1) output, and a high (1) input yields a low (0) output.</p>
+
+    <h3><strong>5. What is the logical difference between XOR and XNOR?</strong></h3>
+    <p>XOR outputs high (1) only when inputs are different. XNOR (Exclusive-NOR) is the exact logical inverse of XOR, outputting high (1) only when inputs are identical (e.g. both 0 or both 1).</p>
+
+    <h3><strong>6. How is digital logic implemented in physical computers?</strong></h3>
+    <p>Modern processors implement logic gates using CMOS (Complementary Metal-Oxide-Semiconductor) technology, where pairs of NMOS and PMOS transistors act as electrical switches to route voltage levels corresponding to logical 0 and 1.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Boolean Algebra Simplifier</strong>Minimize complex boolean expressions using Karnaugh maps.</div>
+      <div class="linkCard"><strong>Binary Adder-Subtractor Calculator</strong>Analyze multi-bit calculations with cascading logical adders.</div>
+      <div class="linkCard"><strong>2-to-1 Multiplexer Simulator</strong>Study routing control lines on multiplexer architectures.</div>
+      <div class="linkCard"><strong>Half Adder Logic Simulator</strong>Analyze basic two-bit addition operations and outputs.</div>
+    </div>
+  </section>
+
 </div>
 
+<script>
+// State manager for current active gate (Default is AND)
+var activeGate = "AND";
 
+function getBit(id) {
+  var btn = document.getElementById(id);
+  return btn.classList.contains("active") ? 1 : 0;
+}
 
+function setBit(id, state) {
+  var btn = document.getElementById(id);
+  if (state === 1) {
+    btn.classList.add("active");
+    btn.innerText = "1";
+  } else {
+    btn.classList.remove("active");
+    btn.innerText = "0";
+  }
+}
+
+function toggleBit(id) {
+  var state = getBit(id) === 1 ? 0 : 1;
+  setBit(id, state);
+  runSimulation();
+}
+
+function togglePin(id) {
+  toggleBit(id);
+}
+
+function selectGate(gateName) {
+  activeGate = gateName;
+  
+  // Update segment active states visually
+  ["AND", "OR", "NOT", "NAND", "NOR", "XOR", "XNOR"].forEach(function(g) {
+    var btn = document.getElementById("tab_" + g);
+    if (g === gateName) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+  
+  runSimulation();
+}
+
+function setWireState(pathId, state) {
+  var path = document.getElementById(pathId);
+  if (path) {
+    if (state === 1) {
+      path.setAttribute("stroke", "#ea580c");
+      path.setAttribute("stroke-width", "3.5");
+    } else {
+      path.setAttribute("stroke", "#64748b");
+      path.setAttribute("stroke-width", "2.5");
+    }
+  }
+}
+
+function setNodeCircleState(circleId, state) {
+  var circle = document.getElementById(circleId);
+  if (circle) {
+    if (state === 1) {
+      circle.setAttribute("fill", "#16a34a"); // green
+    } else {
+      circle.setAttribute("fill", "#dc2626"); // red
+    }
+  }
+}
+
+function runSimulation() {
+  var gate = activeGate;
+  var a = getBit("btn_a");
+  var b = getBit("btn_b");
+
+  // NOT gate only uses Input A
+  if (gate === "NOT") {
+    document.getElementById("row_input_b").style.display = "none";
+    document.getElementById("grp_node_b").style.display = "none";
+    document.getElementById("lbl_node_b").style.display = "none";
+    document.getElementById("path_b").style.display = "none";
+  } else {
+    document.getElementById("row_input_b").style.display = "flex";
+    document.getElementById("grp_node_b").style.display = "block";
+    document.getElementById("lbl_node_b").style.display = "block";
+    document.getElementById("path_b").style.display = "block";
+  }
+
+  // Toggle active Gate SVG symbol visibility
+  ["AND", "OR", "NOT", "NAND", "NOR", "XOR", "XNOR"].forEach(function(g) {
+    document.getElementById("sym_" + g).style.display = (g === gate) ? "block" : "none";
+  });
+
+  // Update inputs on SVG diagram
+  document.getElementById("svg_node_a").textContent = a;
+  setNodeCircleState("svg_node_a_circle", a);
+  setWireState("path_a", a);
+
+  if (gate !== "NOT") {
+    document.getElementById("svg_node_b").textContent = b;
+    setNodeCircleState("svg_node_b_circle", b);
+    setWireState("path_b", b);
+  }
+
+  // Logic evaluations
+  var y = 0;
+  var expr = "";
+  switch(gate) {
+    case "AND":
+      y = a && b ? 1 : 0;
+      expr = "Y = A · B";
+      break;
+    case "OR":
+      y = a || b ? 1 : 0;
+      expr = "Y = A + B";
+      break;
+    case "NOT":
+      y = !a ? 1 : 0;
+      expr = "Y = A'";
+      break;
+    case "NAND":
+      y = !(a && b) ? 1 : 0;
+      expr = "Y = (A · B)'";
+      break;
+    case "NOR":
+      y = !(a || b) ? 1 : 0;
+      expr = "Y = (A + B)'";
+      break;
+    case "XOR":
+      y = a ^ b ? 1 : 0;
+      expr = "Y = A ⊕ B";
+      break;
+    case "XNOR":
+      y = !(a ^ b) ? 1 : 0;
+      expr = "Y = (A ⊕ B)'";
+      break;
+  }
+
+  // Render results
+  document.getElementById("y_out").innerText = y;
+  document.getElementById("y_level").innerText = y === 1 ? "HIGH (Logic 1 / VCC)" : "LOW (Logic 0 / GND)";
+  document.getElementById("log_expr").innerText = expr;
+
+  // Sync output on SVG
+  document.getElementById("svg_node_y").textContent = y;
+  setNodeCircleState("svg_node_y_circle", y);
+  setWireState("path_y", y);
+
+  // Generate truth table grid dynamically
+  var tableHeader = "";
+  var tableBody = "";
+  var activeRowName = "";
+
+  if (gate === "NOT") {
+    tableHeader = "<th>Input A</th><th>Output Y</th>";
+    var states = [0, 1];
+    for (var i = 0; i < states.length; i++) {
+      var currA = states[i];
+      var currY = !currA ? 1 : 0;
+      var isActive = (currA === a);
+      var rowClass = isActive ? "class='active-row'" : "";
       
+      tableBody += "<tr " + rowClass + ">" +
+        "<td>" + currA + "</td>" +
+        "<td>" + currY + "</td>" +
+        "</tr>";
+      
+      if (isActive) {
+        activeRowName = "A = " + currA + " → Y = " + currY;
+      }
+    }
+  } else {
+    tableHeader = "<th>Input A</th><th>Input B</th><th>Output Y</th>";
+    var states = [
+      [0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 1]
+    ];
+    for (var i = 0; i < states.length; i++) {
+      var currA = states[i][0];
+      var currB = states[i][1];
+      var currY = 0;
+      switch(gate) {
+        case "AND": currY = currA && currB ? 1 : 0; break;
+        case "OR": currY = currA || currB ? 1 : 0; break;
+        case "NAND": currY = !(currA && currB) ? 1 : 0; break;
+        case "NOR": currY = !(currA || currB) ? 1 : 0; break;
+        case "XOR": currY = currA ^ currB ? 1 : 0; break;
+        case "XNOR": currY = !(currA ^ currB) ? 1 : 0; break;
+      }
+      var isActive = (currA === a && currB === b);
+      var rowClass = isActive ? "class='active-row'" : "";
+      
+      tableBody += "<tr " + rowClass + ">" +
+        "<td>" + currA + "</td>" +
+        "<td>" + currB + "</td>" +
+        "<td>" + currY + "</td>" +
+        "</tr>";
+      
+      if (isActive) {
+        activeRowName = "A=" + currA + ", B=" + currB + " → Y=" + currY;
+      }
+    }
+  }
+
+  document.getElementById("table_header").innerHTML = tableHeader;
+  document.getElementById("table_body").innerHTML = tableBody;
+  document.getElementById("active_row_lbl").innerText = activeRowName;
+  document.getElementById("errorBox").style.display = "none";
+}
+
+// Start simulation on load
+window.addEventListener('load', function() {
+  runSimulation();
+});
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a logic gate truth table?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A truth table is a mathematical matrix that lists all possible combinations of binary inputs for a logic gate alongside the resulting outputs, representing the full operational logic of that gate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are NAND and NOR gates called universal gates?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "NAND and NOR gates are called universal logic gates because any other standard boolean logic function (including AND, OR, NOT, XOR, XNOR) can be created using combinations of only NAND or NOR gates."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does an XOR gate behave compared to an OR gate?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An OR gate outputs high (1) when at least one input is high, including when both inputs are high. An XOR (Exclusive-OR) gate outputs high only when inputs are different, resolving to low (0) when both inputs are high."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the NOT gate called an inverter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A NOT gate is called an inverter because it only accepts one input and outputs the exact logical inverse of that input. A low (0) input yields a high (1) output, and a high (1) input yields a low (0) output."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the logical difference between XOR and XNOR?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "XOR outputs high (1) only when inputs are different. XNOR (Exclusive-NOR) is the exact logical inverse of XOR, outputting high (1) only when inputs are identical (e.g. both 0 or both 1)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is digital logic implemented in physical computers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Modern processors implement logic gates using CMOS (Complementary Metal-Oxide-Semiconductor) technology, where pairs of NMOS and PMOS transistors act as electrical switches to route voltage levels corresponding to logical 0 and 1."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Logic Gates Truth Tables Calculator",
+      "item": "https://calcboy.com/tool/logic-gates-truth-tables-calculator"
+    }
+  ]
+}
+</script>
+
+</body>
+</html>
