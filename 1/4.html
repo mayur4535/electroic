@@ -1,185 +1,528 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
-<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
-<title>CodePen - Bitwise 1-bit Full Adder Simulation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bitwise 1-bit Full Adder Simulation | CalcBoy</title>
+<meta name="description" content="Simulate a 1-bit Full Adder circuit. Toggle binary inputs to analyze the sum, carry out, and cascaded logic pathways dynamically in real-time.">
+<meta name="keywords" content="1-bit full adder, full adder simulation, logic gate simulator, carry out calculator, binary adder calculator, digital logic simulator, half adder circuit, CalcBoy">
 <style>
-      div.circuit-container {
-  max-width: 96%;
-  width: auto;
-  margin: 5px 0 5px 0;
-  position: relative;
+#fa-calc, #fa-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#fa-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+select.unit-selector { padding: 0 8px; cursor: pointer; font-weight: 700; color: #374151; background-color: #eee; border: 1px solid #cfd6df; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.interactive-label { cursor: pointer; user-select: none; }
+.interactive-label:hover { filter: brightness(1.2); }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box, select.unit-selector { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-
-img.circuit-schematic {
-  width: 100%;
-  height: auto;
-}
-body { 
-  background: ; 
-}
-.circuit-input {
-  -webkit-user-select: none;
-  transition: all 1s ease;
-  background: white;
-  border: 1px solid;
-  border-radius: 5px;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-.circuit-input:active {
-    background-color: yellow;
-    -webkit-transition: background-color 0.1s ease-out;
-}
-
-.circuit-output {
-  background: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-
-.circuit-intern {
-  background: none;
-  border: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1em;
-  font-weight: regular;
-  text-align: center;
-}
-
-.circuit-container > .flash {
-  -webkit-animation-name: circuit-flash-animation;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-timing-function: ease-in-out;
-}
-
-@-webkit-keyframes circuit-flash-animation {
-  from {
-    background: yellow;
-  }
-  to {
-    background: default;
-  }
-}
-
-    </style>
-<script>
-  window.console = window.console || function(t) {};
-</script>
-<script>
-  if (document.location.search.match(/type=embed/gi)) {
-    window.parent.postMessage("resize", "*");
-  }
-</script>
+</style>
 </head>
-<body translate="no">
-<div class="circuit-container" id="circuit-fa">
-<img class="circuit-schematic" alt="" src="https://coertvonk.com/wp-content/logic-simulation/adder/fa-block.svg">
-<div class="circuit-input " id="a" style="bottom:93%;left:69.5%;border-color:#00ADEE;"></div>
-<div class="circuit-input" id="b" style="bottom:93%;left:32%;border-color:#00ADEE;"></div>
-<div class="circuit-input" id="ci" style="bottom:35%;left:93.5%;border-color:#EC1C24;"></div>
-<div class="circuit-output" id="s" style="bottom:2%;left:63.5%;"></div>
-<div class="circuit-output" id="co" style="bottom:42%;left:2%;"></div>
+<body>
+
+<div id="fa-calc">
+
+  <div class="calc-grid">
+    <div class="subTitle">Simulate Binary Inputs</div>
+
+    <div>
+      <label class="calc-label">Addend Input (a)</label>
+      <div class="calc-row">
+        <select id="a" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #eef5ff; color: #2359e8;">a (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Addend Input (b)</label>
+      <div class="calc-row">
+        <select id="b" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #eef5ff; color: #2359e8;">b (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Carry Input (ci)</label>
+      <div class="calc-row">
+        <select id="ci" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #fdf2f2; color: #ea580c;">ci (Bit)</div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="runSimulation()">SIMULATE ADDITION</button>
+
+  <div id="errorBox">Please enter valid binary states (0 or 1).</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Sum Output (s)</div><div class="result-value"><span id="s_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Carry Output (co)</div><div class="result-value"><span id="co_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Intermediate Sum (a ⊕ b)</div><div class="result-value"><span id="ab_xor_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Active Carry Condition</div><div class="result-value"><span id="carry_cond_out"></span></div></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Input Addend (a)</strong>The first primary binary bit operand applied directly to the first cascade half-adder logic circuit block.</div>
+      <div class="paramItem"><strong>Input Addend (b)</strong>The secondary binary bit operand combined with 'a' to form the initial partial sum.</div>
+      <div class="paramItem"><strong>Carry In (ci)</strong>The incoming carry-over bit routed from lower-order addition stages in cascaded parallel structures.</div>
+      <div class="paramItem"><strong>Interactive Gates</strong>Inputs can be controlled via selectors above or toggled by clicking active port nodes in the diagram.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Simple Addition (1 + 0 + 0)</strong></p>
+        <p>Set a=1, b=0, ci=0. The sum output (s) switches to 1, while carry out (co) remains 0.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Carry Generation (1 + 1 + 0)</strong></p>
+        <p>Set a=1, b=1, ci=0. The sum (s) resolves to 0, and carry out (co) generates a 1.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Full Capacity (1 + 1 + 1)</strong></p>
+        <p>Set a=1, b=1, ci=1. Both sum (s) and carry out (co) outputs switch to active high 1.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Cascaded Word Addition</strong></p>
+        <p>Connect consecutive carry-out pins to carry-in inputs to chain binary processing blocks.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A Full Adder combines two Half Adders and an OR logic gate. It computes the arithmetic sum of three single-bit inputs, outputting the sum (s) and carry out (co). Click the inputs on the schematic to simulate logic changes dynamically.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 350" xmlns="http://www.w3.org/2000/svg" id="fa-diagram">
+        <rect width="520" height="350" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Main Schematic Block Outline -->
+        <rect x="130" y="60" width="260" height="230" rx="12" fill="#f8fafc" stroke="#475467" stroke-width="3" />
+        <text x="306" y="85" fill="#1e293b" font-weight="900" font-size="10" text-anchor="middle">1-BIT FULL ADDER BLOCK</text>
+
+        <!-- Half Adder 1 Sub-block -->
+        <rect x="155" y="105" width="95" height="70" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="202" y="140" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">HALF ADDER 1</text>
+
+        <!-- Half Adder 2 Sub-block -->
+        <rect x="275" y="150" width="95" height="70" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="322" y="185" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">HALF ADDER 2</text>
+
+        <!-- OR Gate block for carry generation -->
+        <rect x="200" y="235" width="60" height="40" rx="4" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2" />
+        <text x="230" y="259" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">OR GATE</text>
+
+        <!-- Input a line -->
+        <path id="path_a" d="M185,25 V105" stroke="#64748b" stroke-width="3" fill="none" />
+        
+        <!-- Input b line -->
+        <path id="path_b" d="M225,25 V105" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Input ci line -->
+        <path id="path_ci" d="M495,185 H370" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Output co line -->
+        <path id="path_co" d="M200,255 H25" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Output s line -->
+        <path id="path_s" d="M322,220 V325" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- HA1 Sum (a ⊕ b) internal line routing to HA2 -->
+        <path id="path_ab_xor" d="M202,175 V195 H275" stroke="#64748b" stroke-width="2" fill="none" />
+
+        <!-- HA1 Carry (a · b) internal line routing to OR -->
+        <path id="path_ha1_co" d="M230,175 V235" stroke="#64748b" stroke-width="2" fill="none" />
+
+        <!-- HA2 Carry internal line routing to OR -->
+        <path id="path_ha2_co" d="M322,150 V135 H250 V235" stroke="#64748b" stroke-width="2" fill="none" />
+
+        <!-- Interactive Node Ports -->
+        <!-- Port a -->
+        <g class="interactive-label" onclick="togglePin('a')">
+          <circle cx="185" cy="25" r="14" fill="#2359e8" stroke="#000" stroke-width="2" />
+          <text id="node_a" x="185" y="29" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="160" y="30" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">a</text>
+
+        <!-- Port b -->
+        <g class="interactive-label" onclick="togglePin('b')">
+          <circle cx="225" cy="25" r="14" fill="#2359e8" stroke="#000" stroke-width="2" />
+          <text id="node_b" x="225" y="29" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="250" y="30" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">b</text>
+
+        <!-- Port ci -->
+        <g class="interactive-label" onclick="togglePin('ci')">
+          <circle cx="495" cy="185" r="14" fill="#EC1C24" stroke="#000" stroke-width="2" />
+          <text id="node_ci" x="495" y="189" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="495" y="215" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">ci</text>
+
+        <!-- Port co -->
+        <circle cx="25" cy="255" r="14" fill="#ea580c" stroke="#000" stroke-width="2" />
+        <text id="node_co" x="25" y="259" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        <text x="25" y="280" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">co</text>
+
+        <!-- Port s -->
+        <circle cx="322" cy="325" r="14" fill="#16a34a" stroke="#000" stroke-width="2" />
+        <text id="node_s" x="322" y="329" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        <text x="300" y="330" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">s</text>
+
+        <!-- HA1 Sum Output label -->
+        <rect x="222" y="185" width="20" height="15" rx="3" fill="#ffffff" stroke="#475467" stroke-width="1" />
+        <text id="node_ab_xor" x="232" y="196" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">0</text>
+
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Arithmetic Sum: s = a ⊕ b ⊕ ci</div>
+    <div class="formula">Carry Output: co = (a · b) + (ci · (a ⊕ b))</div>
+    <div class="formulaBox">
+      Truth Table Validation Matrix:<br>
+      • a=0, b=0, ci=0 → Sum (s)=0, Carry Out (co)=0<br>
+      • a=1, b=0, ci=0 → Sum (s)=1, Carry Out (co)=0<br>
+      • a=1, b=1, ci=0 → Sum (s)=0, Carry Out (co)=1<br>
+      • a=1, b=1, ci=1 → Sum (s)=1, Carry Out (co)=1
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose binary values (0 or 1) for the inputs a, b, and carry input ci using the dropdown lists.</div>
+      <div class="aboutStep">Alternatively, toggle the inputs directly on the interactive circuit schematic above by tapping the port circles.</div>
+      <div class="aboutStep">Click the SIMULATE ADDITION button to calculate and evaluate the logic states.</div>
+      <div class="aboutStep">Analyze the results grid to observe Sum, Carry Out, and intermediate logic signals.</div>
+      <div class="aboutStep">Trace active logic high (1) pathways visually, which are highlighted dynamically in bright orange.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Analyze primary binary addition operations with a cascading full adder structure.</strong>
+      <p>The CalcBoy Bitwise 1-bit Full Adder Simulation monitors digital addition, calculating sum bits, propagated carry outputs, and intermediate logic gates dynamically.</p>
+    </div>
+    <p>A Full Adder is the fundamental building block of digital logic systems capable of performing binary addition. While half adders can sum only two single-bit values, a Full Adder accommodates a third input, Carry In (ci). This addition allows hardware designers to cascade individual adder cells to process large binary numbers. This configuration is widely implemented in Arithmetic Logic Units (ALUs), microprocessors, and high-speed execution pipelines.</p>
+    <p>The operational framework relies on cascading two Half Adder modules. The first half-adder processes inputs a and b to calculate a partial sum (a ⊕ b) and an initial carry bit (a · b). The second half-adder combines the partial sum with the Carry In (ci) input, producing the final Sum output (s). The carry-out signals from both stages are routed through an OR gate to generate the system's final Carry Out (co).</p>
+    <p>Understanding and debugging arithmetic circuits requires tracing signal states. This interactive digital simulator provides engineers and learners with an accessible tool to run boolean equations, trace routing lines, and analyze arithmetic processing states.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Silicon architecture design, educational logic demonstrations, and ALU state analysis.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks final sum bits, carry-out outputs, and cascading intermediate XOR pathways.</div>
+      <div class="aboutMiniCard"><span>Interactive UI</span>Tap any input directly on the diagram to cycle through states and evaluate the output instantly.</div>
+      <div class="aboutMiniCard"><span>Industry Standards</span>Complies with standard boolean algebra and binary logic gate calculations.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: Chain multiple Full Adder blocks by connecting the carry out (co) of one block to the carry in (ci) of the next to build multi-bit ripple-carry adders.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is the difference between a Half Adder and a Full Adder?</strong></h3>
+    <p>A Half Adder adds two single-bit inputs and produces sum and carry outputs. A Full Adder adds three inputs (including a Carry In bit), allowing it to handle carry signals from preceding addition stages.</p>
+
+    <h3><strong>2. How are multi-bit binary numbers added in hardware?</strong></h3>
+    <p>Multi-bit addition is typically performed by cascading several 1-bit Full Adders in series. The Carry Out (co) pin of each lower-order bit stage connects to the Carry In (ci) pin of the adjacent higher-order stage.</p>
+
+    <h3><strong>3. What boolean logic gate determines the final Sum output?</strong></h3>
+    <p>The final Sum (s) is generated by a double-input XOR operation. It is expressed mathematically as s = a ⊕ b ⊕ ci, which outputs high (1) only when an odd number of inputs are high.</p>
+
+    <h3><strong>4. How is the Carry Out (co) output calculated?</strong></h3>
+    <p>The Carry Out is determined by the equation co = (a · b) + (ci · (a ⊕ b)). This generates a carry-out signal when any two or more inputs are active high (1).</p>
+
+    <h3><strong>5. What is a Ripple Carry Adder, and what are its limits?</strong></h3>
+    <p>A Ripple Carry Adder is a circuit created by cascading multiple Full Adders. Its primary limit is propagation delay, as each stage must wait for the carry bit to calculate and cascade from the preceding stage.</p>
+
+    <h3><strong>6. Can a Full Adder be used for subtraction?</strong></h3>
+    <p>Yes. By combining a Full Adder with invert logic gates, it can perform subtraction using two's complement arithmetic, where subtraction is treated as addition with a negative representation.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Half Adder Logic Simulator</strong>Analyze basic two-bit addition operations without carry inputs.</div>
+      <div class="linkCard"><strong>Binary Adder-Subtractor Calculator</strong>Simulate signed binary calculations with unified adder structures.</div>
+      <div class="linkCard"><strong>Ripple Carry Adder Calculator</strong>Analyze multi-bit cascading addition delays and signals.</div>
+      <div class="linkCard"><strong>Bitwise Logic Gate Simulator</strong>Run individual AND, OR, XOR, and NAND evaluations.</div>
+    </div>
+  </section>
+
 </div>
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script src='https://coertvonk.com/wp-content/logic-simulation/circuit-simulation.js'></script>
-<script id="rendered-js">
-      // 1-bit Full Adder
-// used in https://coertvonk.com/technology/logic/computer-math-inquiry-4245/7
-/*
-Copyright (c) 2017 by Coert Vonk
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+<script>
+function val(id) {
+  return document.getElementById(id).value;
+}
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-
-var circuitFa = {}; // full adder Name Space
-(function () {
-  let queueDftDelay = 350; // msec
-  var input = {};
-  var output = {};
-
-  // resize the fonts when the window is resized
-  this.resizeFonts = function () {
-    for (let key in input) {
-      let obj = input[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+function updateVisuals(id, state) {
+  // Sync select input dropdown values
+  document.getElementById(id).value = state;
+  
+  // Sync text nodes inside the interactive SVG diagram
+  document.getElementById("node_" + id).textContent = state;
+  
+  // Toggle stroke color based on logical state
+  var path = document.getElementById("path_" + id);
+  if (path) {
+    if (state === 1) {
+      path.setAttribute("stroke", "#ea580c");
+      path.setAttribute("stroke-width", "3.5");
+    } else {
+      path.setAttribute("stroke", "#64748b");
+      path.setAttribute("stroke-width", "2.5");
     }
-    for (let key in output) {
-      let obj = output[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+  }
+}
+
+function togglePin(id) {
+  var current = parseInt(val(id), 10);
+  var nextState = current === 1 ? 0 : 1;
+  updateVisuals(id, nextState);
+  runSimulation();
+}
+
+function runSimulation() {
+  var a = parseInt(val("a"), 10);
+  var b = parseInt(val("b"), 10);
+  var ci = parseInt(val("ci"), 10);
+
+  // Sync inputs with SVG text and trace active pathways
+  updateVisuals("a", a);
+  updateVisuals("b", b);
+  updateVisuals("ci", ci);
+
+  // Arithmetic Logic Computations
+  var ab_xor = a ^ b ? 1 : 0;
+  var ha1_co = a && b ? 1 : 0;
+  var s = ab_xor ^ ci ? 1 : 0;
+  var ha2_co = ci && ab_xor ? 1 : 0;
+  var co = ha1_co || ha2_co ? 1 : 0;
+
+  // Display outputs inside standard results grid
+  document.getElementById("s_out").innerText = s;
+  document.getElementById("co_out").innerText = co;
+  document.getElementById("ab_xor_out").innerText = ab_xor;
+  
+  var carryCond = "No Carry";
+  if (ha1_co && ha2_co) {
+    carryCond = "Dual Carry Generation";
+  } else if (ha1_co) {
+    carryCond = "HA1 Generated Carry (a · b)";
+  } else if (ha2_co) {
+    carryCond = "HA2 Propagated Carry (ci · (a ⊕ b))";
+  }
+  document.getElementById("carry_cond_out").innerText = carryCond;
+
+  // Sync outputs inside interactive SVG
+  document.getElementById("node_ab_xor").textContent = ab_xor;
+  document.getElementById("node_co").textContent = co;
+  document.getElementById("node_s").textContent = s;
+
+  // Dynamic color trace for intermediate XOR line
+  var path_ab_xor = document.getElementById("path_ab_xor");
+  if (ab_xor === 1) {
+    path_ab_xor.setAttribute("stroke", "#ea580c");
+    path_ab_xor.setAttribute("stroke-width", "3");
+  } else {
+    path_ab_xor.setAttribute("stroke", "#64748b");
+    path_ab_xor.setAttribute("stroke-width", "2");
+  }
+
+  // Dynamic color trace for HA1 Carry output line
+  var path_ha1_co = document.getElementById("path_ha1_co");
+  if (ha1_co === 1) {
+    path_ha1_co.setAttribute("stroke", "#ea580c");
+    path_ha1_co.setAttribute("stroke-width", "3");
+  } else {
+    path_ha1_co.setAttribute("stroke", "#64748b");
+    path_ha1_co.setAttribute("stroke-width", "2");
+  }
+
+  // Dynamic color trace for HA2 Carry output line
+  var path_ha2_co = document.getElementById("path_ha2_co");
+  if (ha2_co === 1) {
+    path_ha2_co.setAttribute("stroke", "#ea580c");
+    path_ha2_co.setAttribute("stroke-width", "3");
+  } else {
+    path_ha2_co.setAttribute("stroke", "#64748b");
+    path_ha2_co.setAttribute("stroke-width", "2");
+  }
+
+  // Dynamic color trace for final Carry Out (co) output line
+  var path_co = document.getElementById("path_co");
+  if (co === 1) {
+    path_co.setAttribute("stroke", "#ea580c");
+    path_co.setAttribute("stroke-width", "3.5");
+  } else {
+    path_co.setAttribute("stroke", "#64748b");
+    path_co.setAttribute("stroke-width", "2.5");
+  }
+
+  // Dynamic color trace for final Sum (s) output line
+  var path_s = document.getElementById("path_s");
+  if (s === 1) {
+    path_s.setAttribute("stroke", "#ea580c");
+    path_s.setAttribute("stroke-width", "3.5");
+  } else {
+    path_s.setAttribute("stroke", "#64748b");
+    path_s.setAttribute("stroke-width", "2.5");
+  }
+}
+
+// Start simulation on load
+window.addEventListener('load', function() {
+  runSimulation();
+});
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between a Half Adder and a Full Adder?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Half Adder adds two single-bit inputs and produces sum and carry outputs. A Full Adder adds three inputs (including a Carry In bit), allowing it to handle carry signals from preceding addition stages."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How are multi-bit binary numbers added in hardware?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Multi-bit addition is typically performed by cascading several 1-bit Full Adders in series. The Carry Out (co) pin of each lower-order bit stage connects to the Carry In (ci) pin of the adjacent higher-order stage."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What boolean logic gate determines the final Sum output?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The final Sum (s) is generated by a double-input XOR operation. It is expressed mathematically as s = a ⊕ b ⊕ ci, which outputs high (1) only when an odd number of inputs are high."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the Carry Out (co) output calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Carry Out is determined by the equation co = (a · b) + (ci · (a ⊕ b)). This generates a carry-out signal when any two or more inputs are active high (1)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a Ripple Carry Adder, and what are its limits?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Ripple Carry Adder is a circuit created by cascading multiple Full Adders. Its primary limit is propagation delay, as each stage must wait for the carry bit to calculate and cascade from the preceding stage."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a Full Adder be used for subtraction?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. By combining a Full Adder with invert logic gates, it can perform subtraction using two's complement arithmetic, where subtraction is treated as addition with a negative representation."
+      }
     }
-  };
+  ]
+}
+</script>
 
-  this.updateOutputs = function () {
-    var a = +input.a.innerHTML;
-    var b = +input.b.innerHTML;
-    var ci = +input.ci.innerHTML;
-    circuitQueue.insert(output.co, a && b || ci && a ^ b ? 1 : 0, queueDftDelay);
-    circuitQueue.insert(output.s, a ^ b ^ ci ? 1 : 0, 0);
-    circuitQueue.play(); // play the queued UI changes while respecting the requested delays
-  };
-
-  this.toggle = function (obj) {
-    obj = obj || window.event;
-    obj.innerHTML = (Number(obj.innerHTML) + 1) % 2;
-    circuitFa.updateOutputs();
-  };
-
-  this.init = function () {
-    console.log("init");
-    jQuery('.circuit-container#circuit-fa > .circuit-input').each(function (ii, obj) {
-      input[obj.id] = obj;
-      obj.innerHTML = 0;
-      obj.onclick = function () {
-        circuitFa.toggle(this);
-      };
-      obj.style.height = "5%";
-      obj.style.width = "6%";
-    });
-    jQuery('.circuit-container#circuit-fa > .circuit-output').each(function (ii, obj) {
-      output[obj.id] = obj;
-      obj.style.height = "5%";
-      obj.style.width = "6%";
-    });
-    circuitFa.updateOutputs();
-    circuitFa.resizeFonts();
-    if (window != window.top && parent.jQuery.fancybox) {
-      resizeIframe();
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Bitwise 1-bit Full Adder Simulation",
+      "item": "https://calcboy.com/tool/bitwise-1-bit-full-adder-simulation"
     }
-  };
-}).apply(circuitFa);
+  ]
+}
+</script>
 
-window.addEventListener('load', circuitFa.init);
-window.addEventListener('resize', circuitFa.resizeFonts);
-      //# sourceURL=pen.js
-    </script>
 </body>
 </html>
