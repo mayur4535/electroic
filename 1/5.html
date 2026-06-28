@@ -1,185 +1,528 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
-<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
-<title>CodePen - Bitwise 1-bit Full Subtractor Simulation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bitwise 1-bit Full Subtractor Simulation | CalcBoy</title>
+<meta name="description" content="Simulate a 1-bit Full Subtractor circuit. Toggle binary inputs to analyze the difference, borrow output, and cascaded logic pathways dynamically in real-time.">
+<meta name="keywords" content="1-bit full subtractor, full subtractor simulation, logic gate simulator, borrow out calculator, binary subtractor calculator, digital logic simulator, half subtractor circuit, CalcBoy">
 <style>
-      div.circuit-container {
-  max-width: 96%;
-  width: auto;
-  margin: 5px 0 5px 0;
-  position: relative;
+#fs-calc, #fs-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#fs-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+select.unit-selector { padding: 0 8px; cursor: pointer; font-weight: 700; color: #374151; background-color: #eee; border: 1px solid #cfd6df; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.interactive-label { cursor: pointer; user-select: none; }
+.interactive-label:hover { filter: brightness(1.2); }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box, select.unit-selector { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-
-img.circuit-schematic {
-  width: 100%;
-  height: auto;
-}
-body { 
-  background:  ; 
-}
-.circuit-input {
-  -webkit-user-select: none;
-  transition: all 1s ease;
-  background: white;
-  border: 1px solid;
-  border-radius: 5px;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-.circuit-input:active {
-    background-color: yellow;
-    -webkit-transition: background-color 0.1s ease-out;
-}
-
-.circuit-output {
-  background: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-
-.circuit-intern {
-  background: none;
-  border: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1em;
-  font-weight: regular;
-  text-align: center;
-}
-
-.circuit-container > .flash {
-  -webkit-animation-name: circuit-flash-animation;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-timing-function: ease-in-out;
-}
-
-@-webkit-keyframes circuit-flash-animation {
-  from {
-    background: yellow;
-  }
-  to {
-    background: default;
-  }
-}
-
-    </style>
-<script>
-  window.console = window.console || function(t) {};
-</script>
-<script>
-  if (document.location.search.match(/type=embed/gi)) {
-    window.parent.postMessage("resize", "*");
-  }
-</script>
+</style>
 </head>
-<body translate="no">
-<div class="circuit-container" id="circuit-fs">
-<img class="circuit-schematic" alt="" src="https://coertvonk.com/wp-content/logic-simulation/subtractor/fs-block.svg">
-<div class="circuit-input" id="a" style="bottom:93%;left:75%;border-color:#00ADEE;">0</div>
-<div class="circuit-input" id="b" style="bottom:93%;left:32%;border-color:#00ADEE;height:6%;width:6%;">0</div>
-<div class="circuit-input" id="li" style="bottom:35%;left:94%;border-color:#EC1C24;height:6%;width:6%;">0</div>
-<div class="circuit-output" id="d" style="bottom:2%;left:68%;">?</div>
-<div class="circuit-output" id="lo" style="bottom:41%;left:2%;">?</div>
+<body>
+
+<div id="fs-calc">
+
+  <div class="calc-grid">
+    <div class="subTitle">Simulate Binary Inputs</div>
+
+    <div>
+      <label class="calc-label">Minuend Input (a)</label>
+      <div class="calc-row">
+        <select id="a" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #eef5ff; color: #2359e8;">a (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Subtrahend Input (b)</label>
+      <div class="calc-row">
+        <select id="b" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #eef5ff; color: #2359e8;">b (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Borrow Input (li)</label>
+      <div class="calc-row">
+        <select id="li" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #fdf2f2; color: #ea580c;">li (Bit)</div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="runSimulation()">SIMULATE SUBTRACTION</button>
+
+  <div id="errorBox">Please enter valid binary states (0 or 1).</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Difference Output (d)</div><div class="result-value"><span id="d_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Borrow Output (lo)</div><div class="result-value"><span id="lo_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Intermediate Diff (a ⊕ b)</div><div class="result-value"><span id="ab_xor_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Active Borrow Condition</div><div class="result-value"><span id="borrow_cond_out"></span></div></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Minuend Input (a)</strong>The base binary digit from which the subtraction is executed, entering the first Half Subtractor block.</div>
+      <div class="paramItem"><strong>Subtrahend Input (b)</strong>The secondary binary digit subtracted from operand a, defining the primary subtractive pathway.</div>
+      <div class="paramItem"><strong>Borrow Input (li)</strong>The incoming borrow digit propagated from adjacent lower-order subtraction nodes in multi-bit structures.</div>
+      <div class="paramItem"><strong>Interactive Diagram</strong>Simulate changes by directly clicking the labeled input nodes on the circuit schematic below.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Simple Subtraction (1 - 0 - 0)</strong></p>
+        <p>Set a=1, b=0, li=0. The difference (d) is 1, and borrow out (lo) remains inactive (0).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Borrow Generation (0 - 1 - 0)</strong></p>
+        <p>Set a=0, b=1, li=0. A borrow condition occurs: difference (d) is 1, and borrow out (lo) switches to 1.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Double Borrow State (0 - 1 - 1)</strong></p>
+        <p>Set a=0, b=1, li=1. The difference (d) is 0, while the borrow out (lo) remains high (1).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Cascaded Operation Steps</strong></p>
+        <p>Chain several 1-bit subtractors in series to execute subtraction on multi-bit binary values.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A Full Subtractor is formed by cascading two Half Subtractors and utilizing an OR logic gate. It calculates the arithmetic difference between minuend (a) and subtrahend (b), taking into account any incoming borrow signal (li). Click the inputs on the diagram to toggle logic states directly.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 350" xmlns="http://www.w3.org/2000/svg" id="fs-diagram">
+        <rect width="520" height="350" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Main Schematic Block Outline -->
+        <rect x="130" y="60" width="260" height="230" rx="12" fill="#f8fafc" stroke="#475467" stroke-width="3" />
+        <text x="310" y="85" fill="#1e293b" font-weight="900" font-size="10" text-anchor="middle">1-BIT FULL SUBTRACTOR</text>
+
+        <!-- Half Subtractor 1 Sub-block -->
+        <rect x="155" y="105" width="95" height="70" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="202" y="140" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">HALF SUB 1</text>
+
+        <!-- Half Subtractor 2 Sub-block -->
+        <rect x="275" y="150" width="95" height="70" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="322" y="185" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">HALF SUB 2</text>
+
+        <!-- OR Gate block for borrow propagation -->
+        <rect x="200" y="235" width="60" height="40" rx="4" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2" />
+        <text x="230" y="259" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">OR GATE</text>
+
+        <!-- Input a line (Minuend) -->
+        <path id="path_a" d="M185,25 V105" stroke="#64748b" stroke-width="3" fill="none" />
+        
+        <!-- Input b line (Subtrahend) -->
+        <path id="path_b" d="M225,25 V105" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Input li line (Borrow In) -->
+        <path id="path_li" d="M495,185 H370" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Output lo line (Borrow Out) -->
+        <path id="path_lo" d="M200,255 H25" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Output d line (Difference) -->
+        <path id="path_d" d="M322,220 V325" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- HS1 Difference (a ⊕ b) internal line routing to HS2 -->
+        <path id="path_ab_xor" d="M202,175 V195 H275" stroke="#64748b" stroke-width="2" fill="none" />
+
+        <!-- HS1 Borrow (a' · b) internal line routing to OR -->
+        <path id="path_hs1_lo" d="M230,175 V235" stroke="#64748b" stroke-width="2" fill="none" />
+
+        <!-- HS2 Borrow ( (a ⊕ b)' · li ) internal line routing to OR -->
+        <path id="path_hs2_lo" d="M322,150 V135 H250 V235" stroke="#64748b" stroke-width="2" fill="none" />
+
+        <!-- Interactive Node Ports -->
+        <!-- Port a -->
+        <g class="interactive-label" onclick="togglePin('a')">
+          <circle cx="185" cy="25" r="14" fill="#2359e8" stroke="#000" stroke-width="2" />
+          <text id="node_a" x="185" y="29" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="160" y="30" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">a</text>
+
+        <!-- Port b -->
+        <g class="interactive-label" onclick="togglePin('b')">
+          <circle cx="225" cy="25" r="14" fill="#2359e8" stroke="#000" stroke-width="2" />
+          <text id="node_b" x="225" y="29" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="250" y="30" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">b</text>
+
+        <!-- Port li -->
+        <g class="interactive-label" onclick="togglePin('li')">
+          <circle cx="495" cy="185" r="14" fill="#EC1C24" stroke="#000" stroke-width="2" />
+          <text id="node_li" x="495" y="189" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="495" y="215" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">li</text>
+
+        <!-- Port lo -->
+        <circle cx="25" cy="255" r="14" fill="#ea580c" stroke="#000" stroke-width="2" />
+        <text id="node_lo" x="25" y="259" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        <text x="25" y="285" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">lo</text>
+
+        <!-- Port d -->
+        <circle cx="322" cy="325" r="14" fill="#16a34a" stroke="#000" stroke-width="2" />
+        <text id="node_d" x="322" y="329" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        <text x="300" y="330" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">d</text>
+
+        <!-- HS1 Diff Output label -->
+        <rect x="222" y="185" width="20" height="15" rx="3" fill="#ffffff" stroke="#475467" stroke-width="1" />
+        <text id="node_ab_xor" x="232" y="196" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">0</text>
+
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Arithmetic Difference: d = a ⊕ b ⊕ li</div>
+    <div class="formula">Borrow Output: lo = (a' · b) + (li · (a ⊕ b)')</div>
+    <div class="formulaBox">
+      Truth Table Validation Matrix:<br>
+      • a=0, b=0, li=0 → Difference (d)=0, Borrow Out (lo)=0<br>
+      • a=1, b=0, li=0 → Difference (d)=1, Borrow Out (lo)=0<br>
+      • a=0, b=1, li=0 → Difference (d)=1, Borrow Out (lo)=1<br>
+      • a=0, b=1, li=1 → Difference (d)=0, Borrow Out (lo)=1
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose binary values (0 or 1) for the minuend a, subtrahend b, and borrow input li using the selectors.</div>
+      <div class="aboutStep">Alternatively, toggle the input ports directly on the circuit schematic above by clicking the node buttons.</div>
+      <div class="aboutStep">Click the SIMULATE SUBTRACTION button to calculate and update all system states.</div>
+      <div class="aboutStep">Examine the results grid to analyze Difference, Borrow Out, and intermediate logic signals.</div>
+      <div class="aboutStep">Trace active logical high (1) pathways visually, which are highlighted dynamically in bright orange.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Model and analyze discrete binary subtraction cells inside processor logic blocks.</strong>
+      <p>The CalcBoy Bitwise 1-bit Full Subtractor Simulation evaluates binary subtraction, calculating difference bits, borrow out conditions, and intermediate gate outputs dynamically.</p>
+    </div>
+    <p>A Full Subtractor is a fundamental logic circuit implemented in hardware arithmetic units to execute binary subtraction. While a Half Subtractor can only process two single-bit inputs, a Full Subtractor includes an additional Borrow Input (li). This feature allows multiple 1-bit subtractors to be cascaded to handle subtraction operations on larger multi-bit integers. It is a key element in ALU (Arithmetic Logic Unit) pipelines and microprocessors.</p>
+    <p>The system operates by cascading two Half Subtractor blocks. The first Half Subtractor calculates the initial difference (a ⊕ b) and generates a preliminary borrow-out signal (a' · b). The second Half Subtractor combines this intermediate difference with the incoming Borrow In (li), producing the final Difference output (d). The borrow outputs from both stages are combined through an OR gate to produce the circuit's final Borrow Out (lo).</p>
+    <p>Understanding and debugging digital arithmetic networks requires tracing discrete logic states. This interactive simulator provides engineers and students with an accessible tool to evaluate boolean equations, trace signal lines, and study arithmetic processing logic.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Silicon architecture design, educational logic demonstrations, and ALU state analysis.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks final difference bits, borrow outputs, and cascading intermediate XOR pathways.</div>
+      <div class="aboutMiniCard"><span>Interactive UI</span>Tap any input directly on the diagram to cycle through states and evaluate the output instantly.</div>
+      <div class="aboutMiniCard"><span>Industry Standards</span>Complies with standard boolean algebra and binary logic gate calculations.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: Chain multiple Full Subtractor blocks by connecting the borrow out (lo) of one block to the borrow in (li) of the next to build multi-bit subtractive logic units.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is the difference between a Half Subtractor and a Full Subtractor?</strong></h3>
+    <p>A Half Subtractor subtracts one single-bit input from another and produces difference and borrow outputs. A Full Subtractor adds an incoming Borrow In bit to the calculation, allowing it to process subtraction across cascaded stages.</p>
+
+    <h3><strong>2. How are multi-bit binary subtractions performed in hardware?</strong></h3>
+    <p>Multi-bit subtraction is typically performed by cascading several 1-bit Full Subtractors in series. The Borrow Out (lo) pin of each lower-order bit stage connects to the Borrow Input (li) pin of the adjacent higher-order stage.</p>
+
+    <h3><strong>3. What boolean logic gate determines the final Difference output?</strong></h3>
+    <p>The final Difference (d) is generated by a double-input XOR operation. It is expressed mathematically as d = a ⊕ b ⊕ li, which outputs high (1) only when an odd number of inputs are high.</p>
+
+    <h3><strong>4. How is the Borrow Output (lo) calculated?</strong></h3>
+    <p>The Borrow Output is determined by the equation lo = (a' · b) + (li · (a ⊕ b)'). This generates a borrow-out signal when any two or more inputs are active high (1) in a subtractive relationship.</p>
+
+    <h3><strong>5. What is the role of the OR gate in a Full Subtractor?</strong></h3>
+    <p>The OR gate combines the intermediate borrow-out signals from the two internal Half Subtractor stages. If either stage produces a borrow-out signal, the final Borrow Out (lo) of the Full Subtractor becomes active high (1).</p>
+
+    <h3><strong>6. Can a Full Adder be used as a Full Subtractor?</strong></h3>
+    <p>Yes. A Full Adder can perform subtraction using two's complement arithmetic. By inverting the subtrahend inputs and adding 1 (via the Carry In pin), subtraction can be executed on standard adder hardware.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Half Subtractor Logic Simulator</strong>Analyze basic two-bit subtraction operations without borrow inputs.</div>
+      <div class="linkCard"><strong>Binary Adder-Subtractor Calculator</strong>Simulate signed calculations with unified adder-subtractor networks.</div>
+      <div class="linkCard"><strong>2-to-1 Multiplexer Simulator</strong>Study routing control lines on multiplexer architectures.</div>
+      <div class="linkCard"><strong>Bitwise Logic Gate Simulator</strong>Run individual AND, OR, XOR, and NAND evaluations.</div>
+    </div>
+  </section>
+
 </div>
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script src='https://coertvonk.com/wp-content/logic-simulation/circuit-simulation.js'></script>
-<script id="rendered-js">
-      // 1-bit full subtractor
-// used in https://coertvonk.com/technology/logic/computer-math-inquiry-4245/7
-/*
-Copyright (c) 2017 by Coert Vonk
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+<script>
+function val(id) {
+  return document.getElementById(id).value;
+}
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-
-var circuitFs = {}; // full subtractor Name Space
-(function () {
-  let queueDftDelay = 350; // msec
-  var input = {};
-  var output = {};
-
-  // resize the fonts when the window is resized
-  this.resizeFonts = function () {
-    for (let key in input) {
-      let obj = input[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+function updateVisuals(id, state) {
+  // Sync select input dropdown values
+  document.getElementById(id).value = state;
+  
+  // Sync text nodes inside the interactive SVG diagram
+  document.getElementById("node_" + id).textContent = state;
+  
+  // Toggle stroke color based on logical state
+  var path = document.getElementById("path_" + id);
+  if (path) {
+    if (state === 1) {
+      path.setAttribute("stroke", "#ea580c");
+      path.setAttribute("stroke-width", "3.5");
+    } else {
+      path.setAttribute("stroke", "#64748b");
+      path.setAttribute("stroke-width", "2.5");
     }
-    for (let key in output) {
-      let obj = output[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+  }
+}
+
+function togglePin(id) {
+  var current = parseInt(val(id), 10);
+  var nextState = current === 1 ? 0 : 1;
+  updateVisuals(id, nextState);
+  runSimulation();
+}
+
+function runSimulation() {
+  var a = parseInt(val("a"), 10);
+  var b = parseInt(val("b"), 10);
+  var li = parseInt(val("li"), 10);
+
+  // Sync inputs with SVG text and trace active pathways
+  updateVisuals("a", a);
+  updateVisuals("b", b);
+  updateVisuals("li", li);
+
+  // Arithmetic Logic Computations
+  var ab_xor = a ^ b ? 1 : 0;
+  var hs1_lo = !a && b ? 1 : 0;
+  var d = ab_xor ^ li ? 1 : 0;
+  var hs2_lo = li && !ab_xor ? 1 : 0;
+  var lo = hs1_lo || hs2_lo ? 1 : 0;
+
+  // Display outputs inside standard results grid
+  document.getElementById("d_out").innerText = d;
+  document.getElementById("lo_out").innerText = lo;
+  document.getElementById("ab_xor_out").innerText = ab_xor;
+  
+  var borrowCond = "No Borrow";
+  if (hs1_lo && hs2_lo) {
+    borrowCond = "Dual Borrow Generation";
+  } else if (hs1_lo) {
+    borrowCond = "HS1 Generated Borrow (a' · b)";
+  } else if (hs2_lo) {
+    borrowCond = "HS2 Propagated Borrow (li · (a ⊕ b)')";
+  }
+  document.getElementById("borrow_cond_out").innerText = borrowCond;
+
+  // Sync outputs inside interactive SVG
+  document.getElementById("node_ab_xor").textContent = ab_xor;
+  document.getElementById("node_lo").textContent = lo;
+  document.getElementById("node_d").textContent = d;
+
+  // Dynamic color trace for intermediate XOR line
+  var path_ab_xor = document.getElementById("path_ab_xor");
+  if (ab_xor === 1) {
+    path_ab_xor.setAttribute("stroke", "#ea580c");
+    path_ab_xor.setAttribute("stroke-width", "3");
+  } else {
+    path_ab_xor.setAttribute("stroke", "#64748b");
+    path_ab_xor.setAttribute("stroke-width", "2");
+  }
+
+  // Dynamic color trace for HS1 Borrow output line
+  var path_hs1_lo = document.getElementById("path_hs1_lo");
+  if (hs1_lo === 1) {
+    path_hs1_lo.setAttribute("stroke", "#ea580c");
+    path_hs1_lo.setAttribute("stroke-width", "3");
+  } else {
+    path_hs1_lo.setAttribute("stroke", "#64748b");
+    path_hs1_lo.setAttribute("stroke-width", "2");
+  }
+
+  // Dynamic color trace for HS2 Borrow output line
+  var path_hs2_lo = document.getElementById("path_hs2_lo");
+  if (hs2_lo === 1) {
+    path_hs2_lo.setAttribute("stroke", "#ea580c");
+    path_hs2_lo.setAttribute("stroke-width", "3");
+  } else {
+    path_hs2_lo.setAttribute("stroke", "#64748b");
+    path_hs2_lo.setAttribute("stroke-width", "2");
+  }
+
+  // Dynamic color trace for final Borrow Out (lo) output line
+  var path_lo = document.getElementById("path_lo");
+  if (lo === 1) {
+    path_lo.setAttribute("stroke", "#ea580c");
+    path_lo.setAttribute("stroke-width", "3.5");
+  } else {
+    path_lo.setAttribute("stroke", "#64748b");
+    path_lo.setAttribute("stroke-width", "2.5");
+  }
+
+  // Dynamic color trace for final Difference (d) output line
+  var path_d = document.getElementById("path_d");
+  if (d === 1) {
+    path_d.setAttribute("stroke", "#ea580c");
+    path_d.setAttribute("stroke-width", "3.5");
+  } else {
+    path_d.setAttribute("stroke", "#64748b");
+    path_d.setAttribute("stroke-width", "2.5");
+  }
+}
+
+// Start simulation on load
+window.addEventListener('load', function() {
+  runSimulation();
+});
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between a Half Subtractor and a Full Subtractor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Half Subtractor subtracts one single-bit input from another and produces difference and borrow outputs. A Full Subtractor adds an incoming Borrow In bit to the calculation, allowing it to process subtraction across cascaded stages."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How are multi-bit binary subtractions performed in hardware?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Multi-bit subtraction is typically performed by cascading several 1-bit Full Subtractors in series. The Borrow Out (lo) pin of each lower-order bit stage connects to the Borrow Input (li) pin of the adjacent higher-order stage."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What boolean logic gate determines the final Difference output?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The final Difference (d) is generated by a double-input XOR operation. It is expressed mathematically as d = a ⊕ b ⊕ li, which outputs high (1) only when an odd number of inputs are high."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the Borrow Output (lo) calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Borrow Output is determined by the equation lo = (a' · b) + (li · (a ⊕ b)'). This generates a borrow-out signal when any two or more inputs are active high (1) in a subtractive relationship."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the role of the OR gate in a Full Subtractor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The OR gate combines the intermediate borrow-out signals from the two internal Half Subtractor stages. If either stage produces a borrow-out signal, the final Borrow Out (lo) of the Full Subtractor becomes active high (1)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a Full Adder be used as a Full Subtractor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. A Full Adder can perform subtraction using two's complement arithmetic. By inverting the subtrahend inputs and adding 1 (via the Carry In pin), subtraction can be executed on standard adder hardware."
+      }
     }
-  };
+  ]
+}
+</script>
 
-  this.updateOutputs = function () {
-    var a = +input.a.innerHTML;
-    var b = +input.b.innerHTML;
-    var li = +input.li.innerHTML;
-    circuitQueue.insert(output.d, a ^ b ^ li ? 1 : 0, queueDftDelay);
-    circuitQueue.insert(output.lo, !a && b || li && !(a ^ b) ? 1 : 0, 0);
-    circuitQueue.play(); // play the queued UI changes while respecting the requested delays
-
-  };
-
-  this.toggle = function (obj) {
-    obj = obj || window.event;
-    obj.innerHTML = (Number(obj.innerHTML) + 1) % 2;
-    circuitFs.updateOutputs();
-  };
-
-  this.init = function () {
-    jQuery('.circuit-container#circuit-fs > .circuit-input').each(function (ii, obj) {
-      input[obj.id] = obj;
-      obj.onclick = function () {
-        circuitFs.toggle(this);
-      };
-      obj.style.height = "5%";
-      obj.style.width = "6%";
-    });
-    jQuery('.circuit-container#circuit-fs > .circuit-output').each(function (ii, obj) {
-      output[obj.id] = obj;
-      obj.style.height = "5%";
-      obj.style.width = "6%";
-    });
-    circuitFs.resizeFonts();
-    circuitFs.updateOutputs();
-    circuitFs.resizeFonts();
-    if (window != window.top && parent.jQuery.fancybox) {
-      resizeIframe();
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Bitwise 1-bit Full Subtractor Simulation",
+      "item": "https://calcboy.com/tool/bitwise-1-bit-full-subtractor-simulation"
     }
-  };
-}).apply(circuitFs);
+  ]
+}
+</script>
 
-window.addEventListener('load', circuitFs.init);
-window.addEventListener('resize', circuitFs.resizeFonts);
-      //# sourceURL=pen.js
-    </script>
 </body>
 </html>
