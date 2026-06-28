@@ -1,189 +1,511 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
-<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
-<title>CodePen - Bitwise 1-bit Multiplier Adder Simulation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bitwise 1-bit Multiplier Adder Simulation | CalcBoy</title>
+<meta name="description" content="Simulate a 1-bit Multiplier Adder cell. Toggle binary inputs to analyze the product generation, sum outputs, and cascaded carry out pathways in real-time.">
+<meta name="keywords" content="1-bit multiplier adder, multiplier cell simulator, mac cell calculator, digital logic simulator, carry save adder, binary multiplier array, CalcBoy">
 <style>
-      div.circuit-container {
-  max-width: 96%;
-  width: auto;
-  margin: 5px 0 5px 0;
-  position: relative;
+#ma-calc, #ma-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#ma-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+select.unit-selector { padding: 0 8px; cursor: pointer; font-weight: 700; color: #374151; background-color: #eee; border: 1px solid #cfd6df; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.interactive-label { cursor: pointer; user-select: none; }
+.interactive-label:hover { filter: brightness(1.2); }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box, select.unit-selector { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-
-img.circuit-schematic {
-  width: 100%;
-  height: auto;
-}
-
-.circuit-input {
-  -webkit-user-select: none;
-  transition: all 1s ease;
-  background: white;
-  border: 1px solid;
-  border-radius: 5px;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-.circuit-input:active {
-    background-color: yellow;
-    -webkit-transition: background-color 0.1s ease-out;
-}
-body { 
-  background: ; 
-}
-.circuit-output {
-  background: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-
-.circuit-intern {
-  background: none;
-  border: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1em;
-  font-weight: regular;
-  text-align: center;
-}
-
-.circuit-container > .flash {
-  -webkit-animation-name: circuit-flash-animation;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-timing-function: ease-in-out;
-}
-
-@-webkit-keyframes circuit-flash-animation {
-  from {
-    background: yellow;
-  }
-  to {
-    background: default;
-  }
-}
-
-    </style>
-<script>
-  window.console = window.console || function(t) {};
-</script>
-<script>
-  if (document.location.search.match(/type=embed/gi)) {
-    window.parent.postMessage("resize", "*");
-  }
-</script>
+</style>
 </head>
-<body translate="no">
-<div class="circuit-container" id="circuit-ma">
-<img class="circuit-schematic" alt="" src="https://coertvonk.com/wp-content/logic-simulation/multiplier/ma-block.svg">
-<div class="circuit-input" id="si" style="bottom:93%;left:35%;border-color:#F6921E;height:6%;width:6%;"></div>
-<div class="circuit-input" id="ci" style="bottom:88%;left:90%;border-color:#EC1C24;height:6%;width:6%;"></div>
-<div class="circuit-input" id="x" style="bottom:93%;left:51%;border-color:#00ADEE;height:6%;width:6%;"></div>
-<div class="circuit-input" id="y" style="bottom:67.5%;left:3%;border-color:#00ADEE;height:6%;width:6%;"></div>
-<div class="circuit-output" id="so" style="bottom:2%;left:35.7%;height:6%;width:6%;">x</div>
-<div class="circuit-output" id="co" style="bottom:3%;left:4%;height:6%;width:6%;">x</div>
+<body>
+
+<div id="ma-calc">
+
+  <div class="calc-grid">
+    <div class="subTitle">Simulate Binary Inputs</div>
+
+    <div>
+      <label class="calc-label">Multiplier Bit (x)</label>
+      <div class="calc-row">
+        <select id="x" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #eef5ff; color: #2359e8;">x (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Multiplicand Bit (y)</label>
+      <div class="calc-row">
+        <select id="y" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #eef5ff; color: #2359e8;">y (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Cascaded Sum Input (si)</label>
+      <div class="calc-row">
+        <select id="si" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #fff7ed; color: #ea580c;">si (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Carry Input (ci)</label>
+      <div class="calc-row">
+        <select id="ci" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #fdf2f2; color: #dc2626;">ci (Bit)</div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="runSimulation()">SIMULATE CYCLE</button>
+
+  <div id="errorBox">Please enter valid binary states (0 or 1).</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Sum Output (so)</div><div class="result-value"><span id="so_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Carry Output (co)</div><div class="result-value"><span id="co_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Product Bit (x · y)</div><div class="result-value"><span id="b_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Active State Mode</div><div class="result-value"><span id="mode_out"></span></div></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Multiplier Bit (x)</strong>The dynamic multiplier operand bit fed into the internal 2-input logical AND gate block.</div>
+      <div class="paramItem"><strong>Multiplicand Bit (y)</strong>The multi-bit scaling bit combined with x to calculate the partial product.</div>
+      <div class="paramItem"><strong>Sum Input (si)</strong>The incoming partial sum from the preceding adder row in matrix multiplier arrays.</div>
+      <div class="paramItem"><strong>Carry Input (ci)</strong>The cascaded carry-in bit propagated from lower-order addition cells.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Zero Multiplier (0 · 1)</strong></p>
+        <p>With x=0, y=1, the product bit (b) is 0. The output sum (so) is equal to si ⊕ ci.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Product Active (1 · 1)</strong></p>
+        <p>With x=1, y=1, the product bit (b) becomes 1, contributing directly to the full-adder logic.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>High State Sum (1 · 1 with si=1)</strong></p>
+        <p>With product b=1, si=1, and ci=0, the sum output (so) is 0 and carry out (co) goes high (1).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Matrix Multipliers</strong></p>
+        <p>Cascade multiple MA cells in parallel rows to compute multi-bit digital multiplications.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A Multiplier Adder (MA) cell is a hybrid computational cell containing a 2-input AND gate integrated with a 1-bit Full Adder. It multiplies operand bits x and y, and then adds the product to the sum input (si) and carry input (ci). Click any input node on the diagram to cycle through logic states.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 350" xmlns="http://www.w3.org/2000/svg" id="ma-diagram">
+        <rect width="520" height="350" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Main Schematic Block Outline -->
+        <rect x="130" y="60" width="260" height="230" rx="12" fill="#f8fafc" stroke="#475467" stroke-width="3" />
+        <text x="220" y="240" fill="#1e293b" font-weight="900" font-size="10" text-anchor="middle">MULTIPLIER ADDER CELL</text>
+
+        <!-- AND Gate Sub-block -->
+        <rect x="160" y="105" width="85" height="50" rx="4" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="202" y="135" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">AND GATE</text>
+
+        <!-- Full Adder Sub-block -->
+        <rect x="275" y="125" width="95" height="100" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="322" y="180" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">FULL ADDER</text>
+
+        <!-- Input x line -->
+        <path id="path_x" d="M170,25 V105" stroke="#64748b" stroke-width="3" fill="none" />
+        
+        <!-- Input y line -->
+        <path id="path_y" d="M25,125 H160" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Input si line -->
+        <path id="path_si" d="M310,25 V125" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Input ci line -->
+        <path id="path_ci" d="M495,175 H370" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Output co line -->
+        <path id="path_co" d="M310,225 V250 H25" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Output so line -->
+        <path id="path_so" d="M345,225 V325" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- AND gate to FA internal product line (b) -->
+        <path id="path_b" d="M245,130 H275" stroke="#64748b" stroke-width="2" fill="none" />
+
+        <!-- Interactive Node Ports -->
+        <!-- Port x -->
+        <g class="interactive-label" onclick="togglePin('x')">
+          <circle cx="170" cy="25" r="14" fill="#2359e8" stroke="#000" stroke-width="2" />
+          <text id="node_x" x="170" y="29" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="145" y="30" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">x</text>
+
+        <!-- Port y -->
+        <g class="interactive-label" onclick="togglePin('y')">
+          <circle cx="25" cy="125" r="14" fill="#2359e8" stroke="#000" stroke-width="2" />
+          <text id="node_y" x="25" y="129" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="25" y="153" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">y</text>
+
+        <!-- Port si -->
+        <g class="interactive-label" onclick="togglePin('si')">
+          <circle cx="310" cy="25" r="14" fill="#ea580c" stroke="#000" stroke-width="2" />
+          <text id="node_si" x="310" y="29" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="340" y="30" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">si</text>
+
+        <!-- Port ci -->
+        <g class="interactive-label" onclick="togglePin('ci')">
+          <circle cx="495" cy="175" r="14" fill="#EC1C24" stroke="#000" stroke-width="2" />
+          <text id="node_ci" x="495" y="179" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="495" y="205" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">ci</text>
+
+        <!-- Port co -->
+        <circle cx="25" cy="250" r="14" fill="#ea580c" stroke="#000" stroke-width="2" />
+        <text id="node_co" x="25" y="254" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        <text x="25" y="277" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">co</text>
+
+        <!-- Port so -->
+        <circle cx="345" cy="325" r="14" fill="#16a34a" stroke="#000" stroke-width="2" />
+        <text id="node_so" x="345" y="329" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        <text x="315" y="330" fill="#475467" font-weight="900" font-size="15" text-anchor="middle">so</text>
+
+        <!-- Internal AND Gate Output label (b) -->
+        <rect x="245" y="108" width="20" height="15" rx="3" fill="#ffffff" stroke="#475467" stroke-width="1" />
+        <text id="node_b" x="255" y="119" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">0</text>
+
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Partial Product: b = x · y</div>
+    <div class="formula">Arithmetic Sum Out: so = si ⊕ b ⊕ ci</div>
+    <div class="formula">Arithmetic Carry Out: co = (si · b) + (ci · (si ⊕ b))</div>
+    <div class="formulaBox">
+      Truth Table Validation Matrix:<br>
+      • x=0, y=1, si=0, ci=0 → Product (b)=0 → Sum (so)=0, Carry Out (co)=0<br>
+      • x=1, y=1, si=0, ci=0 → Product (b)=1 → Sum (so)=1, Carry Out (co)=0<br>
+      • x=1, y=1, si=1, ci=0 → Product (b)=1 → Sum (so)=0, Carry Out (co)=1<br>
+      • x=1, y=1, si=1, ci=1 → Product (b)=1 → Sum (so)=1, Carry Out (co)=1
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose binary values (0 or 1) for x, y, partial sum input si, and carry input ci using the dropdown lists.</div>
+      <div class="aboutStep">Alternatively, toggle the inputs directly on the interactive circuit diagram above by clicking the node buttons.</div>
+      <div class="aboutStep">Click the SIMULATE CYCLE button to calculate and evaluate all logic states.</div>
+      <div class="aboutStep">Analyze the results grid to observe Sum Out, Carry Out, and intermediate logic signals.</div>
+      <div class="aboutStep">Trace active logic high (1) pathways visually, which are highlighted dynamically in bright orange.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Model and analyze binary array multiplication networks at the transistor cell level.</strong>
+      <p>The CalcBoy Bitwise 1-bit Multiplier Adder Simulation evaluates binary multiplication, calculating sum bits, propagated carry out conditions, and partial product gate outputs dynamically.</p>
+    </div>
+    <p>A Multiplier Adder (MA) cell is a core structural unit implemented in hardware multiplication arrays, such as Braun or Baugh-Wooley multipliers. Unlike isolated adder blocks, a Multiplier Adder cell integrates multiplication and addition directly within a single physical footprint. This design allows digital processors to calculate partial products and execute row-by-row summation cycles in parallel, dramatically increasing the speed of execution pipelines.</p>
+    <p>The cell operates by routing inputs x and y to a two-input AND gate, producing the partial product bit (b = x · y). This product bit is then routed to an internal 1-bit Full Adder. The Full Adder combines the product with the sum input (si) from the preceding multiplier row and the Carry In (ci) input from the adjacent column. The cell outputs the final computed sum bit (so) and Carry Out (co).</p>
+    <p>Understanding and debugging arithmetic circuits requires tracing signal states. This interactive digital simulator provides engineers and learners with an accessible tool to run boolean equations, trace routing lines, and analyze arithmetic processing states.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Silicon architecture design, educational logic demonstrations, and ALU state analysis.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks final sum bits, carry-out outputs, and cascading intermediate XOR pathways.</div>
+      <div class="aboutMiniCard"><span>Interactive UI</span>Tap any input directly on the diagram to cycle through states and evaluate the output instantly.</div>
+      <div class="aboutMiniCard"><span>Industry Standards</span>Complies with standard boolean algebra and binary logic gate calculations.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: Chain multiple Multiplier Adder blocks by connecting the carry out (co) of one block to the carry in (ci) of the next to build multi-bit ripple-carry adders.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is a Multiplier Adder (MA) cell?</strong></h3>
+    <p>A Multiplier Adder cell is an arithmetic logic unit that combines a two-input AND gate with a Full Adder. It calculates the product of two bits and adds it to incoming sum and carry bits in a single step.</p>
+
+    <h3><strong>2. In what arithmetic systems are MA cells utilized?</strong></h3>
+    <p>They are primarily used in binary parallel multipliers (such as Braun multipliers or carry-save multiplier arrays), where partial products must be calculated and accumulated across multiple dimensions.</p>
+
+    <h3><strong>3. How does the AND gate affect the addition logic?</strong></h3>
+    <p>The AND gate calculates the product of x and y. If either x or y is 0, the product is 0, and the Full Adder behaves as a standard adder. If both are 1, the product is 1, and it is added to the sum calculation.</p>
+
+    <h3><strong>4. How is the Carry Out (co) calculated?</strong></h3>
+    <p>The Carry Out is determined by the equation co = (si · b) + (ci · (si ⊕ b)), where b is the computed product bit (x · y). This generates a carry out signal when any two or more adder inputs are active high (1).</p>
+
+    <h3><strong>5. What is the difference between a MAC cell and a standard Full Adder?</strong></h3>
+    <p>A standard Full Adder only adds three single-bit inputs. A MAC (Multiply-Accumulate) or Multiplier Adder cell includes an integrated AND gate to multiply two inputs before adding the result to the other inputs.</p>
+
+    <h3><strong>6. Can these cells be used to build signed multipliers?</strong></h3>
+    <p>Yes. They form the foundation of signed multiplier arrays, such as the Baugh-Wooley architecture, where specific inputs are inverted to handle two's complement sign extension.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Full Adder Logic Simulator</strong>Analyze basic three-bit addition operations without product calculations.</div>
+      <div class="linkCard"><strong>Binary Adder-Subtractor Calculator</strong>Simulate signed calculations with unified adder-subtractor networks.</div>
+      <div class="linkCard"><strong>Ripple Carry Adder Calculator</strong>Analyze multi-bit cascading addition delays and signals.</div>
+      <div class="linkCard"><strong>Bitwise Logic Gate Simulator</strong>Run individual AND, OR, XOR, and NAND evaluations.</div>
+    </div>
+  </section>
+
 </div>
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script src='https://coertvonk.com/wp-content/logic-simulation/circuit-simulation.js'></script>
-<script id="rendered-js">
-      // 1-bit multiplier adder
-// used in https://coertvonk.com/technology/logic/computer-math-inquiry-4245/7
-/*
-Copyright (c) 2017 by Coert Vonk
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+<script>
+function val(id) {
+  return document.getElementById(id).value;
+}
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-
-var circuitMa = {}; // multiplier adder Name Space
-(function () {
-  let queueDftDelay = 350; // msec
-  var input = {};
-  var output = {};
-
-  // resize the fonts when the window is resized
-  this.resizeFonts = function () {
-    for (let key in input) {
-      let obj = input[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+function updateVisuals(id, state) {
+  // Sync select input dropdown values
+  document.getElementById(id).value = state;
+  
+  // Sync text nodes inside the interactive SVG diagram
+  document.getElementById("node_" + id).textContent = state;
+  
+  // Toggle stroke color based on logical state
+  var path = document.getElementById("path_" + id);
+  if (path) {
+    if (state === 1) {
+      path.setAttribute("stroke", "#ea580c");
+      path.setAttribute("stroke-width", "3.5");
+    } else {
+      path.setAttribute("stroke", "#64748b");
+      path.setAttribute("stroke-width", "2.5");
     }
-    for (let key in output) {
-      let obj = output[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+  }
+}
+
+function togglePin(id) {
+  var current = parseInt(val(id), 10);
+  var nextState = current === 1 ? 0 : 1;
+  updateVisuals(id, nextState);
+  runSimulation();
+}
+
+function runSimulation() {
+  var x = parseInt(val("x"), 10);
+  var y = parseInt(val("y"), 10);
+  var si = parseInt(val("si"), 10);
+  var ci = parseInt(val("ci"), 10);
+
+  // Sync inputs with SVG text and trace active pathways
+  updateVisuals("x", x);
+  updateVisuals("y", y);
+  updateVisuals("si", si);
+  updateVisuals("ci", ci);
+
+  // Arithmetic Logic Computations
+  var b = x && y ? 1 : 0;
+  var so = si ^ b ^ ci ? 1 : 0;
+  var co = (si && b) || (ci && (si ^ b)) ? 1 : 0;
+
+  // Display outputs inside standard results grid
+  document.getElementById("so_out").innerText = so;
+  document.getElementById("co_out").innerText = co;
+  document.getElementById("b_out").innerText = b;
+  document.getElementById("mode_out").innerText = b === 1 ? "Active Product (x·y=1)" : "Product Idle (x·y=0)";
+
+  // Sync outputs inside interactive SVG
+  document.getElementById("node_b").textContent = b;
+  document.getElementById("node_co").textContent = co;
+  document.getElementById("node_so").textContent = so;
+
+  // Dynamic color trace for AND Gate output (b)
+  var path_b = document.getElementById("path_b");
+  if (b === 1) {
+    path_b.setAttribute("stroke", "#ea580c");
+    path_b.setAttribute("stroke-width", "3");
+  } else {
+    path_b.setAttribute("stroke", "#64748b");
+    path_b.setAttribute("stroke-width", "2");
+  }
+
+  // Dynamic color trace for final Carry Out (co) output line
+  var path_co = document.getElementById("path_co");
+  if (co === 1) {
+    path_co.setAttribute("stroke", "#ea580c");
+    path_co.setAttribute("stroke-width", "3.5");
+  } else {
+    path_co.setAttribute("stroke", "#64748b");
+    path_co.setAttribute("stroke-width", "2.5");
+  }
+
+  // Dynamic color trace for final Sum Out (so) output line
+  var path_so = document.getElementById("path_so");
+  if (so === 1) {
+    path_so.setAttribute("stroke", "#ea580c");
+    path_so.setAttribute("stroke-width", "3.5");
+  } else {
+    path_so.setAttribute("stroke", "#64748b");
+    path_so.setAttribute("stroke-width", "2.5");
+  }
+}
+
+// Start simulation on load
+window.addEventListener('load', function() {
+  runSimulation();
+});
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a Multiplier Adder (MA) cell?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Multiplier Adder cell is an arithmetic logic unit that combines a two-input AND gate with a Full Adder. It calculates the product of two bits and adds it to incoming sum and carry bits in a single step."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "In what arithmetic systems are MA cells utilized?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They are primarily used in binary parallel multipliers (such as Braun multipliers or carry-save multiplier arrays), where partial products must be calculated and accumulated across multiple dimensions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the AND gate affect the addition logic?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The AND gate calculates the product of x and y. If either x or y is 0, the product is 0, and the Full Adder behaves as a standard adder. If both are 1, the product is 1, and it is added to the sum calculation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the Carry Out (co) calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Carry Out is determined by the equation co = (si · b) + (ci · (si ⊕ b)), where b is the computed product bit (x · y). This generates a carry out signal when any two or more adder inputs are active high (1)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between a MAC cell and a standard Full Adder?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A standard Full Adder only adds three single-bit inputs. A MAC (Multiply-Accumulate) or Multiplier Adder cell includes an integrated AND gate to multiply two inputs before adding the result to the other inputs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can these cells be used to build signed multipliers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. They form the foundation of signed multiplier arrays, such as the Baugh-Wooley architecture, where specific inputs are inverted to handle two's complement sign extension."
+      }
     }
-  };
+  ]
+}
+</script>
 
-  this.toggle = function (obj) {
-    obj = obj || window.event;
-    obj.innerHTML = (Number(obj.innerHTML) + 1) % 2;
-    circuitMa.updateOutputs();
-  };
-
-  this.init = function () {
-    //console.log("init");
-    jQuery('.circuit-container#circuit-ma > .circuit-input').each(function (ii, obj) {
-      input[obj.id] = obj;
-      obj.innerHTML = 0;
-      obj.onclick = function () {
-        circuitMa.toggle(this);
-      };
-      obj.style.height = "5%";
-      obj.style.width = "6%";
-    });
-    jQuery('.circuit-container#circuit-ma > .circuit-output').each(function (ii, obj) {
-      output[obj.id] = obj;
-      obj.style.height = "5%";
-      obj.style.width = "6%";
-    });
-    circuitMa.updateOutputs();
-    circuitMa.resizeFonts();
-    if (window != window.top && parent.jQuery.fancybox) {// if running in iFrame
-      resizeIframe();
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Bitwise 1-bit Multiplier Adder Simulation",
+      "item": "https://calcboy.com/tool/bitwise-1-bit-multiplier-adder-simulation"
     }
-  };
+  ]
+}
+</script>
 
-  this.updateOutputs = function () {
-    var si = +input.si.innerHTML;
-    var ci = +input.ci.innerHTML;
-    var x = +input.x.innerHTML;
-    var y = +input.y.innerHTML;
-    var b = x && y;
-    circuitQueue.insert(output.so, si ^ b ^ ci ? 1 : 0, queueDftDelay);
-    circuitQueue.insert(output.co, si && b || ci && si ^ b ? 1 : 0, 0);
-    circuitQueue.play(); // play the queued UI changes while respecting the requested delays
-  };
-
-}).apply(circuitMa);
-
-window.addEventListener('load', circuitMa.init);
-window.addEventListener('resize', circuitMa.resizeFonts);
-      //# sourceURL=pen.js
-    </script>
 </body>
 </html>
