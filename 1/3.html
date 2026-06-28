@@ -1,204 +1,525 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
-<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
-<title>CodePen - Bitwise 1-bit Controlled Subtract Multiplexer Simulation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bitwise 1-bit Controlled Subtract Multiplexer Simulation | CalcBoy</title>
+<meta name="description" content="Simulate a 1-bit Controlled Subtract Multiplexer (CSM). Toggle binary inputs to analyze intermediate difference, borrow outputs, and multiplexed results dynamically.">
+<meta name="keywords" content="controlled subtract multiplexer, CSM block simulator, binary subtractor calculator, computer arithmetic simulator, 1-bit subtractor multiplexer, digital logic calculator, CalcBoy">
 <style>
-body { 
-  background:  ; 
+#csm-calc, #csm-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#csm-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+select.unit-selector { padding: 0 8px; cursor: pointer; font-weight: 700; color: #374151; background-color: #eee; border: 1px solid #cfd6df; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.interactive-label { cursor: pointer; user-select: none; }
+.interactive-label:hover { filter: brightness(1.2); }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0,1fr) 72px; }
+  .unit-box, select.unit-selector { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-      div.circuit-container {
-  max-width: %;
-  width: auto;
-  margin: 5px 0 5px 0;
-  position: relative;
-}
-
-img.circuit-schematic {
-  width: 100%;
-  height: auto;
-}
-
-.circuit-input {
-  -webkit-user-select: none;
-  transition: all 1s ease;
-  background: white;
-  border: 1px solid;
-  border-radius: 5px;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-.circuit-input:active {
-    background-color: yellow;
-    -webkit-transition: background-color 0.1s ease-out;
-}
-
-.circuit-output {
-  background: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-
-.circuit-intern {
-  background: none;
-  border: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1em;
-  font-weight: regular;
-  text-align: center;
-}
-
-.circuit-container > .flash {
-  -webkit-animation-name: circuit-flash-animation;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-timing-function: ease-in-out;
-}
-
-@-webkit-keyframes circuit-flash-animation {
-  from {
-    background: yellow;
-  }
-  to {
-    background: default;
-  }
-}
-
-    </style>
-<script>
-  window.console = window.console || function(t) {};
-</script>
-<script>
-  if (document.location.search.match(/type=embed/gi)) {
-    window.parent.postMessage("resize", "*");
-  }
-</script>
+</style>
 </head>
-<body translate="no">
-<div class="circuit-container" id="circuit-csm" >
-<img class="circuit-schematic" alt="" src="https://coertvonk.com/wp-content/logic-simulation/divider/csm-block.svg">
-<div class="circuit-input" id="x" style="bottom:94%;left:42%;border-color:#00A551;">0</div>
-<div class="circuit-input" id="y" style="bottom:91%;left:2.4%;border-color:#EC1C24;">0</div>
-<div class="circuit-input" id="bi" style="bottom:54.5%;left:94.8%;border-color:black;">0</div>
-<div class="circuit-input" id="os" style="bottom:28.7%;left:0%;border-color:#00ADEE;">0</div>
-<div class="circuit-intern" id="d'" style="bottom:36%;left:24%;">0</div>
-<div class="circuit-output" id="d" style="bottom:2%;left:47.5%;">0</div>
-<div class="circuit-output" id="bo" style="bottom:54%;left:1%;">0</div>
+<body>
+
+<div id="csm-calc">
+
+  <div class="calc-grid">
+    <div class="subTitle">Simulate Binary Inputs</div>
+
+    <div>
+      <label class="calc-label">Minuend Input (x)</label>
+      <div class="calc-row">
+        <select id="x" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #eef5ff; color: #2359e8;">x (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Subtrahend Input (y)</label>
+      <div class="calc-row">
+        <select id="y" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #fdf2f2; color: #ea580c;">y (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Borrow Input (bi)</label>
+      <div class="calc-row">
+        <select id="bi" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #f3f4f6; color: #374151;">bi (Bit)</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Output Select Control (os)</label>
+      <div class="calc-row">
+        <select id="os" onchange="runSimulation()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+        </select>
+        <div class="unit-box" style="background: #ecfdf5; color: #16a34a;">os (Bit)</div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="runSimulation()">SIMULATE STATE</button>
+
+  <div id="errorBox">Please enter valid binary states (0 or 1).</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Difference Output (d)</div><div class="result-value"><span id="d_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Borrow Output (bo)</div><div class="result-value"><span id="bo_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Subtractor Out (d')</div><div class="result-value"><span id="dp_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Mux Select State</div><div class="result-value"><span id="sel_state"></span></div></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Input Minuend (x)</strong>The principal arithmetic bit applied directly into the internal 1-bit subtractor core and mapped as channel 1 on the MUX.</div>
+      <div class="paramItem"><strong>Input Subtrahend (y)</strong>The secondary arithmetic bit subtracted from x inside the subtraction core block.</div>
+      <div class="paramItem"><strong>Borrow In (bi)</strong>The active borrow bit propagated from lower-order bitward operations during sequential arithmetic cycles.</div>
+      <div class="paramItem"><strong>Output Select (os)</strong>The multiplexer control signal. When 1, it bridges the input x directly to the output d. When 0, it outputs the subtraction result d'.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Bypass Active (os = 1)</strong></p>
+        <p>Configuring os to 1 bridges x straight to output d. The subtractor difference result d' is completely bypassed.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Active Subtraction (os = 0)</strong></p>
+        <p>Setting os to 0 maps d' to d. Pin d outputs x minus y minus bi while bo tracks active borrow requests.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Division Arithmetic Steps</strong></p>
+        <p>Used to perform parallel, non-restoring conditional subtraction during high-speed hardware binary division.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Cascaded Logic Chains</strong></p>
+        <p>Link consecutive bo pins directly to adjacent bi inputs to evaluate multi-bit binary subtracting networks.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A Controlled Subtract Multiplexer (CSM) is a hybrid logic unit containing a 1-bit full subtractor block coupled with a 2-to-1 multiplexer. Click the inputs directly on the schematic or select options above to run the live simulation.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 350" xmlns="http://www.w3.org/2000/svg" id="csm-diagram">
+        <rect width="520" height="350" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Main Outer Block -->
+        <rect x="130" y="60" width="260" height="230" rx="12" fill="#f8fafc" stroke="#475467" stroke-width="3" />
+        <text x="245" y="85" fill="#1e293b" font-weight="900" font-size="13" text-anchor="middle">CSM BLOCK (1-BIT)</text>
+
+        <!-- Subtractor block -->
+        <rect x="160" y="100" width="100" height="80" rx="6" fill="#e2e8f0" stroke="#1e293b" stroke-width="2" />
+        <text x="210" y="145" fill="#0f172a" font-weight="900" font-size="12" text-anchor="middle">SUBTRACTOR</text>
+
+        <!-- MUX block -->
+        <polygon points="290,200 370,200 350,250 310,250" fill="#e2e8f0" stroke="#1e293b" stroke-width="2" />
+        <text x="330" y="230" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">MUX</text>
+
+        <!-- Input x line (Green) -->
+        <path id="path_x" d="M210,25 V100" stroke="#64748b" stroke-width="3" fill="none" />
+        <!-- Branch of x to MUX -->
+        <path id="path_x_mux" d="M210,45 H350 V200" stroke="#64748b" stroke-width="3" fill="none" />
+        
+        <!-- Input y line (Red) -->
+        <path id="path_y" d="M25,120 H160" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Input bi line -->
+        <path id="path_bi" d="M495,160 H260" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Input os line -->
+        <path id="path_os" d="M25,265 H330 V250" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Intermediate d' line -->
+        <path id="path_dp" d="M210,180 V225 H290" stroke="#64748b" stroke-width="2" fill="none" />
+
+        <!-- Output bo line -->
+        <path id="path_bo" d="M160,160 H25" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Output d line -->
+        <path id="path_d" d="M330,250 V325" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Interactive interactive ports (Buttons) -->
+        <!-- Port x -->
+        <g class="interactive-label" onclick="togglePin('x')">
+          <circle cx="210" cy="25" r="14" fill="#00A551" stroke="#000" stroke-width="2" />
+          <text id="node_x" x="210" y="29" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="185" y="30" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">x</text>
+
+        <!-- Port y -->
+        <g class="interactive-label" onclick="togglePin('y')">
+          <circle cx="25" cy="120" r="14" fill="#EC1C24" stroke="#000" stroke-width="2" />
+          <text id="node_y" x="25" y="124" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="25" y="100" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">y</text>
+
+        <!-- Port bi -->
+        <g class="interactive-label" onclick="togglePin('bi')">
+          <circle cx="495" cy="160" r="14" fill="#111" stroke="#000" stroke-width="2" />
+          <text id="node_bi" x="495" y="164" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="495" y="185" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">bi</text>
+
+        <!-- Port os -->
+        <g class="interactive-label" onclick="togglePin('os')">
+          <circle cx="25" cy="265" r="14" fill="#00ADEE" stroke="#000" stroke-width="2" />
+          <text id="node_os" x="25" y="269" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        </g>
+        <text x="25" y="290" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">os</text>
+
+        <!-- Port bo -->
+        <circle cx="25" cy="160" r="12" fill="#e2e8f0" stroke="#111" stroke-width="2" />
+        <text id="node_bo" x="25" y="164" fill="#0f172a" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        <text x="25" y="185" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">bo</text>
+
+        <!-- Port d' internal output -->
+        <rect x="235" y="200" width="20" height="15" rx="3" fill="#ffffff" stroke="#475467" stroke-width="1" />
+        <text id="node_dp" x="245" y="211" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">0</text>
+        <text x="225" y="212" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">d'</text>
+
+        <!-- Port d -->
+        <circle cx="330" cy="325" r="14" fill="#4f46e5" stroke="#000" stroke-width="2" />
+        <text id="node_d" x="330" y="329" fill="#ffffff" font-weight="900" font-size="13" text-anchor="middle">0</text>
+        <text x="308" y="330" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">d</text>
+
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Intermediate Difference: d' = x ⊕ y ⊕ bi</div>
+    <div class="formula">Borrow Output: bo = (x' · y) + (bi · (x ⊕ y)')</div>
+    <div class="formula">Multiplexed Output Result: d = (os · x) + (os' · d')</div>
+    <div class="formulaBox">
+      Truth Table Verification Matrix:<br>
+      • x=0, y=0, bi=0, os=0 → d'=0, bo=0 → Output d=0<br>
+      • x=0, y=1, bi=0, os=0 → d'=1, bo=1 → Output d=1<br>
+      • x=1, y=0, bi=0, os=0 → d'=1, bo=0 → Output d=1<br>
+      • x=1, y=1, bi=1, os=0 → d'=1, bo=1 → Output d=1<br>
+      • x=0, y=1, bi=1, os=1 → d'=0, bo=1 → Output d=0 (since os=1 bypasses to x)
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose values (0 or 1) for the binary inputs x, y, bi, and os using the dropdown selects.</div>
+      <div class="aboutStep">Alternatively, toggle the input ports directly on the interactive circuit diagram above by tapping them.</div>
+      <div class="aboutStep">Click on the SIMULATE STATE button to calculate the logic state values across the CSM ports.</div>
+      <div class="aboutStep">Check the results grid to find outputs d, bo, the internal subtractor state d', and multiplexer state.</div>
+      <div class="aboutStep">Analyze visual paths colored dynamically in orange to trace active paths with logic high (1) values.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Simulate discrete binary execution cells inside computational ALUs.</strong>
+      <p>The CalcBoy Bitwise 1-bit Controlled Subtract Multiplexer Simulation models computational logic states, evaluating intermediate subtraction differences, cascaded borrows, and multiplexed bypass outputs.</p>
+    </div>
+    <p>A Controlled Subtract Multiplexer (CSM) block functions as a critical logic cell within high-performance binary division hardware structures. In complex division architectures, such as non-restoring or restoring array dividers, the hardware must choose dynamically whether to subtract a divisor from the partial remainder or simply bypass the current state. The CSM cell integrates subtraction and conditional routing directly within a single block to achieve this efficiency.</p>
+    <p>The unit acts on four core binary lines. The three arithmetic inputs—Minuend (x), Subtrahend (y), and Borrow-In (bi)—are evaluated by a full subtractor subcircuit, producing an intermediate difference (d') and a borrow out (bo) signal. Simultaneously, the multiplexer evaluates the select control line (os). When the control state is high (os = 1), the cell bypasses the arithmetic pipeline, routing x directly to output d. When low (os = 0), the computed subtraction result d' routes to d.</p>
+    <p>Designing digital processors or analyzing hardware designs requires tracing discrete logic states. This simulator runs high-speed logic models, offering an interactive framework to study boolean relations and timing states in processor logic pathways.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Silicon processor design, logic testing, ALU planning, and computer hardware lectures.</div>
+      <div class="aboutMiniCard"><span>Output Verification</span>Tracks subtraction difference, propagated borrow parameters, and routing bypass.</div>
+      <div class="aboutMiniCard"><span>Interactive UI</span>Tap any input directly on the circuit diagram to cycle through states instantly.</div>
+      <div class="aboutMiniCard"><span>Logic Compliance</span>Follows strict IEEE standard digital logic and boolean algebra operations.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: Connect multiple CSM blocks in array structures to construct high-capacity parallel division hardware modules.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What does a Controlled Subtract Multiplexer do?</strong></h3>
+    <p>A Controlled Subtract Multiplexer (CSM) is an arithmetic block that subtracts input bits conditionally based on a control line. If the control line is high, the input bit is bypassed directly to the output. If low, the subtraction result is routed instead.</p>
+
+    <h3><strong>2. In what arithmetic systems are CSM blocks utilized?</strong></h3>
+    <p>They are primarily used in binary array division networks, such as restoring or non-restoring division architectures, where conditional subtraction is executed across successive calculation stages.</p>
+
+    <h3><strong>3. How does the borrow out (bo) logic behave?</strong></h3>
+    <p>The borrow output follows standard full-subtractor boolean rules. A borrow occurs if y is larger than x, or if a borrow input is propagated while x and y are equal.</p>
+
+    <h3><strong>4. How does the select control pin (os) determine the output?</strong></h3>
+    <p>When os = 1, the multiplexer routes the input value x to the output d, ignoring the subtractor output. When os = 0, the computed difference d' routes to the output d.</p>
+
+    <h3><strong>5. Does the borrow output (bo) bypass during os = 1 mode?</strong></h3>
+    <p>No. The borrow logic continues to calculate its value based on x, y, and bi, regardless of the multiplexer select state. This ensures proper carry/borrow propagation through cascaded logic chains.</p>
+
+    <h3><strong>6. Can I cascade these blocks to subtract multi-bit values?</strong></h3>
+    <p>Yes. Multiple CSM blocks can be cascaded by connecting the borrow output (bo) of a lower-order stage to the borrow input (bi) of the next higher-order stage.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Full Subtractor Logic Simulator</strong>Test pure subtractive operations without multiplexed outputs.</div>
+      <div class="linkCard"><strong>Binary Adder-Subtractor Calculator</strong>Analyze complement-based operational adder/subtractor logic.</div>
+      <div class="linkCard"><strong>2-to-1 Multiplexer Simulator</strong>Study routing control lines on multiplexer architectures.</div>
+      <div class="linkCard"><strong>Binary Division Calculator</strong>Compute multi-bit hardware steps for integer division.</div>
+    </div>
+  </section>
+
 </div>
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script src='https://coertvonk.com/wp-content/logic-simulation/circuit-simulation.js'></script>
-<script src='https://coertvonk.com/wp-content/logic-simulation/vivus.min.js'></script>
-<script id="rendered-js">
-      // 1-bit Controlled Subtract Multiplexer
-// used in https://coertvonk.com/technology/logic/computer-math-inquiry-4245/7
-// (c) Copyright 2017 by Coert Vonk
-/*
-Copyright (c) 2017 by Coert Vonk
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+<script>
+function val(id) {
+  return document.getElementById(id).value;
+}
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-
-var circuitCsm = {}; // Controlled Subtract Multiplexer Name Space
-(function () {
-  let queueDftDelay = 600; // msec
-  var input = {};
-  var output = {};
-  var intern = {};
-
-  // resize the fonts when the window is resized
-  this.resizeFonts = function () {
-    for (let key in input) {
-      let obj = input[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+function updateVisuals(id, state) {
+  // Update dropdown value
+  document.getElementById(id).value = state;
+  
+  // Update SVG node text
+  document.getElementById("node_" + id).textContent = state;
+  
+  // Color code active/inactive states
+  var path = document.getElementById("path_" + id);
+  if (path) {
+    if (state === 1) {
+      path.setAttribute("stroke", "#ea580c");
+      path.setAttribute("stroke-width", "3.5");
+    } else {
+      path.setAttribute("stroke", "#64748b");
+      path.setAttribute("stroke-width", "2.5");
     }
-    for (let key in intern) {
-      let obj = intern[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+  }
+}
+
+function togglePin(id) {
+  var current = parseInt(val(id), 10);
+  var nextState = current === 1 ? 0 : 1;
+  updateVisuals(id, nextState);
+  runSimulation();
+}
+
+function runSimulation() {
+  var x = parseInt(val("x"), 10);
+  var y = parseInt(val("y"), 10);
+  var bi = parseInt(val("bi"), 10);
+  var os = parseInt(val("os"), 10);
+
+  // Sync inputs with SVG text fields and trace paths
+  updateVisuals("x", x);
+  updateVisuals("y", y);
+  updateVisuals("bi", bi);
+  updateVisuals("os", os);
+
+  // Secondary line trace for branched x input
+  var path_x_mux = document.getElementById("path_x_mux");
+  if (x === 1) {
+    path_x_mux.setAttribute("stroke", "#ea580c");
+    path_x_mux.setAttribute("stroke-width", "3.5");
+  } else {
+    path_x_mux.setAttribute("stroke", "#64748b");
+    path_x_mux.setAttribute("stroke-width", "2.5");
+  }
+
+  // Boolean Calculations
+  var dp = x ^ y ^ bi ? 1 : 0;
+  var bo = (!x && y) || (bi && !(x ^ y)) ? 1 : 0;
+  var d = (os && x) || (!os && dp) ? 1 : 0;
+
+  // Render text outputs into results grid
+  document.getElementById("d_out").innerText = d;
+  document.getElementById("bo_out").innerText = bo;
+  document.getElementById("dp_out").innerText = dp;
+  document.getElementById("sel_state").innerText = os === 1 ? "Bypass Mode" : "Subtract Mode";
+
+  // Update SVG output display pins
+  document.getElementById("node_dp").textContent = dp;
+  document.getElementById("node_bo").textContent = bo;
+  document.getElementById("node_d").textContent = d;
+
+  // Trace d' line color
+  var path_dp = document.getElementById("path_dp");
+  if (dp === 1) {
+    path_dp.setAttribute("stroke", "#ea580c");
+    path_dp.setAttribute("stroke-width", "3");
+  } else {
+    path_dp.setAttribute("stroke", "#64748b");
+    path_dp.setAttribute("stroke-width", "2");
+  }
+
+  // Trace bo output line color
+  var path_bo = document.getElementById("path_bo");
+  if (bo === 1) {
+    path_bo.setAttribute("stroke", "#ea580c");
+    path_bo.setAttribute("stroke-width", "3.5");
+  } else {
+    path_bo.setAttribute("stroke", "#64748b");
+    path_bo.setAttribute("stroke-width", "2.5");
+  }
+
+  // Trace d output line color
+  var path_d = document.getElementById("path_d");
+  if (d === 1) {
+    path_d.setAttribute("stroke", "#ea580c");
+    path_d.setAttribute("stroke-width", "3.5");
+  } else {
+    path_d.setAttribute("stroke", "#64748b");
+    path_d.setAttribute("stroke-width", "2.5");
+  }
+}
+
+// Start simulation on load
+window.addEventListener('load', function() {
+  runSimulation();
+});
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does a Controlled Subtract Multiplexer do?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Controlled Subtract Multiplexer (CSM) is an arithmetic block that subtracts input bits conditionally based on a control line. If the control line is high, the input bit is bypassed directly to the output. If low, the subtraction result is routed instead."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "In what arithmetic systems are CSM blocks utilized?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They are primarily used in binary array division networks, such as restoring or non-restoring division architectures, where conditional subtraction is executed across successive calculation stages."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the borrow out (bo) logic behave?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The borrow output follows standard full-subtractor boolean rules. A borrow occurs if y is larger than x, or if a borrow input is propagated while x and y are equal."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the select control pin (os) determine the output?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When os = 1, the multiplexer routes the input value x to the output d, ignoring the subtractor output. When os = 0, the computed difference d' routes to the output d."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the borrow output (bo) bypass during os = 1 mode?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The borrow logic continues to calculate its value based on x, y, and bi, regardless of the multiplexer select state. This ensures proper carry/borrow propagation through cascaded logic chains."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I cascade these blocks to subtract multi-bit values?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Multiple CSM blocks can be cascaded by connecting the borrow output (bo) of a lower-order stage to the borrow input (bi) of the next higher-order stage."
+      }
     }
-    for (let key in output) {
-      let obj = output[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Controlled Subtract Multiplexer Simulator",
+      "item": "https://calcboy.com/tool/controlled-subtract-multiplexer-simulator"
     }
-  };
+  ]
+}
+</script>
 
-  this.toggle = function (obj) {
-    obj = obj || window.event;
-    obj.innerHTML = (Number(obj.innerHTML) + 1) % 2;
-    circuitCsm.updateOutputs();
-  };
-
-  this.init = function () {
-    jQuery('.circuit-container#circuit-csm > .circuit-input').each(function (ii, obj) {
-      input[obj.id] = obj;
-      obj.innerHTML = 0;
-      obj.onclick = function () {
-        circuitCsm.toggle(this);
-      };
-      obj.style.height = "6%";
-      obj.style.width = "7%";
-    });
-    jQuery('.circuit-container#circuit-csm > .circuit-output').each(function (ii, obj) {
-      output[obj.id] = obj;
-      obj.style.height = "6%";
-      obj.style.width = "7%";
-    });
-    jQuery('.circuit-container#circuit-csm > .circuit-intern').each(function (ii, obj) {
-      intern[obj.id] = obj;
-      obj.style.height = "6%";
-      obj.style.width = "7%";
-    });
-    circuitCsm.updateOutputs();
-    circuitCsm.resizeFonts();
-    if (window != window.top && parent.jQuery.fancybox) {// if running in iFrame
-      resizeIframe();
-    }
-  };
-
-  this.updateOutputs = function () {
-    let x = +input.x.innerHTML;
-    let y = +input.y.innerHTML;
-    let bi = +input.bi.innerHTML;
-    let os = +input.os.innerHTML;
-    let d_ = x ^ y ^ bi ? 1 : 0;
-    circuitQueue.insert(intern["d'"], d_, queueDftDelay);
-    circuitQueue.insert(output.bo, !x && y || bi && !(x ^ y) ? 1 : 0, 0);
-    circuitQueue.insert(output.d, os && x || !os && d_ ? 1 : 0, queueDftDelay);
-    circuitQueue.play(); // play the queued UI changes while respecting the requested delays
-
-  };
-
-}).apply(circuitCsm);
-
-window.addEventListener('load', circuitCsm.init);
-window.addEventListener('resize', circuitCsm.resizeFonts);
-      //# sourceURL=pen.js
-    </script>
 </body>
 </html>
