@@ -1,145 +1,407 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 50px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<div id="body" class="width">
-<section id="content" class="two-column with-right-sidebar">
-<article>
-
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- rfw_rsp -->
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-N=Number(document.calculator.number1.value);
-T=Number(document.calculator.number2.value);
-F=Number(document.calculator.number3.value);
-c1 =  T/F ;
-c2 =  T/N ;
-document.calculator.MTBF.value=c1;
-document.calculator.MTTF.value=c2;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MTBF and MTTF Reliability Calculator | CalcBoy</title>
+<meta name="description" content="Calculate Mean Time Between Failures (MTBF) and Mean Time To Failure (MTTF) to analyze product reliability, failure rates, and hardware lifespan metrics.">
+<meta name="keywords" content="MTBF calculator, MTTF calculator, mean time between failures, mean time to failure, reliability engineering calculator, failure rate FIT, CalcBoy">
+<style>
+#reliability-calc, #reliability-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#reliability-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-</SCRIPT>
-<FORM name="calculator">
-<table border="1" height="573" width="100%" >
+</style>
+</head>
+<body>
 
+<div id="reliability-calc">
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
+  <div class="calc-grid">
+    <div class="subTitle">Reliability Test Parameters</div>
 
+    <div>
+      <label class="calc-label">Number of Devices Under Test (N)</label>
+      <div class="calc-row">
+        <input id="input_devices" type="number" step="any" placeholder="e.g. 30" oninput="clearResults()">
+        <div class="unit-box">Devices</div>
+      </div>
+    </div>
 
-<label for="f">Devices<font face="Arial" size="5"> (Number of devices-Under Test)</font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:300; right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:40;"></h1>
-<label for="f">Test<font face="Arial" size="5"> (Duration of the test-in Hours)</font></label><input  name="number2" class="intro"  style="position: absolute;  text-align:center; width:300; right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:40;"></h1>
+    <div>
+      <label class="calc-label">Duration of the Test in Hours (T)</label>
+      <div class="calc-row">
+        <input id="input_duration" type="number" step="any" placeholder="e.g. 1000" oninput="clearResults()">
+        <div class="unit-box">Hours</div>
+      </div>
+    </div>
 
-<label for="f">Reported<font face="Arial" size="5"> (Number of  failures  reported)</font></label><input  name="number3" class="intro"  style="position: absolute;  text-align:center; width:300; right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:50;"></h1>
+    <div>
+      <label class="calc-label">Number of Failures Reported (F)</label>
+      <div class="calc-row">
+        <input id="input_failures" type="number" step="any" placeholder="e.g. 3" oninput="clearResults()">
+        <div class="unit-box">Failures</div>
+      </div>
+    </div>
+  </div>
 
-</fieldset></div>
+  <button type="button" onclick="computeReliability()">CALCULATE</button>
 
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" name="bt1" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <div id="errorBox">Please enter valid positive values. Number of devices and test duration must be greater than zero. Reported failures cannot be negative.</div>
 
+  <div class="result-title">RESULTS</div>
 
-<h3>Outputs</h3></div></legend>
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">MTBF (Mean Time Between Failures)</div><div class="result-value"><span id="mtbf_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">MTTF (Mean Time To Failure)</div><div class="result-value"><span id="mttf_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Failure Rate (λ)</div><div class="result-value"><span id="lambda_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Failures in Time (FIT)</div><div class="result-value"><span id="fit_out"></span></div></div>
+  </div>
 
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Devices Under Test (N)</strong>The total sample size of units subjected to stress testing inside the lab or operational environment.</div>
+      <div class="paramItem"><strong>Test Duration (T)</strong>The elapsed active operational time or cumulative evaluation interval measured in hours.</div>
+      <div class="paramItem"><strong>Reported Failures (F)</strong>The total count of discrete hardware malfunctions or component breakdowns logged during the evaluation cycle.</div>
+      <div class="paramItem"><strong>Standard Output Units</strong>Provides mean lifetimes expressed in hours/failure along with absolute failure rates in FIT (Failures in Time per billion hours).</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Industrial Server Array</strong></p>
+        <p>A data center monitors 30 active servers over a 1000-hour test run. If 3 failures are logged, the system has an MTBF of 333.33 hours and an MTTF of 33.33 hours.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>LED Lifespan Evaluation</strong></p>
+        <p>A batch of 500 non-repairable solid-state LED chips is tested. Logging 5 early failures over a 2000-hour run resolves the MTTF to 400 hours per device.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Telecom Relay Testing</strong></p>
+        <p>Testing 100 high-frequency RF relays over a 5000-hour cycle with 0 failures indicates an exceptionally high MTBF, yielding 0 FIT.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Automotive ECU Verification</strong></p>
+        <p>Verify automotive microcontrollers under extreme thermal environments to estimate field degradation profiles and warranty risks.</p>
+      </div>
+    </div>
+  </section>
 
-<label for="f">MTBF<font face="Arial" size="6"></font></label><input  name="MTBF" class="intro"  style="position: absolute;   text-align:center; width:350; right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:40;"></h1>
-<label for="f">MTTF<font face="Arial" size="6"></font></label><input  name="MTTF" class="intro"  style="position: absolute;   text-align:center; width:350; right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:50;"></h1>
-</fieldset></div>
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Failure rates over a product lifecycle typically follow the iconic Bathtub Curve. This model separates hardware reliability into three distinct periods: early infant mortality, a constant useful life period, and the eventual wear-out phase.</p>
 
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" id="bathtub-diagram">
+        <rect width="520" height="220" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Axes -->
+        <line x1="50" y1="30" x2="50" y2="180" stroke="#475467" stroke-width="2" />
+        <line x1="50" y1="180" x2="480" y2="180" stroke="#475467" stroke-width="2" />
+        
+        <!-- Y Axis Label -->
+        <text x="25" y="105" fill="#475467" font-weight="900" font-size="10" transform="rotate(-90 25 105)" text-anchor="middle">FAILURE RATE (λ)</text>
+        <!-- X Axis Label -->
+        <text x="260" y="200" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">TIME (t)</text>
 
+        <!-- Bathtub Curve Path -->
+        <path d="M 60,50 Q 100,140 180,140 H 340 Q 420,140 460,50" fill="none" stroke="#2359e8" stroke-width="3" />
 
+        <!-- Highlights Useful Life section (where MTBF/MTTF apply) -->
+        <line x1="180" y1="140" x2="340" y2="140" stroke="#ff7a18" stroke-width="4.5" stroke-linecap="round" />
+        <rect x="175" y="115" width="170" height="55" fill="none" stroke="#ff7a18" stroke-dasharray="3,3" stroke-width="1" />
 
+        <!-- Division Lines -->
+        <line x1="180" y1="140" x2="180" y2="180" stroke="#94a3b8" stroke-dasharray="2,2" stroke-width="1.5" />
+        <line x1="340" y1="140" x2="340" y2="180" stroke="#94a3b8" stroke-dasharray="2,2" stroke-width="1.5" />
 
+        <!-- Zone Labels -->
+        <text x="120" y="190" fill="#64748b" font-weight="800" font-size="9" text-anchor="middle">Infant Mortality</text>
+        <text x="260" y="190" fill="#ea580c" font-weight="900" font-size="9" text-anchor="middle">Useful Life (Constant λ)</text>
+        <text x="400" y="190" fill="#64748b" font-weight="800" font-size="9" text-anchor="middle">Wear-Out Phase</text>
+        
+        <!-- Pointer to MTBF domain -->
+        <text x="260" y="110" fill="#ea580c" font-weight="900" font-size="10" text-anchor="middle">MTBF / MTTF Applied Here</text>
+      </svg>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">MTBF (Mean Time Between Failures): MTBF = Test Duration (T) / Reported Failures (F)</div>
+    <div class="formula">MTTF (Mean Time To Failure): MTTF = Test Duration (T) / Number of Devices (N)</div>
+    <div class="formula">Constant Failure Rate: λ = 1 / MTBF = Reported Failures (F) / Test Duration (T)</div>
+    <div class="formula">FIT (Failures in Time per Billion Hours): FIT = λ × 10^9</div>
+    <div class="formulaBox">
+      Step-by-Step Example (30 Devices, 100 Hours Test, 3 Failures):<br>
+      • Inputs: N = 30, T = 100, F = 3<br>
+      • Step 1: Calculate MTBF. MTBF = 100 / 3 = 33.33 hours/failure<br>
+      • Step 2: Calculate MTTF. MTTF = 100 / 30 = 3.33 hours/device<br>
+      • Step 3: Calculate failure rate (λ). λ = 3 / 100 = 0.03 failures/hour<br>
+      • Step 4: Calculate FIT. FIT = 0.03 × 1,000,000,000 = 30,000,000 FIT
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Enter the total count of devices placed under test (N) in the first input box.</div>
+      <div class="aboutStep">Input the active duration of the evaluation run (T) measured in hours.</div>
+      <div class="aboutStep">Provide the total count of reported failure events (F) logged over the test window.</div>
+      <div class="aboutStep">Click the CALCULATE button to execute the reliability equations.</div>
+      <div class="aboutStep">Examine the results grid to retrieve MTBF, MTTF, Failure Rate (λ), and absolute FIT indexes.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Standardize life-cycle and reliability metrics across electronic and mechanical designs.</strong>
+      <p>The CalcBoy MTBF and MTTF Reliability Calculator computes equipment lifetime indices, generating standardized Mean Time Between Failures, Mean Time To Failure, and absolute failure rates in FIT.</p>
+    </div>
+    <p>In reliability engineering, predicting product lifespan is critical for warranty planning, preventative maintenance, safety validation, and overall customer satisfaction. Different metrics apply depending on whether a component is repairable or non-repairable. This calculator evaluates both core metrics using standard operational formulas, providing engineers with a clear point of comparison.</p>
+    <p>Mean Time Between Failures (MTBF) applies exclusively to repairable systems (e.g., servers, industrial pumps, and automobiles) where the unit is restored to active operation after a failure. It represents the average elapsed time expected between consecutive failure events. Mean Time To Failure (MTTF) applies to non-repairable parts (e.g., microprocessors, batteries, and light bulbs) that are completely discarded and replaced upon failure. Both metrics assume a constant failure rate during the product's useful "flat" middle portion of the bathtub curve.</p>
+    <p>This calculator processes your test observations immediately. If zero failures are logged, the calculator prevents computational breakdown, indicating an infinite MTBF to help identify highly robust, mature design lines.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Telecom servers, industrial automation systems, electronic circuit boards, and aviation arrays.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks MTBF and MTTF alongside failure rates and absolute FIT parameters.</div>
+      <div class="aboutMiniCard"><span>Reliability Metrics</span>Calculates both repairable (MTBF) and non-repairable (MTTF) parameters from identical test parameters.</div>
+      <div class="aboutMiniCard"><span>Standard FIT Scales</span>Converts hourly failure rates directly to FIT units (failures per billion device-hours).</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: MTBF should not be confused with the actual service life of a system. A system can possess an MTBF of 100,000 hours while having a physical design wear-out limit of only 10,000 hours.</div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is the difference between MTBF and MTTF?</strong></h3>
+    <p>MTBF is used for repairable systems (such as computers or vehicles) where components are repaired after failing. MTTF is used for non-repairable components (like light bulbs or fuses) that must be completely replaced upon failure.</p>
 
+    <h3><strong>2. Does a high MTBF mean a product will last that long?</strong></h3>
+    <p>No. MTBF is a measure of random failure rates during a product's useful life, not its wear-out phase. For example, a hard drive might have an MTBF of 1,000,000 hours, but its physical useful service life might only be 5 years (43,800 hours).</p>
 
+    <h3><strong>3. How is the Failure Rate (λ) calculated?</strong></h3>
+    <p>The failure rate (λ) is the mathematical reciprocal of MTBF (λ = 1 / MTBF). It represents the expected number of failures per hour of system operation under a constant failure rate assumption.</p>
 
+    <h3><strong>4. What does the unit FIT represent?</strong></h3>
+    <p>FIT stands for Failures in Time. It is a standardized reliability unit representing the number of expected failures per one billion ($10^9$) device-operating hours, commonly used in semiconductor and aerospace engineering.</p>
 
+    <h3><strong>5. How does a zero-failure test affect the calculations?</strong></h3>
+    <p>If zero failures are logged during a test, the mathematically calculated MTBF approaches infinity. In professional reliability engineering, chi-squared statistical confidence distributions are applied to estimate the lower bound MTBF under zero-failure states.</p>
 
+    <h3><strong>6. Why is the bathtub curve important in reliability studies?</strong></h3>
+    <p>The bathtub curve illustrates that failure rates are not uniform over a product's lifetime. It identifies three phases: early infant mortality failures, constant random failures (where MTBF calculations are valid), and wear-out failures at the end of life.</p>
+  </section>
 
-</FORM>
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>System Availability Calculator</strong>Evaluate overall system uptime based on MTBF and MTTR (Mean Time to Repair).</div>
+      <div class="linkCard"><strong>Weibull Distribution Calculator</strong>Analyze varying failure rates over time and estimate wear-out thresholds.</div>
+      <div class="linkCard"><strong>Parallel System Reliability Calculator</strong>Calculate the reliability of redundant systems in parallel architectures.</div>
+      <div class="linkCard"><strong>Series System Reliability Calculator</strong>Calculate the cumulative reliability of non-redundant system arrays.</div>
+    </div>
+  </section>
 
+</div>
+
+<script>
+function val(id) {
+  return document.getElementById(id).value;
+}
+
+function put(id, val, unit, precision) {
+  var valueBox = document.getElementById(id);
+  if (typeof val === "string") {
+    valueBox.innerText = val;
+  } else {
+    valueBox.innerText = Number(val).toPrecision(precision || 5) + (unit ? (" " + unit) : "");
+  }
+}
+
+function clearResults() {
+  ["mtbf_out", "mttf_out", "lambda_out", "fit_out"].forEach(function(id) {
+    document.getElementById(id).innerText = "";
+  });
+  document.getElementById("errorBox").style.display = "none";
+}
+
+function computeReliability() {
+  var rawN = val("input_devices");
+  var rawT = val("input_duration");
+  var rawF = val("input_failures");
+
+  // Validation checks: blank fields, non-numeric values, or out of bound values (Negative value handled normally if valid)
+  if (rawN === "" || isNaN(rawN) || rawT === "" || isNaN(rawT) || rawF === "" || isNaN(rawF)) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  var N = Number(rawN);
+  var T = Number(rawT);
+  var F = Number(rawF);
+
+  if (N <= 0 || T <= 0 || F < 0) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  // Preserve exact original formulas:
+  // c1 = T / F;
+  // c2 = T / N;
+  var mtbfVal = (F === 0) ? "∞ (No Failures)" : (T / F);
+  var mttfVal = T / N;
+
+  // Additional engineering metrics
+  var lambda = (F === 0) ? 0 : (1 / (T / F));
+  var fit = lambda * 1000000000;
+
+  document.getElementById("errorBox").style.display = "none";
+
+  // Display outputs in results grid
+  put("mtbf_out", mtbfVal, (F === 0 ? "" : "Hours"), 6);
+  put("mttf_out", mttfVal, "Hours", 6);
+  put("lambda_out", lambda, "failures/hr", 6);
+  put("fit_out", fit, "FIT", 6);
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between MTBF and MTTF?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MTBF is used for repairable systems (such as computers or vehicles) where components are repaired after failing. MTTF is used for non-repairable components (like light bulbs or fuses) that must be completely replaced upon failure."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a high MTBF mean a product will last that long?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. MTBF is a measure of random failure rates during a product's useful life, not its wear-out phase. For example, a hard drive might have an MTBF of 1,000,000 hours, but its physical useful service life might only be 5 years (43,800 hours)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the Failure Rate (λ) calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The failure rate (λ) is the mathematical reciprocal of MTBF (λ = 1 / MTBF). It represents the expected number of failures per hour of system operation under a constant failure rate assumption."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the unit FIT represent?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "FIT stands for Failures in Time. It is a standardized reliability unit representing the number of expected failures per one billion (10^9) device-operating hours, commonly used in semiconductor and aerospace engineering."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does a zero-failure test affect the calculations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If zero failures are logged during a test, the mathematically calculated MTBF approaches infinity. In professional reliability engineering, chi-squared statistical confidence distributions are applied to estimate the lower bound MTBF under zero-failure states."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the bathtub curve important in reliability studies?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The bathtub curve illustrates that failure rates are not uniform over a product's lifetime. It identifies three phases: early infant mortality failures, constant random failures (where MTBF calculations are valid), and wear-out failures at the end of life."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "MTBF and MTTF Reliability Calculator",
+      "item": "https://calcboy.com/tool/mtbf-and-mttf-reliability-calculator"
+    }
+  ]
+}
+</script>
 
 </body>
 </html>
