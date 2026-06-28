@@ -1,220 +1,573 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
-<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
-<title>CodePen - Bitwise 4-bit Carry-Propagate Adder Simulation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bitwise 4-bit Carry-Propagate Adder Simulation | CalcBoy</title>
+<meta name="description" content="Simulate a 4-bit Carry-Propagate Adder. Toggle binary inputs to trace the sum, sequential carry propagation, and cascading logic pathways in real-time.">
+<meta name="keywords" content="4-bit carry-propagate adder, ripple carry adder, logic circuit simulator, binary addition calculator, sequential logic calculator, CalcBoy">
 <style>
-      div.circuit-container {
-  max-width: 96%;
-  width: auto;
-  margin: 5px 0 5px 0;
-  position: relative;
+#cpa-calc, #cpa-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#cpa-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; text-align: center; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.binary-selector { display: flex; gap: 6px; justify-content: center; margin-top: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.bin-btn { width: 38px; height: 38px; border-radius: 8px; border: 2px solid #cfd6df; background: #fff; font-weight: 900; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; transition: all 0.2s; }
+.bin-btn.active { background: #2359e8; color: #fff; border-color: #1d4ed8; }
+.bin-btn.red-btn.active { background: #dc2626; color: #fff; border-color: #991b1b; }
+.bit-label { font-size: 11px; font-weight: 800; color: #94a3b8; display: block; text-align: center; margin-top: 2px; }
+.interactive-label { cursor: pointer; user-select: none; }
+.interactive-label:hover { filter: brightness(1.2); }
+@media(max-width:600px){
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr; }
+  .result-value { font-size: 15px; }
 }
-body { 
-  background:  ; 
-}
-
-img.circuit-schematic {
-  width: 100%;
-  height: auto;
-}
-
-.circuit-input {
-  -webkit-user-select: none;
-  transition: all 1s ease;
-  background: white;
-  border: 1px solid;
-  border-radius: 5px;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-.circuit-input:active {
-    background-color: yellow;
-    -webkit-transition: background-color 0.1s ease-out;
-}
-
-.circuit-output {
-  background: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-
-.circuit-intern {
-  background: none;
-  border: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1em;
-  font-weight: regular;
-  text-align: center;
-}
-
-.circuit-container > .flash {
-  -webkit-animation-name: circuit-flash-animation;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-timing-function: ease-in-out;
-}
-
-@-webkit-keyframes circuit-flash-animation {
-  from {
-    background: yellow;
-  }
-  to {
-    background: default;
-  }
-}
-
-    </style>
-<script>
-  window.console = window.console || function(t) {};
-</script>
-<script>
-  if (document.location.search.match(/type=embed/gi)) {
-    window.parent.postMessage("resize", "*");
-  }
-</script>
+</style>
 </head>
-<body translate="no">
-<div class="circuit-container" id="circuit-cpa">
-<img class="circuit-schematic" alt="" src="https://coertvonk.com/wp-content/logic-simulation/adder/4-bit carry-propagate.svg">
-<div class="circuit-input" id="a0" style="bottom:88%;left:88%;border-color:#00ADEE;"></div>
-<div class="circuit-input" id="a1" style="bottom:88%;left:65%;border-color:#00ADEE;"></div>
-<div class="circuit-input" id="a2" style="bottom:88%;left:42.5%;border-color:#00ADEE;"></div>
-<div class="circuit-input" id="a3" style="bottom:88%;left:20%;border-color:#00ADEE;"></div>
-<div class="circuit-input" id="b0" style="bottom:88%;left:80.5%;border-color:#00ADEE;"></div>
-<div class="circuit-input" id="b1" style="bottom:88%;left:57.3%;border-color:#00ADEE;"></div>
-<div class="circuit-input" id="b2" style="bottom:88%;left:34.5%;border-color:#00ADEE;"></div>
-<div class="circuit-input" id="b3" style="bottom:88%;left:12%;border-color:#00ADEE;"></div>
-<div class="circuit-output" id="c0" style="bottom:41%;left:73.5%;"></div>
-<div class="circuit-output" id="c1" style="bottom:41%;left:50.5%;"></div>
-<div class="circuit-output" id="c2" style="bottom:41%;left:28%;"></div>
-<div class="circuit-output" id="c3" style="bottom:41%;left:6%;"></div>
-<div class="circuit-output" id="s0" style="bottom:2%;left:84.5%;"></div>
-<div class="circuit-output" id="s1" style="bottom:2%;left:61.7%;"></div>
-<div class="circuit-output" id="s2" style="bottom:2%;left:39%;"></div>
-<div class="circuit-output" id="s3" style="bottom:2%;left:16.2%;"></div>
-<div class="circuit-output" id="s4" style="bottom:2%;left:1%;"></div>
+<body>
+
+<div id="cpa-calc">
+
+  <div class="calc-grid">
+    <div class="subTitle">Simulate Binary Inputs</div>
+
+    <div>
+      <label class="calc-label">Addend Input (A) - 4-bit</label>
+      <div class="binary-selector">
+        <div><button class="bin-btn" id="a3" onclick="toggleBit('a3')">0</button><span class="bit-label">a3 (MSB)</span></div>
+        <div><button class="bin-btn" id="a2" onclick="toggleBit('a2')">0</button><span class="bit-label">a2</span></div>
+        <div><button class="bin-btn" id="a1" onclick="toggleBit('a1')">0</button><span class="bit-label">a1</span></div>
+        <div><button class="bin-btn" id="a0" onclick="toggleBit('a0')">0</button><span class="bit-label">a0 (LSB)</span></div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Addend Input (B) - 4-bit</label>
+      <div class="binary-selector">
+        <div><button class="bin-btn red-btn" id="b3" onclick="toggleBit('b3')">0</button><span class="bit-label">b3 (MSB)</span></div>
+        <div><button class="bin-btn red-btn" id="b2" onclick="toggleBit('b2')">0</button><span class="bit-label">b2</span></div>
+        <div><button class="bin-btn red-btn" id="b1" onclick="toggleBit('b1')">0</button><span class="bit-label">b1</span></div>
+        <div><button class="bin-btn red-btn" id="b0" onclick="toggleBit('b0')">0</button><span class="bit-label">b0 (LSB)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="runSimulation()">SIMULATE ADDITION</button>
+
+  <div id="errorBox">Please enter valid binary states (0 or 1).</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Arithmetic Sum (S) - Binary</div><div class="result-value"><span id="sum_bin"></span></div></div>
+    <div class="result-card green"><div class="result-label">Arithmetic Sum (S) - Decimal (A + B)</div><div class="result-value"><span id="sum_dec"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Final Carry Out (s4)</div><div class="result-value"><span id="carry_out_bit"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Carry Propagation Path</div><div class="result-value"><span id="carry_chain"></span></div></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Addend (A)</strong>The primary 4-bit binary value (a3 a2 a1 a0) added to operand B. Entered using the blue binary selectors.</div>
+      <div class="paramItem"><strong>Addend (B)</strong>The secondary 4-bit binary value (b3 b2 b1 b0) added to operand A. Entered using the red binary selectors.</div>
+      <div class="paramItem"><strong>Carry-In Pin</strong>The initial carry input is tied to 0 in standard 4-bit additive logic block configurations.</div>
+      <div class="paramItem"><strong>Interactive Gates</strong>Inputs can be controlled via switches above or toggled by clicking active port nodes in the diagram.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Simple Addition (6 + 3)</strong></p>
+        <p>Set minuend A = 0110 (6) and subtrahend B = 0011 (3). Sum yields Sum S = 1001 (9), and final carry out is 0.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Carry Generation (8 + 8)</strong></p>
+        <p>Set minuend A = 1000 (8) and subtrahend B = 1000 (8). The adder produces Sum S = 0000 with final carry out s4 = 1, representing 16 (10000).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Maximum Value (15 + 15)</strong></p>
+        <p>Set minuend A = 1111 (15) and subtrahend B = 1111 (15). Sum is 11110 (30) with final carry out s4 = 1.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Cascaded Propagation Steps</strong></p>
+        <p>Observe the carry propagation path to trace how carry signals cascade from the LSB to the MSB in real-time.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A Carry-Propagate Adder (or Ripple-Carry Adder) chains four Full Adder blocks in series. The carry output of each stage connects to the carry input of the next higher-order stage. Tap any node to change input configurations in real-time.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 350" xmlns="http://www.w3.org/2000/svg" id="cpa-diagram">
+        <rect width="520" height="350" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Main Schematic Block Outline -->
+        <rect x="20" y="60" width="480" height="230" rx="12" fill="#f8fafc" stroke="#475467" stroke-width="3" />
+        <text x="260" y="85" fill="#1e293b" font-weight="900" font-size="13" text-anchor="middle">4-BIT CARRY-PROPAGATE ADDER</text>
+
+        <!-- Subtractor Stages -->
+        <!-- Stage 3 -->
+        <rect x="50" y="110" width="80" height="90" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="90" y="150" fill="#1e293b" font-weight="900" font-size="11" text-anchor="middle">ADDER 3</text>
+        <text x="90" y="165" fill="#64748b" font-weight="800" font-size="9" text-anchor="middle">(MSB)</text>
+
+        <!-- Stage 2 -->
+        <rect x="160" y="110" width="80" height="90" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="200" y="155" fill="#1e293b" font-weight="900" font-size="11" text-anchor="middle">ADDER 2</text>
+
+        <!-- Stage 1 -->
+        <rect x="270" y="110" width="80" height="90" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="310" y="155" fill="#1e293b" font-weight="900" font-size="11" text-anchor="middle">ADDER 1</text>
+
+        <!-- Stage 0 -->
+        <rect x="380" y="110" width="80" height="90" rx="6" fill="#eef5ff" stroke="#2359e8" stroke-width="2" />
+        <text x="420" y="150" fill="#1e293b" font-weight="900" font-size="11" text-anchor="middle">ADDER 0</text>
+        <text x="420" y="165" fill="#64748b" font-weight="800" font-size="9" text-anchor="middle">(LSB)</text>
+
+        <!-- Input a Wires -->
+        <path id="path_a3" d="M75,25 V110" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_a2" d="M185,25 V110" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_a1" d="M295,25 V110" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_a0" d="M405,25 V110" stroke="#64748b" stroke-width="2.5" fill="none" />
+
+        <!-- Input b Wires -->
+        <path id="path_b3" d="M105,25 V110" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_b2" d="M215,25 V110" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_b1" d="M325,25 V110" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_b0" d="M435,25 V110" stroke="#64748b" stroke-width="2.5" fill="none" />
+
+        <!-- Carry Propagation Wires -->
+        <path id="path_c0" d="M380,155 H350" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_c1" d="M270,155 H240" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_c2" d="M160,155 H130" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_c3" d="M50,155 H20" stroke="#64748b" stroke-width="2.5" fill="none" />
+
+        <!-- Initial Carry In pin tied to 0 -->
+        <path d="M495,155 H460" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <circle cx="495" cy="155" r="8" fill="#e2e8f0" stroke="#000" stroke-width="1.5" />
+        <text x="495" y="158" fill="#000" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        <text x="490" y="143" fill="#64748b" font-weight="900" font-size="9" text-anchor="middle">cin</text>
+
+        <!-- Final Carry Out Pin -->
+        <circle cx="20" cy="155" r="11" fill="#ea580c" stroke="#000" stroke-width="2" />
+        <text id="node_s4" x="20" y="159" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        <text x="10" y="139" fill="#64748b" font-weight="900" font-size="9" text-anchor="middle">s4</text>
+
+        <!-- Difference Output Wires -->
+        <path id="path_s3" d="M90,200 V325" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_s2" d="M200,200 V325" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_s1" d="M310,200 V325" stroke="#64748b" stroke-width="2.5" fill="none" />
+        <path id="path_s0" d="M420,200 V325" stroke="#64748b" stroke-width="2.5" fill="none" />
+
+        <!-- Interactive Node Ports (A Inputs) -->
+        <!-- a3 -->
+        <g class="interactive-label" onclick="togglePin('a3')">
+          <circle cx="75" cy="25" r="11" fill="#2359e8" stroke="#000" stroke-width="1.5" />
+          <text id="node_a3" x="75" y="29" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        </g>
+        <text x="50" y="30" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">a3</text>
+        <!-- a2 -->
+        <g class="interactive-label" onclick="togglePin('a2')">
+          <circle cx="185" cy="25" r="11" fill="#2359e8" stroke="#000" stroke-width="1.5" />
+          <text id="node_a2" x="185" y="29" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        </g>
+        <text x="160" y="30" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">a2</text>
+        <!-- a1 -->
+        <g class="interactive-label" onclick="togglePin('a1')">
+          <circle cx="295" cy="25" r="11" fill="#2359e8" stroke="#000" stroke-width="1.5" />
+          <text id="node_a1" x="295" y="29" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        </g>
+        <text x="270" y="30" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">a1</text>
+        <!-- a0 -->
+        <g class="interactive-label" onclick="togglePin('a0')">
+          <circle cx="405" cy="25" r="11" fill="#2359e8" stroke="#000" stroke-width="1.5" />
+          <text id="node_a0" x="405" y="29" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        </g>
+        <text x="380" y="30" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">a0</text>
+
+        <!-- Interactive Node Ports (B Inputs) -->
+        <!-- b3 -->
+        <g class="interactive-label" onclick="togglePin('b3')">
+          <circle cx="105" cy="25" r="11" fill="#dc2626" stroke="#000" stroke-width="1.5" />
+          <text id="node_b3" x="105" y="29" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        </g>
+        <text x="130" y="30" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">b3</text>
+        <!-- b2 -->
+        <g class="interactive-label" onclick="togglePin('b2')">
+          <circle cx="215" cy="25" r="11" fill="#dc2626" stroke="#000" stroke-width="1.5" />
+          <text id="node_b2" x="215" y="29" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        </g>
+        <text x="240" y="30" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">b2</text>
+        <!-- b1 -->
+        <g class="interactive-label" onclick="togglePin('b1')">
+          <circle cx="325" cy="25" r="11" fill="#dc2626" stroke="#000" stroke-width="1.5" />
+          <text id="node_b1" x="325" y="29" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        </g>
+        <text x="350" y="30" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">b1</text>
+        <!-- b0 -->
+        <g class="interactive-label" onclick="togglePin('b0')">
+          <circle cx="435" cy="25" r="11" fill="#dc2626" stroke="#000" stroke-width="1.5" />
+          <text id="node_b0" x="435" y="29" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        </g>
+        <text x="460" y="30" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">b0</text>
+
+        <!-- Sum Output Pins -->
+        <!-- s3 -->
+        <circle cx="90" cy="325" r="11" fill="#16a34a" stroke="#000" stroke-width="1.5" />
+        <text id="node_s3" x="90" y="329" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        <text x="65" y="330" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">s3</text>
+        <!-- s2 -->
+        <circle cx="200" cy="325" r="11" fill="#16a34a" stroke="#000" stroke-width="1.5" />
+        <text id="node_s2" x="200" y="329" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        <text x="175" y="330" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">s2</text>
+        <!-- s1 -->
+        <circle cx="310" cy="325" r="11" fill="#16a34a" stroke="#000" stroke-width="1.5" />
+        <text id="node_s1" x="310" y="329" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        <text x="285" y="330" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">s1</text>
+        <!-- s0 -->
+        <circle cx="420" cy="325" r="11" fill="#16a34a" stroke="#000" stroke-width="1.5" />
+        <text id="node_s0" x="420" y="329" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">0</text>
+        <text x="395" y="330" fill="#475467" font-weight="900" font-size="13" text-anchor="middle">s0</text>
+
+        <!-- Internal stage carry labels -->
+        <rect x="350" y="149" width="16" height="13" rx="3" fill="#ffffff" stroke="#475467" stroke-width="1" />
+        <text id="node_c0" x="358" y="159" fill="#475467" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        <text x="358" y="138" fill="#475467" font-weight="800" font-size="8" text-anchor="middle">c0</text>
+
+        <rect x="240" y="149" width="16" height="13" rx="3" fill="#ffffff" stroke="#475467" stroke-width="1" />
+        <text id="node_c1" x="248" y="159" fill="#475467" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        <text x="248" y="138" fill="#475467" font-weight="800" font-size="8" text-anchor="middle">c1</text>
+
+        <rect x="130" y="149" width="16" height="13" rx="3" fill="#ffffff" stroke="#475467" stroke-width="1" />
+        <text id="node_c2" x="138" y="159" fill="#475467" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        <text x="138" y="138" fill="#475467" font-weight="800" font-size="8" text-anchor="middle">c2</text>
+
+        <rect x="32" y="160" width="16" height="13" rx="3" fill="#ffffff" stroke="#475467" stroke-width="1" />
+        <text id="node_c3" x="40" y="170" fill="#475467" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        <text x="40" y="148" fill="#475467" font-weight="800" font-size="8" text-anchor="middle">c3</text>
+
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Stage i Sum: si = ai ⊕ bi ⊕ c(i-1)  (where c(-1) = 0)</div>
+    <div class="formula">Stage i Carry Out: ci = (ai · bi) + (c(i-1) · (ai ⊕ bi))</div>
+    <div class="formula">Final Carry Out Pin: s4 = c3</div>
+    <div class="formulaBox">
+      Truth Table Validation Matrix:<br>
+      • A = 6 (0110), B = 3 (0011) → Sum S = 1001 (9), Carry Out (s4) = 0<br>
+      • A = 8 (1000), B = 8 (1000) → Sum S = 0000 (0), Carry Out (s4) = 1 (A + B = 16)<br>
+      • A = 15 (1111), B = 15 (1111) → Sum S = 11110 (30), Carry Out (s4) = 1
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Set the 4-bit addend A using the blue binary toggle buttons (a3 down to a0).</div>
+      <div class="aboutStep">Configure the 4-bit addend B using the red binary toggle buttons (b3 down to b0).</div>
+      <div class="aboutStep">Alternatively, toggle inputs directly on the interactive circuit diagram by clicking the labeled node ports.</div>
+      <div class="aboutStep">Click the SIMULATE ADDITION button to execute the calculations.</div>
+      <div class="aboutStep">Trace active logic high (1) pathways visually, which are highlighted dynamically in bright orange.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Analyze sequential ripple carry operations with a cascading full adder structure.</strong>
+      <p>The CalcBoy Bitwise 4-bit Carry-Propagate Adder Simulation evaluates binary addition, calculating sum bits, cascaded carry states, and final carry out conditions dynamically.</p>
+    </div>
+    <p>A Carry-Propagate Adder (also known as a Ripple Carry Adder) is the standard logic circuit implemented in hardware processing units to execute binary addition. The layout is formed by cascading individual 1-bit Full Adder stages. In this serial arrangement, the carry-out signal from each lower-order bit column propagates directly to the carry-in input of the adjacent higher-order bit column. This architecture mirrors the cascading behavior of standard ripple carry adders.</p>
+    <p>The calculation starts at the least significant bit (LSB) stage (Stage 0). It evaluates addend a0 and addend b0 under an initial carry-in of 0, outputting sum s0 and carry c0. This carry-out is then propagated to Stage 1, acting as its carry input. The addition cascades sequentially through Stage 2 and Stage 3, until the final carry out (s4) exits the most significant bit (MSB) stage. If s4 is active high (1), it indicates that sum exceeds the 4-bit limit, resulting in an active carry requirement.</p>
+    <p>Tracing discrete signal states is essential when designing or debugging digital arithmetic networks. This interactive simulator provides engineers, computer science students, and hobbyists with a clear visual tool to run addition equations, analyze carry propagation, and study processor logic structures.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Processor logic design, educational logic demonstrations, and ALU state analysis.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks final sum bits, carry out conditions, and cascading intermediate XOR pathways.</div>
+      <div class="aboutMiniCard"><span>Interactive UI</span>Tap any input directly on the diagram to cycle through states and evaluate the output instantly.</div>
+      <div class="aboutMiniCard"><span>Industry Standards</span>Complies with standard boolean algebra and binary logic gate calculations.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: An active final carry out (s4 = 1) indicates an arithmetic overflow in unsigned systems, representing the 5th bit of the sum.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is a Carry-Propagate Adder?</strong></h3>
+    <p>It is a digital circuit that adds two multi-bit binary numbers by cascading 1-bit Full Adders in series. The carry signal propagates (or ripples) from the least significant bit (LSB) to the most significant bit (MSB).</p>
+
+    <h3><strong>2. How does carry propagation affect adder performance?</strong></h3>
+    <p>Because the stages are cascaded, each stage must wait for the carry signal to be calculated by the preceding stage. This propagation delay (or ripple time) increases linearly with the number of bits, which can limit system speed.</p>
+
+    <h3><strong>3. What does an active final carry output (s4 = 1) indicate?</strong></h3>
+    <p>A final carry-out of 1 indicates that the sum of the two inputs exceeds the 4-bit limit (15). This represents an arithmetic overflow in unsigned systems, acting as the 5th bit of the sum.</p>
+
+    <h3><strong>4. How is the sum output (si) calculated at each stage?</strong></h3>
+    <p>The sum is calculated using the exclusive-OR (XOR) operation. For any stage i, the sum is si = ai ⊕ bi ⊕ c(i-1), outputting 1 only when an odd number of inputs are active high (1).</p>
+
+    <h3><strong>5. Can this circuit perform subtraction?</strong></h3>
+    <p>No. This specific block configuration is optimized for addition. However, in standard CPU Arithmetic Logic Units (ALUs), addition and subtraction are unified by adding XOR gates that can optionally invert input B to perform addition and subtraction on the same hardware.</p>
+
+    <h3><strong>6. How is binary addition cascaded?</strong></h3>
+    <p>Multi-bit addition is typically performed by cascading several 1-bit Full Adders in series. The Carry Out (co) pin of each lower-order bit stage connects to the Carry Input (ci) pin of the adjacent higher-order stage.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Full Adder Logic Simulator</strong>Analyze basic three-input addition operations and outputs.</div>
+      <div class="linkCard"><strong>Binary Adder-Subtractor Calculator</strong>Simulate signed calculations with unified adder-subtractor networks.</div>
+      <div class="linkCard"><strong>Ripple Carry Adder Calculator</strong>Analyze multi-bit cascading addition delays and signals.</div>
+      <div class="linkCard"><strong>Bitwise Logic Gate Simulator</strong>Run individual AND, OR, XOR, and NAND evaluations.</div>
+    </div>
+  </section>
+
 </div>
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script src='https://coertvonk.com/wp-content/logic-simulation/circuit-simulation.js'></script>
-<script id="rendered-js">
-      // 4-bit carry-propagate adder
-// used in https://coertvonk.com/technology/logic/computer-math-inquiry-4245/7
-/*
-Copyright (c) 2017 by Coert Vonk
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+<script>
+function getBit(id) {
+  var btn = document.getElementById(id);
+  return btn.classList.contains("active") ? 1 : 0;
+}
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+function toggleBit(id) {
+  var btn = document.getElementById(id);
+  if (btn.classList.contains("active")) {
+    btn.classList.remove("active");
+    btn.innerText = "0";
+  } else {
+    btn.classList.add("active");
+    btn.innerText = "1";
+  }
+  runSimulation();
+}
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+function togglePin(id) {
+  toggleBit(id);
+}
 
-var circuitCpa = {}; // carry-propagate adder Name Space
-(function () {
-  let queueDftDelay = 350; // msec
-  var input = {};
-  var output = {};
-
-  // resize the fonts when the window is resized
-  this.resizeFonts = function () {
-    for (let key in input) {
-      let obj = input[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+function setWireState(pathId, state) {
+  var path = document.getElementById(pathId);
+  if (path) {
+    if (state === 1) {
+      path.setAttribute("stroke", "#ea580c");
+      path.setAttribute("stroke-width", "3.5");
+    } else {
+      path.setAttribute("stroke", "#64748b");
+      path.setAttribute("stroke-width", "2.5");
     }
-    for (let key in output) {
-      let obj = output[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+  }
+}
+
+function runSimulation() {
+  // 1. Gather Inputs
+  var a = [
+    getBit("a0"), getBit("a1"), getBit("a2"), getBit("a3")
+  ];
+  var b = [
+    getBit("b0"), getBit("b1"), getBit("b2"), getBit("b3")
+  ];
+
+  // Calculate decimal representations
+  var aDec = 0, bDec = 0;
+  for (var i = 0; i < 4; i++) {
+    aDec += a[i] * Math.pow(2, i);
+    bDec += b[i] * Math.pow(2, i);
+  }
+
+  // Arithmetic Logic Computations
+  var c = []; // Cascading carries
+  var s = []; // Sum differences
+
+  // Stage 0 (LSB)
+  c[0] = a[0] && b[0] ? 1 : 0;
+  s[0] = a[0] ^ b[0] ^ 0;
+
+  // Stage 1
+  c[1] = (a[1] && b[1]) || (c[0] && (a[1] ^ b[1])) ? 1 : 0;
+  s[1] = a[1] ^ b[1] ^ c[0];
+
+  // Stage 2
+  c[2] = (a[2] && b[2]) || (c[1] && (a[2] ^ b[2])) ? 1 : 0;
+  s[2] = a[2] ^ b[2] ^ c[1];
+
+  // Stage 3 (MSB)
+  c[3] = (a[3] && b[3]) || (c[2] && (a[3] ^ b[3])) ? 1 : 0;
+  s[3] = a[3] ^ b[3] ^ c[2];
+
+  // Final carry out
+  var s4 = c[3];
+
+  // Output sum as standard binary string
+  var sumBin = s.slice().reverse().join("");
+
+  // Addition calculation: can yield positive values.
+  var sumDec = aDec + bDec;
+
+  // Render text outputs into results grid
+  document.getElementById("sum_bin").innerText = sumBin;
+  document.getElementById("sum_dec").innerText = sumDec;
+  document.getElementById("carry_out_bit").innerText = s4;
+  document.getElementById("carry_chain").innerText = c.slice().reverse().join(" -> ");
+
+  // Synchronize inputs & outputs with interactive SVG schematic
+  for (var i = 0; i < 4; i++) {
+    document.getElementById("node_a" + i).textContent = a[i];
+    document.getElementById("node_b" + i).textContent = b[i];
+    document.getElementById("node_s" + i).textContent = s[i];
+    document.getElementById("node_c" + i).textContent = c[i];
+
+    setWireState("path_a" + i, a[i]);
+    setWireState("path_b" + i, b[i]);
+    setWireState("path_s" + i, s[i]);
+  }
+
+  // Trace active carry lines in SVG
+  setWireState("path_c0", c[0]);
+  setWireState("path_c1", c[1]);
+  setWireState("path_c2", c[2]);
+  setWireState("path_c3", c[3]);
+
+  // Synchronize final carry out pin
+  document.getElementById("node_s4").textContent = s4;
+  setWireState("path_c3", s4); // Highlights the final carry exit line
+
+  document.getElementById("errorBox").style.display = "none";
+}
+
+// Start simulation on load
+window.addEventListener('load', function() {
+  runSimulation();
+});
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a Carry-Propagate Adder?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is a digital circuit that adds two multi-bit binary numbers by cascading 1-bit Full Adders in series. The carry signal propagates (or ripples) from the least significant bit (LSB) to the most significant bit (MSB)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does carry propagation affect adder performance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because the stages are cascaded, each stage must wait for the carry signal to be calculated by the preceding stage. This propagation delay (or ripple time) increases linearly with the number of bits, which can limit system speed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does an active final carry output (s4 = 1) indicate?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A final carry-out of 1 indicates that the sum of the two inputs exceeds the 4-bit limit (15). This represents an arithmetic overflow in unsigned systems, acting as the 5th bit of the sum."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the sum output (si) calculated at each stage?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The sum is calculated using the exclusive-OR (XOR) operation. For any stage i, the sum is si = ai ⊕ bi ⊕ c(i-1), outputting 1 only when an odd number of inputs are active high (1)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can this circuit perform subtraction?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. This specific block configuration is optimized for addition. However, in standard CPU Arithmetic Logic Units (ALUs), addition and subtraction are unified by adding XOR gates that can optionally invert input B to perform addition and subtraction on the same hardware."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is binary addition cascaded?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Multi-bit addition is typically performed by cascading several 1-bit Full Adders in series. The Carry Out (co) pin of each lower-order bit stage connects to the Carry Input (ci) pin of the adjacent higher-order stage."
+      }
     }
-  };
+  ]
+}
+</script>
 
-  this.toggle = function (obj) {
-    obj = obj || window.event;
-    obj.innerHTML = (Number(obj.innerHTML) + 1) % 2;
-    circuitCpa.updateOutputs();
-  };
-
-  this.init = function () {
-    console.log("init");
-    jQuery('.circuit-container#circuit-cpa > .circuit-input').each(function (ii, obj) {
-      input[obj.id] = obj;
-      obj.innerHTML = 0;
-      obj.onclick = function () {
-        circuitCpa.toggle(this);
-      };
-      obj.style.height = "9%";
-      obj.style.width = "4%";
-      //obj.style.visibility = "visible";  // test only
-    });
-    jQuery('.circuit-container#circuit-cpa > .circuit-output').each(function (ii, obj) {
-      output[obj.id] = obj;
-      obj.style.height = "9%";
-      obj.style.width = "4%";
-      //obj.style.visibility = "visible";  // test only
-    });
-    circuitCpa.updateOutputs();
-    circuitCpa.resizeFonts();
-    if (window != window.top && parent.jQuery.fancybox) {
-      resizeIframe();
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Bitwise 4-bit Carry-Propagate Adder Simulation",
+      "item": "https://calcboy.com/tool/bitwise-4-bit-carry-propagate-adder-simulation"
     }
-  };
+  ]
+}
+</script>
 
-  this.updateOutputs = function () {
-    var a0 = +input.a0.innerHTML;
-    var a1 = +input.a1.innerHTML;
-    var a2 = +input.a2.innerHTML;
-    var a3 = +input.a3.innerHTML;
-    var b0 = +input.b0.innerHTML;
-    var b1 = +input.b1.innerHTML;
-    var b2 = +input.b2.innerHTML;
-    var b3 = +input.b3.innerHTML;
-
-    let c0 = a0 && b0 || 0 && a0 ^ b0 ? 1 : 0;
-    circuitQueue.insert(output.c0, c0, queueDftDelay);
-    circuitQueue.insert(output.s0, a0 ^ b0 ^ 0 ? 1 : 0, 0);
-
-    let c1 = a1 && b1 || c0 && a1 ^ b1 ? 1 : 0;
-    circuitQueue.insert(output.c1, c1, queueDftDelay);
-    circuitQueue.insert(output.s1, a1 ^ b1 ^ c0 ? 1 : 0, 0);
-
-    let c2 = a2 && b2 || c1 && a2 ^ b2 ? 1 : 0;
-    circuitQueue.insert(output.c2, c2, queueDftDelay);
-    circuitQueue.insert(output.s2, a2 ^ b2 ^ c1 ? 1 : 0, 0);
-
-    let c3 = a3 && b3 || c2 && a3 ^ b3 ? 1 : 0;
-    circuitQueue.insert(output.c3, c3, queueDftDelay);
-    circuitQueue.insert(output.s3, a3 ^ b3 ^ c2 ? 1 : 0, 0);
-    circuitQueue.insert(output.s4, c3 ? 1 : 0, 0);
-    circuitQueue.play(); // play the queued UI changes while respecting the requested delays
-  };
-}).apply(circuitCpa);
-
-window.addEventListener('load', circuitCpa.init);
-window.addEventListener('resize', circuitCpa.resizeFonts);
-      //# sourceURL=pen.js
-    </script>
 </body>
 </html>
