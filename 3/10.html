@@ -1,141 +1,434 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
-<style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
-}
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
-</style>
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SNR to Resolution Converter | CalcBoy</title>
+<meta name="description" content="Convert between Signal-to-Noise Ratio (SNR) and ADC bit resolution. Calculate quantization steps, dynamic range, and equivalent noise floors instantly.">
+<meta name="keywords" content="SNR to resolution, resolution to SNR, ADC bit calculator, signal to noise ratio converter, dynamic range calculator, quantization steps, CalcBoy">
+<style>
+#snr-calc, #snr-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#snr-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; text-align: center; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
 
-<div id="body" class="width">
-<section id="content" class="two-column with-right-sidebar">
-<article>
+/* Input & Select UI Styles */
+input, select { width: 100%; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; padding: 0 12px; font-size: 15px; background: #fff; outline: none; }
+input:focus, select:focus { border-color: #ff6a00; box-shadow: 0 0 0 3px rgba(255,106,0,.12); }
 
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- rfw_rsp -->
-
-<SCRIPT language="javascript" type="text/javascript">
-function calc()
-{
-SNR_in=Number(document.calculator.number1.value);
-//SNR_in= Math.pow(10,(SNR_in/10));
-resolution_out=  ( SNR_in - 1.76 )/6.02 ;
-document.calculator.RESOLUTION.value=resolution_out;
+button.calc-btn { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.gate-selector-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; margin-bottom: 10px; }
+.gate-tab-btn { padding: 12px 6px; background: #fff; border: 2px solid #cfd6df; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; color: #475467; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.gate-tab-btn:hover { border-color: #ff7a18; color: #ff7a18; }
+.gate-tab-btn.active { background: #ff7a18; color: #fff; border-color: #ff4b00; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 8px; align-items: center; }
+.unit-box { width: 82px; min-width: 82px; max-width: 82px; height: 43px; border: 1px solid #cfd6df; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #374151; }
+@media(max-width:600px){
+  .calc-row { grid-template-columns: minmax(0, 1fr) 72px; }
+  .unit-box { width: 72px; min-width: 72px; max-width: 72px; }
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  .result-value { font-size: 14px; }
 }
-</SCRIPT>
-<FORM name="calculator">
+</style>
+</head>
+<body>
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
+<div id="snr-calc">
 
+  <div class="calc-grid">
+    <div class="subTitle">Dynamic Conversion Parameters</div>
 
-<label for="f">SNR<font face="Arial" size="6"></font></label><input  name="number1" class="intro"  style="position: absolute;  text-align:center; width:350; right: 10px;"class="form-control" type="number" />
-<h1 style="font-size:30;"></h1>
+    <div>
+      <label class="calc-label">Select Conversion Direction</label>
+      <div class="gate-selector-grid">
+        <button class="gate-tab-btn active" id="tab_SNR_to_RES" onclick="selectMode('SNR_to_RES')">SNR to Resolution</button>
+        <button class="gate-tab-btn" id="tab_RES_to_SNR" onclick="selectMode('RES_to_SNR')">Resolution to SNR</button>
+      </div>
+    </div>
 
+    <div>
+      <label class="calc-label" id="input_label_text">Signal-to-Noise Ratio (SNR)</label>
+      <div class="calc-row">
+        <input id="input_val" type="number" step="any" placeholder="e.g. 98" oninput="clearResults()">
+        <div class="unit-box" id="unit_label">dB</div>
+      </div>
+    </div>
+  </div>
 
+  <button type="button" class="calc-btn" onclick="computeResolution()">CONVERT</button>
 
-</fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<h1 style="font-size:50;"></h1>
-<fieldset><legend><div colspan="2" align="center" height="19"><INPUT type="button" name="bt1" value="CALCULATE" onclick="javascript:calc();" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset></div>
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+  <div id="errorBox">Please enter a valid numeric value.</div>
 
+  <div class="result-title">RESULTS</div>
 
-<h3>Outputs</h3></div></legend>
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Converted Value</div><div class="result-value"><span id="converted_out"></span></div></div>
+    <div class="result-card green"><div class="result-label">Quantization Steps</div><div class="result-value"><span id="quant_steps_out"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Dynamic Range (dB)</div><div class="result-value"><span id="dr_out"></span></div></div>
+    <div class="result-card orange"><div class="result-label">RMS Noise Floor (dBFS)</div><div class="result-value"><span id="noise_out"></span></div></div>
+  </div>
 
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Signal-to-Noise Ratio (SNR)</strong>The power ratio comparing the desired signal level to background noise. Higher values indicate cleaner signal reproduction.</div>
+      <div class="paramItem"><strong>Resolution (Bits)</strong>The ideal bit depth of the analog-to-digital converter (ADC). Dictates the precision of amplitude quantization.</div>
+      <div class="paramItem"><strong>Quantization Steps</strong>The total discrete voltage intervals ($2^{\text{Resolution}}$) resolved by the ADC. High step counts allow finer signal details.</div>
+      <div class="paramItem"><strong>Dynamic Range (DR)</strong>The theoretical maximum signal amplitude ratio relative to the noise floor, calculated as $6.02 \times \text{Bits}$.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>CD-Quality Audio (16-bit)</strong></p>
+        <p>A standard 16-bit audio DAC provides a theoretical maximum SNR of 98.08 dB, resolving 65,536 distinct quantization levels.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Hi-Res Audio Master (24-bit)</strong></p>
+        <p>A high-fidelity 24-bit studio recorder provides an ideal SNR threshold of 146.24 dB, tracking extreme dynamic variations.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>High-Speed 8-bit Oscilloscope</strong></p>
+        <p>A standard digital oscilloscope operates with 8-bit resolution, yielding an ideal signal-to-noise ratio limit of 49.92 dB.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>SDR Receiver Planning</strong></p>
+        <p>Analyze RF spectral noise margins to determine required ADC bit-depths and minimize spurious quantization spurs.</p>
+      </div>
+    </div>
+  </section>
 
-<label for="f">RESOLUTION<font face="Arial" size="6"></font></label><input  name="RESOLUTION" class="intro"  style="position: absolute;   text-align:center; width:350; right: 10px;"class="form-control" type="text" />
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Signal-to-Noise Ratio (SNR) compares the power of a nominal sinusoidal signal to the background noise floor. The theoretical limits are governed by quantization noise, which is the inevitable rounding error introduced during analog-to-digital conversion.</p>
 
-</fieldset></div>
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" id="snr-diagram">
+        <rect width="520" height="220" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Signal Sine Wave (Blue, Full Scale) -->
+        <path d="M 40,110 Q 90,20 140,110 T 240,110 T 340,110 T 440,110" fill="none" stroke="#2359e8" stroke-width="3.5" />
+        <line x1="30" y1="110" x2="490" y2="110" stroke="#94a3b8" stroke-width="1.5" />
 
+        <!-- Noise Waveform (Red, at the bottom) -->
+        <path d="M 40,180 L 50,175 L 60,185 L 70,180 L 80,190 L 90,175 L 100,185 L 110,180 L 120,185 L 130,175 L 140,180 L 150,175 L 160,185 L 170,180 L 180,190 L 190,175 L 200,185 L 210,180 L 220,185 L 230,175 L 240,180 L 250,175 L 260,185 L 270,180 L 280,190 L 290,175 L 300,185 L 310,180 L 320,185 L 330,175 L 340,180 L 350,175 L 360,185 L 370,180 L 380,190 L 390,175 L 400,185 L 410,180 L 420,185 L 430,175 L 440,180 L 450,175 L 460,185" fill="none" stroke="#dc2626" stroke-width="1.5" />
 
+        <!-- SNR Double headed Arrow -->
+        <path d="M 240,30 V 170" stroke="#ff7a18" stroke-width="2" />
+        <polygon points="236,40 244,40 240,25" fill="#ff7a18" />
+        <polygon points="236,160 244,160 240,175" fill="#ff7a18" />
 
+        <!-- Labels -->
+        <text x="240" y="20" fill="#2359e8" font-weight="900" font-size="10" text-anchor="middle">Peak Signal Level</text>
+        <text x="260" y="100" fill="#ea580c" font-weight="900" font-size="11">SNR (dB)</text>
+        <text x="320" y="195" fill="#dc2626" font-weight="900" font-size="10" text-anchor="middle">Average Noise Floor</text>
 
+        <!-- Legend -->
+        <text x="260" y="210" fill="#475467" font-weight="900" font-size="11" text-anchor="middle">Logarithmic Signal-to-Noise Ratio (SNR) Threshold</text>
+      </svg>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">SNR to Resolution: Resolution = (SNR - 1.76) / 6.02</div>
+    <div class="formula">Resolution to SNR: SNR = (Resolution × 6.02) + 1.76</div>
+    <div class="formula">Quantization Steps: Steps = 2^Resolution</div>
+    <div class="formula">Ideal Dynamic Range: Dynamic Range = Resolution × 6.02 (dB)</div>
+    <div class="formulaBox">
+      Step-by-Step Conversion Example (98 dB SNR to Resolution):<br>
+      • Step 1: Subtract ideal offset: 98 - 1.76 = 96.24 dB<br>
+      • Step 2: Divide by slope coefficient: 96.24 / 6.02 = 15.986 Bits (~16 Bits)<br>
+      • Step 3: Compute quantization steps: 2^15.986 = 64,942 steps<br>
+      • Step 4: Quantization noise relative to peak: -98.0 dBFS
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the desired conversion direction using the top segment tabs.</div>
+      <div class="aboutStep">Enter your known value (either SNR in dB or Resolution in Bits, depending on the active mode).</div>
+      <div class="aboutStep">Click the CONVERT button to execute the calculations.</div>
+      <div class="aboutStep">Observe the converted results inside the results panel.</div>
+      <div class="aboutStep">Review the corresponding quantization levels, ideal Dynamic Range, and noise floor.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Evaluate data converter performance across analog-to-digital (ADC) and digital-to-analog (DAC) networks.</strong>
+      <p>The CalcBoy SNR to Resolution Converter translates dynamic parameters instantly, generating standard physical conversion metrics, quantization step numbers, and noise floors.</p>
+    </div>
+    <p>In digital signal processing (DSP) and telecommunications design, data converters act as crucial interfaces between real-world analog waveforms and digital silicon processors. Because real-world converters introduce thermal noise, clock jitter, and harmonic distortions, their active bit depth is always lower than their physical design resolution. This discrepancy is captured by the Effective Number of Bits (ENOB).</p>
+    <p>The mathematical relationship relies on the standardized full-scale sinusoidal signal-to-noise ratio. An ideal ADC's quantization error is uniformly distributed over the interval of one least significant bit (LSB). Integrating this noise power relative to a peak-to-peak sine wave yields the classic equation: SNR = 6.02 × N + 1.76 dB. By inverting this, designers can identify the functional bit-resolution of any data converter based on measured laboratory SNR values.</p>
+    <p>Using this calculator, system architects, RF engineers, DSP specialists, and electronics students can evaluate data converter specifications, trace quantization limits, and determine system dynamic range requirements.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>ADC testing, receiver design, software-defined radio (SDR) planning, and DSP noise margin modeling.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks converted values alongside discrete quantization levels, SNR bounds, and relative noise floors.</div>
+      <div class="aboutMiniCard"><span>Precision Math</span>Logarithmic evaluations use exact double-precision calculations to prevent rounding drift.</div>
+      <div class="aboutMiniCard"><span>Bidirectional Converter</span>Supports conversion from SNR (dB) to Resolution (Bits) as well as from Resolution to SNR.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: A real-world 16-bit ADC typically yields an equivalent resolution around 12 to 14 bits due to thermal noise and clock phase jitter at high sampling rates.</div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is the difference between physical resolution and ideal resolution?</strong></h3>
+    <p>Physical resolution is the number of bits in the converter's digital register (e.g. 14 bits). Ideal resolution (derived from SNR) is the actual resolution achieved after subtracting errors from noise, harmonic distortion, and clock jitter.</p>
 
+    <h3><strong>2. How does the 1.76 dB offset factor arise in the equation?</strong></h3>
+    <p>The 1.76 dB constant represents the theoretical root-mean-square (RMS) quantization noise of an ideal ADC, assuming a continuous full-scale sinusoidal input and a uniform probability distribution of the quantization error.</p>
 
+    <h3><strong>3. Can resolution be higher than the physical bit resolution?</strong></h3>
+    <p>No. A converter's equivalent resolution is always less than or equal to its physical bit depth. Thermal noise, clock jitter, non-linearities, and analog input track-and-hold distortions inevitably degrade dynamic range.</p>
 
+    <h3><strong>4. What does the term SNR represent?</strong></h3>
+    <p>SNR stands for Signal-to-Noise Ratio. It is the ratio of total signal power to the combined power of all noise components and quantization errors (excluding harmonic distortion components).</p>
 
+    <h3><strong>5. How does sampling rate affect resolution?</strong></h3>
+    <p>At very high sampling rates, clock jitter (phase noise) increases, which introduces timing errors during conversion. This timing uncertainty translates to amplitude noise on the input signal, decreasing the measured SNR and resolution.</p>
 
+    <h3><strong>6. Why is quantization noise expressed in dBFS?</strong></h3>
+    <p>dBFS stands for decibels relative to Full Scale. It is an amplitude level unit used to measure signals relative to the maximum analog input range the data converter can process without clipping.</p>
+  </section>
 
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>SINAD to ENOB Converter</strong>Convert Spurious-Free Dynamic Range (SFDR) to effective bit limits.</div>
+      <div class="linkCard"><strong>ADC Noise Floor Calculator</strong>Determine the absolute thermal and quantization noise floor in nV/Hz.</div>
+      <div class="linkCard"><strong>Phase Jitter to SNR Calculator</strong>Evaluate SNR degradation due to clock phase noise and jitter.</div>
+      <div class="linkCard"><strong>Decibels to Voltage Converter</strong>Translate logarithmic power ratios into equivalent RMS voltages.</div>
+    </div>
+  </section>
 
+</div>
 
+<script>
+// State manager for current active conversion mode (Default is SNR_to_RES)
+var activeMode = "SNR_to_RES";
 
+function val(id) {
+  return document.getElementById(id).value;
+}
 
+function put(id, val, unit, precision) {
+  var valueBox = document.getElementById(id);
+  if (typeof val === "string") {
+    valueBox.innerText = val;
+  } else {
+    valueBox.innerText = Number(val).toPrecision(precision || 5) + (unit ? (" " + unit) : "");
+  }
+}
 
-</FORM>
+function clearResults() {
+  ["converted_out", "quant_steps_out", "dr_out", "noise_out"].forEach(function(id) {
+    document.getElementById(id).innerText = "";
+  });
+  document.getElementById("errorBox").style.display = "none";
+}
+
+function selectMode(modeName) {
+  activeMode = modeName;
+  
+  // Update segment active states visually
+  ["SNR_to_RES", "RES_to_SNR"].forEach(function(m) {
+    var btn = document.getElementById("tab_" + m);
+    if (m === modeName) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+
+  // Update input label and unit label dynamically
+  var inputLabelText = document.getElementById("input_label_text");
+  var unitLabel = document.getElementById("unit_label");
+  if (modeName === "SNR_to_RES") {
+    inputLabelText.innerText = "Signal-to-Noise Ratio (SNR)";
+    unitLabel.innerText = "dB";
+  } else {
+    inputLabelText.innerText = "Resolution Value (Bits)";
+    unitLabel.innerText = "Bits";
+  }
+  
+  clearResults();
+}
+
+function computeResolution() {
+  var inputRaw = val("input_val");
+
+  // Validation checks: blank fields, non-numeric values, or out of bound values (Negative value handled normally if valid)
+  if (inputRaw === "" || isNaN(inputRaw)) {
+    document.getElementById("errorBox").style.display = "block";
+    clearResults();
+    return;
+  }
+
+  var value = Number(inputRaw);
+
+  var convertedVal = 0;
+  var resBits = 0;
+  var snr = 0;
+  var quantSteps = 0;
+  var dynamicRange = 0;
+  var noiseFloor = 0;
+
+  if (activeMode === "SNR_to_RES") {
+    // SNR to Resolution
+    // Preserve exact original formulas: resolution_out = (SNR_in - 1.76) / 6.02
+    resBits = (value - 1.76) / 6.02;
+    convertedVal = resBits;
+    snr = value;
+  } else {
+    // Resolution to SNR
+    // Preserve exact original formulas: SNR = (Resolution * 6.02) + 1.76
+    snr = (value * 6.02) + 1.76;
+    convertedVal = snr;
+    resBits = value;
+  }
+
+  // Calculate secondary dynamic range parameters
+  quantSteps = Math.pow(2, resBits);
+  dynamicRange = resBits * 6.02;
+  noiseFloor = -snr;
+
+  document.getElementById("errorBox").style.display = "none";
+
+  // Display outputs inside results panel
+  var destUnit = (activeMode === "SNR_to_RES") ? "Bits" : "dB";
+  put("converted_out", convertedVal, destUnit, 6);
+  put("quant_steps_out", quantSteps, "steps", 6);
+  put("dr_out", dynamicRange, "dB", 6);
+  put("noise_out", noiseFloor, "dBFS", 6);
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between physical resolution and ideal resolution?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Physical resolution is the number of bits in the converter's digital register (e.g. 14 bits). Ideal resolution (derived from SNR) is the actual resolution achieved after subtracting errors from noise, harmonic distortion, and clock jitter."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the 1.76 dB offset factor arise in the equation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The 1.76 dB constant represents the theoretical root-mean-square (RMS) quantization noise of an ideal ADC, assuming a continuous full-scale sinusoidal input and a uniform probability distribution of the quantization error."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can resolution be higher than the physical bit resolution?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. A converter's equivalent resolution is always less than or equal to its physical bit depth. Thermal noise, clock jitter, non-linearities, and analog input track-and-hold distortions inevitably degrade dynamic range."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the term SNR represent?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SNR stands for Signal-to-Noise Ratio. It is the ratio of total signal power to the combined power of all noise components and quantization errors (excluding harmonic distortion components)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does sampling rate affect resolution?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At very high sampling rates, clock jitter (phase noise) increases, which introduces timing errors during conversion. This timing uncertainty translates to amplitude noise on the input signal, decreasing the measured SNR and resolution."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is quantization noise expressed in dBFS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "dBFS stands for decibels relative to Full Scale. It is an amplitude level unit used to measure signals relative to the maximum analog input range the data converter can process without clipping."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "SNR to Resolution Converter",
+      "item": "https://calcboy.com/tool/snr-to-resolution-converter"
+    }
+  ]
+}
+</script>
+
 </body>
 </html>
