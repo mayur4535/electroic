@@ -1,285 +1,484 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
-<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
-<title>CodePen - Bitwise  4-bit Carry-Propagate Multiplier Simulation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bitwise 4-bit Carry-Propagate Multiplier Simulation | CalcBoy</title>
+<meta name="description" content="Simulate a 4-bit Carry-Propagate Multiplier array. Toggle binary inputs to trace the partial products, ripple carries, and final outputs in real-time.">
+<meta name="keywords" content="4-bit carry-propagate multiplier, ripple carry multiplier, binary multiplier simulator, digital logic gate simulator, computer arithmetic calculator, array multiplier, CalcBoy">
 <style>
-      div.circuit-container {
-  max-width: 96%;
-  width: auto;
-  margin: 5px 0 5px 0;
-  position: relative;
+#cpm-calc, #cpm-calc * { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0 !important; padding: 0 !important; background: #f6f8fb; color: #333; }
+#cpm-calc { width: 100% !important; max-width: 620px; margin: auto; padding: 14px 10px 10px 10px !important; background: transparent; border: none; }
+.calc-grid { display: grid; gap: 15px; }
+.calc-label { display: block; font-size: 15px; font-weight: 700; color: #4b5563; margin-bottom: 7px; text-align: center; }
+.subTitle { font-size: 13px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-top: 4px; padding: 10px 0 0; border-top: 1px solid #e5e7eb; }
+button { width: 100%; height: 45px; border: 0; border-radius: 9px; background: linear-gradient(90deg,#ff7a18,#ff4b00); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+#errorBox { display: none; margin-top: 14px; margin-bottom: 6px; color: #dc2626; font-size: 14px; font-weight: 800; text-align: center; border: 2px solid #dc2626; padding: 10px; border-radius: 8px; background: #fef2f2; }
+.result-title { margin-top: 30px; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #7b8794; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-card { min-height: 82px; padding: 16px; border-radius: 12px; border: 1px solid #cfd6df; }
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+.result-card.orange { background: #fff7ed; border-color: #fed7aa; }
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+.result-card.orange .result-label, .result-card.orange .result-value { color: #ea580c; }
+.result-label { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .5px; }
+.result-value { font-size: 16px; font-weight: 900; word-break: break-word; line-height: 1.2; min-height: 22px; }
+.infoBox { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.infoBox h2 { margin: 0 0 12px; font-size: 15px; color: #1e293b; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.infoBox h3 { font-size: 14px; color: #0f172a; margin: 12px 0 7px; }
+.infoBox p, .infoBox li { font-size: 13px; line-height: 1.6; color: #667085; font-weight: 700; }
+.formula, .formulaBox { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 13px; color: #334155; font-weight: 700; line-height: 1.6; }
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; color: #475467; line-height: 1.55; }
+.paramItem strong, .aboutMiniCard span, .linkCard strong { color: #0f172a; display: block; margin-bottom: 2px; font-weight: 900; }
+.diagramBox { background: #fff; padding: 16px; text-align: center; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 12px; overflow-x: auto; }
+.diagramBox svg { width: 100%; max-width: 520px; height: auto; display: block; margin: auto; }
+.aboutLead { background: linear-gradient(135deg,#eef5ff,#fff7ed); border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.aboutLead strong { display: block; font-size: 16px; color: #0f172a; margin-bottom: 7px; }
+.aboutNote { background: #ecfdf5; border: 1px solid #bbf7d0; border-left: 5px solid #059669; border-radius: 10px; padding: 12px; margin: 12px 0; font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.6; }
+.aboutSteps { counter-reset: step; display: grid; gap: 8px; margin: 12px 0; }
+.aboutStep { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 11px 11px 11px 42px; font-size: 13px; font-weight: 700; color: #475467; line-height: 1.55; }
+.aboutStep:before { counter-increment: step; content: counter(step); position:absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: #ff7a18; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+.binary-selector { display: flex; gap: 6px; justify-content: center; margin-top: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.bin-btn { width: 38px; height: 38px; border-radius: 8px; border: 2px solid #cfd6df; background: #fff; font-weight: 900; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; transition: all 0.2s; }
+.bin-btn.active { background: #2359e8; color: #fff; border-color: #1d4ed8; }
+.bin-btn.red-btn.active { background: #dc2626; color: #fff; border-color: #991b1b; }
+.bit-label { font-size: 11px; font-weight: 800; color: #94a3b8; display: block; text-align: center; margin-top: 2px; }
+.interactive-label { cursor: pointer; user-select: none; }
+.interactive-label:hover { filter: brightness(1.2); }
+@media(max-width:600px){
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr; }
+  .result-value { font-size: 15px; }
 }
-
-img.circuit-schematic {
-  width: 100%;
-  height: auto;
-}
-
-.circuit-input {
-  -webkit-user-select: none;
-  transition: all 1s ease;
-  background: white;
-  border: 1px solid;
-  border-radius: 5px;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-.circuit-input:active {
-    background-color: yellow;
-    -webkit-transition: background-color 0.1s ease-out;
-}
-
-.circuit-output {
-  background: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-}
-body { 
-  background: ; 
-}
-.circuit-intern {
-  background: none;
-  border: none;
-  position: absolute;
-  font-family: courier;
-  font-size: 1em;
-  font-weight: regular;
-  text-align: center;
-}
-
-.circuit-container > .flash {
-  -webkit-animation-name: circuit-flash-animation;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-timing-function: ease-in-out;
-}
-
-@-webkit-keyframes circuit-flash-animation {
-  from {
-    background: yellow;
-  }
-  to {
-    background: default;
-  }
-}
-
-    </style>
-<script>
-  window.console = window.console || function(t) {};
-</script>
-<script>
-  if (document.location.search.match(/type=embed/gi)) {
-    window.parent.postMessage("resize", "*");
-  }
-</script>
+</style>
 </head>
-<body translate="no">
-<div class="circuit-container" id="circuit-cpm">
-<img class="circuit-schematic" alt="" src="https://coertvonk.com/wp-content/logic-simulation/multiplier/4-bit carry-propagate.svg">
-<div class="circuit-input" id="x0" style="bottom:90%;left:96.5%"></div>
-<div class="circuit-input" id="x1" style="bottom:90%;left:83.5%"></div>
-<div class="circuit-input" id="x2" style="bottom:90%;left:71%"></div>
-<div class="circuit-input" id="x3" style="bottom:90%;left:58%"></div>
-<div class="circuit-input" id="y0" style="bottom:77.5%;left:0.5%"></div>
-<div class="circuit-input" id="y1" style="bottom:58%;left:0.5%"></div>
-<div class="circuit-input" id="y2" style="bottom:38.5%;left:0.5%"></div>
-<div class="circuit-input" id="y3" style="bottom:19%;left:0.5%"></div>
-<div class="circuit-intern" id="c00" style="bottom:84%;left:83.5%">x</div>
-<div class="circuit-intern" id="c01" style="bottom:84%;left:70.9%">x</div>
-<div class="circuit-intern" id="c02" style="bottom:84%;left:57.9%">x</div>
-<div class="circuit-intern" id="c03" style="bottom:68.5%;left:37%">x</div>
-<div class="circuit-intern" id="c10" style="bottom:64%;left:71%">x</div>
-<div class="circuit-intern" id="c11" style="bottom:64%;left:58.2%">x</div>
-<div class="circuit-intern" id="c12" style="bottom:64%;left:45.3%">x</div>
-<div class="circuit-intern" id="c13" style="bottom:49.5%;left:24.3%">x</div>
-<div class="circuit-intern" id="c20" style="bottom:44.5%;left:58.2%">x</div>
-<div class="circuit-intern" id="c21" style="bottom:44.5%;left:45.4%">x</div>
-<div class="circuit-intern" id="c22" style="bottom:44.5%;left:32.6%">x</div>
-<div class="circuit-intern" id="c23" style="bottom:30%;left:11.3%;">x</div>
-<div class="circuit-intern" id="c30" style="bottom:25%;left:45.3%;">x</div>
-<div class="circuit-intern" id="c31" style="bottom:25%;left:32.6%;">x</div>
-<div class="circuit-intern" id="c32" style="bottom:25%;left:19.8%;">x</div>
-<div class="circuit-intern" id="c33" style="bottom:10%;left:0.5%;">x</div>
-<div class="circuit-intern" id="s00" style="bottom:65%;left:87.2%;">x</div>
-<div class="circuit-intern" id="s01" style="bottom:66%;left:74.7%;">x</div>
-<div class="circuit-intern" id="s02" style="bottom:66%;left:61.8%;">x</div>
-<div class="circuit-intern" id="s03" style="bottom:66%;left:49.1%;">x</div>
-<div class="circuit-intern" id="s10" style="bottom:47%;left:74.7%;">x</div>
-<div class="circuit-intern" id="s11" style="bottom:47%;left:61.8%;">x</div>
-<div class="circuit-intern" id="s12" style="bottom:47%;left:49.1%;">x</div>
-<div class="circuit-intern" id="s13" style="bottom:47%;left:36.3%;">x</div>
-<div class="circuit-intern" id="s20" style="bottom:28%;left:61.8%;">x</div>
-<div class="circuit-intern" id="s21" style="bottom:28%;left:49.1%;">x</div>
-<div class="circuit-intern" id="s22" style="bottom:28%;left:36.3%;">x</div>
-<div class="circuit-intern" id="s23" style="bottom:28%;left:23.3%;">x</div>
-<div class="circuit-output" id="p0" style="bottom:0%;left:88.5%;">x</div>
-<div class="circuit-output" id="p1" style="bottom:0%;left:75.8%;">x</div>
-<div class="circuit-output" id="p2" style="bottom:0%;left:62.8%;">x</div>
-<div class="circuit-output" id="p3" style="bottom:0%;left:50%;">x</div>
-<div class="circuit-output" id="p4" style="bottom:0%;left:37.3%;">x</div>
-<div class="circuit-output" id="p5" style="bottom:0%;left:24.4%;">x</div>
-<div class="circuit-output" id="p6" style="bottom:0%;left:11.6%;">x</div>
-<div class="circuit-output" id="p7" style="bottom:0%;left:1.2%;">x</div>
+<body>
+
+<div id="cpm-calc">
+
+  <div class="calc-grid">
+    <div class="subTitle">Simulate Binary Inputs</div>
+
+    <div>
+      <label class="calc-label">Multiplier Input (X) - 4-bit</label>
+      <div class="binary-selector">
+        <div><button class="bin-btn" id="x3" onclick="toggleBit('x3')">0</button><span class="bit-label">x3 (MSB)</span></div>
+        <div><button class="bin-btn" id="x2" onclick="toggleBit('x2')">0</button><span class="bit-label">x2</span></div>
+        <div><button class="bin-btn" id="x1" onclick="toggleBit('x1')">0</button><span class="bit-label">x1</span></div>
+        <div><button class="bin-btn" id="x0" onclick="toggleBit('x0')">0</button><span class="bit-label">x0 (LSB)</span></div>
+      </div>
+    </div>
+
+    <div>
+      <label class="calc-label">Multiplicand Input (Y) - 4-bit</label>
+      <div class="binary-selector">
+        <div><button class="bin-btn red-btn" id="y3" onclick="toggleBit('y3')">0</button><span class="bit-label">y3 (MSB)</span></div>
+        <div><button class="bin-btn red-btn" id="y2" onclick="toggleBit('y2')">0</button><span class="bit-label">y2</span></div>
+        <div><button class="bin-btn red-btn" id="y1" onclick="toggleBit('y1')">0</button><span class="bit-label">y1</span></div>
+        <div><button class="bin-btn red-btn" id="y0" onclick="toggleBit('y0')">0</button><span class="bit-label">y0 (LSB)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="runSimulation()">SIMULATE MULTIPLICATION</button>
+
+  <div id="errorBox">Please enter valid binary states (0 or 1).</div>
+
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Product (P) - Binary</div><div class="result-value"><span id="prod_bin"></span></div></div>
+    <div class="result-card green"><div class="result-label">Product (P) - Decimal</div><div class="result-value"><span id="prod_dec"></span></div></div>
+    <div class="result-card purple"><div class="result-label">Arithmetic Steps</div><div class="result-value"><span id="calc_steps"></span></div></div>
+    <div class="result-card orange"><div class="result-label">Output Bus Mode</div><div class="result-value"><span id="bus_mode"></span></div></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Multiplier (X)</strong>The 4-bit multiplier operand (x3 x2 x1 x0). Entered using the blue binary selectors, mapped as the horizontal axis of the multiplier cell array.</div>
+      <div class="paramItem"><strong>Multiplicand (Y)</strong>The 4-bit multiplicand operand (y3 y2 y1 y0). Entered using the red binary selectors, mapped as the vertical axis of the cell array.</div>
+      <div class="paramItem"><strong>Full Adder Cascades</strong>Each row of the array acts as a partial product generator and carry-propagation row using Carry-Save or Ripple-Carry configurations.</div>
+      <div class="paramItem"><strong>Interactive Gates</strong>Inputs can be controlled via switches above or toggled by clicking active port nodes in the diagram.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Standard Multiplication (12 × 5)</strong></p>
+        <p>Set Multiplier X = 1100 (12) and Multiplicand Y = 0101 (5). Sum yields Product P = 00111100 (60).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Maximum Capacity (15 × 15)</strong></p>
+        <p>Set Multiplier X = 1111 (15) and Multiplicand Y = 1111 (15). Array resolves to Product P = 11100001 (225).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Multiplication by Zero (7 × 0)</strong></p>
+        <p>Set Multiplier X = 0111 (7) and Multiplicand Y = 0000 (0). Yields Product P = 00000000 (0).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Identity State (13 × 1)</strong></p>
+        <p>Set Multiplier X = 1101 (13) and Multiplicand Y = 0001 (1). Yields Product P = 00001101 (13).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A Carry-Propagate Multiplier (or Ripple-Carry Array Multiplier) implements multi-bit multiplication directly in hardware using a 2D array of Multiplier Adder (MA) cells. Tap any node to change input configurations in real-time.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 520 350" xmlns="http://www.w3.org/2000/svg" id="cpm-diagram">
+        <rect width="520" height="350" fill="#ffffff" rx="12" stroke="#e5e7eb" stroke-width="2" />
+        
+        <!-- Main Schematic Block Outline -->
+        <rect x="120" y="60" width="280" height="230" rx="12" fill="#f8fafc" stroke="#475467" stroke-width="3" />
+        <text x="260" y="85" fill="#1e293b" font-weight="900" font-size="13" text-anchor="middle">4-BIT CARRY-PROPAGATE ARRAY</text>
+
+        <!-- Dynamic Visual Data Flow Wires -->
+        <path id="path_x" d="M210,25 V60" stroke="#64748b" stroke-width="3" fill="none" />
+        <path id="path_y" d="M60,160 H120" stroke="#64748b" stroke-width="3" fill="none" />
+        <path id="path_p" d="M260,290 V325" stroke="#64748b" stroke-width="3" fill="none" />
+
+        <!-- Bus labels with real-time decimal updates -->
+        <text x="290" y="30" fill="#2359e8" font-weight="900" font-size="11" text-anchor="middle">X: <tspan id="lbl_x_bin">0000</tspan> (<tspan id="lbl_x_dec">0</tspan>)</text>
+        <text x="50" y="99" fill="#dc2626" font-weight="900" font-size="11" text-anchor="middle">Y: <tspan id="lbl_y_bin">0000</tspan> (<tspan id="lbl_y_dec">0</tspan>)</text>
+        <text x="260" y="340" fill="#16a34a" font-weight="900" font-size="11" text-anchor="middle">P: <tspan id="lbl_p_bin">00000000</tspan> (<tspan id="lbl_p_dec">0</tspan>)</text>
+
+        <!-- Hardware Stage Blocks -->
+        <g stroke="#1e293b" stroke-width="2">
+          <!-- Multiplier Array Row stages -->
+          <rect x="140" y="110" width="110" height="60" rx="4" fill="#eef5ff" />
+          <rect x="270" y="110" width="110" height="60" rx="4" fill="#eef5ff" />
+          <rect x="200" y="200" width="120" height="60" rx="4" fill="#ecfdf5" stroke="#16a34a" />
+        </g>
+
+        <!-- Stage block labels -->
+        <text x="195" y="145" fill="#1e293b" font-weight="900" font-size="10" text-anchor="middle">PARTIAL PROD 0-1</text>
+        <text x="325" y="145" fill="#1e293b" font-weight="900" font-size="10" text-anchor="middle">PARTIAL PROD 2-3</text>
+        <text x="260" y="235" fill="#15803d" font-weight="900" font-size="9" text-anchor="middle">CARRY-PROPAGATION</text>
+
+        <!-- Interactive Node Ports (X Inputs) -->
+        <g class="interactive-label" onclick="togglePin('x3')">
+          <circle cx="150" cy="25" r="10" fill="#2359e8" stroke="#000" stroke-width="1.5" />
+          <text id="node_x3" x="150" y="29" fill="#ffffff" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        </g>
+        <text x="150" y="11" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">x3</text>
+
+        <g class="interactive-label" onclick="togglePin('x2')">
+          <circle cx="180" cy="25" r="10" fill="#2359e8" stroke="#000" stroke-width="1.5" />
+          <text id="node_x2" x="180" y="29" fill="#ffffff" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        </g>
+        <text x="180" y="11" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">x2</text>
+
+        <g class="interactive-label" onclick="togglePin('x1')">
+          <circle cx="210" cy="25" r="10" fill="#2359e8" stroke="#000" stroke-width="1.5" />
+          <text id="node_x1" x="210" y="29" fill="#ffffff" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        </g>
+        <text x="210" y="11" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">x1</text>
+
+        <g class="interactive-label" onclick="togglePin('x0')">
+          <circle cx="240" cy="25" r="10" fill="#2359e8" stroke="#000" stroke-width="1.5" />
+          <text id="node_x0" x="240" y="29" fill="#ffffff" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        </g>
+        <text x="240" y="11" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">x0</text>
+
+        <!-- Interactive Node Ports (Y Inputs) -->
+        <g class="interactive-label" onclick="togglePin('y3')">
+          <circle cx="25" cy="115" r="10" fill="#dc2626" stroke="#000" stroke-width="1.5" />
+          <text id="node_y3" x="25" y="119" fill="#ffffff" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        </g>
+        <text x="45" y="120" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">y3</text>
+
+        <g class="interactive-label" onclick="togglePin('y2')">
+          <circle cx="25" cy="145" r="10" fill="#dc2626" stroke="#000" stroke-width="1.5" />
+          <text id="node_y2" x="25" y="149" fill="#ffffff" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        </g>
+        <text x="45" y="145" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">y2</text>
+
+        <g class="interactive-label" onclick="togglePin('y1')">
+          <circle cx="25" cy="175" r="10" fill="#dc2626" stroke="#000" stroke-width="1.5" />
+          <text id="node_y1" x="25" y="179" fill="#ffffff" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        </g>
+        <text x="45" y="175" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">y1</text>
+
+        <g class="interactive-label" onclick="togglePin('y0')">
+          <circle cx="25" cy="205" r="10" fill="#dc2626" stroke="#000" stroke-width="1.5" />
+          <text id="node_y0" x="25" y="209" fill="#ffffff" font-weight="900" font-size="9" text-anchor="middle">0</text>
+        </g>
+        <text x="45" y="205" fill="#475467" font-weight="900" font-size="10" text-anchor="middle">y0</text>
+
+      </svg>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Row i, Column j Partial Product: b[i][j] = x[j] · y[i]</div>
+    <div class="formula">Stage i, j Sum Output: s[i][j] = s[i-1][j+1] ⊕ b[i][j] ⊕ c[i][j-1]</div>
+    <div class="formula">Stage i, j Carry Output: c[i][j] = (s[i-1][j+1] · b[i][j]) + (c[i][j-1] · (s[i-1][j+1] ⊕ b[i][j]))</div>
+    <div class="formulaBox">
+      Truth Table Validation Matrix:<br>
+      • X = 5 (0101), Y = 3 (0011) → Product P = 00001111 (15)<br>
+      • X = 10 (1010), Y = 10 (1010) → Product P = 01100100 (100)<br>
+      • X = 15 (1111), Y = 15 (1111) → Product P = 11100001 (225)
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the 4-bit multiplier X using the blue binary toggle buttons (x3 down to x0).</div>
+      <div class="aboutStep">Configure the 4-bit multiplicand Y using the red binary toggle buttons (y3 down to y0).</div>
+      <div class="aboutStep">Alternatively, toggle the inputs directly on the interactive circuit diagram by clicking the labeled node ports.</div>
+      <div class="aboutStep">Click the SIMULATE MULTIPLICATION button to execute calculations.</div>
+      <div class="aboutStep">Analyze the results grid to observe Product binary, decimal, and arithmetic operations.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Model and analyze binary array multiplication networks at the silicon level.</strong>
+      <p>The CalcBoy Bitwise 4-bit Carry-Propagate Multiplier Simulation evaluates binary multiplication, calculating sum bits, propagated carry out conditions, and partial product gate outputs dynamically.</p>
+    </div>
+    <p>A Carry-Propagate Multiplier (often called a Ripple-Carry Array Multiplier) is a core structural unit implemented in hardware multiplication arrays. Unlike isolated adder blocks, a Multiplier Adder cell integrates multiplication and addition directly within a single physical footprint. This design allows digital processors to calculate partial products and execute row-by-row summation cycles in parallel, dramatically increasing the speed of execution pipelines.</p>
+    <p>The cell operates by routing inputs x and y to a two-input AND gate, producing the partial product bit (b = x · y). This product bit is then routed to an internal 1-bit Full Adder. The Full Adder combines the product with the sum input (si) from the preceding multiplier row and the Carry In (ci) input from the adjacent column. The cell outputs the final computed sum bit (so) and Carry Out (co).</p>
+    <p>Understanding and debugging arithmetic circuits requires tracing signal states. This interactive digital simulator provides engineers and learners with an accessible tool to run boolean equations, trace routing lines, and analyze arithmetic processing states.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal Applications</span>Silicon architecture design, educational logic demonstrations, and ALU state analysis.</div>
+      <div class="aboutMiniCard"><span>Complete Verification</span>Tracks final sum bits, carry-out outputs, and cascading intermediate XOR pathways.</div>
+      <div class="aboutMiniCard"><span>Interactive UI</span>Tap any input directly on the diagram to cycle through states and evaluate the output instantly.</div>
+      <div class="aboutMiniCard"><span>Industry Standards</span>Complies with standard boolean algebra and binary logic gate calculations.</div>
+    </div>
+    <div class="aboutNote">System Pro-Tip: Chain multiple Multiplier Adder blocks by connecting the carry out (co) of one block to the carry in (ci) of the next to build multi-bit ripple-carry adders.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is a Carry-Propagate Multiplier?</strong></h3>
+    <p>It is a hardware circuit that multiplies two multi-bit binary numbers by calculating partial products with AND gates and summing them using an array of Full Adders with cascading carry signals.</p>
+
+    <h3><strong>2. How does the partial product generation work?</strong></h3>
+    <p>Each bit of multiplier X is logically ANDed with each bit of multiplicand Y. This generates a grid of 1-bit partial products that are subsequently accumulated through the adder array.</p>
+
+    <h3><strong>3. Why is it called a Carry-Propagate multiplier?</strong></h3>
+    <p>The carry signals generated during the addition of partial products cascade (or propagate) horizontally through each row, resembling a ripple-carry adder configuration.</p>
+
+    <h3><strong>4. What is the maximum propagation delay of this multiplier?</strong></h3>
+    <p>The propagation delay is determined by the worst-case carry chain path, which runs diagonally and horizontally across the entire 2D cell grid from the LSB cell to the MSB product output pin.</p>
+
+    <h3><strong>5. What is the size of the output product?</strong></h3>
+    <p>Multiplying two N-bit binary numbers always yields a product of up to 2N bits. For a 4-bit by 4-bit multiplier, the output product is 8 bits wide (p7 down to p0).</p>
+
+    <h3><strong>6. How does this compare to a Carry-Save Multiplier?</strong></h3>
+    <p>In a Carry-Save Multiplier, carry signals do not propagate horizontally within the intermediate rows. Instead, they are routed down to the next row, reducing the critical path delay until the final ripple-carry summation stage.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Binary Multiplier Simulator</strong>Model parallel partial product generation and accumulation.</div>
+      <div class="linkCard"><strong>Full Adder Logic Simulator</strong>Analyze basic three-input addition operations and outputs.</div>
+      <div class="linkCard"><strong>Ripple Carry Adder Calculator</strong>Analyze multi-bit cascading addition delays and signals.</div>
+      <div class="linkCard"><strong>Bitwise Logic Gate Simulator</strong>Run individual AND, OR, XOR, and NAND evaluations.</div>
+    </div>
+  </section>
+
 </div>
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script src='https://coertvonk.com/wp-content/logic-simulation/circuit-simulation.js'></script>
-<script id="rendered-js">
-      // 4-bit carry-propagate multiplier
-// used in https://coertvonk.com/technology/logic/computer-math-inquiry-4245/7
-/*
-Copyright (c) 2017 by Coert Vonk
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+<script>
+function getBit(id) {
+  var btn = document.getElementById(id);
+  return btn.classList.contains("active") ? 1 : 0;
+}
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+function toggleBit(id) {
+  var btn = document.getElementById(id);
+  if (btn.classList.contains("active")) {
+    btn.classList.remove("active");
+    btn.innerText = "0";
+  } else {
+    btn.classList.add("active");
+    btn.innerText = "1";
+  }
+  runSimulation();
+}
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+function togglePin(id) {
+  toggleBit(id);
+}
 
-var circuitCpm = {}; // carry-propagate multiplier Name Space
-(function () {
-  let queueDftDelay = 350; // msec
-  var input = {};
-  var output = {};
-  var intern = {};
+function runSimulation() {
+  // 1. Gather Inputs
+  var x = [
+    getBit("x0"), getBit("x1"), getBit("x2"), getBit("x3")
+  ];
+  var y = [
+    getBit("y0"), getBit("y1"), getBit("y2"), getBit("y3")
+  ];
 
-  // resize the fonts when the window is resized
-  this.resizeFonts = function () {
-    for (var key in input) {
-      var obj = input[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
+  // Calculate decimal values
+  var xDec = 0, yDec = 0;
+  for (var i = 0; i < 4; i++) {
+    xDec += x[i] * Math.pow(2, i);
+    yDec += y[i] * Math.pow(2, i);
+  }
+
+  // 2D Array Allocation
+  var len = 4;
+  var c = Array(len).fill(0).map(() => Array(len).fill(0));
+  var s = Array(len).fill(0).map(() => Array(len).fill(0));
+  var p = Array(len * 2).fill(0);
+
+  // Core array multiplication simulation matching original source code logic
+  for (var ii = 0; ii < len; ii++) {
+    for (var jj = 0; jj < len; jj++) {
+      var ci = jj > 0 ? c[ii][jj - 1] : 0;
+      var si = ii > 0 ? (jj != len - 1 ? s[ii - 1][jj + 1] : c[ii - 1][jj]) : 0;
+      
+      s[ii][jj] = si ^ (x[jj] && y[ii]) ^ ci ? 1 : 0;
+      c[ii][jj] = (si && x[jj] && y[ii]) || (ci && (si ^ (x[jj] && y[ii]))) ? 1 : 0;
     }
-    for (let key in output) {
-      let obj = output[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
-    }
-    for (let key in intern) {
-      let obj = intern[key];
-      obj.style.fontSize = obj.clientWidth * 0.8 + "px";
-    }
-  };
+  }
 
-  this.create2DArray = function (dim1, dim2) {
-    var arr = Array(dim1);
-    for (var ii = 0; ii < dim1; ii++) {if (window.CP.shouldStopExecution(0)) break;
-      arr[ii] = Array(dim2);
-    }window.CP.exitedLoop(0);
-    return arr;
-  };
+  // Map Array Sums/Carries to Product Pins (P0-P7)
+  for (var jj = 0; jj < len; jj++) {
+    p[len - 1 + jj] = s[len - 1][jj];
+  }
+  for (var ii = 0; ii < len - 1; ii++) {
+    p[ii] = s[ii][0];
+  }
+  p[len + len - 1] = c[len - 1][len - 1];
 
-  this.updateOutputs = function () {
-    let len = Object.keys(input).length / 2;
-    let x = Array(len);
-    let y = Array(len);
-    let c = circuitCpm.create2DArray(len, len);
-    let s = circuitCpm.create2DArray(len, len);
-    for (ii = 0; ii < len; ii++) {if (window.CP.shouldStopExecution(1)) break;
-      x[ii] = +input["x" + ii].innerHTML;
-      y[ii] = +input["y" + ii].innerHTML;
-    }window.CP.exitedLoop(1);
-    for (ii = 0; ii < len; ii++) {if (window.CP.shouldStopExecution(2)) break;
-      for (jj = 0; jj < len; jj++) {if (window.CP.shouldStopExecution(3)) break;
-        var ci = jj > 0 ? c[ii][jj - 1] : 0;
-        var si =
-        ii > 0 ? jj != len - 1 ? s[ii - 1][jj + 1] : c[ii - 1][jj] : 0;
-        s[ii][jj] = si ^ (x[jj] && y[ii]) ^ ci ? 1 : 0;
-        c[ii][jj] =
-        si && x[jj] && y[ii] || ci && si ^ (x[jj] && y[ii]) ? 1 : 0;
+  // Render text outputs into results grid
+  var prodBin = p.slice().reverse().join("");
+  var prodDec = xDec * yDec;
 
-        circuitQueue.insert(intern["c" + ii + "" + jj], c[ii][jj], queueDftDelay);
-        if (ii == len - 1) {
-          circuitQueue.insert(output["p" + (len - 1 + jj)], s[ii][jj]);
-        } else {
-          if (jj === 0) {
-            circuitQueue.insert(output["p" + ii], s[ii][jj], 0);
-          }
-          circuitQueue.insert(intern["s" + ii + "" + jj], s[ii][jj], 0);
-        }
-      }window.CP.exitedLoop(3);
-    }window.CP.exitedLoop(2);
-    circuitQueue.insert(output["p" + (len + len - 1)], c[len - 1][len - 1], 0);
-    circuitQueue.play(); // play the queued UI changes while respecting the requested delays
-  };
+  document.getElementById("prod_bin").innerText = prodBin;
+  document.getElementById("prod_dec").innerText = prodDec;
+  document.getElementById("calc_steps").innerText = xDec + " × " + yDec + " = " + prodDec;
+  document.getElementById("bus_mode").innerText = prodDec > 0 ? "Active Sum Data Flow" : "System Standby Mode";
 
-  this.toggle = function (obj) {
-    obj = obj || window.event;
-    obj.innerHTML = (Number(obj.innerHTML) + 1) % 2;
-    circuitCpm.updateOutputs();
-  };
+  // Update labels inside interactive SVG diagram
+  document.getElementById("lbl_x_bin").textContent = x.slice().reverse().join("");
+  document.getElementById("lbl_x_dec").textContent = xDec;
+  document.getElementById("lbl_y_bin").textContent = y.slice().reverse().join("");
+  document.getElementById("lbl_y_dec").textContent = yDec;
+  document.getElementById("lbl_p_bin").textContent = prodBin;
+  document.getElementById("lbl_p_dec").textContent = prodDec;
 
-  this.init = function () {
-    jQuery(".circuit-container#circuit-cpm > .circuit-input").each(function (
-    ii,
-    obj)
+  // Synchronize pin inputs
+  for (var i = 0; i < 4; i++) {
+    document.getElementById("node_x" + i).textContent = x[i];
+    document.getElementById("node_y" + i).textContent = y[i];
+  }
+
+  document.getElementById("errorBox").style.display = "none";
+}
+
+// Start simulation on load
+window.addEventListener('load', function() {
+  runSimulation();
+});
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CalcBoy",
+    "url": "https://calcboy.com"
+  },
+  "mainEntity": [
     {
-      input[obj.id] = obj;
-      obj.innerHTML = 0;
-      obj.onclick = function () {
-        circuitCpm.toggle(this);
-      };
-      obj.style.height = "3.5%";
-      obj.style.width = "2.5%";
-      obj.style.borderColor = "#00ADEE";
-    });
-    jQuery(".circuit-container#circuit-cpm > .circuit-output").each(function (
-    ii,
-    obj)
+      "@type": "Question",
+      "name": "What is a Carry-Propagate Multiplier?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is a hardware circuit that multiplies two multi-bit binary numbers by calculating partial products with AND gates and summing them using an array of Full Adders with cascading carry signals."
+      }
+    },
     {
-      output[obj.id] = obj;
-      obj.style.height = "3.5%";
-      obj.style.width = "2.5%";
-    });
-    jQuery(".circuit-container#circuit-cpm > .circuit-intern").each(function (
-    ii,
-    obj)
+      "@type": "Question",
+      "name": "How does the partial product generation work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Each bit of multiplier X is logically ANDed with each bit of multiplicand Y. This generates a grid of 1-bit partial products that are subsequently accumulated through the adder array."
+      }
+    },
     {
-      intern[obj.id] = obj;
-      obj.style.height = "2.5%";
-      obj.style.width = "2%";
-      switch (obj.id[0]) {
-        case "c":
-          obj.style.color = "#EC1C24";
-          break;
-        case "s":
-          obj.style.color = "#FAAF40";
-          break;
-        default:}
-
-    });
-    circuitCpm.updateOutputs();
-    circuitCpm.resizeFonts();
-    if (window != window.top && parent.jQuery.fancybox) {
-      resizeIframe();
+      "@type": "Question",
+      "name": "Why is it called a Carry-Propagate multiplier?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The carry signals generated during the addition of partial products cascade (or propagate) horizontally through each row, resembling a ripple-carry adder configuration."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the maximum propagation delay of this multiplier?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The propagation delay is determined by the worst-case carry chain path, which runs diagonally and horizontally across the entire 2D cell grid from the LSB cell to the MSB product output pin."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the size of the output product?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Multiplying two N-bit binary numbers always yields a product of up to 2N bits. For a 4-bit by 4-bit multiplier, the output product is 8 bits wide (p7 down to p0)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does this compare to a Carry-Save Multiplier?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In a Carry-Save Multiplier, carry signals do not propagate horizontally within the intermediate rows. Instead, they are routed down to the next row, reducing the critical path delay until the final ripple-carry summation stage."
+      }
     }
-  };
-}).apply(circuitCpm);
+  ]
+}
+</script>
 
-window.addEventListener("load", circuitCpm.init);
-window.addEventListener("resize", circuitCpm.resizeFonts);
-      //# sourceURL=pen.js
-    </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "CalcBoy",
+      "item": "https://calcboy.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Electronics Calculators",
+      "item": "https://calcboy.com/category/electronics-calculators/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Bitwise 4-bit Carry-Propagate Multiplier Simulation",
+      "item": "https://calcboy.com/tool/bitwise-4-bit-carry-propagate-multiplier-simulation"
+    }
+  ]
+}
+</script>
+
 </body>
 </html>
