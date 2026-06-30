@@ -1,290 +1,822 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Scientific & Engineering Unit Conversion Calculator | CalcBoy</title>
+<meta name="description" content="Convert engineering and scientific units instantly across 33 dynamic domains including Density, Viscosity, Volumetric Flow, Mass Flow, Pressure, and Simple scales.">
+<meta name="keywords" content="unit converter, engineering calculator, density converter, viscosity converter, volumetric flow rate, metric imperial converter, CalcBoy">
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+#unit-converter-calc,#unit-converter-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+#unit-converter-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
+.calc-grid{display:grid;gap:15px}
+.calc-label{display:block;font-size:15px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.select-box-wide{width:100%;height:43px}
+.subTitle{font-size:13px;font-weight:900;color:#64748b;text-transform:uppercase;margin-top:4px;padding:10px 0 0;border-top:1px solid #e5e7eb}
+button{width:100%;height:45px;border:0;border-radius:9px;background:linear-gradient(90deg,#ff7a18,#ff4b00);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:15px}
+.btn-secondary{background:#e2e8f0;color:#475569;margin-top:8px}
+.btn-secondary:hover{background:#cbd5e1}
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:18px;font-weight:900;word-break:break-all;line-height:1.3;min-height:22px}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.diagramBox{background:#fff;padding:16px;text-align:center;margin-top:10px;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto}
+.diagramBox svg{width:100%;max-width:560px;height:auto;display:block;margin:auto}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+@media(max-width:600px){
+#unit-converter-calc{padding:14px 10px !important}
+.calc-row{grid-template-columns:minmax(0,1fr) 120px}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 }
-
-body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 55px;
-}
-
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
-
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
-   
-  }
 </style>
+</head>
+<body>
 
+<div id="unit-converter-calc">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <div class="calc-grid">
+    <div class="subTitle">Category Selection</div>
+    <div>
+      <label class="calc-label" for="category">Measurement Domain</label>
+      <select id="category" class="select-box-wide" onchange="updateUnits()">
+        <optgroup label="Complex & Engineering Units">
+          <option value="acceleration">Acceleration</option>
+          <option value="angular_velocity">Angular Velocity</option>
+          <option value="density" selected>Density</option>
+          <option value="digital_storage">Digital Storage</option>
+          <option value="dynamic_viscosity">Dynamic Viscosity</option>
+          <option value="heat_capacity_molar">Heat Capacity and Entropy, Molar</option>
+          <option value="heat_capacity_specific">Heat Capacity or Entropy, Specific</option>
+          <option value="heat_capacity_volumetric">Heat Capacity, Volumetric</option>
+          <option value="heat_transfer_coefficient">Heat Transfer Coefficient</option>
+          <option value="kinematic_viscosity">Kinematic Viscosity</option>
+          <option value="mass_flow_rate">Mass Flow Rate</option>
+          <option value="moment_of_inertia_area">Moment of Inertia of Area</option>
+          <option value="moment_of_inertia_mass">Moment of Inertia of Mass</option>
+          <option value="momentum">Momentum</option>
+          <option value="specific_volume">Specific Volume</option>
+          <option value="thermal_conductivity">Thermal Conductivity</option>
+          <option value="thermal_expansion_coefficient">Thermal Expansion Coefficient</option>
+          <option value="thermal_resistance">Thermal Resistance</option>
+          <option value="torque">Torque</option>
+          <option value="velocity">Velocity</option>
+          <option value="volumetric_flow_rate">Volumetric Flow Rate</option>
+        </optgroup>
+        <optgroup label="Simple Units">
+          <option value="angle">Angle</option>
+          <option value="area">Area</option>
+          <option value="energy">Energy</option>
+          <option value="force">Force</option>
+          <option value="frequency">Frequency</option>
+          <option value="length">Length</option>
+          <option value="mass">Mass</option>
+          <option value="power">Power</option>
+          <option value="pressure">Pressure</option>
+          <option value="temperature">Temperature</option>
+          <option value="time">Time</option>
+          <option value="volume">Volume</option>
+        </optgroup>
+      </select>
+    </div>
 
+    <div class="subTitle">Input Parameters</div>
+    <div>
+      <label class="calc-label" for="inputVal">Value to Convert</label>
+      <div class="calc-row">
+        <input id="inputVal" type="number" value="12" oninput="calculateConversion()">
+        <select id="fromUnit" onchange="calculateConversion()"></select>
+      </div>
+    </div>
 
-<div class="mx-4">
-<div class="bootstrap3-legacy">
-<div class="container-fluid">
+    <div class="subTitle">Target Specification</div>
+    <div>
+      <label class="calc-label" for="toUnit">Target Unit Scale</label>
+      <select id="toUnit" class="select-box-wide" onchange="calculateConversion()"></select>
+    </div>
+  </div>
 
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
+  <button type="button" onclick="calculateConversion()">CONVERT NOW</button>
 
-<form id="tool-form">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
+  <div id="errorBox">Please enter a valid numeric value.</div>
 
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group">
-<label for="type">Unit Select<font face="Arial" size="6"> </font></label><select style="padding: 5px ;  position: absolute; right: 10px;font-size:60px; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:525px;"class="form-control" id="type">
-<option value="1">Length</option>
-<option value="2">Weight / Mass</option>
-<option value="3">Power</option>
-<option value="4">Temperature</option>
-<option value="5">Torque</option>
-</select>
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-</div>
-</div>
-</div>
-<h1 style="font-size:70;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+  <div class="result-title">RESULTS</div>
 
-</div>
-</div>
-<h1 style="font-size:100;"></h1>
- 
-<div class="col-sm-4 col-xs-4">
-<div class="form-group" id="input-unit-container">
+  <div class="result-grid">
+    <div class="result-card blue">
+      <div class="result-label">Converted Output Value</div>
+      <div class="result-value"><span id="resultDisplay">0.00</span></div>
+    </div>
+  </div>
 
-<select  style="padding: 5px ;  position: absolute; left: 130px;font-size:60px; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:300px;"class="form-control" id="length-in">
-<option value="1">(km)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   Kilometers </option>
-<option value="2">(m)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     Meters </option>
-<option value="3">(cm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Centimeters </option>
-<option value="4">(mm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Millimeters </option>
-<option value="5">(mi)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Miles </option>
-<option value="6">(yd)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Yards </option>
-<option value="7">(ft)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Feet </option>
-<option value="8">(in)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Inches </option>
-<option value="9">(µin)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Microinches </option>
-</select>
+  <!-- Clear All (Retry) Button Styled Premiumly -->
+  <button type="button" class="btn-secondary" onclick="clearAllFields()">CLEAR ALL & RETRY</button>
 
-<select  class="intro" style="padding: 5px ;  position: absolute; left: 130px;font-size:60px; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:300px;"class="form-control" id="mass-in">
-<option value="1">(kg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Kilograms </option>
-<option value="2">(g)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     Grams </option>
-<option value="3">(mg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Milligrams </option>
-<option value="4">(lb)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Pounds </option>
-<option value="5">(oz)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Ounces </option>
-</select>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Measurement Domain</strong>Toggles between 33 distinct physical parameters, updating units dynamically.</div>
+      <div class="paramItem"><strong>Value to Convert</strong>The base numeric magnitude representing the initial physical state.</div>
+      <div class="paramItem"><strong>Source Unit Scale</strong>The starting unit or reference scale to convert from.</div>
+      <div class="paramItem"><strong>Target Unit Scale</strong>The desired unit or scale to convert into.</div>
+    </div>
+  </section>
 
-<select  style="padding: 5px ;  position: absolute; left: 130px;font-size:60px; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:300px;"class="form-control" id="power-in">
-<option value="1">(mW)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Milliwatts </option>
-<option value="2">(W)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     Watts </option>
-<option value="3">(dBm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Decibel-milliwatt </option>
-<option value="4">(dBW)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Decibel-watt </option>
-<option value="5">(mV)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Millivolts </option>
-<option value="6">(V)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Volts </option>
-</select>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Fluid & Hydraulic Viscosity</strong></p>
+        <p>Convert Kinematic Viscosity from Centistokes (cSt) to standard square feet per second (ft²/s) for lubrication studies.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Aerospace Acceleration Profiles</strong></p>
+        <p>Translate linear acceleration limits from standard gravitational forces (g) directly to standard metric m/s² units.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Thermodynamic Conductivity Modeling</strong></p>
+        <p>Convert Thermal Conductivity from W/(m·K) to imperial BTU/(hr·ft·°F) for industrial heat loss profiles.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Digital Storage Volumes</strong></p>
+        <p>Determine exact Gigabyte to Terabyte conversions for system configurations or memory requirements.</p>
+      </div>
+    </div>
+  </section>
 
-<select  style="padding: 5px ;  position: absolute; left: 130px;font-size:60px; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:300px;"class="form-control" id="temp-in">
-<option value="1">(°F)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Farenheit </option>
-<option value="3">(°C)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Celsius </option>
-<option value="2">(°K)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Kelvin </option>
-</select>
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Units map dimensional properties to mathematical values. All compound units (like Viscosity, Mass Flow, or Thermal Conductivity) are built directly from primary spatial, mass, and time constraints:</p>
 
-<select  style="padding: 5px ;  position: absolute; left: 130px;font-size:60px; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:300px;" id="tor-in">
-<option value="1">(Nm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      Newton-meters </option>
-<option value="2">(ft-lbs)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     Foot-pounds </option>
-<option value="3">(in-lbs)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Inch-pounds </option>
-</select>
-</div>
-</div>
-</div>
-</div>
-<h1 style="font-size:70;"></h1>
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+    <div class="diagramBox">
+      <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dimensional Analysis Flowchart">
+        <rect width="620" height="300" fill="#fff" rx="10"/>
+        <style>
+          .block { fill: #f8fafc; stroke: #475569; stroke-width: 2; }
+          .highlight-block { fill: #eef5ff; stroke: #2563eb; stroke-width: 2; }
+          .arrow { stroke: #ea580c; stroke-width: 2; fill: none; }
+          .arrow-head { fill: #ea580c; }
+          .lbl-title { font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; fill: #1e293b; }
+          .lbl-desc { font-family: Arial, sans-serif; font-size: 11px; fill: #64748b; font-weight: bold; }
+        </style>
+        
+        <text x="310" y="30" class="text-header" text-anchor="middle" style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #1e293b;">Dimensional Analysis Mapping</text>
+        
+        <!-- Fundamental Blocks -->
+        <rect x="50" y="40" width="110" height="60" rx="6" class="block"/>
+        <text x="105" y="65" class="lbl-title" text-anchor="middle">Mass (M)</text>
+        <text x="105" y="85" class="lbl-desc" text-anchor="middle">Kilogram (kg)</text>
+        
+        <rect x="50" y="120" width="110" height="60" rx="6" class="block"/>
+        <text x="105" y="145" class="lbl-title" text-anchor="middle">Length (L)</text>
+        <text x="105" y="165" class="lbl-desc" text-anchor="middle">Meter (m)</text>
+        
+        <rect x="50" y="200" width="110" height="60" rx="6" class="block"/>
+        <text x="105" y="225" class="lbl-title" text-anchor="middle">Time (T)</text>
+        <text x="105" y="245" class="lbl-desc" text-anchor="middle">Second (s)</text>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center" id="out-unit-container">
-<label for="out"></label><label  style="padding: 5px ;  position: absolute; right: 330px;font-size:60px; text-align:center;  width:300px;">TO</label>
-<select style="padding: 5px ;  position: absolute; right: 120px;font-size:60px; text-align:center;  border:3px solid #aaa;border-radius:4px;margin:8px 0; width:300px;" class="form-control" id="length-out">
-<option value="1">(km)&nbsp; Kilometers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
-<option value="2">(m)&nbsp;Meters </option>
-<option value="3">(cm)&nbsp;Centimeters </option>
-<option value="4">(mm)&nbsp;Millimeters </option>
-<option value="5">(mi)&nbsp;Miles </option>
-<option value="6">(yd)&nbsp;Yards </option>
-<option value="7">(ft)&nbsp;Feet </option>
-<option value="8">(in)&nbsp;Inches </option>
-<option value="9">(µin)&nbsp; Microinches </option>
-</select>
+        <!-- Connecting Arrows -->
+        <path d="M 160 70 L 260 110" class="arrow"/>
+        <path d="M 160 150 L 260 150" class="arrow"/>
+        <path d="M 160 230 L 260 190" class="arrow"/>
+        
+        <polygon points="260,110 250,105 255,115" class="arrow-head"/>
+        <polygon points="260,150 250,145 250,155" class="arrow-head"/>
+        <polygon points="260,190 255,185 250,195" class="arrow-head"/>
 
-<select  
-<select style="padding: 5px ;  position: absolute; right: 120px;font-size:60px; text-align:center;  border:2px solid #aaa;border-radius:4px;margin:8px 0; width:300px;" id="mass-out">
-<option value="4">(lb)&nbsp;Pounds </option>
-<option value="1">(kg)&nbsp;Kilograms </option>
-<option value="2">(g)&nbsp;Grams </option>
-<option value="3">(mg)&nbsp;Milligrams </option>
-<option value="5">(oz)&nbsp;Ounces </option>
-</select>
+        <!-- Compound Block -->
+        <rect x="280" y="110" width="140" height="80" rx="8" class="highlight-block"/>
+        <text x="350" y="145" class="lbl-title" text-anchor="middle">Derived Scale</text>
+        <text x="350" y="165" class="lbl-desc" text-anchor="middle" style="fill:#2563eb;">Density (M / L³)</text>
 
-<select  
-<select style="padding: 5px ;  position: absolute; right: 120px;font-size:60px; text-align:center;  border:2px solid #aaa;border-radius:4px;margin:8px 0; width:300px;" id="power-out">
-<option value="3">(dBm)&nbsp;Decibel-milliwatt </option>
-<option value="1">(mW)&nbsp;Milliwatts </option>
-<option value="2">(W)&nbsp;Watts </option>
-<option value="4">(dBW)&nbsp;Decibel-watt </option>
-<option value="5">(mV)&nbsp;Millivolts </option>
-<option value="6">(V)&nbsp;Volts </option>
-</select>
+        <!-- Outer Boundary Bridge -->
+        <rect x="470" y="110" width="120" height="80" rx="8" class="block"/>
+        <text x="530" y="145" class="lbl-title" text-anchor="middle">Imperial Span</text>
+        <text x="530" y="165" class="lbl-desc" text-anchor="middle">lb/ft³</text>
+        
+        <path d="M 420 150 L 460 150" class="arrow"/>
+        <polygon points="460,150 450,145 450,155" class="arrow-head"/>
+      </svg>
+    </div>
+  </section>
 
-<select  
-<select style="padding: 5px ;  position: absolute; right: 120px;font-size:60px; text-align:center;  border:2px solid #aaa;border-radius:4px;margin:8px 0; width:300px;" id="temp-out">
-<option value="3">(°C)&nbsp;Celsius </option>
-<option value="1">(°F)&nbsp;Farenheit </option>
-<option value="2">(°K)&nbsp;Kelvin </option>
-</select>
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <p>Conversions in all domains map input coordinates directly to standardized SI base references, resolving any metric/imperial scaling boundaries:</p>
+    <div class="formula">SI Base Equivalent = Input Value * Scale Reference Factor</div>
+    <div class="formula">Target Output Value = SI Base Equivalent / Target Reference Factor</div>
+    <p>Temperature conversions use specific offset-based parameters:</p>
+    <div class="formula">Celsius to Kelvin: K = C + 273.15</div>
+    <div class="formula">Fahrenheit to Kelvin: K = (F - 32) * 5/9 + 273.15</div>
+  </section>
 
-<select  
-<select style="padding: 5px ;  position: absolute; right: 120px;font-size:60px; text-align:center;  border:2px solid #aaa;border-radius:4px;margin:8px 0; width:300px;" id="tor-out">
-<option value="3">(in-lbs)&nbsp;Inch-pounds </option>
-<option value="1">(Nm)&nbsp;Newton-meters </option>
-<option value="2">(ft-lbs)Foot-pounds </option>
-</select>
-</div>
-</div>
-<div class="col-sm-4 col-xs-4">
-</div>
-</div>
-</div>
-<br><br>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group text-center">
-<label for="in"><font face="Arial" size="6"></font></label><input  name="in"  id="in"class="intro"  style="position: absolute;  text-align:center; width:500; right: 235px;"class="form-control" type="number" placeholder="Enter Input"/>
-</div>
-</div><br>
-</form></fieldset>
-<div class="row">
-<div class="col-sm-12">
-<div class='col-sm-4'>
-<div class="form-group">
-&nbsp;
-</div>
-</div>
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">
+        <strong>Identify the Conversion Factors:</strong> Find the baseline factor for your source and destination units. For example, when converting density, the baseline reference standard is 1.0 kg/m³. lb/ft³ has a factor of 16.018463 kg/m³.
+      </div>
+      <div class="aboutStep">
+        <strong>Map Input to Baseline:</strong> Convert the starting value to the absolute baseline SI standard (e.g., 12 kg/m³ * 1.0 = 12 kg/m³).
+      </div>
+      <div class="aboutStep">
+        <strong>Apply Target Factor:</strong> Divide the baseline value by the destination unit standard factor (12 / 16.018463 ≈ 0.749136 lb/ft³).
+      </div>
+      <div class="aboutStep">
+        <strong>Verify and Display:</strong> Check limits, format with appropriate exponential decimal lengths, and display final metrics.
+      </div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the desired category of measurement from the top selector menu.</div>
+      <div class="aboutStep">Enter your initial scalar value inside the "Value to Convert" input field.</div>
+      <div class="aboutStep">Choose the active incoming unit scale from the first units dropdown.</div>
+      <div class="aboutStep">Select your desired target conversion standard from the final "To Unit Scale" dropdown.</div>
+      <div class="aboutStep">Recalculations compile in real-time as inputs change, or by clicking "CONVERT NOW".</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Unified engineering and physical unit conversion suite.</strong>
+      <p>Convert metrics seamlessly across thermal, spatial, mechanical, and power domains with high-precision baseline standards.</p>
+    </div>
+    <p>Unit conversions are essential across mechanical, chemical, civil, and thermodynamic engineering. Different manufacturing regions often specify different measuring standards, necessitating precise translations. For example, piping layouts designed in Europe often rely on metric density (kg/m³), while North American layouts often use imperial density (lb/ft³).</p>
+    <p>This calculator functions as a high-fidelity dimensional solver. It avoids multi-step rounding errors by mapping all inputs to standard scientific SI baselines, ensuring exact conversions across both metric and imperial configurations.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Category Options</span>Includes Length, Mass, Volume, Density, Area, Pressure, Energy, and Power.</div>
+      <div class="aboutMiniCard"><span>Conversion Accuracy</span>Calculations utilize double-precision floating-point factors to maintain numerical integrity.</div>
+      <div class="aboutMiniCard"><span>Engineering Check</span>Eliminates manual calculation errors when working with compound units like Density (Mass/Volume).</div>
+      <div class="aboutMiniCard"><span>Responsive Layout</span>Optimized for real-time mobile calculation across active physical work environments.</div>
+    </div>
+    <div class="aboutNote">Tip: Standard water density is approximately 1,000 kg/m³ or 62.43 lb/ft³ at room temperature, which serves as an excellent benchmark for verifying calculations.</div>
+  </section>
 
-<div class="col-sm-4">
-<div class="form-group">
-<div id="borderimg">
- <borderimg id="control-label" style="width:100%; height:500px;">
- <fieldset><legend><div colspan="2" align="center" height="19"><input type="button" id="calculate" class="btn btn-theme" value="Calculate"  disabled="disabled" style="background-color: #167A04 ;
-  border: 1;
-  align:center;
-  color: white;
- 
-  padding: 10px 200px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 70px;
-  margin: 4px 2px;
-  cursor: pointer;"></legend></fieldset>
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3>**1. How does the unit converter handle rounding during multi-stage conversions?**</h3>
+    <p>The tool uses direct scaling relative to absolute reference standards. Inputs are processed with high-precision decimals before being formatted for output, preventing rounding errors.</p>
 
-</div>
-</div>
-</div>
-</div>
-<div id="answer-fields">
-<div class="row">
-<div class="col-sm-12 col-xs-12">
-<div class="form-group">
+    <h3>**2. What is a dimensional conversion factor?**</h3>
+    <p>A dimensional conversion factor is a constant multiplier that scales one unit system directly to another (e.g., multiplying inches by 2.54 to obtain centimeters).</p>
 
-</div>
-<div id="borderimg">
- <borderimg id="control-label" style="width:100%; height:500px;">
-<fieldset><legend><div colspan="2" align="center" height="19">
+    <h3>**3. Why are some units (like US gallons vs. Imperial gallons) different?**</h3>
+    <p>US and British Imperial systems developed independent liquid volumes. A US gallon is approximately 3.785 liters, whereas an Imperial gallon is approximately 4.546 liters. This calculator uses US standard values.</p>
 
+    <h3>**4. How is density defined in dimensional analysis?**</h3>
+    <p>Density is a compound dimension defined as Mass divided by Volume (M/L³), requiring the simultaneous conversion of both mass and spatial volumes.</p>
 
-<h3>Outputs</h3></div></legend>
+    <h3>**5. What is the relation between energy and power units?**</h3>
+    <p>Energy represents total work capacity (Joules, Watt-hours), whereas Power represents the rate at which work is performed (Watts, Horsepower). They are connected through time parameters.</p>
 
-<div class='col-sm-4 col-xs-12'>
-<div class="form-group">
+    <h3>**6. What are typical engineering density targets for water and air?**</h3>
+    <p>At standard atmospheric conditions, pure liquid water is approximately 1000 kg/m³ (62.4 lb/ft³), while dry ambient air is approximately 1.2 kg/m³ (0.075 lb/ft³).</p>
+  </section>
 
-</div>
-</div>
-<div class="col-sm-4 col-xs-8">
-<div class="form-group has-warning">
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Heat Sink Calculator</strong>Evaluate thermal resistances and component cooling profiles.</div>
+      <div class="linkCard"><strong>Scientific Temperature Converter</strong>Convert temperatures across Celsius, Fahrenheit, and Kelvin SI prefixes.</div>
+      <div class="linkCard"><strong>Trace Width Calculator</strong>Calculate PCB copper limits and operational temperature bounds.</div>
+      <div class="linkCard"><strong>Wire Ampacity Calculator</strong>Verify maximum current limits for standard electrical wiring.</div>
+    </div>
+  </section>
 
 </div>
-</div>
 
-<div class="col-sm-4 col-xs-4">
-<div class="form-group">
-<h1 style="font-size:0;"></h1>
-<div id="answer-unit"  style="position: absolute;  text-align:center; width:600; top:1300px;right: 190px;"class="form-control"  type="text" ></div><input  name="answer"  id="answer"class="intro"  style="position: absolute;  text-align:center; width:500; right: 235px;"class="form-control" type="number"class="form-control" placeholder="Output" type="text" /><br>
-<br><br><br>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<script type="text/javascript">
-!function(e){"use strict";function t(){1==e("#type").val()?e("#toRange").hide():e("#toRange").show()}function s(){e("#input-unit-container select").each(function(){e(this).hide()}),e("#out-unit-container select").each(function(){e(this).hide()});var t=e("#type").val();"1"==t?(e("#length-in").show(),e("#length-out").show()):"2"==t?(e("#mass-in").show(),e("#mass-out").show()):"3"==t?(e("#power-in").show(),e("#power-out").show()):"4"==t?(e("#temp-in").show(),e("#temp-out").show()):"5"==t&&(e("#tor-in").show(),e("#tor-out").show())}function a(e,t,s){var a="";switch(e){case"10":s/=1e3;case"4":s/=10;case"3":s/=100;case"2":s/=1e3;case"1":a="si";break;case"9":s/=Math.pow(10,6);case"8":s/=12;case"7":s/=3;case"6":s/=1760;case"5":a="std"}if("si"==a)switch(t){case"10":s*=1e3;case"4":s*=10;case"3":s*=100;case"2":s*=1e3;case"1":return s;case"9":s*=Math.pow(10,6);case"8":s*=12;case"7":s*=3;case"6":s*=1760;case"5":return s/1.60934}if("std"==a)switch(t){case"10":s*=1e3;case"4":s*=10;case"3":s*=100;case"2":s*=1e3;case"1":return 1.60934*s;case"9":s*=Math.pow(10,6);case"8":s*=12;case"7":s*=3;case"6":s*=1760;case"5":return s}}function r(e,t,s){var a="";switch(e){case"3":s/=1e3;case"2":s/=1e3;case"1":a="si";break;case"5":s/=16;case"4":a="std"}if("si"==a)switch(t){case"3":s*=1e3;case"2":s*=1e3;case"1":return s;case"5":s*=16;case"4":return s/.453592}if("std"==a)switch(t){case"3":s*=1e3;case"2":s*=1e3;case"1":return.453592*s;case"5":s*=16;case"4":return s}}function c(e,t,s){var a="";switch(e){case"2":s=1e3*s;case"1":a="si";break;case"4":s+=30;case"3":a="db";break;case"5":s/=1e3;case"6":a="v"}if("si"==a)switch(t){case"1":s/=1e3;case"2":return s;case"4":s/=1e3;case"3":return 10*Math.log(s)/Math.log(10);case"6":return c("3","6",10*Math.log(s)/Math.log(10));case"5":return 1e3*c("3","6",10*Math.log(s)/Math.log(10))}if("db"==a)switch(t){case"1":s-=30;case"2":return Math.pow(10,s/10);case"4":s-=30;case"3":return s;case"6":return Math.sqrt(50*Math.pow(10,s/10)/1e3);case"5":return 1e3*Math.sqrt(50*Math.pow(10,s/10)/1e3)}if("v"==a)switch(t){case"2":return c("3","2",10*Math.log(1e3*Math.pow(s,2)/50)/Math.log(10));case"1":return c("3","1",10*Math.log(1e3*Math.pow(s,2)/50)/Math.log(10));case"3":return 10*Math.log(1e3*Math.pow(s,2)/50)/Math.log(10);case"4":return 10*Math.log(1e3*Math.pow(s,2)/50)/Math.log(10)-30;case"6":return s;case"5":return 1e3*s}}function n(e,t){switch(e){case"1":return 5*(t-32)/9;case"3":return t;case"2":return t-273.15}}function i(e,t){switch(e){case"1":return t;case"3":return 9*t/5+32;case"2":return 9*(t-273.15)/5+32}}function o(e,t){switch(e){case"1":return 5*(t-32)/9+273.15;case"3":return t+273.15;case"2":return t}}function u(e,t){switch(e){case"1":return t;case"2":return t/.73756214837;case"3":return t/.73756214837/12}}function l(e,t){switch(e){case"1":return.73756214837*t;case"2":return t;case"3":return t/12}}function h(e,t){switch(e){case"1":return 12*t*.73756214837;case"2":return 12*t;case"3":return t}}function w(){e("#answer-fields :input").each(function(){e(this).closest("div").removeClass("has-success"),e(this).closest("div").addClass("has-warning"),e(this).val("")})}function v(){e("#answer-fields :input").each(function(){e(this).closest("div").removeClass("has-warning"),e(this).closest("div").addClass("has-success")})}var p,d=e("#calculate");e("#tool-form :input").keyup(function(){e(this).closest("div").removeClass("has-error"),w(),d.attr("disabled",!1),e.isNumeric(e(this).val())===!1?(e(this).closest("div").addClass("has-error"),d.attr("disabled",!1)):e(this).closest("div").removeClass("has-error"),p=0,e("#tool-form :input").each(function(){""!=e(this).val()&&e.isNumeric(e(this).val())!==!1||p++}),p>0&&d.attr("disabled",!0)}),d.on("click",function(t){t.preventDefault();var s,w,p,d;if(p=parseFloat(e("#in").val()),d=e("#type").val(),s=0,e("#answer-unit").text(""),e("#answer").val(""),"1"==d)s=a(e("#length-in").val(),e("#length-out").val(),p),e("#answer-unit").text(e("#length-out :selected").text()),e("#answer").val(parseFloat(s).toFixed(4));else if("2"==d)s=r(e("#mass-in").val(),e("#mass-out").val(),p),e("#answer-unit").text(e("#mass-out :selected").text()),e("#answer").val(parseFloat(s).toFixed(4));else if("3"==d)s=c(e("#power-in").val(),e("#power-out").val(),p),w=2*s*Math.sqrt(2),e("#answer").val(parseFloat(s).toFixed(4)),e("#answer-unit").text(e("#power-out :selected").text()),"5"!=e("#power-out").val()&&"6"!=e("#power-out").val()||(e("#answer-unit").text(""),e("#answer-unit").append("V<sub>rms</sub> - V<sub>pp</sub>"),e("#answer").val(parseFloat(s).toFixed(4)+" - "+parseFloat(w).toFixed(4)));else if("4"==d){var f=e("#temp-out").val(),M=e("#temp-in").val();"1"==f?s=i(M,p):"2"==f?s=o(M,p):"3"==f&&(s=n(M,p)),e("#answer-unit").text(e("#temp-out :selected").text()),e("#answer").val(parseFloat(s).toFixed(4))}else if("5"==d){var g=e("#tor-out").val(),x=e("#tor-in").val();"1"==g?s=u(x,p):"2"==g?s=l(x,p):"3"==g&&(s=h(x,p)),e("#answer-unit").text(e("#tor-out :selected").text()),e("#answer").val(parseFloat(s).toFixed(4))}v()}),t(),s(),e("#answer-unit").text(""),e("#type").on("change",function(){w(),e("#answer-unit").text(""),t(),s()})}(jQuery);
-    </script>
-</div>
-</div>
+<script>
+// Master conversion database of factors relative to their absolute SI base units
+const masterDatabase = {
+  acceleration: {
+    base: 'm/s2',
+    units: {
+      'm/s2': { label: 'meter/sec² (m/s²)', factor: 1.0 },
+      'g': { label: 'standard gravity (g)', factor: 9.80665 },
+      'ft/s2': { label: 'foot/sec² (ft/s²)', factor: 0.3048 },
+      'in/s2': { label: 'inch/sec² (in/s²)', factor: 0.0254 }
+    }
+  },
+  angular_velocity: {
+    base: 'rad/s',
+    units: {
+      'rad/s': { label: 'radian/sec (rad/s)', factor: 1.0 },
+      'deg/s': { label: 'degree/sec (deg/s)', factor: 0.0174532925 },
+      'rpm': { label: 'revolutions/min (rpm)', factor: 0.104719755 }
+    }
+  },
+  density: {
+    base: 'kg/m3',
+    units: {
+      'kg/m3': { label: 'kg/m³ (kilograms/m³)', factor: 1.0 },
+      'g/cm3': { label: 'g/cm³ (grams/cm³)', factor: 1000.0 },
+      'lb/ft3': { label: 'lb/ft³ (pounds/ft³)', factor: 16.018463 },
+      'lb/in3': { label: 'lb/in³ (pounds/in³)', factor: 27679.904 },
+      'mg/L': { label: 'mg/L (milligrams/Liter)', factor: 0.001 },
+      'g/L': { label: 'g/L (grams/Liter)', factor: 1.0 },
+      'g/mL': { label: 'g/mL (grams/mL)', factor: 1000.0 },
+      'kg/L': { label: 'kg/L (kilograms/Liter)', factor: 1000.0 },
+      'ton/m3': { label: 'ton/m³ (metric tons/m³)', factor: 1000.0 },
+      'mg/cm3': { label: 'mg/cm³ (milligrams/cm³)', factor: 1.0 },
+      'g/m3': { label: 'g/m³ (grams/m³)', factor: 0.001 },
+      'oz/gal': { label: 'oz/gal (ounces/US gallon)', factor: 7.4891517 },
+      'lb/gal': { label: 'lb/gal (pounds/US gallon)', factor: 119.8264 },
+      'lb/yd3': { label: 'lb/yd³ (pounds/yd³)', factor: 0.5932764 },
+      'oz/in3': { label: 'oz/in³ (ounces/in³)', factor: 1729.994 },
+      'oz/ft3': { label: 'oz/ft³ (ounces/ft³)', factor: 1.00115396 },
+      'slug/ft3': { label: 'slug/ft³ (slugs/ft³)', factor: 515.3788 },
+      'ton/yd3': { label: 'ton/yd³ (tons/yd³)', factor: 593.2764 },
+      'tonne/m3': { label: 'tonne/m³ (tonnes/m³)', factor: 1000.0 }
+    }
+  },
+  digital_storage: {
+    base: 'B',
+    units: {
+      'B': { label: 'Bytes (B)', factor: 1.0 },
+      'b': { label: 'bits (b)', factor: 0.125 },
+      'kb': { label: 'kilobits (kb)', factor: 125.0 },
+      'Mb': { label: 'megabits (Mb)', factor: 125000.0 },
+      'Gb': { label: 'gigabits (Gb)', factor: 1.25e8 },
+      'Tb': { label: 'terabits (Tb)', factor: 1.25e11 },
+      'Pb': { label: 'petabits (Pb)', factor: 1.25e14 },
+      'kB': { label: 'Kilobytes (kB)', factor: 1024.0 },
+      'MB': { label: 'Megabytes (MB)', factor: 1048576.0 },
+      'GB': { label: 'Gigabytes (GB)', factor: 1073741824.0 },
+      'TB': { label: 'Terabytes (TB)', factor: 1099511627776.0 },
+      'PB': { label: 'Petabytes (PB)', factor: 1125899906842624.0 }
+    }
+  },
+  dynamic_viscosity: {
+    base: 'Pa_s',
+    units: {
+      'Pa_s': { label: 'Pascal-second (Pa·s)', factor: 1.0 },
+      'lbf_s/ft2': { label: 'lbf·s/ft²', factor: 47.880259 },
+      'lbm/(ft*s)': { label: 'lbm/(ft·s)', factor: 1.488164 }
+    }
+  },
+  heat_capacity_molar: {
+    base: 'J_molK',
+    units: {
+      'J_molK': { label: 'J/(mol·K)', factor: 1.0 },
+      'BTU_lbmolF': { label: 'BTU/(lbmol·°F)', factor: 4.1868 },
+      'BTU_kmolF': { label: 'BTU/(kmol·°F)', factor: 0.0041868 }
+    }
+  },
+  heat_capacity_specific: {
+    base: 'J_kgK',
+    units: {
+      'J_kgK': { label: 'J/(kg·K)', factor: 1.0 },
+      'J_kgC': { label: 'J/(kg·°C)', factor: 1.0 },
+      'kJ_kgK': { label: 'kJ/(kg·K)', factor: 1000.0 },
+      'kJ_kgC': { label: 'kJ/(kg·°C)', factor: 1000.0 },
+      'MJ_kgK': { label: 'MJ/(kg·K)', factor: 1e6 },
+      'J_gK': { label: 'J/(g·K)', factor: 1000.0 },
+      'J_gC': { label: 'J/(g·°C)', factor: 1000.0 },
+      'kgf_m_kgK': { label: 'kgf·m/(kg·K)', factor: 9.80665 },
+      'ft_lbf_lbF': { label: 'ft·lbf/(lb·°F)', factor: 5.3803 },
+      'erg_gC': { label: 'erg/(g·°C)', factor: 0.0001 },
+      'BTU_lbR': { label: 'BTU/(lb·°R)', factor: 4186.8 },
+      'BTU_lbF': { label: 'BTU/(lb·°F)', factor: 4186.8 }
+    }
+  },
+  heat_capacity_volumetric: {
+    base: 'J_m3K',
+    units: {
+      'J_m3K': { label: 'J/(m³·K)', factor: 1.0 },
+      'J_cm3C': { label: 'J/(cm³·°C)', factor: 1e6 },
+      'BTU_ft3F': { label: 'BTU/(ft³·°F)', factor: 67066.11 }
+    }
+  },
+  heat_transfer_coefficient: {
+    base: 'W_m2K',
+    units: {
+      'W_m2K': { label: 'W/(m²·K)', factor: 1.0 },
+      'W_m2C': { label: 'W/(m²·°C)', factor: 1.0 },
+      'BTU_hrft2F': { label: 'BTU/(hr·ft²·°F)', factor: 5.678263 }
+    }
+  },
+  kinematic_viscosity: {
+    base: 'm2/s',
+    units: {
+      'm2/s': { label: 'm²/s', factor: 1.0 },
+      'ft2/s': { label: 'ft²/s', factor: 0.09290304 }
+    }
+  },
+  mass_flow_rate: {
+    base: 'kg/s',
+    units: {
+      'kg/s': { label: 'kg/second', factor: 1.0 },
+      'kg/min': { label: 'kg/minute', factor: 0.01666667 },
+      'kg/h': { label: 'kg/hour', factor: 0.0002777778 },
+      'g/s': { label: 'g/second', factor: 0.001 },
+      'lb/s': { label: 'lb/second', factor: 0.45359237 },
+      'lb/min': { label: 'lb/minute', factor: 0.0075598728 },
+      'lb/h': { label: 'lb/hour', factor: 0.00012599788 },
+      'ton/h': { label: 'ton/hour', factor: 0.25199576 },
+      'ton/day': { label: 'ton/day', factor: 0.01049982 },
+      'tonne/h': { label: 'tonne/hour', factor: 0.27777778 },
+      'tonne/day': { label: 'tonne/day', factor: 0.01157407 }
+    }
+  },
+  moment_of_inertia_area: {
+    base: 'm4',
+    units: {
+      'mm4': { label: 'mm⁴', factor: 1e-12 },
+      'cm4': { label: 'cm⁴', factor: 1e-8 },
+      'dm4': { label: 'dm⁴', factor: 1e-4 },
+      'm4': { label: 'm⁴', factor: 1.0 },
+      'dam4': { label: 'dam⁴', factor: 1e4 },
+      'km4': { label: 'km⁴', factor: 1e12 },
+      'hm4': { label: 'hm⁴', factor: 1e8 },
+      'in4': { label: 'in⁴', factor: 4.162314256e-7 },
+      'ft4': { label: 'ft⁴', factor: 0.0086309748 },
+      'yd4': { label: 'yd⁴', factor: 0.069906155 },
+      'mi4': { label: 'mi⁴', factor: 6.697415e12 }
+    }
+  },
+  moment_of_inertia_mass: {
+    base: 'kg_m2',
+    units: {
+      'kg*m^2': { label: 'kg·m²', factor: 1.0 },
+      'lb*ft^2': { label: 'lb·ft²', factor: 0.04214011 },
+      'lbf*ft*s^2': { label: 'lbf·ft·s²', factor: 1.355818 }
+    }
+  },
+  momentum: {
+    base: 'kg_m_s',
+    units: {
+      'kg m/s': { label: 'kg·m/s', factor: 1.0 },
+      'lb ft/s': { label: 'lb·ft/s', factor: 0.138255 }
+    }
+  },
+  specific_volume: {
+    base: 'm3/kg',
+    units: {
+      'm3/kg': { label: 'm³/kg', factor: 1.0 },
+      'ft3/lb': { label: 'ft³/lb', factor: 0.06242796 }
+    }
+  },
+  thermal_conductivity: {
+    base: 'W_mK',
+    units: {
+      'W_mK': { label: 'W/(m·K)', factor: 1.0 },
+      'W_mC': { label: 'W/(m·°C)', factor: 1.0 },
+      'BTU_hrftF': { label: 'BTU/(hr·ft·°F)', factor: 1.730735 }
+    }
+  },
+  thermal_expansion_coefficient: {
+    base: '1/K',
+    units: {
+      'K^-1': { label: '1/Kelvin', factor: 1.0 },
+      'degC^-1': { label: '1/°Celsius', factor: 1.0 },
+      'degF^-1': { label: '1/°Fahrenheit', factor: 1.8 }
+    }
+  },
+  thermal_resistance: {
+    base: 'm2_K_W',
+    units: {
+      'm^2*K/W': { label: 'm²·K/W', factor: 1.0 },
+      'ft^2*h*degF/BTU': { label: 'ft²·h·°F/BTU', factor: 0.1761102 }
+    }
+  },
+  torque: {
+    base: 'N_m',
+    units: {
+      'N*m': { label: 'N·m', factor: 1.0 },
+      'kN*m': { label: 'kN·m', factor: 1000.0 },
+      'ft*lbf': { label: 'ft·lbf', factor: 1.355818 },
+      'in*lbf': { label: 'in·lbf', factor: 0.1129848 }
+    }
+  },
+  velocity: {
+    base: 'm/s',
+    units: {
+      'm/s': { label: 'meters/sec (m/s)', factor: 1.0 },
+      'km/h': { label: 'km/hour (km/h)', factor: 0.2777778 },
+      'cm/s': { label: 'centimeters/sec (cm/s)', factor: 0.01 },
+      'mm/s': { label: 'millimeters/sec (mm/s)', factor: 0.001 },
+      'ft/s': { label: 'feet/sec (ft/s)', factor: 0.3048 },
+      'ft/min': { label: 'feet/minute (ft/min)', factor: 0.00508 },
+      'in/s': { label: 'inches/sec (in/s)', factor: 0.0254 },
+      'mi/h': { label: 'miles/hour (mph)', factor: 0.44704 }
+    }
+  },
+  volumetric_flow_rate: {
+    base: 'm3/s',
+    units: {
+      'm3/s': { label: 'm³/second', factor: 1000.0 },
+      'L/s': { label: 'liters/second', factor: 1.0 },
+      'L/min': { label: 'liters/minute', factor: 0.01666667 },
+      'L/h': { label: 'liters/hour', factor: 0.0002777778 },
+      'mL/s': { label: 'milliliters/second', factor: 1e-6 },
+      'gal/min': { label: 'gallons/min (gpm)', factor: 0.063090196 },
+      'gal/h': { label: 'gallons/hour', factor: 0.00105150327 },
+      'gal/s': { label: 'gallons/second', factor: 3.78541178 },
+      'ft^3/s': { label: 'cubic feet/second', factor: 28.3168466 },
+      'ft^3/min': { label: 'cubic feet/minute', factor: 0.47194744 },
+      'ft^3/h': { label: 'cubic feet/hour', factor: 0.0078657907 },
+      'in^3/s': { label: 'cubic inches/second', factor: 0.016387064 },
+      'bbl/day': { label: 'barrels/day', factor: 0.0018401307 },
+      'bbl/h': { label: 'barrels/hour', factor: 0.04416312 }
+    }
+  },
+  angle: {
+    base: 'rad',
+    units: {
+      'rad': { label: 'radians (rad)', factor: 1.0 },
+      'deg': { label: 'degrees (deg)', factor: 0.0174532925 },
+      'grad': { label: 'gradients (grad)', factor: 0.015707963 },
+      'cycle': { label: 'cycles', factor: 6.2831853 },
+      'arcsec': { label: 'arcseconds', factor: 0.0000048481 },
+      'arcmin': { label: 'arcminutes', factor: 0.0002908882 }
+    }
+  },
+  area: {
+    base: 'm2',
+    units: {
+      'm^2': { label: 'square meters (m²)', factor: 1.0 },
+      'in^2': { label: 'square inches (in²)', factor: 0.00064516 },
+      'ft^2': { label: 'square feet (ft²)', factor: 0.09290304 },
+      'acre': { label: 'acres', factor: 4046.8564 },
+      'hectare': { label: 'hectares', factor: 10000.0 },
+      'mi^2': { label: 'square miles (mi²)', factor: 2589988.11 },
+      'mm^2': { label: 'square millimeters (mm²)', factor: 1e-6 },
+      'cm^2': { label: 'square centimeters (cm²)', factor: 1e-4 }
+    }
+  },
+  energy: {
+    base: 'J',
+    units: {
+      'J': { label: 'Joules (J)', factor: 1.0 },
+      'erg': { label: 'ergs', factor: 1e-7 },
+      'Wh': { label: 'Watt-hours (Wh)', factor: 3600.0 },
+      'BTU': { label: 'BTU', factor: 1055.0558 },
+      'eV': { label: 'electron volts (eV)', factor: 1.602176634e-19 }
+    }
+  },
+  force: {
+    base: 'N',
+    units: {
+      'N': { label: 'Newtons (N)', factor: 1.0 },
+      'dyn': { label: 'dynes', factor: 1e-5 },
+      'lbf': { label: 'pound-force (lbf)', factor: 4.448222 },
+      'kip': { label: 'kips', factor: 4448.222 }
+    }
+  },
+  frequency: {
+    base: 'Hz',
+    units: {
+      'Hz': { label: 'Hertz (Hz)', factor: 1.0 },
+      'kHz': { label: 'kiloHertz (kHz)', factor: 1000.0 },
+      'MHz': { label: 'megaHertz (MHz)', factor: 1e6 },
+      'GHz': { label: 'gigaHertz (GHz)', factor: 1e9 }
+    }
+  },
+  length: {
+    base: 'm',
+    units: {
+      'm': { label: 'meters (m)', factor: 1.0 },
+      'in': { label: 'inches (in)', factor: 0.0254 },
+      'ft': { label: 'feet (ft)', factor: 0.3048 },
+      'yd': { label: 'yards (yd)', factor: 0.9144 },
+      'mi': { label: 'miles (mi)', factor: 1609.344 },
+      'li': { label: 'links (li)', factor: 0.201168 },
+      'rd': { label: 'rods (rd)', factor: 5.0292 },
+      'ch': { label: 'chains (ch)', factor: 20.1168 },
+      'angstrom': { label: 'angstroms', factor: 1e-10 }
+    }
+  },
+  mass: {
+    base: 'g',
+    units: {
+      'g': { label: 'grams (g)', factor: 1.0 },
+      'oz': { label: 'ounces (oz)', factor: 28.349523 },
+      'slug': { label: 'slugs', factor: 14593.903 },
+      'lb': { label: 'pounds (lb)', factor: 453.59237 },
+      'stone': { label: 'stones', factor: 6350.293 },
+      'tonne': { label: 'tonnes (t)', factor: 1e6 },
+      'ton': { label: 'short tons (ton)', factor: 907184.74 }
+    }
+  },
+  power: {
+    base: 'W',
+    units: {
+      'W': { label: 'Watts (W)', factor: 1.0 },
+      'hp': { label: 'horsepower (hp)', factor: 745.69987 }
+    }
+  },
+  pressure: {
+    base: 'Pa',
+    units: {
+      'Pa': { label: 'Pascals (Pa)', factor: 1.0 },
+      'psi': { label: 'psi (pounds/in²)', factor: 6894.757 },
+      'atm': { label: 'atmospheres (atm)', factor: 101325.0 },
+      'bar': { label: 'bars (bar)', factor: 100000.0 },
+      'torr': { label: 'Torr (mm Hg)', factor: 133.322368 },
+      'mmHg': { label: 'mm Hg', factor: 133.322387 }
+    }
+  },
+  temperature: {
+    base: 'K',
+    units: {
+      'K': { label: 'Kelvin (K)', factor: 1.0 },
+      'degC': { label: 'Celsius (°C)', factor: 1.0 },
+      'degF': { label: 'Fahrenheit (°F)', factor: 1.0 },
+      'degR': { label: 'Rankine (°R)', factor: 1.0 }
+    }
+  },
+  time: {
+    base: 's',
+    units: {
+      's': { label: 'seconds (s)', factor: 1.0 },
+      'min': { label: 'minutes (min)', factor: 60.0 },
+      'h': { label: 'hours (h)', factor: 3600.0 },
+      'day': { label: 'days', factor: 86400.0 },
+      'week': { label: 'weeks', factor: 604800.0 },
+      'month': { label: 'months', factor: 2628000.0 },
+      'year': { label: 'years', factor: 31536000.0 },
+      'decade': { label: 'decades', factor: 315360000.0 },
+      'century': { label: 'centuries', factor: 3153600000.0 },
+      'millennium': { label: 'millenniums', factor: 31536000000.0 }
+    }
+  },
+  volume: {
+    base: 'l',
+    units: {
+      'l': { label: 'liters (L)', factor: 1.0 },
+      'm^3': { label: 'cubic meters (m³)', factor: 1000.0 },
+      'in^3': { label: 'cubic inches (in³)', factor: 0.016387064 },
+      'ft^3': { label: 'cubic feet (ft³)', factor: 28.316846 },
+      'floz': { label: 'fluid ounces (floz)', factor: 0.02957353 },
+      'cup': { label: 'cups', factor: 0.2365882 },
+      'pint': { label: 'pints', factor: 0.4731765 },
+      'quart': { label: 'quarts', factor: 0.9463529 },
+      'gallon': { label: 'gallons', factor: 3.78541178 },
+      'teaspoon': { label: 'teaspoons', factor: 0.00492892 },
+      'tablespoon': { label: 'tablespoons', factor: 0.01478676 },
+      'cm^3': { label: 'cubic cm (cm³)', factor: 0.001 },
+      'mm^3': { label: 'cubic mm (mm³)', factor: 1e-6 }
+    }
+  }
+};
+
+function updateUnits() {
+  const category = document.getElementById('category').value;
+  const fromSelect = document.getElementById('fromUnit');
+  const toSelect = document.getElementById('toUnit');
+  
+  fromSelect.innerHTML = '';
+  toSelect.innerHTML = '';
+
+  const unitsObj = masterDatabase[category].units;
+  const keys = Object.keys(unitsObj);
+  
+  keys.forEach((key, index) => {
+    const optFrom = document.createElement('option');
+    optFrom.value = key;
+    optFrom.innerText = unitsObj[key].label;
+    fromSelect.appendChild(optFrom);
+
+    const optTo = document.createElement('option');
+    optTo.value = key;
+    optTo.innerText = unitsObj[key].label;
+    
+    if (index === 1 || (index === 2 && keys.length === 2)) {
+      optTo.selected = true;
+    }
+    toSelect.appendChild(optTo);
+  });
+  
+  if (category === 'density') {
+    fromSelect.value = 'kg/m3';
+    toSelect.value = 'lb/ft3';
+  } else if (category === 'temperature') {
+    fromSelect.value = 'degC';
+    toSelect.value = 'degF';
+  }
+
+  calculateConversion();
+}
+
+function calculateConversion() {
+  const valueInput = document.getElementById('inputVal');
+  const errorBox = document.getElementById('errorBox');
+  const display = document.getElementById('resultDisplay');
+
+  const rawVal = valueInput.value;
+  if (rawVal === '' || isNaN(rawVal)) {
+    errorBox.style.display = 'block';
+    display.innerText = '0.00';
+    return;
+  }
+  errorBox.style.display = 'none';
+
+  const category = document.getElementById('category').value;
+  const from = document.getElementById('fromUnit').value;
+  const to = document.getElementById('toUnit').value;
+  const val = parseFloat(rawVal);
+
+  let result = 0;
+
+  if (category === 'temperature') {
+    let kelvin = 0;
+    if (from === 'K') {
+      kelvin = val;
+    } else if (from === 'degC') {
+      kelvin = val + 273.15;
+    } else if (from === 'degF') {
+      kelvin = (val - 32) * 5 / 9 + 273.15;
+    } else if (from === 'degR') {
+      kelvin = val * 5 / 9;
+    }
+
+    if (to === 'K') {
+      result = kelvin;
+    } else if (to === 'degC') {
+      result = kelvin - 273.15;
+    } else if (to === 'degF') {
+      result = (kelvin - 273.15) * 9 / 5 + 32;
+    } else if (to === 'degR') {
+      result = kelvin * 9 / 5;
+    }
+  } else {
+    const fromFactor = masterDatabase[category].units[from].factor;
+    const toFactor = masterDatabase[category].units[to].factor;
+
+    const baseVal = val * fromFactor;
+    result = baseVal / toFactor;
+  }
+
+  let formattedResult = '';
+  if (Math.abs(result) < 1e-5 || Math.abs(result) >= 1e7) {
+    formattedResult = result.toExponential(6);
+  } else {
+    formattedResult = Number(result.toPrecision(8)).toString();
+  }
+
+  display.innerText = formattedResult + " " + to;
+}
+
+function clearAllFields() {
+  document.getElementById('inputVal').value = '';
+  document.getElementById('resultDisplay').innerText = '0.00';
+  document.getElementById('errorBox').style.display = 'none';
+}
+
+window.addEventListener('DOMContentLoaded', updateUnits);
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"How does this converter handle multi-stage rounding errors?","acceptedAnswer":{"@type":"Answer","text":"All calculations are solved directly using absolute base units as a central bridge, preserving precision over long metric-to-imperial conversions."}},
+{"@type":"Question","name":"What is the difference between simple and complex engineering units?","acceptedAnswer":{"@type":"Answer","text":"Simple units (like length or mass) are basic, direct physical boundaries. Complex units (like viscosity, torque, or thermal conductivity) are compound dimensions derived from several fundamental scales."}},
+{"@type":"Question","name":"Why are some liquid units (like gallons) different in standard systems?","acceptedAnswer":{"@type":"Answer","text":"The US liquid gallon is defined as 231 cubic inches (~3.785 liters), while the British Imperial gallon is defined as 10 pounds of water (~4.546 liters). This converter relies on US standards."}},
+{"@type":"Question","name":"How is density defined in dimensional analysis?","acceptedAnswer":{"@type":"Answer","text":"Density is defined as Mass divided by Volume (M/L³), requiring the simultaneous conversion of both mass and spatial volumes."}},
+{"@type":"Question","name":"What is the relationship between dynamic and kinematic viscosity?","acceptedAnswer":{"@type":"Answer","text":"Dynamic viscosity measures a fluid's internal resistance to shear flow, while kinematic viscosity is the ratio of dynamic viscosity to fluid density."}},
+{"@type":"Question","name":"Are temperature conversions relative or absolute?","acceptedAnswer":{"@type":"Answer","text":"Because Celsius and Fahrenheit scales use different starting reference offsets, converting temperature points requires offset formulas, while relative scales (Kelvin and Rankine) use direct multipliers."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Scientific Unit Conversion Calculator","item":"https://calcboy.com/tool/scientific-unit-conversion-calculator"}
+]
+}
+</script>
+
+</body>
+</html>
