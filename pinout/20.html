@@ -1,8 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Particle IoT GPIO Pinouts and Reference Guide | CalcBoy</title>
+<meta name="description" content="Complete Particle IoT pinouts reference guide for Tracker SoM, Boron, Argon, Xenon, Electron, Photon, B-Series, and E-Series. Detailed GPIO maps and specs.">
+<meta name="keywords" content="particle pinout, particle boron pinout, tracker som pinout, particle argon, electron gpio, photon pinout, particle iot guide, CalcBoy">
+<style>
+body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+#audio-pinout-calc,#audio-pinout-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+#audio-pinout-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
 
+/* Search Bar Styling */
+.search-container {margin-bottom:20px;position:relative}
+#myInput {
+  width:100%;
+  height:45px;
+  border:1px solid #cfd6df;
+  border-radius:10px;
+  padding:0 16px 0 40px;
+  font-size:15px;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
+  outline:none;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
+  transition:border-color .2s, box-shadow .2s;
+}
+#myInput:focus {
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
 
+/* Master UL / List Cards */
+#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
+#myUL li {margin:0}
+.pinout-item-card {
+  display:block;
+  text-decoration:none;
+  background:#fff;
+  border:1px solid #cfd6df;
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.02);
+  transition:border-color .2s, box-shadow .2s;
+}
+.pinout-item-card:hover {
+  border-color:#ff6a00;
+  box-shadow:0 4px 12px rgba(255,106,0,.08);
+}
+.card-tag {
+  display:inline-block;
+  font-size:10px;
+  font-weight:900;
+  color:#ff6a00;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-bottom:6px;
+}
+.card-inner {display:flex;align-items:center;justify-content:between}
+.card-title {
+  font-size:16px;
+  font-weight:800;
+  color:#1e293b;
+  flex-grow:1;
+}
+.card-arrow {
+  color:#94a3b8;
+  font-size:18px;
+  font-weight:800;
+  padding-left:12px;
+}
 
+/* Modal Styling */
+.w3-modal {
+  display:none;
+  position:fixed;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  z-index:9999;
+  overflow:auto;
+  background-color:rgba(15,23,42,.65);
+  backdrop-filter:blur(4px);
+  padding:20px 10px;
+}
+.w3-modal-content {
+  background:#fff;
+  margin:20px auto;
+  width:100%;
+  max-width:580px;
+  border-radius:16px;
+  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
+  position:relative;
+  padding:24px;
+}
 
+/* Red Close Button STICKY 10% */
+.mid {
+  position: sticky !important;
+  top: 10% !important;
+  right: 16px !important;
+  float: right !important;
+  z-index: 1010 !important;
+  width: 36px;
+  height: 36px;
+  background-color: #ef4444 !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: -8px;
+  margin-right: -8px;
+}
+.mid:hover {
+  background-color: #dc2626 !important;
+}
 
+/* Inline Diagram Styling */
+.diagram-container {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px auto 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.diagram-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.table1 {width:100%;text-align:left;clear:both}
+
+.img-caption {
+  font-size:11px;
+  font-weight:800;
+  color:#64748b;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-top:6px;
+  margin-bottom:16px;
+}
+
+/* Standardized Tables & Scroll wrappers */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  margin: 15px 0 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+table {
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  overflow:hidden;
+}
+th {
+  background:#f1f5f9;
+  color:#1e293b;
+  font-size:12px;
+  font-weight:900;
+  padding:10px 12px;
+  text-align:left;
+  border-bottom:2px solid #e2e8f0;
+  white-space: nowrap;
+}
+td {
+  padding:8px 12px;
+  font-size:12px;
+  color:#475467;
+  border-bottom:1px solid #edf2f7;
+  white-space: nowrap;
+}
+tr:nth-child(even) {background:#f8fafc}
+hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
+
+/* Info Box / Content Sections */
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+
+@media(max-width:600px){
+  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="audio-pinout-calc">
+
+  <div class="search-container">
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Particle Boards..." title="Type in a board name">
+  </div>
+
+  <ul id="myUL">
+    
+    <!-- TRACKER SOM -->
+    <li>
+      <a href="#" onclick="document.getElementById('id01').style.display='block'; return false;" class="pinout-item-card">
+        <span class="card-tag">nRF52840 Cellular SoM</span>
+        <div class="card-inner">
+          <span class="card-title">Tracker SoM Pinout Reference</span>
+          <span class="card-arrow">&#x2192;</span>
+        </div>
+      </a>
+      <div id="id01" class="w3-modal">
+        <div class="w3-modal-content">
+          <button class="mid" onclick="document.getElementById('id01').style.display='none'">X</button>
+          <div class="table1">
+            <div class="diagram-container">
+              <!-- SVG schematic of Tracker SoM edge profile -->
+              <svg viewBox="0 0 500 120" width="100%">
+                <rect x="10" y="10" width="480" height="100" rx="8" fill="#1e293b" />
+                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="12" font-weight="bold">TRACKER SOM (HIGH-DENSITY M.2 EDGE BLOCK)</text>
+                <g fill="#cbd5e1">
+                  <!-- Segment lines indicating four outer boundary connection zones -->
+                  <line x1="20" y1="50" x2="180" y2="50" stroke="#ff6a00" stroke-width="4" />
+                  <text x="25" y="70" fill="#94a3b8" font-family="Arial" font-size="9">RIGHT SIDE: Pins 1-42</text>
+                  
+                  <line x1="200" y1="50" x2="300" y2="50" stroke="#3b82f6" stroke-width="4" />
+                  <text x="205" y="70" fill="#94a3b8" font-family="Arial" font-size="9">TOP: Pins 43-53</text>
+                  
+                  <line x1="320" y1="50" x2="480" y2="50" stroke="#10b981" stroke-width="4" />
+                  <text x="325" y="70" fill="#94a3b8" font-family="Arial" font-size="9">LEFT: Pins 54-95</text>
+                </g>
+                <text x="25" y="95" fill="#eab308" font-family="Arial" font-size="8">SWD, NFC, RGB, PMIC, GNSS, ESP32, nRF52 PORT INTERFACES INTEGRATED</text>
+              </svg>
+            </div>
+            <div class="img-caption">DIAGRAM: TRACKER SOM SYSTEM BLOCK ALLOCATION</div>
+
+            <h3>Complete SoM Pin Allocation Table</h3>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th># Pin</th>
+                    <th>Pin Name</th>
+                    <th>Function</th>
+                    <th>Linked Component</th>
+                    <th>Signal Port Description &amp; Alternate Profiles</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="5" style="background:#f1f5f9; font-weight:bold;">RIGHT SIDE INTERFACE TERMINALS</td></tr>
+                  <tr><td>1</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>2</td><td>GNSS_BAT</td><td>POWER IN</td><td>GNSS</td><td>RTC Backup battery rail for u-blox GNSS hot-start cycles</td></tr>
+                  <tr><td>3</td><td>GNSS_RESET</td><td>IO</td><td>GNSS &amp; IOEX</td><td>GNSS reset control line; can be driven manually or via internal IO Expander</td></tr>
+                  <tr><td>4</td><td>GNSS_VBUS</td><td>USB PWR</td><td>GNSS</td><td> u-blox USB port power rail (Optional deployment)</td></tr>
+                  <tr><td>5</td><td>GNSS_P</td><td>USB D+</td><td>GNSS</td><td>u-blox USB differential transceiver plus (+)</td></tr>
+                  <tr><td>6</td><td>GNSS_N</td><td>USB D-</td><td>GNSS</td><td>u-blox USB differential transceiver minus (-)</td></tr>
+                  <tr><td>7</td><td>GNSS_PULSE</td><td>OUT</td><td>GNSS</td><td>High-precision time pulse output (Configurable as fix status LED driver)</td></tr>
+                  <tr><td>8</td><td>-</td><td>-</td><td>-</td><td>Empty Terminal Node</td></tr>
+                  <tr><td>9</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>10</td><td>-</td><td>-</td><td>-</td><td>Empty Terminal Node</td></tr>
+                  <tr><td>11</td><td>URXD1</td><td>Input</td><td>nRF52840</td><td>Main system UART Receiver Port 1 (Alternative GPIO use)</td></tr>
+                  <tr><td>12</td><td>EINT8</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 8 (Alternative GPIO use)</td></tr>
+                  <tr><td>13</td><td>UTXD1</td><td>Output</td><td>nRF52840</td><td>Main system UART Transmitter Port 1 (Alternative GPIO use)</td></tr>
+                  <tr><td>14</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>15</td><td>UCTS1</td><td>Input</td><td>nRF52840</td><td>UART1 Clear-to-Send Flow Control handshaking line</td></tr>
+                  <tr><td>16</td><td>EINT5</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 5 (Alternative GPIO use)</td></tr>
+                  <tr><td>17</td><td>VIO28_PMU</td><td>Power</td><td>PMU</td><td>2.8V IO Power Rail Output</td></tr>
+                  <tr><td>18</td><td>EINT11</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 11 (Alternative GPIO use)</td></tr>
+                  <tr><td>19</td><td>SPI2_MISO</td><td>Input</td><td>nRF52840</td><td>SPI2 MISO Line (Shared with EINT3)</td></tr>
+                  <tr><td>20</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>21</td><td>SPI2_MOSI</td><td>Output</td><td>nRF52840</td><td>SPI2 MOSI Line (Shared with EINT4)</td></tr>
+                  <tr><td>22</td><td>URTS1</td><td>Output</td><td>nRF52840</td><td>UART1 Request-to-Send Flow Control handshaking line</td></tr>
+                  <tr><td>23</td><td>SPI2_CLK</td><td>Output</td><td>nRF52840</td><td>SPI2 Clock Line (Shared with EINT1)</td></tr>
+                  <tr><td>24</td><td>SPI2_CS</td><td>Output</td><td>nRF52840</td><td>SPI2 CS Line (Shared with EINT5)</td></tr>
+                  <tr><td>25</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>26</td><td>EINT12</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 12 (Alternative GPIO use)</td></tr>
+                  <tr><td>27</td><td>SDA2</td><td>I/O</td><td>nRF52840</td><td>Secondary I2C Data Line (Shared with GPIO51)</td></tr>
+                  <tr><td>28</td><td>SCL2</td><td>I/O</td><td>nRF52840</td><td>Secondary I2C Clock Line (Shared with GPIO52)</td></tr>
+                  <tr><td>29</td><td>SPI_CS</td><td>Output</td><td>nRF52840</td><td>SPI CS Line (Shared with GPIO65)</td></tr>
+                  <tr><td>30</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>31</td><td>SPI_CK</td><td>Output</td><td>nRF52840</td><td>SPI Clock Line (Shared with GPIO66)</td></tr>
+                  <tr><td>32</td><td>URTS2</td><td>Output</td><td>nRF52840</td><td>UART2 Request-to-Send Flow Control handshaking line / GPIO60</td></tr>
+                  <tr><td>33</td><td>SPI_MO</td><td>Output</td><td>nRF52840</td><td>SPI Master Output (PA Line)</td></tr>
+                  <tr><td>34</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>35</td><td>SPUM</td><td>I/O</td><td>nRF52840</td><td>Shared GPIO67 line</td></tr>
+                  <tr><td>36</td><td>UCTS2</td><td>Input</td><td>nRF52840</td><td>UART2 Clear-to-Send Flow Control handshaking line / GPIO59</td></tr>
+                  <tr><td>37</td><td>EINT_123</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 123 (GPIO123)</td></tr>
+                  <tr><td>38</td><td>SCL3</td><td>Output</td><td>nRF52840</td><td>Tertiary I2C Clock Line (Shared with GPIO54)</td></tr>
+                  <tr><td>39</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>40</td><td>SDA3</td><td>I/O</td><td>nRF52840</td><td>Tertiary I2C Data Line (Shared with GPIO53)</td></tr>
+                  <tr><td>41</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>42</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+
+                  <tr><td colspan="5" style="background:#f1f5f9; font-weight:bold;">TOP SIDE INTERFACE TERMINALS</td></tr>
+                  <tr><td>43</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>44</td><td>NC</td><td>-</td><td>-</td><td>Empty Terminal Node</td></tr>
+                  <tr><td>45</td><td>3V3</td><td>POWER OUT</td><td>TPS62291</td><td>Regulated 3.3V Output Rail (1.0A max allocation limit)</td></tr>
+                  <tr><td>46</td><td>TS</td><td>Input</td><td>PMIC</td><td>Power Management IC battery temperature thermistor sensor</td></tr>
+                  <tr><td>47</td><td>PMID</td><td>POWER OUT</td><td>PMIC</td><td>Power Management IC boost converter out during OTG operations</td></tr>
+                  <tr><td>48</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>49</td><td>VIN</td><td>POWER IN</td><td>PMIC</td><td>Wide voltage main input rail (3.88V to 12.0V DC)</td></tr>
+                  <tr><td>50</td><td>STAT</td><td>Output</td><td>PMIC</td><td>Power Management IC charger status indicator pin (Active-Low)</td></tr>
+                  <tr><td>51</td><td>VBUS</td><td>POWER IN</td><td>PMIC &amp; MCU</td><td>USB power supply alternative input rail (5V)</td></tr>
+                  <tr><td>52</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>53</td><td>LI+</td><td>POWER</td><td>PMIC</td><td>Rechargeable Single-Cell Lithium-Polymer battery anode rail</td></tr>
+
+                  <tr><td colspan="5" style="background:#f1f5f9; font-weight:bold;">LEFT SIDE INTERFACE TERMINALS</td></tr>
+                  <tr><td>54</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>55</td><td>A0</td><td>I/O</td><td>nRF52840</td><td>Analog Input 0 / Digital I/O / I2C1 Data / Internal Thermistor</td></tr>
+                  <tr><td>56</td><td>A1</td><td>I/O</td><td>nRF52840</td><td>Analog Input 1 / Digital I/O / I2C1 Clock / User Button Line</td></tr>
+                  <tr><td>57</td><td>A2</td><td>I/O</td><td>nRF52840</td><td>Analog Input 2 / Digital I/O / UART1 Clear-to-Send / GNSS Fix State</td></tr>
+                  <tr><td>58</td><td>A3</td><td>I/O</td><td>nRF52840</td><td>Analog Input 3 / Digital I/O / UART1 Request-to-Send / GNSS GPIO</td></tr>
+                  <tr><td>59 to 62</td><td>-</td><td>-</td><td>-</td><td>Empty Terminal Nodes</td></tr>
+                  <tr><td>63</td><td>AGND</td><td>POWER</td><td>nRF52840</td><td>Analog noise-isolated ground reference</td></tr>
+                  <tr><td>64</td><td>CAN_N</td><td>I/O</td><td>CAN controller</td><td>Controller Area Network differential transceiver minus (-)</td></tr>
+                  <tr><td>65</td><td>CAN_P</td><td>I/O</td><td>CAN controller</td><td>Controller Area Network differential transceiver plus (+)</td></tr>
+                  <tr><td>66</td><td>CAN_5V</td><td>Power Out</td><td>XCL9142F40</td><td>On-board 5.0V step-up converter output (0.8A max)</td></tr>
+                  <tr><td>67</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>68</td><td>MCU-D-</td><td>Analog I/O</td><td>nRF52840</td><td>MCU USB differential transceiver minus (-)</td></tr>
+                  <tr><td>69</td><td>MCU_D+</td><td>Analog I/O</td><td>nRF52840</td><td>MCU USB differential transceiver plus (+)</td></tr>
+                  <tr><td>70</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>71</td><td>MCU_RX</td><td>I/O</td><td>nRF52840</td><td>System UART0 Receiver / Digital I/O / I2C3 Data Line</td></tr>
+                  <tr><td>72</td><td>MCU_TX</td><td>I/O</td><td>nRF52840</td><td>System UART0 Transmitter / Digital I/O / I2C3 Clock Line</td></tr>
+                  <tr><td>73</td><td>RTC_BAT</td><td>Power Input</td><td>AM18X5</td><td>Real-Time Clock / Watchdog battery backup terminal</td></tr>
+                  <tr><td>74</td><td>RTC_BTN</td><td>Input</td><td>AM18X5</td><td>RTC external interrupt wake button input</td></tr>
+                  <tr><td>75 to 82</td><td>-</td><td>-</td><td>-</td><td>Empty Terminal Nodes</td></tr>
+                  <tr><td>83</td><td>CELL_GPS_RX</td><td>Input</td><td>Modem</td><td>Cellular module auxiliary GPS UART receiver input</td></tr>
+                  <tr><td>84</td><td>CELL_GPS_TX</td><td>Output</td><td>Modem</td><td>Cellular module auxiliary GPS UART transmitter output</td></tr>
+                  <tr><td>85</td><td>CELL_RI</td><td>Output</td><td>Modem</td><td>Cellular module active ring indicator status out</td></tr>
+                  <tr><td>86</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>87</td><td>CELL_GPS_RF</td><td>Analog RF</td><td>Modem</td><td>Cellular module GPS RF antenna interface</td></tr>
+                  <tr><td>88, 89</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>90</td><td>GNSS_BOOT</td><td>Input</td><td>GNSS</td><td>u-blox module hardware boot configuration strap</td></tr>
+                  <tr><td>91</td><td>GNSS_ANT_PWR</td><td>Power Out</td><td>GNSS</td><td>u-blox active antenna LDO feed control output</td></tr>
+                  <tr><td>92</td><td>GNSS_LNA_EN</td><td>Output</td><td>GNSS</td><td>u-blox LNA gain amplifier enable pinout</td></tr>
+                  <tr><td>93</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                  <tr><td>94</td><td>GNSS_RF</td><td>Analog RF</td><td>GNSS</td><td>Main GNSS coaxial antenna RF pad</td></tr>
+                  <tr><td>95</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <!-- TRACKER SOM EVALUATION BOARD -->
+    <li>
+      <a href="#" onclick="document.getElementById('id02').style.display='block'; return false;" class="pinout-item-card">
+        <span class="card-tag">Tracker Carrier Interface</span>
+        <div class="card-inner">
+          <span class="card-title">Tracker SoM Eval Board Pinout</span>
+          <span class="card-arrow">&#x2192;</span>
+        </div>
+      </a>
+      <div id="id02" class="w3-modal">
+        <div class="w3-modal-content">
+          <button class="mid" onclick="document.getElementById('id02').style.display='none'">X</button>
+          <div class="table1">
+            <div class="diagram-container">
+              <!-- SVG schematic of Tracker Carrier breakout block -->
+              <svg viewBox="0 0 460 140" width="100%">
+                <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
+                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">TRACKER EVALUATION BREAKOUT STRUCTS</text>
+                <g fill="#10b981">
+                  <!-- Parallel columns left and right -->
+                  <circle cx="40" cy="60" r="4" /><text x="50" y="63" fill="#cbd5e1" font-family="Arial" font-size="8">LEFT ROW (Analog / TS / PMID)</text>
+                  <circle cx="260" cy="60" r="4" /><text x="270" y="63" fill="#cbd5e1" font-family="Arial" font-size="8">RIGHT ROW (VIN / VBUS / LI+)</text>
+                </g>
+              </svg>
+            </div>
+            <div class="img-caption">DIAGRAM: EVAL BOARD CARRIER BLOCK INTERFACE</div>
+
+            <h3>Carrier Header Interface Map</h3>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Left Target Label</th>
+                    <th>Left Connector</th>
+                    <th>Right Connector</th>
+                    <th>Right Target Label</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Ground Return</td><td>GND</td><td>GND</td><td>Ground Return</td></tr>
+                  <tr><td>PMIC system output</td><td>PMID</td><td>LI+</td><td>Single-cell Lithium battery anode</td></tr>
+                  <tr><td>PMIC thermistor input</td><td>TS</td><td>VBUS</td><td>nRF52 USB supply line (5V)</td></tr>
+                  <tr><td>Regulated Output (3.3V)</td><td>3V3</td><td>STAT</td><td>PMIC active charge status output</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM44</td><td>VIN</td><td>External main supply line (5V-12V DC)</td></tr>
+                  <tr><td>Ground Return</td><td>GND</td><td>GND</td><td>Ground Return</td></tr>
+                  <tr><td>Analog input 4 / SPI MOSI</td><td>A4</td><td>A0</td><td>Analog input 0 / I2C1 Data</td></tr>
+                  <tr><td>Analog input 5 / SPI MISO</td><td>A5</td><td>A1</td><td>Analog input 1 / I2C1 Clock</td></tr>
+                  <tr><td>Analog input 6 / SPI Clock</td><td>A6</td><td>A2</td><td>Analog input 2 / Serial1 Clear-to-Send</td></tr>
+                  <tr><td>Analog input 7 / SS Chip select</td><td>A7</td><td>A3</td><td>Analog input 3 / Serial1 Request-to-Send</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM37</td><td>SOM59</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM36</td><td>SOM60</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM35</td><td>SOM61</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM34</td><td>SOM62</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>Regulated Output (3.3V)</td><td>3V3</td><td>3V3</td><td>Regulated Output (3.3V)</td></tr>
+                  <tr><td>Ground Return</td><td>GND</td><td>AGND</td><td>Analog noise-isolated ground</td></tr>
+                  <tr><td>MCU System Reset line</td><td>RESET</td><td>MCU_RX</td><td>USART1 Serial receive channel / GPIO D9</td></tr>
+                  <tr><td>MCU Boot Mode trigger</td><td>MODE</td><td>MCU_TX</td><td>USART1 Serial transmit channel / GPIO D8</td></tr>
+                  <tr><td>Red system status driver</td><td>R</td><td>RTC_BAT</td><td>RTC battery backup line</td></tr>
+                  <tr><td>Green system status driver</td><td>G</td><td>RTC_BTN</td><td>RTC external wake interrupt button</td></tr>
+                  <tr><td>Blue system status driver</td><td>B</td><td>SOM76</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>NFC loop antenna port 1</td><td>NFC1</td><td>SOM77</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>NFC loop antenna port 2</td><td>NFC2</td><td>SOM78</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM21</td><td>SOM79</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM20</td><td>SOM80</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM19</td><td>SOM81</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM18</td><td>SOM82</td><td>Empty/Unused pin</td></tr>
+                  <tr><td>Regulated Output (3.3V)</td><td>3V3</td><td>3V3</td><td>Regulated Output (3.3V)</td></tr>
+                  <tr><td>ESP32 Serial RX</td><td>WIFI_RXD</td><td>NC</td><td>No Connection (NC)</td></tr>
+                  <tr><td>ESP32 Serial TX</td><td>WIFI_TXD</td><td>CELL_RX</td><td>Cellular modem serial receive channel</td></tr>
+                  <tr><td>ESP32 boot configuration</td><td>WIFI_BOOT</td><td>CELL_TX</td><td>Cellular modem serial transmit channel</td></tr>
+                  <tr><td>ESP32 system enable</td><td>WIFI_EN</td><td>CELL_RI</td><td>Cellular active ring status indicator</td></tr>
+                  <tr><td>Empty/Unused pin</td><td>SOM9</td><td>GNSS_TIME_PULSE</td><td>u-blox GNSS time-pulse output</td></tr>
+                  <tr><td>Ground Return</td><td>GND</td><td>GND</td><td>Ground Return</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <!-- B-SERIES B402 -->
+    <li>
+      <a href="#" onclick="document.getElementById('id04').style.display='block'; return false;" class="pinout-item-card">
+        <span class="card-tag">nRF52840 LTE Cat M1 / NB-IoT SoM</span>
+        <div class="card-inner">
+          <span class="card-title">Particle B-Series B402 Pinout</span>
+          <span class="card-arrow">&#x2192;</span>
+        </div>
+      </a>
+      <div id="id04" class="w3-modal">
+        <div class="w3-modal-content">
+          <button class="mid" onclick="document.getElementById('id04').style.display='none'">X</button>
+          <div class="table1">
+            <div class="diagram-container">
+              <!-- SVG Schematic of B402 Castellated Module -->
+              <svg viewBox="0 0 460 140" width="100%">
+                <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
+                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">PARTICLE B402 MESH/CELLULAR SOM</text>
+                <g fill="#cbd5e1">
+                  <!-- Top/Bottom Edge pads representation -->
+                  <circle cx="30" cy="60" r="3" fill="#ef4444" />
+                  <circle cx="50" cy="60" r="3" />
+                  <circle cx="70" cy="60" r="3" fill="#64748b" />
+                  <circle cx="90" cy="60" r="3" />
+                  <circle cx="110" cy="60" r="3" />
+                  <circle cx="130" cy="60" r="3" />
+                  <circle cx="150" cy="60" r="3" fill="#eab308" />
+                  <circle cx="170" cy="60" r="3" />
+                  <circle cx="190" cy="60" r="3" />
+                  <circle cx="210" cy="60" r="3" fill="#64748b" />
+                </g>
+                <text x="25" y="85" fill="#10b981" font-family="Arial" font-size="8">75 CAST_PIN CONNECTIONS - INTEGRATED UART, SPI, NFC, &amp; ADC MAPS</text>
+              </svg>
+            </div>
+            <div class="img-caption">DIAGRAM: B402 CASTELLATED SMT INTERFACE</div>
+
+            <h3>B402 Pinout &amp; Port Definition Table</h3>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th># Pin</th>
+                    <th>Pin Label</th>
+                    <th>Bus / Alternative Function</th>
+                    <th>Module Class</th>
+                    <th>nRF52 Port Address</th>
+                    <th>Signal Port Description &amp; Alternate Operation Profiles</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>1</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>2</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
+                  <tr><td>3</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>4</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
+                  <tr><td>5</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>6</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
+                  <tr><td>7</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>8</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
+                  <tr><td>9</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>10</td><td>3V3</td><td>3V3</td><td>POWER</td><td>-</td><td>Stabilized supply input rail (3.0V to 3.6V)</td></tr>
+                  <tr><td>11</td><td>USB D+</td><td>USB D+</td><td>Analog I/O</td><td>-</td><td>nRF52840 native USB differential transceiver plus (+)</td></tr>
+                  <tr><td>12</td><td>3V3</td><td>3V3</td><td>POWER</td><td>-</td><td>Stabilized supply input rail (3.0V to 3.6V)</td></tr>
+                  <tr><td>13</td><td>USB D-</td><td>USB D-</td><td>Analog I/O</td><td>-</td><td>nRF52840 native USB differential transceiver minus (-)</td></tr>
+                  <tr><td>14</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
+                  <tr><td>15</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>16</td><td>VUSB</td><td>VUSB</td><td>Power Input</td><td>-</td><td>USB device controller bus voltage detection pin (5V)</td></tr>
+                  <tr><td>17</td><td>NFC1</td><td>SOM3</td><td>Analog Input</td><td>P0.09</td><td>NFC tag loop antenna interface port 1</td></tr>
+                  <tr><td>18</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
+                  <tr><td>19</td><td>NFC2</td><td>SOM4</td><td>Analog Input</td><td>P0.10</td><td>NFC tag loop antenna interface port 2</td></tr>
+                  <tr><td>20</td><td>D1</td><td>SCL</td><td>I/O</td><td>P0.27</td><td>Main hardware I2C Clock Bus / Digital I/O</td></tr>
+                  <tr><td>21</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>22</td><td>D0</td><td>SDA</td><td>I/O</td><td>P0.26</td><td>Main hardware I2C Data Bus / Digital I/O</td></tr>
+                  <tr><td>23</td><td>A0</td><td>ADC0</td><td>Analog Input</td><td>P0.03</td><td>Analog Input Channel 0 / Digital I/O</td></tr>
+                  <tr><td>32</td><td>MODE</td><td>MODE</td><td>Input</td><td>P0.11</td><td>System MODE button input line (Active-Low)</td></tr>
+                  <tr><td>33</td><td>A1</td><td>ADC1</td><td>Analog Input</td><td>P0.04</td><td>Analog Input Channel 1 / Digital I/O</td></tr>
+                  <tr><td>34</td><td>RESET</td><td>RESET</td><td>Input</td><td>-</td><td>Active-Low hardware reset line</td></tr>
+                  <tr><td>35</td><td>A2</td><td>ADC2</td><td>Analog Input</td><td>P0.28</td><td>Analog Input Channel 2 / Digital I/O</td></tr>
+                  <tr><td>36</td><td>D9</td><td>TX</td><td>Output</td><td>P0.06</td><td>Primary UART Transmitter output / Digital I/O</td></tr>
+                  <tr><td>37</td><td>A3</td><td>ADC3</td><td>Analog Input</td><td>P0.29</td><td>Analog Input Channel 3 / Digital I/O</td></tr>
+                  <tr><td>38</td><td>D10</td><td>RX</td><td>Input</td><td>P0.08</td><td>Primary UART Receiver input / Digital I/O</td></tr>
+                  <tr><td>39</td><td>AGND</td><td>AGND</td><td>POWER</td><td>-</td><td>Analog noise-isolated ground reference</td></tr>
+                  <tr><td>40</td><td>D3</td><td>RESERVED</td><td>I/O</td><td>P1.01</td><td>UART Flow Control CTS / I2C3 SCL / SPI2 MOSI / Digital I/O</td></tr>
+                  <tr><td>41</td><td>A4</td><td>RESERVED</td><td>Analog Input</td><td>P0.30</td><td>Analog Input Channel 4 / Digital I/O</td></tr>
+                  <tr><td>42</td><td>D2</td><td>RESERVED</td><td>I/O</td><td>P1.02</td><td>UART Flow Control RTS / I2C3 SDA / SPI2 Clock / Digital I/O</td></tr>
+                  <tr><td>43</td><td>A5</td><td>RESERVED</td><td>Analog Input</td><td>P0.31</td><td>Analog Input Channel 5 / Digital I/O</td></tr>
+                  <tr><td>44</td><td>u-blox USB D+</td><td>SOM0</td><td>Analog I/O</td><td>-</td><td>Cellular module USB differential transceiver plus (+)</td></tr>
+                  <tr><td>45</td><td>A6</td><td>RESERVED</td><td>Analog Input</td><td>P0.05</td><td>Analog Input Channel 6 / Digital I/O</td></tr>
+                  <tr><td>46</td><td>u-blox USB D-</td><td>SOM1</td><td>Analog I/O</td><td>-</td><td>Cellular module USB differential transceiver minus (-)</td></tr>
+                  <tr><td>47</td><td>A7</td><td>RESERVED</td><td>Analog Input</td><td>P0.02</td><td>Analog Input Channel 7 / Digital I/O</td></tr>
+                  <tr><td>48</td><td>D8</td><td>CS</td><td>Output</td><td>P1.03</td><td>Primary SPI CS Line / Digital I/O</td></tr>
+                  <tr><td>49</td><td>AGND</td><td>AGND</td><td>POWER</td><td>-</td><td>Analog noise-isolated ground reference</td></tr>
+                  <tr><td>50</td><td>D11</td><td>MISO</td><td>Input</td><td>P1.14</td><td>Primary SPI MISO Line / Digital I/O</td></tr>
+                  <tr><td>51</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
+                  <tr><td>52</td><td>D12</td><td>MOSI</td><td>Output</td><td>P1.13</td><td>Primary SPI MOSI Line / Digital I/O</td></tr>
+                  <tr><td>53</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
+                  <tr><td>54</td><td>D13</td><td>SCK</td><td>Output</td><td>P1.15</td><td>Primary SPI Clock Line / Digital I/O</td></tr>
+                  <tr><td>55 to 60</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Nodes (Leave unconnected)</td></tr>
+                  <tr><td>61</td><td>RGBR</td><td>RED</td><td>Output</td><td>P0.13</td><td>Status Indicator RGB LED Red Channel Driver</td></tr>
+                  <tr><td>62</td><td>D22</td><td>GPIO0</td><td>I/O</td><td>P0.24</td><td>General Purpose Digital I/O Line 0</td></tr>
+                  <tr><td>63</td><td>RGBG</td><td>GREEN</td><td>Output</td><td>P0.14</td><td>Status Indicator RGB LED Green Channel Driver</td></tr>
+                  <tr><td>64</td><td>D23</td><td>GPIO1</td><td>I/O</td><td>P1.09</td><td>General Purpose Digital I/O Line 1</td></tr>
+                  <tr><td>65</td><td>RGBB</td><td>BLUE</td><td>Output</td><td>P0.15</td><td>Status Indicator RGB LED Blue Channel Driver</td></tr>
+                  <tr><td>66</td><td>D4</td><td>PWM0</td><td>I/O</td><td>P1.08</td><td>SPI1 MISO / General Purpose Digital I/O / Hardware PWM0</td></tr>
+                  <tr><td>67</td><td>SIM_VCC</td><td>SOM5</td><td>Power Out</td><td>-</td><td>Cellular module SIM power supply line (1.8V / 3V)</td></tr>
+                  <tr><td>68</td><td>D5</td><td>PWM1</td><td>I/O</td><td>P1.10</td><td>General Purpose Digital I/O / Hardware PWM1</td></tr>
+                  <tr><td>69</td><td>SIM_RST</td><td>SOM6</td><td>Output</td><td>-</td><td>Cellular module SIM reset line (1.8V / 3V)</td></tr>
+                  <tr><td>70</td><td>D6</td><td>PWM2</td><td>I/O</td><td>P1.11</td><td>General Purpose Digital I/O / Hardware PWM2</td></tr>
+                  <tr><td>71</td><td>SIM_CLK</td><td>SOM7</td><td>Output</td><td>-</td><td>Cellular module SIM clock line (1.8V / 3V)</td></tr>
+                  <tr><td>72</td><td>D7</td><td>PWM3</td><td>I/O</td><td>P1.12</td><td>General Purpose Digital I/O / Hardware PWM3</td></tr>
+                  <tr><td>73</td><td>SIM_DATA</td><td>SOM8</td><td>I/O</td><td>-</td><td>Cellular module SIM data line (Includes internal 4.7k pull-up)</td></tr>
+                  <tr><td>74</td><td>u-blox VBUS</td><td>SOM2</td><td>Power Input</td><td>-</td><td>Cellular module USB bus detection pin (5V)</td></tr>
+                  <tr><td>75</td><td>-</td><td>SOM9</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <!-- B-SERIES B523 -->
+    <li>
+      <a href="#" onclick="document.getElementById('id05').style.display='block'; return false;" class="pinout-item-card">
+        <span class="card-tag">Quectel LTE Cat M1 / NB1 / EGPRS SoM</span>
+        <div class="card-inner">
+          <span class="card-title">Particle B-Series B523 Pinout</span>
+          <span class="card-arrow">&#x2192;</span>
+        </div>
+      </a>
+      <div id="id05" class="w3-modal">
+        <div class="w3-modal-content">
+          <button class="mid" onclick="document.getElementById('id05').style.display='none'">X</button>
+          <div class="table1">
+            <div class="diagram-container">
+              <!-- SVG Schematic of B523 Castellated Module -->
+              <svg viewBox="0 0 460 140" width="100%">
+                <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
+                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">PARTICLE B523 QUECTEL CELLULAR SOM</text>
+                <g fill="#cbd5e1">
+                  <!-- Castellated layout representation -->
+                  <circle cx="30" cy="60" r="3" fill="#ef4444" />
+                  <circle cx="50" cy="60" r="3" />
+                  <circle cx="70" cy="60" r="3" fill="#64748b" />
+                  <circle cx="90" cy="60" r="3" />
+                  <circle cx="110" cy="60" r="3" />
+                  <circle cx="130" cy="60" r="3" />
+                  <circle cx="150" cy="60" r="3" fill="#eab308" />
+                  <circle cx="170" cy="60" r="3" />
+                  <circle cx="190" cy="60" r="3" />
+                  <circle cx="210" cy="60" r="3" fill="#64748b" />
+                </g>
+                <text x="25" y="85" fill="#a855f7" font-family="Arial" font-size="8">75 CAST_PIN CONNECTIONS - INTEGRATED UART, SPI, NFC, &amp; ADC MAPS</text>
+              </svg>
+            </div>
+            <div class="img-caption">DIAGRAM: B523 CASTELLATED SMT INTERFACE</div>
+
+            <h3>B523 Pinout &amp; Port Definition Table</h3>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th># Pin</th>
+                    <th>Pin Label</th>
+                    <th>Bus / Alternative Function</th>
+                    <th>Module Class</th>
+                    <th>nRF52 Port Address</th>
+                    <th>Signal Port Description &amp; Alternate Operation Profiles</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>1</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>2</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.3V supply</td></tr>
+                  <tr><td>3</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>4</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.3V supply</td></tr>
+                  <tr><td>5</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>6</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.3V supply</td></tr>
+                  <tr><td>7</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>8</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.3V supply</td></tr>
+                  <tr><td>9</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>10</td><td>3V3</td><td>3V3</td><td>POWER</td><td>-</td><td>Stabilized supply input rail (3.0V to 3.6V)</td></tr>
+                  <tr><td>11</td><td>USB D+</td><td>USB D+</td><td>Analog I/O</td><td>-</td><td>nRF52840 native USB differential transceiver plus (+)</td></tr>
+                  <tr><td>12</td><td>3V3</td><td>3V3</td><td>POWER</td><td>-</td><td>Stabilized supply input rail (3.0V to 3.6V)</td></tr>
+                  <tr><td>13</td><td>USB D-</td><td>USB D-</td><td>Analog I/O</td><td>-</td><td>nRF52840 native USB differential transceiver minus (-)</td></tr>
+                  <tr><td>14</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
+                  <tr><td>15</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>16</td><td>VUSB</td><td>VUSB</td><td>Power Input</td><td>-</td><td>USB device controller bus voltage detection pin (5V)</td></tr>
+                  <tr><td>17</td><td>NFC1</td><td>SOM3</td><td>Analog Input</td><td>P0.09</td><td>NFC tag loop antenna interface port 1</td></tr>
+                  <tr><td>18</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
+                  <tr><td>19</td><td>NFC2</td><td>SOM4</td><td>Analog Input</td><td>P0.10</td><td>NFC tag loop antenna interface port 2</td></tr>
+                  <tr><td>20</td><td>D1</td><td>SCL</td><td>I/O</td><td>P0.27</td><td>Main hardware I2C Clock Bus / Digital I/O</td></tr>
+                  <tr><td>21</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
+                  <tr><td>22</td><td>D0</td><td>SDA</td><td>I/O</td><td>P0.26</td><td>Main hardware I2C Data Bus / Digital I/O</td></tr>
+                  <tr><td>23</td><td>A0</td><td>ADC0</td><td>Analog Input</td><td>P0.03</td><td>Analog Input Channel 0 / Digital I/O</td></tr>
+                  <tr><td>32</td><td>MODE</td><td>MODE</td><td>Input</td><td>P0.11</td><td>System MODE button input line (Active-Low)</td></tr>
+                  <tr><td>33</td><td>A1</td><td>ADC1</td><td>Analog Input</td><td>P0.04</td><td>Analog Input Channel 1 / Digital I/O</td></tr>
+                  <tr><td>34</td><td>RESET</td><td>RESET</td><td>Input</td><td>-</td><td>Active-Low hardware reset line</td></tr>
+                  <tr><td>35</td><td>A2</td><td>ADC2</td><td>Analog Input</td><td>P0.28</td><td>Analog Input Channel 2 / Digital I/O</td></tr>
+                  <tr><td>36</td><td>D9</td><td>TX</td><td>Output</td><td>P0.06</td><td>Primary UART Transmitter output / Digital I/O</td></tr>
+                  <tr><td>37</td><td>A3</td><td>ADC3</td><td>Analog Input</td><td>P0.29</td><td>Analog Input Channel 3 / Digital I/O</td></tr>
+                  <tr><td>38</td><td>D10</td><td>RX</td><td>Input</td><td>P0.08</td><td>Primary UART Receiver input / Digital I/O</td></tr>
+                  <tr><td>39</td><td>AGND</td><td>AGND</td><td>POWER</td><td>-</td><td>Analog noise-isolated ground reference</td></tr>
+                  <tr><td>40</td><td>D3</td><td>RESERVED</td><td>I/O</td><td>P1.01</td><td>UART Flow Control CTS / I2C3 SCL / SPI2 MOSI / Digital I/O</td></tr>
+                  <tr><td>41</td><td>A4</td><td>RESERVED</td><td>Analog Input</td><td>P0.30</td><td>Analog Input Channel 4 / Digital I/O</td></tr>
+                  <tr><td>42</td><td>D2</td><td>RESERVED</td><td>I/O</td><td>P1.02</td><td>UART Flow Control RTS / I2C3 SDA / SPI2 Clock / Digital I/O</td></tr>
+                  <tr><td>43</td><td>A5</td><td>RESERVED</td><td>Analog Input</td><td>P0.31</td><td>Analog Input Channel 5 / Digital I/O</td></tr>
+                  <tr><td>44</td><td>Quectel USB D+</td><td>SOM0</td><td>Analog I/O</td><td>-</td><td>Cellular module USB differential transceiver plus (+)</td></tr>
+                  <tr><td>45</td><td>A6</td><td>RESERVED</td><td>Analog Input</td><td>P0.05</td><td>Analog Input Channel 6 / Digital I/O</td></tr>
+                  <tr><td>46</td><td>Quectel USB D-</td><td>SOM1</td><td>Analog I/O</td><td>-</td><td>Cellular module USB differential transceiver minus (-)</td></tr>
+                  <tr><td>47</td><td>A7</td><td>RESERVED</td><td>Analog Input</td><td>P0.02</td><td>Analog Input Channel 7 / Digital I/O</td></tr>
+                  <tr><td>48</td><td>D8</td><td>CS</td><td>Output</td><td>P1.03</td><td>Primary SPI CS Line / Digital I/O</td></tr>
+                  <tr><td>49</td><td>AGND</td><td>AGND</td><td>POWER</td><td>-</td><td>Analog noise-isolated ground reference</td></tr>
+                  <tr><td>50</td><td>D11</td><td>MISO</td><td>Input</td><td>P1.14</td><td>Primary SPI MISO Line / Digital I/O</td></tr>
+                  <tr><td>51</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
+                  <tr><td>52</td><td>D12</td><td>MOSI</td><td>Output</td><td>P1.13</td><td>Primary SPI MOSI Line / Digital I/O</td></tr>
+                  <tr><td>53</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
+                  <tr><td>54</td><td>D13</td><td>SCK</td><td>Output</td><td>P1.15</td><td>Primary SPI Clock Line / Digital I/O</td></tr>
+                  <tr><td>55 to 60</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Nodes (Leave unconnected)</td></tr>
+                  <tr><td>61</td><td>RGBR</td><td>RED</td><td>Output</td><td>P0.13</td><td>Status Indicator RGB LED Red Channel Driver</td></tr>
+                  <tr><td>62</td><td>D22</td><td>GPIO0</td><td>I/O</td><td>P0.24</td><td>General Purpose Digital I/O Line 0</td></tr>
+                  <tr><td>63</td><td>RGBG</td><td>GREEN</td><td>Output</td><td>P0.14</td><td>Status Indicator RGB LED Green Channel Driver</td></tr>
+                  <tr><td>64</td><td>D23</td><td>GPIO1</td><td>I/O</td><td>P1.09</td><td>General Purpose Digital I/O Line 1</td></tr>
+                  <tr><td>65</td><td>RGBB</td><td>BLUE</td><td>Output</td><td>P0.15</td><td>Status Indicator RGB LED Blue Channel Driver</td></tr>
+                  <tr><td>66</td><td>D4</td><td>PWM0</td><td>I/O</td><td>P1.08</td><td>SPI1 MISO / General Purpose Digital I/O / Hardware PWM0</td></tr>
+                  <tr><td>67</td><td>SIM_VCC</td><td>SOM5</td><td>Power Out</td><td>-</td><td>Cellular module SIM power supply line (1.8V / 3V)</td></tr>
+                  <tr><td>68</td><td>D5</td><td>PWM1</td><td>I/O</td><td>P1.10</td><td>General Purpose Digital I/O / Hardware PWM1</td></tr>
+                  <tr><td>69</td><td>SIM_RST</td><td>SOM6</td><td>Output</td><td>-</td><td>Cellular module SIM reset line (1.8V / 3V)</td></tr>
+                  <tr><td>70</td><td>D6</td><td>PWM2</td><td>I/O</td><td>P1.11</td><td>General Purpose Digital I/O / Hardware PWM2</td></tr>
+                  <tr><td>71</td><td>SIM_CLK</td><td>SOM7</td><td>Output</td><td>-</td><td>Cellular module SIM clock line (1.8V / 3V)</td></tr>
+                  <tr><td>72</td><td>D7</td><td>PWM3</td><td>I/O</td><td>P1.12</td><td>General Purpose Digital I/O / Hardware PWM3</td></tr>
+                  <tr><td>73</td><td>SIM_DATA</td><td>SOM8</td><td>I/O</td><td>-</td><td>Cellular module SIM data line (Includes internal 4.7k pull-up)</td></tr>
+                  <tr><td>74</td><td>Quectel VBUS</td><td>SOM2</td><td>Power Input</td><td>-</td><td>Cellular module USB bus detection pin (5V)</td></tr>
+                  <tr><td>75</td><td>Quectel RI</td><td>SOM9</td><td>I/O</td><td>-</td><td>Cellular module active ring indicator status line</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+
+  </ul>
+
+  <!-- Educational & SEO Sections -->
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>SBC Quick Filter</strong>Locate individual board layouts using the top dynamic search utility.</div>
+      <div class="paramItem"><strong>M.2 Edge Termination</strong>Tracker SoM units are terminated over 95 gold edge fingers designed for high-vibration M.2 board carriage connections.</div>
+      <div class="paramItem"><strong>SIM Controller Handshaking</strong>SMT cellular modules route core SIM_VCC, RST, CLK, and DATA lines directly to allow easy integration of external eSIM/nano-SIM slots.</div>
+      <div class="paramItem"><strong>Active LNA Power Feeds</strong>On-board LNA power outputs provide clean current to external active GNSS antennas directly through RF coaxial pads.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Configuring Debug Console</strong></p>
+        <p>Connect serial debugging lines to the standard TX and RX pins using a 3.3V USB-to-UART converter.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Integrating LiPo Battery Inputs</strong></p>
+        <p>Connect a 3.7V single-cell LiPo battery to the LI+ and GND pins, allowing on-board PMIC circuits to manage USB charging.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Using Hardware PWM Drivers</strong></p>
+        <p>Drive standard servo motors by mapping control lines to hardware-backed PWM0-PWM3 channels on the board.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Configuring Wake Buttons</strong></p>
+        <p>Connect active-low tactile switches to the MODE or RTC_BTN pins to allow system wake interrupts from deep sleep.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Logic and Power Rail Theory</h2>
+    <p>The Particle Tracker, Boron, and B-Series modules utilize Nordic Semiconductor nRF52840 ARM Cortex-M4 architectures combined with cellular coprocessors. Operating at a 3.3V CMOS logic rail, these platforms can be damaged if exposed to 5V inputs. Always use active logic-level converters when interfacing with high-voltage sensors.</p>
+    <div class="aboutNote">Tip: Use a shared common ground (GND) across all boards in your system to prevent ground loops and serial data corruption.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Series Current Limiting: R_series = (3.3V - V_led) / I_target (Keep under 4-8mA per pin)</div>
+    <div class="formula">I2C Pull-Up Range: R_min = (3.3V - V_low) / I_sink, preventing overcurrent drain on open-drain pins.</div>
+    <div class="formula">RF Transmission Match: Coaxial PCB traces must maintain a characteristic impedance of exactly 50 Ohms to minimize signal reflection.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Reference Guide</h2>
+    <div class="aboutLead">
+      <strong>Quick access to standard Particle IoT development board layouts.</strong>
+      <p>This reference consolidates layout configurations, logic states, and physical system interfaces across the Particle family.</p>
+    </div>
+    <p>Finding accurate pinout layouts is crucial for embedded designers, system architects, IoT engineers, and DIY hobbyists. This directory documents active signal paths to help prevent wiring errors, serial protocol failures, and board damage.</p>
+    <p>Always verify pinout configurations with a digital multimeter before powering up custom circuits or shield adapters.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Supported Boards</span>Tracker SoM, Tracker Evaluation Board, B402, and B523 cellular platforms.</div>
+      <div class="aboutMiniCard"><span>Hardware Safeguards</span>Clear warnings regarding 3.3V logic thresholds and RF antenna line parameters.</div>
+      <div class="aboutMiniCard"><span>Protocol Maps</span>Direct pin definitions for SPI, UART, I2C, CAN, SWD, and active PMIC lines.</div>
+      <div class="aboutMiniCard"><span>SIM Integration</span>Documents cellular SIM handshaking lines for custom eSIM configurations.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. Are Particle GPIO pins 5V tolerant?</strong></h3>
+    <p>No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure.</p>
+
+    <h3><strong>2. What is the maximum safe input voltage for the VIN pin?</strong></h3>
+    <p>The on-board power management ICs (PMIC) on the Tracker SoM and Evaluation boards can accept external power inputs ranging from 3.88V to 12.0V DC safely.</p>
+
+    <h3><strong>3. How do I configure the on-board cellular GPS antenna?</strong></h3>
+    <p>Ensure your coaxial RF trace connects directly to the GNSS_RF (Pin 94) or CELL_GPS_RF (Pin 87) pads with a characteristic impedance of 50 Ohms for optimal signal reception.</p>
+
+    <h3><strong>4. Why do the SPI and I2C lines share pins with GPIOs?</strong></h3>
+    <p>The nRF52840 chip features a flexible pin routing multiplexer, allowing software to reconfigure digital pins to support SPI, UART, I2C, or standard GPIO tasks dynamically.</p>
+
+    <h3><strong>5. How do I reset search filters in this tool?</strong></h3>
+    <p>Clear any text from the search box at the top of the interface to restore the full list of pinout cards.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Identify primary and secondary system winding calculations.</div>
+      <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure stored energy metrics inside transformer components.</div>
+      <div class="linkCard"><strong>SMPS Duty Cycle Calculator</strong>Evaluate performance criteria on active switching regulators.</div>
+      <div class="linkCard"><strong>Wire Gauge Calculator</strong>Estimate safe wire sizes for diverse line current applications.</div>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 <script>
 function myFunction() {
@@ -21,2904 +794,41 @@ function myFunction() {
         }
     }
 }
-</script>
 
-
-
-<body>
-
-
-
-
-
- 
-
-
-
-
-
-
-
-<script>
-// Get the modal
-var modal = document.getElementById('id01');
-
-
-// When the user clicks anywhere outside of the modal, close it
+// Close modals when user clicks outside of them
 window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-   
-  
-  
-  
-  
-  
-  
+  if (event.target.classList.contains('w3-modal')) {
+    event.target.style.display = "none";
   }
 }
 </script>
 
-<style>
-
-.mid {background-color:yellow;margin-left:auto;margin-right:auto;display:block;background-color: red ;
-color:red;  
-border: 5;
-  color: white;
-
- width:50;
- height:40;
-  text-decoration: none;
-  border-radius: 12px;
-  font-size: 25px;
-  position: fixed;
-  right: 25px;
-  top:50;
-  font-weight: bold;
-  cursor: pointer;"
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. Are Particle GPIO pins 5V tolerant?","acceptedAnswer":{"@type":"Answer","text":"No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure."}},
+{"@type":"Question","name":"2. What is the maximum safe input voltage for the VIN pin?","acceptedAnswer":{"@type":"Answer","text":"The on-board power management ICs (PMIC) on the Tracker SoM and Evaluation boards can accept external power inputs ranging from 3.88V to 12.0V DC safely."}},
+{"@type":"Question","name":"3. How do I configure the on-board cellular GPS antenna?","acceptedAnswer":{"@type":"Answer","text":"Ensure your coaxial RF trace connects directly to the GNSS_RF (Pin 94) or CELL_GPS_RF (Pin 87) pads with a characteristic impedance of 50 Ohms for optimal signal reception."}},
+{"@type":"Question","name":"4. Why do the SPI and I2C lines share pins with GPIOs?","acceptedAnswer":{"@type":"Answer","text":"The nRF52840 chip features a flexible pin routing multiplexer, allowing software to reconfigure digital pins to support SPI, UART, I2C, or standard GPIO tasks dynamically."}},
+{"@type":"Question","name":"5. How do I reset search filters in this tool?","acceptedAnswer":{"@type":"Answer","text":"Clear any text from the search box at the top of the interface to restore the full list of pinout cards."}}
+]
 }
-.body{
-	text-size:100px;
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Particle IoT GPIO Pinouts and Reference Guide","item":"https://calcboy.com/tool/particle-iot-gpio-pinouts-and-reference-guide"}
+]
 }
-#customers {
-	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-	border-collapse: collapse;
-	width: 100%;
-}
-#customers td, #customers th {
-	border: 1px solid #ddd;
-	padding: 8px;
-}
-#customers tr:nth-child(even){
-	background-color: #f2f2f2;
-}
-#customers tr:hover {
-	background-color: #ddd;
-}
-html{
-	box-sizing:border-box
-}
-*,*:before,*:after{
-	box-sizing:inherit
-}
-/* End extract */
-html,body{
-	font-family:Verdana,sans-serif;
-	font-size:15px;
-	line-height:1.5
-}
-html{
-	overflow-x:hidden
-}
-h1{
-	font-size:36px
-}
-h2{
-	font-size:30px
-}
-h3{
-	font-size:24px
-}
-h4{
-	font-size:20px
-}
-h5{
-	font-size:18px
-}
-h6{
-	font-size:16px
-}
-.w3-serif{
-	font-family:serif
-}
-border.w3-btn,.w3-button{
-	font-size:50px;
-	border-radius: 25px;
-	background: #73AD21;
-	inpaddg: 2px;
-	width: 200px;
-	height: 100px;
-	text-align:center;
-}
-.w3-btn,.w3-button1{
-	border:none;
-	display:inline-block;
-	padding:1px 1px;
-	font-size:50px;
-	vertical-align:middle;
-	Horizontal-align:middle;
-	overflow:hidden;
-	text-decoration:none;
-	color:inherit;
-	background-color:inherit;
-	cursor:pointer;
-	white-space:nowrap;
-	text-align:LEFT;
-}
-.w3-modal{
-	z-index:3;
-	display:none;
-	padding-top:100px;
-	position:fixed;
-	left:0;
-	top:0;
-	width:100%;
-	height:100%;
-	overflow:auto;
-	background-color:rgb(0,0,0);
-	background-color:rgba(0,0,0,0.4)
-}
-.w3-modal-content{
-	margin:-30px 10px 10px 10px;
-	
-	
-	
-}
+</script>
 
-@media (min-width:601px){
-	.w3-col.m1{
-		width:8.33333%
-}
-	.w3-col.m2{
-		width:16.66666%
-}
-	.w3-col.m3,.w3-quarter{
-		width:24.99999%
-}
-	.w3-col.m4,.w3-third{
-		width:33.33333%
-}
-	.w3-display-topmiddle{
-		position:absolute;
-		left:50%;
-		top:0;
-		transform:translate(-50%,0%);
-		-ms-transform:translate(-50%,0%)
-}
-	.w3-display-container:hover .w3-display-hover{
-		display:block
-}
-	.w3-display-container:hover span.w3-display-hover{
-		display:inline-block
-}
-	.w3-display-hover{
-		display:none
-}
-	.w3-teal,.w3-hover-teal:hover{
-		color:#fff!important;
-		background-color:#009688!important
-}
-	.w3-yellow,.w3-hover-yellow:hover{
-		color:#000!important;
-		background-color:#ffeb3b!important
-}
-	.w3-white,.w3-hover-white:hover{
-		color:#000!important;
-		background-color:#fff!important
-}
-	border colour.w3-black,.w3-hover-black:hover{
-		color:#fff!important;
-		background-color:red!important
-}
-	
-</style>
-<style>
-.bg{ background-color:e6e9ee;
-     }
-.w3-button{background:;
-          WIDTH:100%}
-
-</style>
-
-<style>
-* {
-  box-sizing: border-box;
-}
-
-#myInput {
-  background-image: url('/css/searchicon.png');
-  background-position: 10px 12px;
-  background-repeat: no-repeat;
-  width: 100%;
-  font-size: 16px;
-  padding: 12px 20px 12px 40px;
-  border: 1px solid #ddd;
-  margin-bottom: 12px;
-}
-
-#myUL {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-#myUL li a {
-  border: 1px solid #ddd;
-  margin-top: -1px; /* Prevent double borders */
-  background-color: #f6f6f6;
-  padding: 12px;
-  text-decoration: none;
-  font-size: 18px;
-  color: black;
-  display: block;
- 
-}
-
-#myUL li a:hover:not(.header) {
-  background-color: #eee;
-}
-table1{align:center;}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
-  border: 2px solid #ddd;
-  background:white;
-  
-  font-weight: bold;
-}
-th{background-color:lightgreen;
- }
-th, td {
-  text-align: left;
-  padding: 8px;
-   
-}
-
-tr:nth-child(even){background-color: #f2f2f2}
-tr:hover {background-color: #ddd;}
-</style>
-</head>
-<body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Particle Pinouts" title="Type in a name">
-
-<ul id="myUL">
-  
- 
-<li><a href="#">
-
-<button onclick="document.getElementById('id01').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Tracker SoM</font></button></a>
-
-  <div id="id01" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id01').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/1_KfXD88E95.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-<table><thead><tr>
-<th style="text-align:center">#</th>
-<th style="text-align:center">Pin</th>
-<th style="text-align:center">Function</th>
-<th style="text-align:center">Connected To</th>
-<th>Description</th>
-</tr>
-</thead><tbody><tr>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Right Side</td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">2</td>
-<td style="text-align:center">GNSS_BAT</td>
-<td style="text-align:center">POWER IN</td>
-<td style="text-align:center">GNSS</td>
-<td>Battery backup for GNSS</td>
-</tr>
-<tr>
-<td style="text-align:center">3</td>
-<td style="text-align:center">GNSS_RESET</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">GNSS &amp; IOEX</td>
-<td>GNSS hardware reset. Can be controlled by this pin or software.</td>
-</tr>
-<tr>
-<td style="text-align:center">4</td>
-<td style="text-align:center">GNSS_VBUS</td>
-<td style="text-align:center">USB PWR</td>
-<td style="text-align:center">GNSS</td>
-<td>GNSS USB power. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">5</td>
-<td style="text-align:center">GNSS_P</td>
-<td style="text-align:center">USB D+</td>
-<td style="text-align:center">GNSS</td>
-<td>GNSS USB interface D+. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">6</td>
-<td style="text-align:center">GNSS_N</td>
-<td style="text-align:center">USB D-</td>
-<td style="text-align:center">GNSS</td>
-<td>GNSS USB interface D-. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">7</td>
-<td style="text-align:center">GNSS_PULSE</td>
-<td style="text-align:center">OUT</td>
-<td style="text-align:center">GNSS</td>
-<td>GNSS time pulse output. Can be used for a GNSS fix LED.<sup>2</sup></td>
-</tr>
-<tr>
-<td style="text-align:center">8</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">9</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">10</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">11</td>
-<td style="text-align:center">WIFI_EN</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">WIFI &amp; IOEX</td>
-<td>ESP32 enable. Can be controlled by this pin or software.</td>
-</tr>
-<tr>
-<td style="text-align:center">12</td>
-<td style="text-align:center">WIFI_BOOT</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">WIFI &amp; IOEX</td>
-<td>ESP32 boot mode. Can be controlled by this pin or software.</td>
-</tr>
-<tr>
-<td style="text-align:center">13</td>
-<td style="text-align:center">WIFI_TXD</td>
-<td style="text-align:center">OUT</td>
-<td style="text-align:center">WIFI</td>
-<td>ESP32 serial TX</td>
-</tr>
-<tr>
-<td style="text-align:center">14</td>
-<td style="text-align:center">WIFI_RXD</td>
-<td style="text-align:center">IN</td>
-<td style="text-align:center">WIFI</td>
-<td>ESP32 serial TX</td>
-</tr>
-<tr>
-<td style="text-align:center">15</td>
-<td style="text-align:center">CELL_VBUS</td>
-<td style="text-align:center">USB PWR</td>
-<td style="text-align:center">CELL</td>
-<td>Cellular modem USB power. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">16</td>
-<td style="text-align:center">CELL_D+</td>
-<td style="text-align:center">USB D+</td>
-<td style="text-align:center">CELL</td>
-<td>Cellular modem USB interface D+. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">17</td>
-<td style="text-align:center">CELL-D-</td>
-<td style="text-align:center">USB D-</td>
-<td style="text-align:center">CELL</td>
-<td>Cellular modem USB interface D-. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">18</td>
-<td style="text-align:center">NC SOM18</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">19</td>
-<td style="text-align:center">NC SOM19</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">20</td>
-<td style="text-align:center">NC SOM20</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">21</td>
-<td style="text-align:center">NC SOM21</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">22</td>
-<td style="text-align:center">SWDIO</td>
-<td style="text-align:center">JTAG</td>
-<td style="text-align:center">nRF52</td>
-<td>nRF52 MCU SWDIO</td>
-</tr>
-<tr>
-<td style="text-align:center">23</td>
-<td style="text-align:center">SWDCLK</td>
-<td style="text-align:center">JTAG</td>
-<td style="text-align:center">nRF52</td>
-<td>nRF52 MCU SWDCLK</td>
-</tr>
-<tr>
-<td style="text-align:center">24</td>
-<td style="text-align:center">SWO</td>
-<td style="text-align:center">JTAG</td>
-<td style="text-align:center">nRF52</td>
-<td>nRF52 MCU SWO</td>
-</tr>
-<tr>
-<td style="text-align:center">25</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">26</td>
-<td style="text-align:center">NFC2</td>
-<td style="text-align:center">NFC</td>
-<td style="text-align:center">nRF52</td>
-<td>nRF52 NFC antenna. Supports NFC tag mode only. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">27</td>
-<td style="text-align:center">NFC1</td>
-<td style="text-align:center">NFC</td>
-<td style="text-align:center">nRF52</td>
-<td>nRF52 NFC antenna. Supports NFC tag mode only. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">28</td>
-<td style="text-align:center">RGB_BLUE</td>
-<td style="text-align:center">RGB LED</td>
-<td style="text-align:center">nRF52</td>
-<td>Common anode RGB status LED, blue. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">29</td>
-<td style="text-align:center">RGB_GREEN</td>
-<td style="text-align:center">RGB LED</td>
-<td style="text-align:center">nRF52</td>
-<td>Common anode RGB status LED, green. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">30</td>
-<td style="text-align:center">RGB_RED</td>
-<td style="text-align:center">RGB LED</td>
-<td style="text-align:center">nRF52</td>
-<td>Common anode RGB status LED, red. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">31</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">32</td>
-<td style="text-align:center">MODE</td>
-<td style="text-align:center">INPUT</td>
-<td style="text-align:center">nRF52</td>
-<td>External MODE button input, active low. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">33</td>
-<td style="text-align:center">RESET</td>
-<td style="text-align:center">INPUT</td>
-<td style="text-align:center">nRF52</td>
-<td>External RESET button input, active low. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">34</td>
-<td style="text-align:center">NC SOM34</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">35</td>
-<td style="text-align:center">NC SOM35</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">36</td>
-<td style="text-align:center">NC SOM36</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">37</td>
-<td style="text-align:center">NC SOM37</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">38</td>
-<td style="text-align:center">A7</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>A7, D7, SS, WKP</td>
-</tr>
-<tr>
-<td style="text-align:center">39</td>
-<td style="text-align:center">A6</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>A6, D6, SPI SCK</td>
-</tr>
-<tr>
-<td style="text-align:center">40</td>
-<td style="text-align:center">A5</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>A5, D5, SPI MISO</td>
-</tr>
-<tr>
-<td style="text-align:center">41</td>
-<td style="text-align:center">A4</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>A4, D4, SPI MOSI</td>
-</tr>
-<tr>
-<td style="text-align:center">42</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Top Side</td>
-</tr>
-<tr>
-<td style="text-align:center">43</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">44</td>
-<td style="text-align:center">NC SOM44</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">45</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center">POWER OUT</td>
-<td style="text-align:center">TPS62291</td>
-<td>3.3V power output. 1000 mA maximum include nRF52 and other peripheral use.</td>
-</tr>
-<tr>
-<td style="text-align:center">46</td>
-<td style="text-align:center">TS</td>
-<td style="text-align:center">IN</td>
-<td style="text-align:center">PMIC</td>
-<td>Battery temperature sensor</td>
-</tr>
-<tr>
-<td style="text-align:center">47</td>
-<td style="text-align:center">PMID</td>
-<td style="text-align:center">POWER OUT</td>
-<td style="text-align:center">PMIC</td>
-<td>PMIC power output in OTG mode.</td>
-</tr>
-<tr>
-<td style="text-align:center">48</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">49</td>
-<td style="text-align:center">VIN</td>
-<td style="text-align:center">POWER IN</td>
-<td style="text-align:center">PMIC</td>
-<td>Power input 3.88VDC to 12VDC.</td>
-</tr>
-<tr>
-<td style="text-align:center">50</td>
-<td style="text-align:center">STAT</td>
-<td style="text-align:center">OUT</td>
-<td style="text-align:center">PMIC</td>
-<td>PMIC charge status. Can be connected to an LED. Active low. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">51</td>
-<td style="text-align:center">VBUS</td>
-<td style="text-align:center">POWER IN</td>
-<td style="text-align:center">PMIC &amp; nRF52</td>
-<td>nRF52 USB power input. Can be used as a power supply instead of VIN.</td>
-</tr>
-<tr>
-<td style="text-align:center">52</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">53</td>
-<td style="text-align:center">LI+</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center">PMIC</td>
-<td>Connect to Li-Po battery. Can power the device or be recharged by VIN or VBUS.</td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Left Side</td>
-</tr>
-<tr>
-<td style="text-align:center">54</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">55</td>
-<td style="text-align:center">A0</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>A0, D0, Wire SDA, Thermistor<sup>1<sup></sup></sup></td>
-</tr>
-<tr>
-<td style="text-align:center">56</td>
-<td style="text-align:center">A1</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>A1, D1, Wire SCL, User button<sup>1<sup></sup></sup></td>
-</tr>
-<tr>
-<td style="text-align:center">57</td>
-<td style="text-align:center">A2</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>A2, D2, Serial1 CTS, GNSS lock indicator<sup>1<sup></sup></sup></td>
-</tr>
-<tr>
-<td style="text-align:center">58</td>
-<td style="text-align:center">A3</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>A3, D3, Serial1 RTS, M8 GPIO<sup>1<sup></sup></sup></td>
-</tr>
-<tr>
-<td style="text-align:center">59</td>
-<td style="text-align:center">NC SOM59</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">60</td>
-<td style="text-align:center">NC SOM60</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">61</td>
-<td style="text-align:center">NC SOM61</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">62</td>
-<td style="text-align:center">NC SOM62</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">63</td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center">nRF52</td>
-<td>nRF52 analog ground. Can connect to regular GND.</td>
-</tr>
-<tr>
-<td style="text-align:center">64</td>
-<td style="text-align:center">CAN_N</td>
-<td style="text-align:center">CAN</td>
-<td style="text-align:center">CAN</td>
-<td>CAN Data-</td>
-</tr>
-<tr>
-<td style="text-align:center">65</td>
-<td style="text-align:center">CAN_P</td>
-<td style="text-align:center">CAN</td>
-<td style="text-align:center">CAN</td>
-<td>CAN Data+</td>
-</tr>
-<tr>
-<td style="text-align:center">66</td>
-<td style="text-align:center">CAN_5V</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">XCL9142F40</td>
-<td>5V power out, 0.8A maximum. Can be controlled by software.</td>
-</tr>
-<tr>
-<td style="text-align:center">67</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">68</td>
-<td style="text-align:center">MCU-D-</td>
-<td style="text-align:center">USB D-</td>
-<td style="text-align:center">nRF52</td>
-<td>MCU USB interface D-. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">69</td>
-<td style="text-align:center">MCU_D+</td>
-<td style="text-align:center">USB D+</td>
-<td style="text-align:center">nRF52</td>
-<td>MCU USB interface D+. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">70</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">71</td>
-<td style="text-align:center">MCU_RX</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>Serial RX, GPIO D9, Wire3 SDA</td>
-</tr>
-<tr>
-<td style="text-align:center">72</td>
-<td style="text-align:center">MCU_TX</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">nRF52</td>
-<td>Serial TX, GPIO D8, Wire3 SCL</td>
-</tr>
-<tr>
-<td style="text-align:center">73</td>
-<td style="text-align:center">RTC_BAT</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center">AM18X5</td>
-<td>RTC/Watchdog battery +. Connect to GND if not using.</td>
-</tr>
-<tr>
-<td style="text-align:center">74</td>
-<td style="text-align:center">RTC_BTN</td>
-<td style="text-align:center">IN</td>
-<td style="text-align:center">AM18X5</td>
-<td>RTC EXTI. Can use as a wake button.</td>
-</tr>
-<tr>
-<td style="text-align:center">75</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">76</td>
-<td style="text-align:center">NC SOM76</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">77</td>
-<td style="text-align:center">NC SOM77</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">78</td>
-<td style="text-align:center">NC SOM78</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">79</td>
-<td style="text-align:center">NC SOM79</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">80</td>
-<td style="text-align:center">NC SOM80</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">81</td>
-<td style="text-align:center">NC SOM81</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">82</td>
-<td style="text-align:center">NC SOM82</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">83</td>
-<td style="text-align:center">CELL_GPS_RX</td>
-<td style="text-align:center">IN</td>
-<td style="text-align:center">CELL</td>
-<td>Cellular modem GPS serial RX data.</td>
-</tr>
-<tr>
-<td style="text-align:center">84</td>
-<td style="text-align:center">CELL_GPS_TX</td>
-<td style="text-align:center">OUT</td>
-<td style="text-align:center">CELL</td>
-<td>Cellular modem GPS serial TX data.</td>
-</tr>
-<tr>
-<td style="text-align:center">85</td>
-<td style="text-align:center">CELL_RI</td>
-<td style="text-align:center">OUT</td>
-<td style="text-align:center">CELL</td>
-<td>Cellular modem ring indicator output.</td>
-</tr>
-<tr>
-<td style="text-align:center">86</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">87</td>
-<td style="text-align:center">CELL_GPS_RF</td>
-<td style="text-align:center">RF</td>
-<td style="text-align:center">CELL</td>
-<td>Cellular modem GPS antenna. Optional.</td>
-</tr>
-<tr>
-<td style="text-align:center">88</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">89</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">90</td>
-<td style="text-align:center">GNSS_BOOT</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">GNSS</td>
-<td>u-blox GNSS boot mode</td>
-</tr>
-<tr>
-<td style="text-align:center">91</td>
-<td style="text-align:center">GNSS_ANT_PWR</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">GNSS</td>
-<td>u-blox GNSS antenna power</td>
-</tr>
-<tr>
-<td style="text-align:center">92</td>
-<td style="text-align:center">GNSS_LNA_EN</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">GNSS</td>
-<td>u-blox GNSS LNA enable or antenna switch</td>
-</tr>
-<tr>
-<td style="text-align:center">93</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-<tr>
-<td style="text-align:center">94</td>
-<td style="text-align:center">GNSS_RF</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">GNSS</td>
-<td>GNSS antenna.</td>
-</tr>
-<tr>
-<td style="text-align:center">95</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Ground</td>
-</tr>
-</tbody></table>
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li><li><a href="#">
-
-<button onclick="document.getElementById('id02').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Tracker SoM Evaluation</font></button></a>
-
-  <div id="id02" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id02').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/2new_iGcvePB5TX.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
- 
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-<table><thead><tr>
-<th style="text-align:right">Left Description</th>
-<th style="text-align:center">Left</th>
-<th style="text-align:center"></th>
-<th style="text-align:center">Right</th>
-<th style="text-align:left">Right Description</th>
-</tr>
-</thead><tbody><tr>
-<td style="text-align:right">Ground</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">GND</td>
-<td style="text-align:left">Ground</td>
-</tr>
-<tr>
-<td style="text-align:right">PMIC power out</td>
-<td style="text-align:center">PMID</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">LI+</td>
-<td style="text-align:left">LiPo battery</td>
-</tr>
-<tr>
-<td style="text-align:right">PMIC thermistor</td>
-<td style="text-align:center">TS</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">VBUS</td>
-<td style="text-align:left">nRF52 USB power</td>
-</tr>
-<tr>
-<td style="text-align:right">3.3V Out</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">STAT</td>
-<td style="text-align:left">PMIC charge status</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM44</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">VIN</td>
-<td style="text-align:left">Power input 5-12V</td>
-</tr>
-<tr>
-<td style="text-align:right">Ground</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">GND</td>
-<td style="text-align:left">Ground</td>
-</tr>
-<tr>
-<td style="text-align:right">A4, D4, SPI MOSI</td>
-<td style="text-align:center">A4</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">A0</td>
-<td style="text-align:left">A0, D0, Wire SDA</td>
-</tr>
-<tr>
-<td style="text-align:right">A5, D5, SPI MISO</td>
-<td style="text-align:center">A5</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">A1</td>
-<td style="text-align:left">A1, D1, Wire SCL</td>
-</tr>
-<tr>
-<td style="text-align:right">A6, D6, SPI SCK</td>
-<td style="text-align:center">A6</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">A2</td>
-<td style="text-align:left">A2, D2, Serial1 CTS</td>
-</tr>
-<tr>
-<td style="text-align:right">A7, D7, SS, WKP</td>
-<td style="text-align:center">A7</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">A3</td>
-<td style="text-align:left">A3, D3, Serial1 RTS</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM37</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM59</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM36</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM60</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM35</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM61</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM34</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM62</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">3.3V Out</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:left">3.3V Out</td>
-</tr>
-<tr>
-<td style="text-align:right">Ground</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:left">Analog Ground</td>
-</tr>
-<tr>
-<td style="text-align:right">RESET button</td>
-<td style="text-align:center">RESET</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">MCU_RX</td>
-<td style="text-align:left">Serial1 RX, GPIO D9</td>
-</tr>
-<tr>
-<td style="text-align:right">MODE button</td>
-<td style="text-align:center">MODE</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">MCU_TX</td>
-<td style="text-align:left">Serial1 TX, GPIO D8</td>
-</tr>
-<tr>
-<td style="text-align:right">RGB Status LED Red</td>
-<td style="text-align:center">R</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">RTC_BAT</td>
-<td style="text-align:left">RTC battery</td>
-</tr>
-<tr>
-<td style="text-align:right">RGB Status LED Green</td>
-<td style="text-align:center">G</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">RTC_BTN</td>
-<td style="text-align:left">RTC wake button</td>
-</tr>
-<tr>
-<td style="text-align:right"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:right">RGB Status LED Blue</td>
-<td style="text-align:center">B</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM76</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">NFC Tag Antenna</td>
-<td style="text-align:center">NFC1</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM77</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">NFC Tag Antenna</td>
-<td style="text-align:center">NFC2</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM78</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM21</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM79</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM20</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM80</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM19</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM81</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM18</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">SOM82</td>
-<td style="text-align:left">Unused</td>
-</tr>
-<tr>
-<td style="text-align:right">3.3V Out</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:left">3.3V Out</td>
-</tr>
-<tr>
-<td style="text-align:right">ESP32 Serial RX</td>
-<td style="text-align:center">WIFI_RXD</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">NC</td>
-</tr>
-<tr>
-<td style="text-align:right">ESP32 Serial TX</td>
-<td style="text-align:center">WIFI_TXD</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">CELL_RX</td>
-<td style="text-align:left">Cellular serial RX</td>
-</tr>
-<tr>
-<td style="text-align:right">ESP32 boot mode</td>
-<td style="text-align:center">WIFI_BOOT</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">CELL_TX</td>
-<td style="text-align:left">Cellular serial TX</td>
-</tr>
-<tr>
-<td style="text-align:right">ESP32 enable</td>
-<td style="text-align:center">WIFI_EN</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">CELL_RI</td>
-<td style="text-align:left">Cellular ring indicator</td>
-</tr>
-<tr>
-<td style="text-align:right">Unused</td>
-<td style="text-align:center">SOM9</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">GNSS_TIME_PULSE</td>
-<td style="text-align:left">GNSS time pulse or fix indicator</td>
-</tr>
-<tr>
-<td style="text-align:right">Ground</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">GND</td>
-<td style="text-align:left">Ground</td>
-</tr>
-</tbody></table>
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id03').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Boron</font></button></a>
-
-  <div id="id03" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id03').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/3_zOaqvpPk2.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id04').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">B-Series B402</font></button></a>
-
-  <div id="id04" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id04').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/4_jZFL3OGgSD.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-<table><thead><tr>
-<th style="text-align:center">#</th>
-<th style="text-align:center">Pin</th>
-<th style="text-align:center">Common</th>
-<th style="text-align:center">Function</th>
-<th style="text-align:center">nRF52</th>
-<th>Description</th>
-</tr>
-</thead><tbody><tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">2</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, connect to the +LiPo or supply a fixed 3.6-4.2v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">3</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">4</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, connect to the +LiPo or supply a fixed 3.6-4.2v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">5</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">6</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, connect to the +LiPo or supply a fixed 3.6-4.2v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">7</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">8</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, connect to the +LiPo or supply a fixed 3.6-4.2v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">9</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">10</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, supply a fixed 3.0-3.6v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">11</td>
-<td style="text-align:center">USB D+</td>
-<td style="text-align:center">USB D+</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Data+ pin of the NRF52840 USB port.</td>
-</tr>
-<tr>
-<td style="text-align:center">12</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, supply a fixed 3.0-3.6v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">13</td>
-<td style="text-align:center">USB D-</td>
-<td style="text-align:center">USB D-</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Data- pin of the NRF52840 USB port.</td>
-</tr>
-<tr>
-<td style="text-align:center">14</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">15</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">16</td>
-<td style="text-align:center">VUSB</td>
-<td style="text-align:center">VUSB</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, USB detect pin for nRF52840. 5V on this pin enables the USB interface.</td>
-</tr>
-<tr>
-<td style="text-align:center">17</td>
-<td style="text-align:center">NFC1</td>
-<td style="text-align:center">SOM3<sup>3</sup></td>
-<td style="text-align:center">NFC input</td>
-<td style="text-align:center">P0.9</td>
-<td>NFC antenna connection.</td>
-</tr>
-<tr>
-<td style="text-align:center">18</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">19</td>
-<td style="text-align:center">NFC2</td>
-<td style="text-align:center">SOM4<sup>3</sup></td>
-<td style="text-align:center">NFC input</td>
-<td style="text-align:center">P0.10</td>
-<td>NFC antenna connection.</td>
-</tr>
-<tr>
-<td style="text-align:center">20</td>
-<td style="text-align:center">D1</td>
-<td style="text-align:center">SCL</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.27</td>
-<td>I2C SCL, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">21</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">22</td>
-<td style="text-align:center">D0</td>
-<td style="text-align:center">SDA</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.26</td>
-<td>I2C SDA, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">23</td>
-<td style="text-align:center">A0</td>
-<td style="text-align:center">ADC0</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.3</td>
-<td>Analog input ADC0<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">32</td>
-<td style="text-align:center">MODE</td>
-<td style="text-align:center">MODE</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.11</td>
-<td>Connected to the MODE button input, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">33</td>
-<td style="text-align:center">A1</td>
-<td style="text-align:center">ADC1</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.4</td>
-<td>Analog input ADC1<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">34</td>
-<td style="text-align:center">RESET</td>
-<td style="text-align:center">RESET</td>
-<td style="text-align:center">I</td>
-<td style="text-align:center"></td>
-<td>Active-low reset input.</td>
-</tr>
-<tr>
-<td style="text-align:center">35</td>
-<td style="text-align:center">A2</td>
-<td style="text-align:center">ADC2</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.28</td>
-<td>Analog input ADC2<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">36</td>
-<td style="text-align:center">D9</td>
-<td style="text-align:center">TX</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.6</td>
-<td>Primarily used as UART TX, but can also be used as a digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">37</td>
-<td style="text-align:center">A3</td>
-<td style="text-align:center">ADC3</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.29</td>
-<td>Analog input ADC3<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">38</td>
-<td style="text-align:center">D10</td>
-<td style="text-align:center">RX</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.08</td>
-<td>Primarily used as UART RX, but can also be used as a digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">39</td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System analog ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">40</td>
-<td style="text-align:center">D3</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.1</td>
-<td>UART flow control interface CTS, SCL1 (Wire1), SPI1 MOSI, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">41</td>
-<td style="text-align:center">A4</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.30</td>
-<td>Analog input ADC4<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">42</td>
-<td style="text-align:center">D2</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.2</td>
-<td>UART flow control interface RTS, SDA1 (Wire1), SPI1 SCK, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">43</td>
-<td style="text-align:center">A5</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.31</td>
-<td>Analog input ADC5<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">44</td>
-<td style="text-align:center">u-blox USB D+</td>
-<td style="text-align:center">SOM0</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Data+ pin of the R410M USB port.</td>
-</tr>
-<tr>
-<td style="text-align:center">45</td>
-<td style="text-align:center">A6</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.5</td>
-<td>Analog input ADC6<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">46</td>
-<td style="text-align:center">u-blox USB D-</td>
-<td style="text-align:center">SOM1</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Data- pin of the R410M USB port.</td>
-</tr>
-<tr>
-<td style="text-align:center">47</td>
-<td style="text-align:center">A7</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.2</td>
-<td>Analog input ADC7<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">48</td>
-<td style="text-align:center">D8</td>
-<td style="text-align:center">CS</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.3</td>
-<td>SPI interface CS, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">49</td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System analog ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">50</td>
-<td style="text-align:center">D11</td>
-<td style="text-align:center">MISO</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.14</td>
-<td>SPI interface MISO, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">51</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">52</td>
-<td style="text-align:center">D12</td>
-<td style="text-align:center">MOSI</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.13</td>
-<td>SPI interface MOSI, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">53</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">54</td>
-<td style="text-align:center">D13</td>
-<td style="text-align:center">SCK</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.15</td>
-<td>SPI interface SCK, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">55</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">56</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System analog ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">57</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">58</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">59</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">60</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">61</td>
-<td style="text-align:center">RGBR</td>
-<td style="text-align:center">RED</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.13</td>
-<td>Red pin of the RGB LED.</td>
-</tr>
-<tr>
-<td style="text-align:center">62</td>
-<td style="text-align:center">D22</td>
-<td style="text-align:center">GPIO0</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.24</td>
-<td>GPIO0, digital only.</td>
-</tr>
-<tr>
-<td style="text-align:center">63</td>
-<td style="text-align:center">RGBG</td>
-<td style="text-align:center">GREEN</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.14</td>
-<td>Green pin of the RGB LED.</td>
-</tr>
-<tr>
-<td style="text-align:center">64</td>
-<td style="text-align:center">D23</td>
-<td style="text-align:center">GPIO1</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.9</td>
-<td>GPIO1, digital only.</td>
-</tr>
-<tr>
-<td style="text-align:center">65</td>
-<td style="text-align:center">RGBB</td>
-<td style="text-align:center">BLUE</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.15</td>
-<td>Blue pin of the RGB LED.</td>
-</tr>
-<tr>
-<td style="text-align:center">66</td>
-<td style="text-align:center">D4</td>
-<td style="text-align:center">PWM0</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.8</td>
-<td>SPI1 MISO, Digital only GPIO, and PWM0.</td>
-</tr>
-<tr>
-<td style="text-align:center">67</td>
-<td style="text-align:center">SIM_VCC<sup>1</sup></td>
-<td style="text-align:center">SOM5<sup>3</sup></td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected, 1.8V/3V SIM Supply Output from R410M.</td>
-</tr>
-<tr>
-<td style="text-align:center">68</td>
-<td style="text-align:center">D5</td>
-<td style="text-align:center">PWM1</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.10</td>
-<td>Digital only GPIO, and PWM1.</td>
-</tr>
-<tr>
-<td style="text-align:center">69</td>
-<td style="text-align:center">SIM_RST<sup>1</sup></td>
-<td style="text-align:center">SOM6<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected, 1.8V/3V SIM Reset Output from R410M.</td>
-</tr>
-<tr>
-<td style="text-align:center">70</td>
-<td style="text-align:center">D6</td>
-<td style="text-align:center">PWM2</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.11</td>
-<td>Digital only GPIO, and PWM2.</td>
-</tr>
-<tr>
-<td style="text-align:center">71</td>
-<td style="text-align:center">SIM_CLK<sup>1</sup></td>
-<td style="text-align:center">SOM7<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected, 1.8V/3V SIM Clock Output from R410M.</td>
-</tr>
-<tr>
-<td style="text-align:center">72</td>
-<td style="text-align:center">D7</td>
-<td style="text-align:center">PWM3</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.12</td>
-<td>Digital only GPIO, and PWM3.</td>
-</tr>
-<tr>
-<td style="text-align:center">73</td>
-<td style="text-align:center">SIM_DATA<sup>1</sup></td>
-<td style="text-align:center">SOM8<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected, 1.8V/3V SIM Data I/O of R410m with internal 4.7 k pull-up.</td>
-</tr>
-<tr>
-<td style="text-align:center">74</td>
-<td style="text-align:center">u-blox VBUS</td>
-<td style="text-align:center">SOM2<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>USB detect pin for R410M. 5V on this pin enables the u-blox USB interface.</td>
-</tr>
-<tr>
-<td style="text-align:center">75</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">SOM9<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-</tbody></table>
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id05').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">B-Series B523</font></button></a>
-
-  <div id="id05" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id05').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/5_H4LutgnrD.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-<table><thead><tr>
-<th style="text-align:center">#</th>
-<th style="text-align:center">Pin</th>
-<th style="text-align:center">Common</th>
-<th style="text-align:center">Function</th>
-<th style="text-align:center">nRF52</th>
-<th>Description</th>
-</tr>
-</thead><tbody><tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">2</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">VCC<sup>5</sup></td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, connect to the +LiPo or supply a fixed 3.6-4.3v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">3</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">4</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, connect to the +LiPo or supply a fixed 3.6-4.3v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">5</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">6</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, connect to the +LiPo or supply a fixed 3.6-4.3v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">7</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">8</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">VCC</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, connect to the +LiPo or supply a fixed 3.6-4.3v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">9</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">10</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, supply a fixed 3.0-3.6v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">11</td>
-<td style="text-align:center">USB D+</td>
-<td style="text-align:center">USB D+</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Data+ pin of the NRF52840 USB port.</td>
-</tr>
-<tr>
-<td style="text-align:center">12</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center">3V3</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, supply a fixed 3.0-3.6v power.</td>
-</tr>
-<tr>
-<td style="text-align:center">13</td>
-<td style="text-align:center">USB D-</td>
-<td style="text-align:center">USB D-</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Data- pin of the NRF52840 USB port.</td>
-</tr>
-<tr>
-<td style="text-align:center">14</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">15</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">16</td>
-<td style="text-align:center">VUSB</td>
-<td style="text-align:center">VUSB</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System power in, USB detect pin for nRF52840. 5V on this pin enables the USB interface.</td>
-</tr>
-<tr>
-<td style="text-align:center">17</td>
-<td style="text-align:center">NFC1</td>
-<td style="text-align:center">SOM3<sup>3</sup></td>
-<td style="text-align:center">NFC input</td>
-<td style="text-align:center">P0.9</td>
-<td>NFC antenna connection.</td>
-</tr>
-<tr>
-<td style="text-align:center">18</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">19</td>
-<td style="text-align:center">NFC2</td>
-<td style="text-align:center">SOM4<sup>3</sup></td>
-<td style="text-align:center">NFC input</td>
-<td style="text-align:center">P0.10</td>
-<td>NFC antenna connection.</td>
-</tr>
-<tr>
-<td style="text-align:center">20</td>
-<td style="text-align:center">D1</td>
-<td style="text-align:center">SCL</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.27</td>
-<td>I2C SCL, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">21</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">22</td>
-<td style="text-align:center">D0</td>
-<td style="text-align:center">SDA</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.26</td>
-<td>I2C SDA, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">23</td>
-<td style="text-align:center">A0</td>
-<td style="text-align:center">ADC0</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.3</td>
-<td>Analog input ADC0<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">32</td>
-<td style="text-align:center">MODE</td>
-<td style="text-align:center">MODE</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.11</td>
-<td>Connected to the MODE button input, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">33</td>
-<td style="text-align:center">A1</td>
-<td style="text-align:center">ADC1</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.4</td>
-<td>Analog input ADC1<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">34</td>
-<td style="text-align:center">RESET</td>
-<td style="text-align:center">RESET</td>
-<td style="text-align:center">I</td>
-<td style="text-align:center"></td>
-<td>Active-low reset input.</td>
-</tr>
-<tr>
-<td style="text-align:center">35</td>
-<td style="text-align:center">A2</td>
-<td style="text-align:center">ADC2</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.28</td>
-<td>Analog input ADC2<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">36</td>
-<td style="text-align:center">D9</td>
-<td style="text-align:center">TX</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.6</td>
-<td>Primarily used as UART TX, but can also be used as a digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">37</td>
-<td style="text-align:center">A3</td>
-<td style="text-align:center">ADC3</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.29</td>
-<td>Analog input ADC3<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">38</td>
-<td style="text-align:center">D10</td>
-<td style="text-align:center">RX</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.08</td>
-<td>Primarily used as UART RX, but can also be used as a digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">39</td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System analog ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">40</td>
-<td style="text-align:center">D3</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.1</td>
-<td>UART flow control interface CTS, SCL1 (Wire1), SPI1 MOSI, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">41</td>
-<td style="text-align:center">A4</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.30</td>
-<td>Analog input ADC4<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">42</td>
-<td style="text-align:center">D2</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.2</td>
-<td>UART flow control interface RTS, SDA1 (Wire1), SPI1 SCK, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">43</td>
-<td style="text-align:center">A5</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.31</td>
-<td>Analog input ADC5<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">44</td>
-<td style="text-align:center">Quectel USB D+</td>
-<td style="text-align:center">SOM0</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Data+ pin of the R410M USB port.</td>
-</tr>
-<tr>
-<td style="text-align:center">45</td>
-<td style="text-align:center">A6</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.5</td>
-<td>Analog input ADC6<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">46</td>
-<td style="text-align:center">Quectel USB D-</td>
-<td style="text-align:center">SOM1</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Data- pin of the R410M USB port.</td>
-</tr>
-<tr>
-<td style="text-align:center">47</td>
-<td style="text-align:center">A7</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.2</td>
-<td>Analog input ADC7<sup>2</sup>, and digital GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">48</td>
-<td style="text-align:center">D8</td>
-<td style="text-align:center">CS</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.3</td>
-<td>SPI interface CS, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">49</td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:center">AGND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System analog ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">50</td>
-<td style="text-align:center">D11</td>
-<td style="text-align:center">MISO</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.14</td>
-<td>SPI interface MISO, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">51</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">52</td>
-<td style="text-align:center">D12</td>
-<td style="text-align:center">MOSI</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.13</td>
-<td>SPI interface MOSI, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">53</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">54</td>
-<td style="text-align:center">D13</td>
-<td style="text-align:center">SCK</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.15</td>
-<td>SPI interface SCK, and digital only GPIO.</td>
-</tr>
-<tr>
-<td style="text-align:center">55</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">56</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">GND</td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>System analog ground.</td>
-</tr>
-<tr>
-<td style="text-align:center">57</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">58</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">59</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">60</td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center">RESERVED<sup>3</sup></td>
-<td style="text-align:center">NC</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected.</td>
-</tr>
-<tr>
-<td style="text-align:center">61</td>
-<td style="text-align:center">RGBR</td>
-<td style="text-align:center">RED</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.13</td>
-<td>Red pin of the RGB LED.</td>
-</tr>
-<tr>
-<td style="text-align:center">62</td>
-<td style="text-align:center">D22</td>
-<td style="text-align:center">GPIO0</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.24</td>
-<td>GPIO0, digital only.</td>
-</tr>
-<tr>
-<td style="text-align:center">63</td>
-<td style="text-align:center">RGBG</td>
-<td style="text-align:center">GREEN</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.14</td>
-<td>Green pin of the RGB LED.</td>
-</tr>
-<tr>
-<td style="text-align:center">64</td>
-<td style="text-align:center">D23</td>
-<td style="text-align:center">GPIO1</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.9</td>
-<td>GPIO1, digital only.</td>
-</tr>
-<tr>
-<td style="text-align:center">65</td>
-<td style="text-align:center">RGBB</td>
-<td style="text-align:center">BLUE</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P0.15</td>
-<td>Blue pin of the RGB LED.</td>
-</tr>
-<tr>
-<td style="text-align:center">66</td>
-<td style="text-align:center">D4</td>
-<td style="text-align:center">PWM0</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.8</td>
-<td>SPI1 MISO, Digital only GPIO, and PWM0.</td>
-</tr>
-<tr>
-<td style="text-align:center">67</td>
-<td style="text-align:center">SIM_VCC<sup>1</sup></td>
-<td style="text-align:center">SOM5<sup>3</sup></td>
-<td style="text-align:center">POWER</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected, 1.8V/3V SIM Supply Output from R410M.</td>
-</tr>
-<tr>
-<td style="text-align:center">68</td>
-<td style="text-align:center">D5</td>
-<td style="text-align:center">PWM1</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.10</td>
-<td>Digital only GPIO, and PWM1.</td>
-</tr>
-<tr>
-<td style="text-align:center">69</td>
-<td style="text-align:center">SIM_RST<sup>1</sup></td>
-<td style="text-align:center">SOM6<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected, 1.8V/3V SIM Reset Output from R410M.</td>
-</tr>
-<tr>
-<td style="text-align:center">70</td>
-<td style="text-align:center">D6</td>
-<td style="text-align:center">PWM2</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.11</td>
-<td>Digital only GPIO, and PWM2.</td>
-</tr>
-<tr>
-<td style="text-align:center">71</td>
-<td style="text-align:center">SIM_CLK<sup>1</sup></td>
-<td style="text-align:center">SOM7<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected, 1.8V/3V SIM Clock Output from R410M.</td>
-</tr>
-<tr>
-<td style="text-align:center">72</td>
-<td style="text-align:center">D7</td>
-<td style="text-align:center">PWM3</td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center">P1.12</td>
-<td>Digital only GPIO, and PWM3.</td>
-</tr>
-<tr>
-<td style="text-align:center">73</td>
-<td style="text-align:center">SIM_DATA<sup>1</sup></td>
-<td style="text-align:center">SOM8<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Leave unconnected, 1.8V/3V SIM Data I/O of R410m with internal 4.7 k pull-up.</td>
-</tr>
-<tr>
-<td style="text-align:center">74</td>
-<td style="text-align:center">Quectel VBUS</td>
-<td style="text-align:center">SOM2<sup>3</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>USB detect pin for R410M. 5V on this pin enables the Quectel USB interface.</td>
-</tr>
-<tr>
-<td style="text-align:center">75</td>
-<td style="text-align:center">Quectel RI</td>
-<td style="text-align:center">SOM9<sup>4</sup></td>
-<td style="text-align:center">IO</td>
-<td style="text-align:center"></td>
-<td>Ring indicator</td>
-</tr>
-</tbody></table>
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id06').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">B-Series Evaluation</font></button></a>
-
-  <div id="id06" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id06').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/6_ch2hQj74Da.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id07').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Electron</font></button></a>
-
-  <div id="id07" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id07').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/7_8PJI7Cof2X.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
- 
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id08').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">E-Series</font></button></a>
-
-  <div id="id08" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id08').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/8_T17vBh_gS.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id09').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">E-Series Evaluation</font></button></a>
-
-  <div id="id09" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id09').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/9_OiPFUL67wz.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id010').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Argon</font></button></a>
-
-  <div id="id010" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id010').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/10_DekFLDo3E-.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id011').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Photon</font></button></a>
-
-  <div id="id011" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id011').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/11_-1igepXmx.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id012').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Particle P1 WIFI</font></button></a>
-
-  <div id="id012" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id012').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/12_fgJksIcFf.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id013').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Legacy Shield</font></button></a>
-
-  <div id="id013" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id013').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/13_9Ag5flCWY-.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id014').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">XENON</font></button></a>
-
-  <div id="id014" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id014').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/14_MppfQlrKQy.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id015').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Spark Core</font></button></a>
-
-  <div id="id015" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id015').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/partical/15_oWO1OiGsma.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-
-</ul>
 </body>
 </html>
-
- <script>
-$('img[data-enlargable]').addClass('img-enlargable').click(function(){
-    var src = $(this).attr('src');
-    var modal;
-    function removeModal(){ modal.remove(); $('body').off('keyup.modal-close'); }
-    modal = $('<div>').css({
-        background: 'RGBA(0,0,0,.5) url('+src+') no-repeat center',
-        backgroundSize: 'contain',
-        width:'100%', height:'100%',
-        position:'fixed',
-        zIndex:'10000',
-        top:'0', left:'0',
-        cursor: 'zoom-out'
-    }).click(function(){
-        removeModal();
-    }).appendTo('body');
-    //handling ESC
-    $('body').on('keyup.modal-close', function(e){
-      if(e.key==='Escape'){ removeModal(); } 
-    });
-});
-  </script>
-</head>
-<body>
-
-
-
-
-
-
- 
