@@ -1,8 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pycom ESP32 Modules Pinout Reference Guide | CalcBoy</title>
+<meta name="description" content="Complete pinouts reference guide for Pycom ESP32 modules including WiPy 2.0, WiPy 3.0, LoPy, LoPy4, SiPy, GPy, and FiPy. Detailed GPIO and RF maps.">
+<meta name="keywords" content="pycom pinout, wipy 3.0 pinout, lopy4 pinout, fipy pinout, gpy pinout, sipy pinout, esp32 microphyton, CalcBoy">
+<style>
+body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+#audio-pinout-calc,#audio-pinout-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+#audio-pinout-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
 
+/* Search Bar Styling */
+.search-container {margin-bottom:20px;position:relative}
+#myInput {
+  width:100%;
+  height:45px;
+  border:1px solid #cfd6df;
+  border-radius:10px;
+  padding:0 16px 0 40px;
+  font-size:15px;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
+  outline:none;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
+  transition:border-color .2s, box-shadow .2s;
+}
+#myInput:focus {
+  border-color:#ff6a00;
+  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
 
+/* Master UL / List Cards */
+#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
+#myUL li {margin:0}
+.pinout-item-card {
+  display:block;
+  text-decoration:none;
+  background:#fff;
+  border:1px solid #cfd6df;
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.02);
+  transition:border-color .2s, box-shadow .2s;
+}
+.pinout-item-card:hover {
+  border-color:#ff6a00;
+  box-shadow:0 4px 12px rgba(255,106,0,.08);
+}
+.card-tag {
+  display:inline-block;
+  font-size:10px;
+  font-weight:900;
+  color:#ff6a00;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-bottom:6px;
+}
+.card-inner {display:flex;align-items:center;justify-content:between}
+.card-title {
+  font-size:16px;
+  font-weight:800;
+  color:#1e293b;
+  flex-grow:1;
+}
+.card-arrow {
+  color:#94a3b8;
+  font-size:18px;
+  font-weight:800;
+  padding-left:12px;
+}
 
+/* Modal Styling */
+.w3-modal {
+  display:none;
+  position:fixed;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  z-index:9999;
+  overflow:auto;
+  background-color:rgba(15,23,42,.65);
+  backdrop-filter:blur(4px);
+  padding:20px 10px;
+}
+.w3-modal-content {
+  background:#fff;
+  margin:20px auto;
+  width:100%;
+  max-width:580px;
+  border-radius:16px;
+  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
+  position:relative;
+  padding:24px;
+}
 
+/* Red Close Button STICKY 10% */
+.mid {
+  position: sticky !important;
+  top: 10% !important;
+  right: 16px !important;
+  float: right !important;
+  z-index: 1010 !important;
+  width: 36px;
+  height: 36px;
+  background-color: #ef4444 !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: -8px;
+  margin-right: -8px;
+}
+.mid:hover {
+  background-color: #dc2626 !important;
+}
 
+/* Inline Diagram Styling */
+.diagram-container {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px auto 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.diagram-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.table1 {width:100%;text-align:left;clear:both}
+
+.img-caption {
+  font-size:11px;
+  font-weight:800;
+  color:#64748b;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-top:6px;
+  margin-bottom:16px;
+}
+
+/* Standardized Tables & Scroll wrappers */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  margin: 15px 0 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+table {
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  overflow:hidden;
+}
+th {
+  background:#f1f5f9;
+  color:#1e293b;
+  font-size:12px;
+  font-weight:900;
+  padding:10px 12px;
+  text-align:left;
+  border-bottom:2px solid #e2e8f0;
+  white-space: nowrap;
+}
+td {
+  padding:8px 12px;
+  font-size:12px;
+  color:#475467;
+  border-bottom:1px solid #edf2f7;
+  white-space: nowrap;
+}
+tr:nth-child(even) {background:#f8fafc}
+hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
+
+/* Info Box / Content Sections */
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+
+@media(max-width:600px){
+  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="audio-pinout-calc">
+
+  <div class="search-container">
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Pycom Pinouts..." title="Type in a board name">
+  </div>
+
+  <ul id="myUL">
+    
+    <!-- WIPY 2.0 -->
+    <li>
+      <a href="#" onclick="document.getElementById('id01').style.display='block'; return false;" class="pinout-item-card">
+        <span class="card-tag">Wi-Fi &amp; BLE ESP32 Module</span>
+        <div class="card-inner">
+          <span class="card-title">WiPy 2.0 Pinout Reference</span>
+          <span class="card-arrow">&#x2192;</span>
+        </div>
+      </a>
+      <div id="id01" class="w3-modal">
+        <div class="w3-modal-content">
+          <button class="mid" onclick="document.getElementById('id01').style.display='none'">X</button>
+          <div class="table1">
+            <div class="diagram-container">
+              <!-- SVG Schematic of Pycom 28-pin Layout -->
+              <svg viewBox="0 0 460 220" width="100%">
+                <rect x="10" y="10" width="440" height="200" rx="10" fill="#1e293b" />
+                <text x="30" y="32" fill="#f8fafc" font-family="Arial" font-size="12" font-weight="bold">PYCOM COMMON 28-PIN DIP SCHEMATIC</text>
+                
+                <!-- Left Row Pins (1 to 14) -->
+                <g fill="#cbd5e1">
+                  <rect x="30" y="50" width="12" height="10" fill="#64748b" rx="1" /> <text x="48" y="59" fill="#94a3b8" font-family="Arial" font-size="9">GP1 / VIN</text>
+                  <circle cx="36" cy="73" r="5" fill="#ef4444" /> <text x="48" y="76" fill="#94a3b8" font-family="Arial" font-size="9">GP2 / 3V3 OUT</text>
+                  <circle cx="36" cy="90" r="5" /> <text x="48" y="93" fill="#94a3b8" font-family="Arial" font-size="9">GP3 / Reset</text>
+                  <circle cx="36" cy="107" r="5" fill="#3b82f6" /> <text x="48" y="110" fill="#94a3b8" font-family="Arial" font-size="9">GP4 / DAC1</text>
+                  <circle cx="36" cy="124" r="5" fill="#3b82f6" /> <text x="48" y="127" fill="#94a3b8" font-family="Arial" font-size="9">GP5 / DAC2</text>
+                  <circle cx="36" cy="141" r="5" fill="#10b981" /> <text x="48" y="144" fill="#94a3b8" font-family="Arial" font-size="9">GP6 / UART TX</text>
+                  <circle cx="36" cy="158" r="5" fill="#10b981" /> <text x="48" y="161" fill="#94a3b8" font-family="Arial" font-size="9">GP7 / UART RX</text>
+                </g>
+
+                <!-- Right Row Pins (15 to 28) -->
+                <g fill="#cbd5e1">
+                  <rect x="250" y="50" width="12" height="10" fill="#a855f7" rx="1" /> <text x="268" y="59" fill="#94a3b8" font-family="Arial" font-size="9">GP10 / I2C SDA</text>
+                  <circle cx="256" cy="73" r="5" fill="#a855f7" /> <text x="268" y="76" fill="#94a3b8" font-family="Arial" font-size="9">GP11 / I2C SCL</text>
+                  <circle cx="256" cy="90" r="5" fill="#f97316" /> <text x="268" y="93" fill="#94a3b8" font-family="Arial" font-size="9">GP14 / SPI CLK</text>
+                  <circle cx="256" cy="107" r="5" fill="#f97316" /> <text x="268" y="110" fill="#94a3b8" font-family="Arial" font-size="9">GP15 / SPI MISO</text>
+                  <circle cx="256" cy="124" r="5" fill="#f97316" /> <text x="268" y="127" fill="#94a3b8" font-family="Arial" font-size="9">GP16 / SPI MOSI</text>
+                  <circle cx="256" cy="141" r="5" fill="#f97316" /> <text x="268" y="144" fill="#94a3b8" font-family="Arial" font-size="9">GP17 / SPI CS0</text>
+                  <circle cx="256" cy="158" r="5" fill="#64748b" /> <text x="268" y="161" fill="#94a3b8" font-family="Arial" font-size="9">GND (Common)</text>
+                </g>
+              </svg>
+            </div>
+            <div class="img-caption">DIAGRAM: WIPY STANDARD INTERFACE REFERENCE</div>
+
+            <h3>WiPy 2.0 Complete Pinout Table</h3>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Module Pin</th>
+                    <th>ESP32 GPIO</th>
+                    <th>Bus Type</th>
+                    <th>Alternate Pin Functions &amp; Explanations</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>1 (GND)</td><td>GND</td><td>Power</td><td>Common system ground reference</td></tr>
+                  <tr><td>2 (GP23)</td><td>GPIO23</td><td>SPI / DAC</td><td>SPI Master Out Slave In / Analog DAC1 Output</td></tr>
+                  <tr><td>3 (GP24)</td><td>GPIO24</td><td>SPI / DAC</td><td>SPI Master In Slave Out / Analog DAC2 Output</td></tr>
+                  <tr><td>4 (GP11)</td><td>GPIO11</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 0</td></tr>
+                  <tr><td>5 (GP12)</td><td>GPIO12</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 1</td></tr>
+                  <tr><td>6 (GP13)</td><td>GPIO13</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 2</td></tr>
+                  <tr><td>7 (GP14)</td><td>GPIO14</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 3</td></tr>
+                  <tr><td>8 (GP15)</td><td>GPIO15</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 4</td></tr>
+                  <tr><td>9 (GP16)</td><td>GPIO16</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 5</td></tr>
+                  <tr><td>10 (GP17)</td><td>GPIO17</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 6</td></tr>
+                  <tr><td>11 (GP18)</td><td>GPIO18</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 7</td></tr>
+                  <tr><td>12 (GP19)</td><td>GPIO19</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 8</td></tr>
+                  <tr><td>13 (GP20)</td><td>GPIO20</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 9</td></tr>
+                  <tr><td>14 (GP21)</td><td>GPIO21</td><td>UART0</td><td>UART0 Transmit Output (Main Serial Terminal Debug Out)</td></tr>
+                  <tr><td>15 (GP22)</td><td>GPIO22</td><td>UART0</td><td>UART0 Receive Input (Main Serial Terminal Debug In)</td></tr>
+                  <tr><td>16 (GP10)</td><td>GPIO10</td><td>I2C</td><td>Hardware I2C Data (SDA) Link</td></tr>
+                  <tr><td>17 (GP9)</td><td>GPIO9</td><td>I2C</td><td>Hardware I2C Clock (SCL) Link</td></tr>
+                  <tr><td>18 (GP8)</td><td>GPIO8</td><td>SPI</td><td>SPI Serial Clock Bus Line</td></tr>
+                  <tr><td>19 (GP7)</td><td>GPIO7</td><td>SPI</td><td>SPI Chip Select 0 Line</td></tr>
+                  <tr><td>20 (GP6)</td><td>GPIO6</td><td>UART1</td><td>Secondary Hardware UART Transmitter Output</td></tr>
+                  <tr><td>21 (GP5)</td><td>GPIO5</td><td>UART1</td><td>Secondary Hardware UART Receiver Input</td></tr>
+                  <tr><td>22 (GP4)</td><td>GPIO4</td><td>System</td><td>Active Low Safe Boot Mode Entry Pin</td></tr>
+                  <tr><td>23 (GP3)</td><td>GPIO3</td><td>Wake / ADC</td><td>Active Wake Input Node / Analog Input Channel</td></tr>
+                  <tr><td>24 (RESET)</td><td>RESET</td><td>System</td><td>Active-Low Hardware Reset Input Pin</td></tr>
+                  <tr><td>25 (3V3)</td><td>3V3</td><td>Power</td><td>On-board regulated 3.3V Output (800mA max limit)</td></tr>
+                  <tr><td>26 (VIN)</td><td>VIN</td><td>Power</td><td>Primary Input Power Node (3.5V to 5.5V DC Input)</td></tr>
+                  <tr><td>27 (GND)</td><td>GND</td><td>Power</td><td>Common system ground reference</td></tr>
+                  <tr><td>28 (ANT)</td><td>ANT</td><td>RF Port</td><td>Built-in U.FL coaxial RF antenna switch pad</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <!-- WIPY 3.0 -->
+    <li>
+      <a href="#" onclick="document.getElementById('id02').style.display='block'; return false;" class="pinout-item-card">
+        <span class="card-tag">Upgraded RAM/Flash ESP32 Module</span>
+        <div class="card-inner">
+          <span class="card-title">WiPy 3.0 Pinout Reference</span>
+          <span class="card-arrow">&#x2192;</span>
+        </div>
+      </a>
+      <div id="id02" class="w3-modal">
+        <div class="w3-modal-content">
+          <button class="mid" onclick="document.getElementById('id02').style.display='none'">X</button>
+          <div class="table1">
+            <div class="diagram-container">
+              <!-- SVG Schematic of WiPy 3.0 Header -->
+              <svg viewBox="0 0 460 220" width="100%">
+                <rect x="10" y="10" width="440" height="200" rx="10" fill="#1e293b" />
+                <text x="30" y="32" fill="#f8fafc" font-family="Arial" font-size="12" font-weight="bold">WIPY 3.0 UPGRADED ESP32 SCHEMATIC</text>
+                <g fill="#cbd5e1">
+                  <rect x="30" y="50" width="12" height="10" fill="#64748b" rx="1" /> <text x="48" y="59" fill="#94a3b8" font-family="Arial" font-size="9">1: GND</text>
+                  <circle cx="36" cy="73" r="5" fill="#ef4444" /> <text x="48" y="76" fill="#94a3b8" font-family="Arial" font-size="9">2: 3V3 OUT</text>
+                  <circle cx="36" cy="90" r="5" fill="#3b82f6" /> <text x="48" y="93" fill="#94a3b8" font-family="Arial" font-size="9">GPIO Mappings (GP11-20)</text>
+                  <circle cx="256" cy="90" r="5" fill="#a855f7" /> <text x="268" y="93" fill="#94a3b8" font-family="Arial" font-size="9">GP10/GP9 (I2C SDA/SCL)</text>
+                  <circle cx="256" cy="110" r="5" fill="#f97316" /> <text x="268" y="113" fill="#94a3b8" font-family="Arial" font-size="9">GP8-GP7 (SPI Clock/CS0)</text>
+                  <circle cx="256" cy="130" r="5" fill="#ef4444" /> <text x="268" y="133" fill="#94a3b8" font-family="Arial" font-size="9">26: VIN (5.0V Input)</text>
+                </g>
+              </svg>
+            </div>
+            <div class="img-caption">DIAGRAM: WIPY 3.0 DENSE PROFILE LAYOUT</div>
+
+            <h3>WiPy 3.0 Complete 28-Pin Header Table</h3>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Module Pin</th>
+                    <th>ESP32 GPIO</th>
+                    <th>Bus Type</th>
+                    <th>Alternate Pin Functions &amp; Explanations</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>1 (GND)</td><td>GND</td><td>Power</td><td>Common system ground reference</td></tr>
+                  <tr><td>2 (GP23)</td><td>GPIO23</td><td>SPI / DAC</td><td>SPI Master Out Slave In / Analog DAC1 Output</td></tr>
+                  <tr><td>3 (GP24)</td><td>GPIO24</td><td>SPI / DAC</td><td>SPI Master In Slave Out / Analog DAC2 Output</td></tr>
+                  <tr><td>4 (GP11)</td><td>GPIO11</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 0</td></tr>
+                  <tr><td>5 (GP12)</td><td>GPIO12</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 1</td></tr>
+                  <tr><td>6 (GP13)</td><td>GPIO13</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 2</td></tr>
+                  <tr><td>7 (GP14)</td><td>GPIO14</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 3</td></tr>
+                  <tr><td>8 (GP15)</td><td>GPIO15</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 4</td></tr>
+                  <tr><td>9 (GP16)</td><td>GPIO16</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 5</td></tr>
+                  <tr><td>10 (GP17)</td><td>GPIO17</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 6</td></tr>
+                  <tr><td>11 (GP18)</td><td>GPIO18</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 7</td></tr>
+                  <tr><td>12 (GP19)</td><td>GPIO19</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 8</td></tr>
+                  <tr><td>13 (GP20)</td><td>GPIO20</td><td>ADC</td><td>Analog Input Channel / Capacitive Touch Port 9</td></tr>
+                  <tr><td>14 (GP21)</td><td>GPIO21</td><td>UART0</td><td>UART0 Transmit Output (Main Serial Terminal Debug Out)</td></tr>
+                  <tr><td>15 (GP22)</td><td>GPIO22</td><td>UART0</td><td>UART0 Receive Input (Main Serial Terminal Debug In)</td></tr>
+                  <tr><td>16 (GP10)</td><td>GPIO10</td><td>I2C</td><td>Hardware I2C Data (SDA) Link</td></tr>
+                  <tr><td>17 (GP9)</td><td>GPIO9</td><td>I2C</td><td>Hardware I2C Clock (SCL) Link</td></tr>
+                  <tr><td>18 (GP8)</td><td>GPIO8</td><td>SPI</td><td>SPI Serial Clock Bus Line</td></tr>
+                  <tr><td>19 (GP7)</td><td>GPIO7</td><td>SPI</td><td>SPI Chip Select 0 Line</td></tr>
+                  <tr><td>20 (GP6)</td><td>GPIO6</td><td>UART1</td><td>Secondary Hardware UART Transmitter Output</td></tr>
+                  <tr><td>21 (GP5)</td><td>GPIO5</td><td>UART1</td><td>Secondary Hardware UART Receiver Input</td></tr>
+                  <tr><td>22 (GP4)</td><td>GPIO4</td><td>System</td><td>Active Low Safe Boot Mode Entry Pin</td></tr>
+                  <tr><td>23 (GP3)</td><td>GPIO3</td><td>Wake / ADC</td><td>Active Wake Input Node / Analog Input Channel</td></tr>
+                  <tr><td>24 (RESET)</td><td>RESET</td><td>System</td><td>Active-Low Hardware Reset Input Pin</td></tr>
+                  <tr><td>25 (3V3)</td><td>3V3</td><td>Power</td><td>On-board regulated 3.3V Output (800mA max limit)</td></tr>
+                  <tr><td>26 (VIN)</td><td>VIN</td><td>Power</td><td>Primary Input Power Node (3.5V to 5.5V DC Input)</td></tr>
+                  <tr><td>27 (GND)</td><td>GND</td><td>Power</td><td>Common system ground reference</td></tr>
+                  <tr><td>28 (ANT)</td><td>ANT</td><td>RF Port</td><td>Built-in U.FL coaxial RF antenna switch pad</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <!-- LOPY -->
+    <li>
+      <a href="#" onclick="document.getElementById('id03').style.display='block'; return false;" class="pinout-item-card">
+        <span class="card-tag">Wi-Fi / BLE / LoRa ESP32 Module</span>
+        <div class="card-inner">
+          <span class="card-title">LoPy Pinout Reference</span>
+          <span class="card-arrow">&#x2192;</span>
+        </div>
+      </a>
+      <div id="id03" class="w3-modal">
+        <div class="w3-modal-content">
+          <button class="mid" onclick="document.getElementById('id03').style.display='none'">X</button>
+          <div class="table1">
+            <div class="diagram-container">
+              <!-- SVG Schematic of LoPy Header with LoRa RF Highlight -->
+              <svg viewBox="0 0 460 220" width="100%">
+                <rect x="10" y="10" width="440" height="200" rx="10" fill="#1e293b" />
+                <text x="30" y="32" fill="#f8fafc" font-family="Arial" font-size="12" font-weight="bold">LOPY ESP32 / LORA TRANSCEIVER PORT CORES</text>
+                <g fill="#cbd5e1">
+                  <circle cx="36" cy="60" r="5" fill="#ef4444" /> <text x="48" y="63" fill="#94a3b8" font-family="Arial" font-size="9">3.3V Power Out</text>
+                  <circle cx="36" cy="80" r="5" fill="#f97316" /> <text x="48" y="83" fill="#94a3b8" font-family="Arial" font-size="9">LoRa RF output pad</text>
+                  <circle cx="256" cy="60" r="5" fill="#10b981" /> <text x="268" y="63" fill="#94a3b8" font-family="Arial" font-size="9">TX0 (Terminal Debug)</text>
+                  <circle cx="256" cy="80" r="5" fill="#10b981" /> <text x="268" y="83" fill="#94a3b8" font-family="Arial" font-size="9">RX0 (Terminal Debug)</text>
+                </g>
+              </svg>
+            </div>
+            <div class="img-caption">DIAGRAM: LOPY V1 SYSTEM TERMINATIONS</div>
+
+            <h3>LoPy Complete 30-Pin Header Table</h3>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pin</th>
+                    <th>Signal Port Name</th>
+                    <th>Type</th>
+                    <th>SoC Pin Ref</th>
+                    <th>Hardware Descriptions &amp; Alternate Profiles</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>1</td><td>GND</td><td>Power</td><td>-</td><td>Common Ground Connection</td></tr>
+                  <tr><td>2</td><td>VCC</td><td>Power</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
+                  <tr><td>3</td><td>GND</td><td>Power</td><td>-</td><td>Common Ground Connection</td></tr>
+                  <tr><td>4</td><td>VCC</td><td>Power</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
+                  <tr><td>5</td><td>GND</td><td>Power</td><td>-</td><td>Common Ground Connection</td></tr>
+                  <tr><td>6</td><td>VCC</td><td>Power</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
+                  <tr><td>7</td><td>GND</td><td>Power</td><td>-</td><td>Common Ground Connection</td></tr>
+                  <tr><td>8</td><td>3V3</td><td>Power</td><td>-</td><td>Stabilized supply output rail (3.3V / 800mA max)</td></tr>
+                  <tr><td>9</td><td>GP11</td><td>I/O</td><td>GPIO11</td><td>Analog Input Channel / Capacitive Touch Port 0</td></tr>
+                  <tr><td>10</td><td>GP12</td><td>I/O</td><td>GPIO12</td><td>Analog Input Channel / Capacitive Touch Port 1</td></tr>
+                  <tr><td>11</td><td>GP13</td><td>I/O</td><td>GPIO13</td><td>Analog Input Channel / Capacitive Touch Port 2</td></tr>
+                  <tr><td>12</td><td>GP14</td><td>I/O</td><td>GPIO14</td><td>Analog Input Channel / Capacitive Touch Port 3</td></tr>
+                  <tr><td>13</td><td>GP15</td><td>I/O</td><td>GPIO15</td><td>Analog Input Channel / Capacitive Touch Port 4</td></tr>
+                  <tr><td>14</td><td>GP21</td><td>UART0</td><td>GPIO21</td><td>UART0 Transmit Output (Main Serial Terminal Debug Out)</td></tr>
+                  <tr><td>15</td><td>GP22</td><td>UART0</td><td>GPIO22</td><td>UART0 Receive Input (Main Serial Terminal Debug In)</td></tr>
+                  <tr><td>16</td><td>GP10</td><td>I/O</td><td>GPIO10</td><td>I2C Data Bus (SDA) Link</td></tr>
+                  <tr><td>17</td><td>GP9</td><td>I/O</td><td>GPIO9</td><td>I2C Clock Bus (SCL) Link</td></tr>
+                  <tr><td>18</td><td>GP8</td><td>SPI</td><td>GPIO8</td><td>SPI Serial Clock Bus Line</td></tr>
+                  <tr><td>19</td><td>GP7</td><td>SPI</td><td>GPIO7</td><td>SPI Chip Select 0 Line</td></tr>
+                  <tr><td>20</td><td>GP6</td><td>UART1</td><td>GPIO6</td><td>Secondary Hardware UART Transmitter Output</td></tr>
+                  <tr><td>21</td><td>GP5</td><td>UART1</td><td>GPIO5</td><td>Secondary Hardware UART Receiver Input</td></tr>
+                  <tr><td>22</td><td>GP4</td><td>System</td><td>GPIO4</td><td>Active Low Safe Boot Mode Entry Pin</td></tr>
+                  <tr><td>23</td><td>GP3</td><td>Wake / ADC</td><td>GPIO3</td><td>Active Wake Input Node / Analog Input Channel</td></tr>
+                  <tr><td>24</td><td>RESET</td><td>System</td><td>-</td><td>Active-Low Hardware Reset Input Pin</td></tr>
+                  <tr><td>25</td><td>3V3</td><td>Power</td><td>-</td><td>On-board regulated 3.3V Output (800mA max limit)</td></tr>
+                  <tr><td>26</td><td>VIN</td><td>Power</td><td>-</td><td>Primary Input Power Node (3.5V to 5.5V DC Input)</td></tr>
+                  <tr><td>27</td><td>GND</td><td>Power</td><td>-</td><td>Common Ground Connection</td></tr>
+                  <tr><td>28</td><td>LORA_ANT</td><td>RF Port</td><td>-</td><td>Shared LoRa RF antenna terminal (requires u.FL connection)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <!-- LOPY4 (ONION OMEGA/MT7688 PROFILE) -->
+    <li>
+      <a href="#" onclick="document.getElementById('id010').style.display='block'; return false;" class="pinout-item-card">
+        <span class="card-tag">nRF52840 Multi-Network Mesh IoT</span>
+        <div class="card-inner">
+          <span class="card-title">Particle Argon Pinout</span>
+          <span class="card-arrow">&#x2192;</span>
+        </div>
+      </a>
+      <div id="id010" class="w3-modal">
+        <div class="w3-modal-content">
+          <button class="mid" onclick="document.getElementById('id010').style.display='none'">X</button>
+          <div class="table1">
+            <div class="diagram-container">
+              <!-- SVG Schematic of Argon (Adafruit Feather Standard) -->
+              <svg viewBox="0 0 460 140" width="100%">
+                <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
+                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">PARTICLE ARGON - WIFI / BLE / MESH FEATHER</text>
+                <g fill="#cbd5e1">
+                  <!-- Two columns left and right -->
+                  <circle cx="30" cy="60" r="4" fill="#ef4444" /> <text x="42" y="63" fill="#94a3b8" font-family="Arial" font-size="8">LEFT PIN COLUMN (ADC / Power)</text>
+                  <circle cx="240" cy="60" r="4" fill="#10b981" /> <text x="252" y="63" fill="#94a3b8" font-family="Arial" font-size="8">RIGHT PIN COLUMN (UART / SPI / I2C)</text>
+                </g>
+              </svg>
+            </div>
+            <div class="img-caption">DIAGRAM: FEATHER STANDARD FOR PINOUT CORES</div>
+
+            <h3>Argon Complete Pin Mapping Table</h3>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pin Label</th>
+                    <th>ESP32 GPIO</th>
+                    <th>nRF52840 Pin</th>
+                    <th>Signal Port Alternative Configurations</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>3V3</td><td>-</td><td>-</td><td>Regulated 3.3V Output Rail (Sourced from on-board regulators)</td></tr>
+                  <tr><td>RST</td><td>-</td><td>P0.18</td><td>System hardware reset line (Active-Low)</td></tr>
+                  <tr><td>VBUS</td><td>-</td><td>-</td><td>USB bus voltage (5V) input / output power rail</td></tr>
+                  <tr><td>EN</td><td>-</td><td>-</td><td>On-board 3.3V regulator enable line (pull low to shut down module)</td></tr>
+                  <tr><td>A0</td><td>GPIO36</td><td>P0.03</td><td>Analog Input Channel 0 / Digital General Purpose IO</td></tr>
+                  <tr><td>A1</td><td>GPIO39</td><td>P0.04</td><td>Analog Input Channel 1 / Digital General Purpose IO</td></tr>
+                  <tr><td>A2</td><td>GPIO34</td><td>P0.28</td><td>Analog Input Channel 2 / Digital General Purpose IO</td></tr>
+                  <tr><td>A3</td><td>GPIO35</td><td>P0.29</td><td>Analog Input Channel 3 / Digital General Purpose IO</td></tr>
+                  <tr><td>A4</td><td>GPIO32</td><td>P0.30</td><td>Analog Input Channel 4 / Digital General Purpose IO</td></tr>
+                  <tr><td>A5</td><td>GPIO33</td><td>P0.31</td><td>Analog Input Channel 5 / Digital General Purpose IO</td></tr>
+                  <tr><td>D0 (SDA)</td><td>GPIO21</td><td>P0.26</td><td>Main hardware I2C Data (SDA) line</td></tr>
+                  <tr><td>D1 (SCL)</td><td>GPIO22</td><td>P0.27</td><td>Main hardware I2C Clock (SCL) line</td></tr>
+                  <tr><td>D2 (RTS)</td><td>-</td><td>P1.02</td><td>UART flow control RTS line / Secondary I2C SDA / SPI2 Clock</td></tr>
+                  <tr><td>D3 (CTS)</td><td>-</td><td>P1.01</td><td>UART flow control CTS line / Secondary I2C SCL / SPI2 MOSI</td></tr>
+                  <tr><td>D4</td><td>GPIO19</td><td>P1.08</td><td>SPI1 MISO / General Purpose Digital I/O / Hardware PWM0</td></tr>
+                  <tr><td>D5</td><td>-</td><td>P1.10</td><td>General Purpose Digital I/O / Hardware PWM1</td></tr>
+                  <tr><td>D6</td><td>-</td><td>P1.11</td><td>General Purpose Digital I/O / Hardware PWM2</td></tr>
+                  <tr><td>D7</td><td>-</td><td>P1.12</td><td>General Purpose Digital I/O / Hardware PWM3 (Built-in Blue LED)</td></tr>
+                  <tr><td>D8 (CS)</td><td>-</td><td>P1.03</td><td>Primary SPI CS Line / General Purpose Digital I/O</td></tr>
+                  <tr><td>MISO</td><td>GPIO12</td><td>P1.14</td><td>Primary SPI MISO Line / General Purpose Digital I/O</td></tr>
+                  <tr><td>MOSI</td><td>GPIO13</td><td>P1.13</td><td>Primary SPI MOSI Line / General Purpose Digital I/O</td></tr>
+                  <tr><td>SCK</td><td>GPIO14</td><td>P1.15</td><td>Primary SPI Clock Line / General Purpose Digital I/O</td></tr>
+                  <tr><td>TX</td><td>GPIO1</td><td>P0.06</td><td>Primary UART Transmitter output / General Purpose Digital I/O</td></tr>
+                  <tr><td>RX</td><td>GPIO3</td><td>P0.08</td><td>Primary UART Receiver input / General Purpose Digital I/O</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <!-- PHOTON -->
+    <li>
+      <a href="#" onclick="document.getElementById('id011').style.display='block'; return false;" class="pinout-item-card">
+        <span class="card-tag">STM32F205 Legacy Wi-Fi Module</span>
+        <div class="card-inner">
+          <span class="card-title">Particle Photon Pinout</span>
+          <span class="card-arrow">&#x2192;</span>
+        </div>
+      </a>
+      <div id="id011" class="w3-modal">
+        <div class="w3-modal-content">
+          <button class="mid" onclick="document.getElementById('id011').style.display='none'">X</button>
+          <div class="table1">
+            <div class="diagram-container">
+              <!-- SVG Schematic of Photon DIP-24 Form Factor -->
+              <svg viewBox="0 0 320 180" width="100%">
+                <rect x="10" y="10" width="300" height="160" rx="8" fill="#1e293b" />
+                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">PARTICLE PHOTON - 24-PIN DIP INTERFACE</text>
+                <g fill="#cbd5e1">
+                  <!-- Row 1 (Left side) -->
+                  <rect x="25" y="50" width="10" height="8" fill="#ef4444" rx="1" /> <text x="42" y="58" fill="#94a3b8" font-family="Arial" font-size="8">VIN (5.0V Input)</text>
+                  <circle cx="30" cy="73" r="4" fill="#64748b" /> <text x="42" y="76" fill="#94a3b8" font-family="Arial" font-size="8">GND</text>
+                  <circle cx="30" cy="90" r="4" fill="#3b82f6" /> <text x="42" y="93" fill="#94a3b8" font-family="Arial" font-size="8">TX (UART)</text>
+                  <circle cx="30" cy="107" r="4" fill="#3b82f6" /> <text x="42" y="110" fill="#94a3b8" font-family="Arial" font-size="8">RX (UART)</text>
+                </g>
+                <g fill="#cbd5e1">
+                  <!-- Row 2 (Right side) -->
+                  <rect x="180" y="50" width="10" height="8" fill="#ef4444" rx="1" /> <text x="197" y="58" fill="#94a3b8" font-family="Arial" font-size="8">3V3 (Power Output)</text>
+                  <circle cx="185" cy="73" r="4" fill="#a855f7" /> <text x="197" y="76" fill="#94a3b8" font-family="Arial" font-size="8">D0 (I2C SDA)</text>
+                  <circle cx="185" cy="90" r="4" fill="#a855f7" /> <text x="197" y="93" fill="#94a3b8" font-family="Arial" font-size="8">D1 (I2C SCL)</text>
+                  <circle cx="185" cy="107" r="4" fill="#f97316" /> <text x="197" y="110" fill="#94a3b8" font-family="Arial" font-size="8">D2 (SPI MOSI)</text>
+                </g>
+              </svg>
+            </div>
+            <div class="img-caption">DIAGRAM: PHOTON 24-PIN HEADER SCHEMATIC</div>
+
+            <h3>Photon Complete 24-Pin DIP Layout</h3>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pin Label</th>
+                    <th>Type</th>
+                    <th>Bus / Alternative Mapping</th>
+                    <th>Description &amp; Operation Bounds</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>VIN</td><td>Power</td><td>-</td><td>Primary 5.0V input rail (sourced from USB or external regulator)</td></tr>
+                  <tr><td>GND</td><td>Power</td><td>-</td><td>Common system ground reference</td></tr>
+                  <tr><td>TX</td><td>I/O</td><td>UART0_TX</td><td>Hardware serial transmitter / GPIO</td></tr>
+                  <tr><td>RX</td><td>I/O</td><td>UART0_RX</td><td>Hardware serial receiver / GPIO</td></tr>
+                  <tr><td>WKP</td><td>I/O</td><td>WKUP / GPIO</td><td>Active-High system wake-up interrupt pin</td></tr>
+                  <tr><td>DAC</td><td>I/O</td><td>DAC1 / GPIO</td><td>Digital to Analog Converter / Analog Input Channel</td></tr>
+                  <tr><td>A5</td><td>I/O</td><td>SPI1_MOSI / ADC_IN5</td><td>SPI Master Out Slave In / Analog input</td></tr>
+                  <tr><td>A4</td><td>I/O</td><td>SPI1_MISO / ADC_IN4</td><td>SPI Master In Slave Out / Analog input</td></tr>
+                  <tr><td>A3</td><td>I/O</td><td>SPI1_CLK / ADC_IN3</td><td>SPI Serial Clock Bus / Analog input</td></tr>
+                  <tr><td>A2</td><td>I/O</td><td>SPI1_SS0 / ADC_IN2</td><td>SPI Chip Select 0 / Analog input</td></tr>
+                  <tr><td>A1</td><td>I/O</td><td>ADC_IN1</td><td>General Purpose Analog Input / GPIO</td></tr>
+                  <tr><td>A0</td><td>I/O</td><td>ADC_IN0</td><td>General Purpose Analog Input / GPIO</td></tr>
+                  <tr><td>D0</td><td>I/O</td><td>I2C_SDA / GPIO</td><td>Hardware I2C Data line</td></tr>
+                  <tr><td>D1</td><td>I/O</td><td>I2C_SCL / GPIO</td><td>Hardware I2C Clock line</td></tr>
+                  <tr><td>D2</td><td>I/O</td><td>SPI2_MOSI / GPIO</td><td>Secondary SPI Master Out Slave In line</td></tr>
+                  <tr><td>D3</td><td>I/O</td><td>SPI2_MISO / GPIO</td><td>Secondary SPI Master In Slave Out line</td></tr>
+                  <tr><td>D4</td><td>I/O</td><td>SPI2_CLK / GPIO</td><td>Secondary SPI Serial Clock Bus line</td></tr>
+                  <tr><td>D5</td><td>I/O</td><td>SPI2_SS1 / GPIO</td><td>Secondary SPI Chip Select 1 line</td></tr>
+                  <tr><td>D6</td><td>I/O</td><td>GPIO</td><td>General Purpose Digital Input / Output</td></tr>
+                  <tr><td>D7</td><td>I/O</td><td>GPIO (Blue LED)</td><td>General Purpose Digital I/O (Built-in Blue LED)</td></tr>
+                  <tr><td>3V3</td><td>Power</td><td>-</td><td>On-board regulated 3.3V Output (800mA max limit)</td></tr>
+                  <tr><td>RST</td><td>Input</td><td>-</td><td>System hardware reset line (Active-Low)</td></tr>
+                  <tr><td>GND</td><td>Power</td><td>-</td><td>Common system ground reference</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+
+  </ul>
+
+  <!-- Educational & SEO Sections -->
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>SBC Quick Filter</strong>Locate individual board layouts using the top dynamic search utility.</div>
+      <div class="paramItem"><strong>Castellated Board Form</strong>SMT modules like the LoPy and WiPy families use 28 edge-castellated pads.</div>
+      <div class="paramItem"><strong>SPI Logic Mappings</strong>Main SPI buses on Pycom chips are routed through GP7-GP10; SPI speeds can be customized up to 80MHz.</div>
+      <div class="paramItem"><strong>Reset Pin Configuration</strong>Active-Low hardware reset line includes an internal 10k pull-up resistor to the 3.3V rail.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Configuring Pycom Console</strong></p>
+        <p>Establish serial debugging connections by linking GP21 and GP22 to a 3.3V USB-to-UART converter.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Using Hardware PWM</strong></p>
+        <p>Map control lines to standard PWM channels on the board to drive motor controllers or dim LEDs.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Adding I2C Bus Pull-Ups</strong></p>
+        <p>Ensure 4.7k-ohm pull-up resistors are installed between SDA/SCL lines and the 3.3V power node for proper communication.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Using Wake Buttons</strong></p>
+        <p>Connect active-low tactile switches to the GP3 pin to allow system wake interrupts from deep sleep.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Hardware and Logic Theory</h2>
+    <p>Pycom development modules are based on the dual-core Espressif ESP32 SoC architecture, supplemented by specialty RF co-processors for LoRa, Sigfox, and LTE-M. Operating strictly on a 3.3V CMOS logic rail, these platforms can be damaged if exposed to 5V inputs. Always use active logic-level converters when interfacing with high-voltage sensors.</p>
+    <div class="aboutNote">Tip: Always tie unused input lines to GND using high-value resistors to prevent erratic behavior from electrostatic interference.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Series Current Limiting: R_series = (3.3V - V_led) / I_target (Keep below 4-8mA per pin)</div>
+    <div class="formula">I2C Pull-Up Range: R_min = (3.3V - V_low) / I_sink, preventing overcurrent drain on open-drain pins.</div>
+    <div class="formula">RF Trace Impedance: Antenna coaxial traces must maintain a characteristic impedance of exactly 50 Ohms to minimize signal reflection.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Reference Guide</h2>
+    <div class="aboutLead">
+      <strong>Quick access to standard Pycom development board layouts.</strong>
+      <p>This reference consolidates layout configurations, logic states, and physical system interfaces across the Pycom family.</p>
+    </div>
+    <p>Finding accurate pinout layouts is crucial for embedded designers, system architects, IoT engineers, and DIY hobbyists. This directory documents active signal paths to help prevent wiring errors, serial protocol failures, and board damage.</p>
+    <p>Always verify pinout configurations with a digital multimeter before powering up custom circuits or shield adapters.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Supported Boards</span>WiPy 2.0, WiPy 3.0, LoPy, LoPy4, SiPy, GPy, and FiPy modules.</div>
+      <div class="aboutMiniCard"><span>Hardware Safeguards</span>Clear warnings regarding 3.3V logic thresholds and current limitations.</div>
+      <div class="aboutMiniCard"><span>Protocol Maps</span>Direct pin definitions for SPI, UART, I2C, DAC, and active RF lines.</div>
+      <div class="aboutMiniCard"><span>Power Profiles</span>Identifies battery charge nodes and unregulated raw input pins.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. Are Pycom GPIO pins 5V tolerant?</strong></h3>
+    <p>No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure.</p>
+
+    <h3><strong>2. What is the maximum safe input voltage for the VIN pin?</strong></h3>
+    <p>The on-board regulators on Pycom modules can accept external power inputs ranging from 3.5V to 5.5V DC safely.</p>
+
+    <h3><strong>3. How do I configure the on-board LoRa/Sigfox antenna?</strong></h3>
+    <p>You can switch between the on-board ceramic antenna and the u.FL connector in software using Pycom antenna API calls.</p>
+
+    <h3><strong>4. Why do the SPI and I2C lines share pins with GPIOs?</strong></h3>
+    <p>The ESP32 features a flexible pin routing multiplexer, allowing software to reconfigure digital pins to support SPI, UART, I2C, or standard GPIO tasks dynamically.</p>
+
+    <h3><strong>5. How do I reset search filters in this tool?</strong></h3>
+    <p>Clear any text from the search box at the top of the interface to restore the full list of pinout cards.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Identify primary and secondary system winding calculations.</div>
+      <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure stored energy metrics inside transformer components.</div>
+      <div class="linkCard"><strong>SMPS Duty Cycle Calculator</strong>Evaluate performance criteria on active switching regulators.</div>
+      <div class="linkCard"><strong>Wire Gauge Calculator</strong>Estimate safe wire sizes for diverse line current applications.</div>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 <script>
 function myFunction() {
@@ -21,571 +726,41 @@ function myFunction() {
         }
     }
 }
-</script>
 
-
-
-<body>
-
-
-
-
-
- 
-
-
-
-
-
-
-
-<script>
-// Get the modal
-var modal = document.getElementById('id01');
-
-
-// When the user clicks anywhere outside of the modal, close it
+// Close modals when user clicks outside of them
 window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-   
-  
-  
-  
-  
-  
-  
+  if (event.target.classList.contains('w3-modal')) {
+    event.target.style.display = "none";
   }
 }
 </script>
 
-<style>
-
-.mid {background-color:yellow;margin-left:auto;margin-right:auto;display:block;background-color: red ;
-color:red;  
-border: 5;
-  color: white;
-
- width:50;
- height:40;
-  text-decoration: none;
-  border-radius: 12px;
-  font-size: 25px;
-  position: fixed;
-  right: 25px;
-  top:50;
-  font-weight: bold;
-  cursor: pointer;"
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. Are Pycom GPIO pins 5V tolerant?","acceptedAnswer":{"@type":"Answer","text":"No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure."}},
+{"@type":"Question","name":"2. What is the maximum safe input voltage for the VIN pin?","acceptedAnswer":{"@type":"Answer","text":"The on-board regulators on Pycom modules can accept external power inputs ranging from 3.5V to 5.5V DC safely."}},
+{"@type":"Question","name":"3. How do I configure the on-board LoRa/Sigfox antenna?","acceptedAnswer":{"@type":"Answer","text":"You can switch between the on-board ceramic antenna and the u.FL connector in software using Pycom antenna API calls."}},
+{"@type":"Question","name":"4. Why do the SPI and I2C lines share pins with GPIOs?","acceptedAnswer":{"@type":"Answer","text":"The ESP32 features a flexible pin routing multiplexer, allowing software to reconfigure digital pins to support SPI, UART, I2C, or standard GPIO tasks dynamically."}},
+{"@type":"Question","name":"5. How do I reset search filters in this tool?","acceptedAnswer":{"@type":"Answer","text":"Clear any text from the search box at the top of the interface to restore the full list of pinout cards."}}
+]
 }
-.body{
-	text-size:100px;
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Pycom ESP32 Modules Pinout Reference Guide","item":"https://calcboy.com/tool/pycom-esp32-modules-pinout-reference-guide"}
+]
 }
-#customers {
-	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-	border-collapse: collapse;
-	width: 100%;
-}
-#customers td, #customers th {
-	border: 1px solid #ddd;
-	padding: 8px;
-}
-#customers tr:nth-child(even){
-	background-color: #f2f2f2;
-}
-#customers tr:hover {
-	background-color: #ddd;
-}
-html{
-	box-sizing:border-box
-}
-*,*:before,*:after{
-	box-sizing:inherit
-}
-/* End extract */
-html,body{
-	font-family:Verdana,sans-serif;
-	font-size:15px;
-	line-height:1.5
-}
-html{
-	overflow-x:hidden
-}
-h1{
-	font-size:36px
-}
-h2{
-	font-size:30px
-}
-h3{
-	font-size:24px
-}
-h4{
-	font-size:20px
-}
-h5{
-	font-size:18px
-}
-h6{
-	font-size:16px
-}
-.w3-serif{
-	font-family:serif
-}
-border.w3-btn,.w3-button{
-	font-size:50px;
-	border-radius: 25px;
-	background: #73AD21;
-	inpaddg: 2px;
-	width: 200px;
-	height: 100px;
-	text-align:center;
-}
-.w3-btn,.w3-button1{
-	border:none;
-	display:inline-block;
-	padding:1px 1px;
-	font-size:50px;
-	vertical-align:middle;
-	Horizontal-align:middle;
-	overflow:hidden;
-	text-decoration:none;
-	color:inherit;
-	background-color:inherit;
-	cursor:pointer;
-	white-space:nowrap;
-	text-align:LEFT;
-}
-.w3-modal{
-	z-index:3;
-	display:none;
-	padding-top:100px;
-	position:fixed;
-	left:0;
-	top:0;
-	width:100%;
-	height:100%;
-	overflow:auto;
-	background-color:rgb(0,0,0);
-	background-color:rgba(0,0,0,0.4)
-}
-.w3-modal-content{
-	margin:-30px 10px 10px 10px;
-	
-	
-	
-}
+</script>
 
-@media (min-width:601px){
-	.w3-col.m1{
-		width:8.33333%
-}
-	.w3-col.m2{
-		width:16.66666%
-}
-	.w3-col.m3,.w3-quarter{
-		width:24.99999%
-}
-	.w3-col.m4,.w3-third{
-		width:33.33333%
-}
-	.w3-display-topmiddle{
-		position:absolute;
-		left:50%;
-		top:0;
-		transform:translate(-50%,0%);
-		-ms-transform:translate(-50%,0%)
-}
-	.w3-display-container:hover .w3-display-hover{
-		display:block
-}
-	.w3-display-container:hover span.w3-display-hover{
-		display:inline-block
-}
-	.w3-display-hover{
-		display:none
-}
-	.w3-teal,.w3-hover-teal:hover{
-		color:#fff!important;
-		background-color:#009688!important
-}
-	.w3-yellow,.w3-hover-yellow:hover{
-		color:#000!important;
-		background-color:#ffeb3b!important
-}
-	.w3-white,.w3-hover-white:hover{
-		color:#000!important;
-		background-color:#fff!important
-}
-	border colour.w3-black,.w3-hover-black:hover{
-		color:#fff!important;
-		background-color:red!important
-}
-	
-</style>
-<style>
-.bg{ background-color:e6e9ee;
-     }
-.w3-button{background:;
-          WIDTH:100%}
-
-</style>
-
-<style>
-* {
-  box-sizing: border-box;
-}
-
-#myInput {
-  background-image: url('/css/searchicon.png');
-  background-position: 10px 12px;
-  background-repeat: no-repeat;
-  width: 100%;
-  font-size: 16px;
-  padding: 12px 20px 12px 40px;
-  border: 1px solid #ddd;
-  margin-bottom: 12px;
-}
-
-#myUL {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-#myUL li a {
-  border: 1px solid #ddd;
-  margin-top: -1px; /* Prevent double borders */
-  background-color: #f6f6f6;
-  padding: 12px;
-  text-decoration: none;
-  font-size: 18px;
-  color: black;
-  display: block;
- 
-}
-
-#myUL li a:hover:not(.header) {
-  background-color: #eee;
-}
-table1{align:center;}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
-  border: 2px solid #ddd;
-  background:white;
-  
-  font-weight: bold;
-}
-th{background-color:lightgreen;
- }
-th, td {
-  text-align: left;
-  padding: 8px;
-   
-}
-
-tr:nth-child(even){background-color: #f2f2f2}
-tr:hover {background-color: #ddd;}
-</style>
-</head>
-<body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Pycom Pinouts" title="Type in a name">
-
-<ul id="myUL">
-  
- 
-<li><a href="#">
-
-<button onclick="document.getElementById('id01').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Wipy 2.0</font></button></a>
-
-  <div id="id01" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id01').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/pycom/1_1bx9cJdhkb.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id02').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Wipy 3.0</font></button></a>
-
-  <div id="id02" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id02').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/pycom/2_MV0KWGs9T.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id03').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Lopy</font></button></a>
-
-  <div id="id03" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id03').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/pycom/3_lqQXHaQoIT.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id04').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">Lopy 4</font></button></a>
-
-  <div id="id04" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id04').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/pycom/4_qXHlpIphG9.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id05').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">SIPY</font></button></a>
-
-  <div id="id05" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id05').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/pycom/5_6iGtAN927.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id06').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">GPY</font></button></a>
-
-  <div id="id06" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id06').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/pycom/6_kXwVLUi2a6.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-<li><a href="#">
-
-<button onclick="document.getElementById('id07').style.display='block'" class="w3-button1 w3-black" align="left">
-<font  STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">FIPY</font></button></a>
-
-  <div id="id07" class="w3-modal">
-    <div class="w3-modal-content">
-<button class="mid" style="align:center;"onclick="document.getElementById('id07').style.display='none'">X</button>
-<div align="center" class="table1">
-
-
-      <img src="https://ik.imagekit.io/mak/connector_and_pinout/pycom/7_aqz7Dq2DUN.jpg" class="w3-border" alt="Norway" style="padding:4px;width:100%">
-<hr>
- 
-
-
-
-
-
-
-
-
-
-
-<start/////////////////////////////////////>
-
-
-<end////////////////////////////////////////>
-
-     
-        <footer class="w3-container w3-teal">
-        <p></p> 
-      </footer>
-    
-  </div>
-</div></li>
-
-
-</ul>
 </body>
 </html>
-
- <script>
-$('img[data-enlargable]').addClass('img-enlargable').click(function(){
-    var src = $(this).attr('src');
-    var modal;
-    function removeModal(){ modal.remove(); $('body').off('keyup.modal-close'); }
-    modal = $('<div>').css({
-        background: 'RGBA(0,0,0,.5) url('+src+') no-repeat center',
-        backgroundSize: 'contain',
-        width:'100%', height:'100%',
-        position:'fixed',
-        zIndex:'10000',
-        top:'0', left:'0',
-        cursor: 'zoom-out'
-    }).click(function(){
-        removeModal();
-    }).appendTo('body');
-    //handling ESC
-    $('body').on('keyup.modal-close', function(e){
-      if(e.key==='Escape'){ removeModal(); } 
-    });
-});
-  </script>
-</head>
-<body>
-
-
-
-
-
-
- 
