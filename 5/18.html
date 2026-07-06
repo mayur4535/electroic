@@ -1,28 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Inductor Color Code Calculator | 3-Band, 4-Band, 5-Band | CalcBoy</title>
+<meta name="description" content="Decode 3-band, 4-band, and 5-band molded axial inductors. Find inductance values in microhenries (µH) or millihenries (mH) with tolerance ratings.">
+<meta name="keywords" content="inductor color code calculator, 3 band inductor calculator, 4 band inductor calculator, 5 band inductor calculator, axial inductor decoder, mold choke color code, military standard inductor, CalcBoy">
 <style>
 *{box-sizing:border-box}
-body{font-family:Arial;margin:0;padding:12px;background:#fff;color:#123}
+body{font-family:Arial;margin:0 !important;padding:0 !important;background:#f6f8fb;color:#123}
 body.lock-scroll{overflow:hidden}
-.wrap{max-width:900px;margin:auto;text-align:center;padding:0 14px}
+
+#inductor-calc{width:100% !important;max-width:620px;margin:0 auto !important;padding:14px 10px !important;background:transparent;border:none}
+.wrap{max-width:100% !important;margin:auto;text-align:center;padding:0;overflow:visible}
 .top{max-width:260px;margin:0 auto 18px;text-align:left}
+
+/* Controls Grid Setup: 2 Columns on Mobile / 3 Columns on PC */
 .controls{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px;text-align:left}
-.lbl{font-size:13px;margin-bottom:5px}
+.lbl{font-size:13px;margin-bottom:5px;font-weight:700}
 .pick-btn{width:100%;height:42px;border:1px solid #8fa3bd;border-radius:8px;font-size:14px;font-weight:bold;padding:6px 30px 6px 10px;background:linear-gradient(#f9fcff,#c8d5e6 48%,#a9b9cf 50%,#edf3fb);box-shadow:inset 0 1px 0 #fff,0 2px 5px #999;position:relative;cursor:pointer;text-align:left;overflow:hidden;white-space:nowrap}
 .pick-btn:after{content:"⌄";position:absolute;right:9px;top:7px;font-size:20px}
 .sw{display:inline-block;width:17px;height:17px;border:1px solid #666;margin-right:6px;vertical-align:middle}
-.result{margin:14px auto;border-radius:22px;border:3px solid #73AD21;padding:14px 18px;width:min(95%,340px);font-size:24px;font-weight:bold}
-.inductor{position:relative;width:100%;max-width:430px;height:170px;margin:5px auto 18px;overflow:hidden}
+.result{margin:14px auto;border-radius:22px;border:3px solid #73AD21;padding:14px 18px;width:min(95%,340px);font-size:24px;font-weight:bold;background:#fff}
+
+/* Inductor Resistor-Like Green Design */
+.inductor{position:relative;width:100%;max-width:430px;height:170px;margin:5px auto 32px;overflow:hidden}
 .wire{position:absolute;top:72px;left:0;width:100%;height:26px;background:#777}
-.body{position:absolute;top:32px;left:8%;right:8%;height:110px;background:#1f8b28;border-radius:60px;box-shadow:4px 5px 8px rgba(0,0,0,.35);overflow:hidden}
-.band{position:absolute;top:32px;height:110px;width:7%;z-index:3}
-#band0{left:21%}
-#band1{left:34%}
-#band2{left:47%}
-#band3{left:60%}
-#band4{left:73%}
+.body{position:absolute;top:32px;left:8%;right:8%;height:110px}
+.cap{position:absolute;top:0;width:23%;height:110px;background:#1f8b28;border-radius:18px;z-index:2}
+.cap.left{left:0}.cap.right{right:0}
+.mid{position:absolute;top:12px;left:21%;right:21%;height:86px;background:#1f8b28;z-index:1}
+
+/* Band Layout & Precise Alignment */
+.band{position:absolute;width:7%;z-index:3}
+#band0{left:21%;top:32px;height:110px} /* Side band: full cap height */
+#band1{left:34%;top:44px;height:86px}  /* Middle band: aligned to slimmer mid section */
+#band2{left:47%;top:44px;height:86px}  /* Middle band: aligned to slimmer mid section */
+#band3{left:60%;top:44px;height:86px}  /* Middle band: aligned to slimmer mid section */
+#band4{left:73%;top:32px;height:110px} /* Side band: full cap height */
+
 .ios-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:9999}
 .ios-picker{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:92%;max-width:420px;background:#d8dee9;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:12px;z-index:10000}
 .ios-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:bold}
@@ -30,67 +46,212 @@ body.lock-scroll{overflow:hidden}
 .wheel-wrap{position:relative}
 .wheel{height:210px;overflow-y:auto;border-radius:10px;border:1px solid #8e99aa;background:linear-gradient(#eef3fb,#cbd6e7,#eef3fb);scroll-snap-type:y mandatory;padding:84px 0}
 .wheel::-webkit-scrollbar{width:0;height:0}
-.wheel div{height:42px;display:flex;align-items:center;padding:0 18px;font-size:22px;font-weight:bold;scroll-snap-align:center;cursor:pointer}
+.wheel div{height:42px;display:flex;align-items:center;padding:0 18px;font-size:20px;font-weight:bold;scroll-snap-align:center;cursor:pointer}
 .wheel-highlight{position:absolute;left:0;right:0;top:84px;height:42px;border-top:1px solid #6f7f98;border-bottom:1px solid #6f7f98;background:rgba(255,255,255,.25);pointer-events:none}
 .formula{font-size:14px;font-weight:bold;line-height:1.6;margin-top:12px}
+
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:left}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
 @media(min-width:701px){
-.controls{grid-template-columns:repeat(4,1fr)}
+/* PC layout selectors config to 3 Columns */
+.controls{grid-template-columns:repeat(3,1fr)}
 .pick-btn{height:44px;font-size:16px}
 .lbl{font-size:14px}
 .result{font-size:28px}
+
 .inductor{height:220px}
 .wire{top:94px;height:32px}
 .body{top:42px;height:140px}
-.band{top:42px;height:140px}
+.cap{height:140px;border-radius:22px}
+.mid{top:16px;height:108px}
+
+/* Scale bands matching slimmer PC mid section precisely */
+#band0{top:42px;height:140px}
+#band1{top:58px;height:108px}
+#band2{top:58px;height:108px}
+#band3{top:58px;height:108px}
+#band4{top:42px;height:140px}
+}
+
+@media(max-width:700px){
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
 }
 </style>
 </head>
-
 <body>
 
-<div class="wrap">
+<div id="inductor-calc">
+  <div class="wrap">
+    <div class="top">
+      <div class="lbl">Band Mode</div>
+      <div id="modeBox"></div>
+    </div>
 
-<div class="top">
-<div class="lbl">Band Mode</div>
-<div id="modeBox"></div>
-</div>
+    <div class="controls">
+      <div id="box1"><div class="lbl" id="lab1">First</div><div id="d1Box"></div></div>
+      <div id="box2"><div class="lbl" id="lab2">Second</div><div id="d2Box"></div></div>
+      <div id="boxM"><div class="lbl" id="labM">Third</div><div id="mBox"></div></div>
+      <div id="boxT"><div class="lbl" id="labT">Forth</div><div id="tBox"></div></div>
+    </div>
 
-<div class="controls">
-<div id="box1"><div class="lbl" id="lab1">First</div><div id="d1Box"></div></div>
-<div id="box2"><div class="lbl" id="lab2">Second</div><div id="d2Box"></div></div>
-<div id="boxM"><div class="lbl" id="labM">Third</div><div id="mBox"></div></div>
-<div id="boxT"><div class="lbl" id="labT">Forth</div><div id="tBox"></div></div>
-</div>
+    <div class="inductor">
+      <div class="wire"></div>
+      <div class="body">
+        <div class="mid"></div>
+        <div class="cap left"></div>
+        <div class="cap right"></div>
+      </div>
+      <div class="band" id="band0"></div>
+      <div class="band" id="band1"></div>
+      <div class="band" id="band2"></div>
+      <div class="band" id="band3"></div>
+      <div class="band" id="band4"></div>
+    </div>
 
-<div class="inductor">
-<div class="wire"></div>
-<div class="body"></div>
-<div class="band" id="band0"></div>
-<div class="band" id="band1"></div>
-<div class="band" id="band2"></div>
-<div class="band" id="band3"></div>
-<div class="band" id="band4"></div>
-</div>
+    <div class="result" id="result">RES</div>
 
-<div class="result" id="result">RES</div>
+    <div class="formula">
+      Value = original code formula: value = digits × 10<sup>multiplier</sup>, formatted in µH / mH.
+    </div>
+  </div>
 
-<div class="formula">
-Value = original code formula: value = digits × 10<sup>multiplier</sup>, formatted in µH / mH.
-</div>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>First / Second Digits</strong>Significant figure digits printed on the axial molded choke body casing representing the nominal base inductance value.</div>
+      <div class="paramItem"><strong>Third Band (Military Silver)</strong>Utilized in specialized 5-band military spec chokes. The wide silver band defines standard military testing qualifications.</div>
+      <div class="paramItem"><strong>Decimal Multiplier</strong>Scales base digits exponentially in microhenries (µH) or millihenries (mH) to represent different structural ranges.</div>
+      <div class="paramItem"><strong>Tolerance Rating</strong>Details percentage manufacturing variances allowed under thermal swings and standard high-frequency loads.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>10µH Molded Choke</strong></p>
+        <p>Typically 4-band: Brown (1), Black (0), Black (x1), Silver (±10%). Popularly chosen for basic power supply filtering.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>1.5µH High-Spec Inductor</strong></p>
+        <p>Standard 5-band: Silver (Military), Brown (1), Green (5), Gold (x0.1), Gold (±5%). Found in high-frequency RF impedance matching.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>EMI Noise Cancellation</strong></p>
+        <p>Decouples high-frequency spikes on power branches. Selected based on maximum target line currents.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Standard Logarithmic Step</strong></p>
+        <p>Aligns within E12 or E24 standard industrial grids, simplifying component catalog sourcing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Axial mold inductors use standard color bands to communicate critical parameters. The visual model above shifts colors dynamically in real time and features a green body, distinguishing it clearly from resistors on visual inspection.</p>
+    <p>These codes follow international standards, allowing technicians and automated scanning systems to identify inductor parameters in active circuits.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formulaBox">For 3 & 4-Band: Value = (Digit 1 × 10 + Digit 2) × Multiplier (µH)</div>
+    <div class="formulaBox">For 5-Band: Value = (Digit 2 × 10 + Digit 3) × Multiplier (µH) [First Wide Band is Silver]</div>
+    <div class="formulaBox">Minimum tolerance limit: Lmin = Value - (Value × Tolerance / 100)</div>
+    <div class="formulaBox">Maximum tolerance limit: Lmax = Value + (Value × Tolerance / 100)</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: 4-Band Inductor - Yellow (4), Violet (7), Black (x1), Gold (±5%)</div>
+    <div class="formulaBox">Step 1: Write down the primary digits: Digit 1 = 4, Digit 2 = 7. Combine them to get: 47.</div>
+    <div class="formulaBox">Step 2: Multiply the combined digits by the multiplier band value: 47 × 1 = 47 µH.</div>
+    <div class="formulaBox">Step 3: Factor in the tolerance to find the operational range: 47 µH ± 5% gives an acceptable window of 44.65 µH to 49.35 µH.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the band count (3, 4, or 5 bands) to match your physical component.</div>
+      <div class="aboutStep">Inspect the axial inductor and locate the band closest to the lead wire. Read left to right.</div>
+      <div class="aboutStep">Select the band colors using the selection picker menus.</div>
+      <div class="aboutStep">The calculated values, tolerances, and multiplier are updated instantly.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Decode axial molded inductors with speed.</strong>
+      <p>This tool helps you quickly read inductance values, multipliers, and tolerance ratings for standard axial components.</p>
+    </div>
+    <p>Color bands are used on axial inductors because printed text on small, curved surfaces can easily smudge or fade, or be covered when soldered in place.</p>
+    <p>Using standard inductor values simplifies design and component sourcing. Sticking to standard logarithmic scales (like E12 or E24) ensures components are easy to find and cost-effective to manufacture.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Ideal For</span>Breadboarding, filter debugging, and RF choke calculations.</div>
+      <div class="aboutMiniCard"><span>Decodes Bands</span>Decodes 3, 4, and 5 axial bands.</div>
+      <div class="aboutMiniCard"><span>Precision Check</span>Identifies maximum and minimum bounds to assist with circuit testing.</div>
+      <div class="aboutMiniCard"><span>Military Specs</span>Supports 5-band chokes starting with a wide silver band.</div>
+    </div>
+    <div class="aboutNote">Tip: Always measure the inductor with a multimeter if you are unsure of its value or if the bands are faded.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. How do I read an axial mold inductor color code?</strong></h3>
+    <p>Locate the band closest to one of the metal leads. Read the bands in order from that side to find the digits, multiplier, and tolerance.</p>
+
+    <h3><strong>2. Why do some 5-band inductors start with a wide silver band?</strong></h3>
+    <p>A wide silver band on a 5-band inductor indicates a military-standard specification component, representing an established quality standard.</p>
+
+    <h3><strong>3. What is the standard unit of measurement for color-coded inductors?</strong></h3>
+    <p>Color-coded axial inductors are measured in microhenries (µH) as their base unit of calculation.</p>
+
+    <h3><strong>4. What does the tolerance rating on an inductor mean?</strong></h3>
+    <p>The tolerance rating represents the expected manufacturing variations in inductance, expressed as a plus or minus percentage of its nominal value.</p>
+
+    <h3><strong>5. How do axial inductors differ from axial resistors visually?</strong></h3>
+    <p>Though identical in physical structure, inductors are molded with a dark-green or olive body, whereas resistors typically have a beige, blue, or light gray body.</p>
+
+    <h3><strong>6. Can I install an axial inductor in any direction?</strong></h3>
+    <p>Yes. Inductors are non-polarized components and can be connected safely in either direction in a circuit.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Resistor Color Code Calculator</strong>Decode standard 4, 5, and 6-band axial resistor values.</div>
+      <div class="linkCard"><strong>Ohm's Law Calculator</strong>Quickly find voltage, current, and resistance.</div>
+      <div class="linkCard"><strong>Series-Parallel Inductance Calculator</strong>Calculate total inductance for series and parallel networks.</div>
+      <div class="linkCard"><strong>Voltage Divider Calculator</strong>Predict the output voltage of a dual-resistor voltage divider.</div>
+    </div>
+  </section>
 </div>
 
 <div class="ios-mask" id="mask">
-<div class="ios-picker">
-<div class="ios-head">
-<span id="title">Select</span>
-<button onclick="closePicker()">Done</button>
-</div>
-<div class="wheel-wrap">
-<div class="wheel-highlight"></div>
-<div class="wheel" id="wheel"></div>
-</div>
-</div>
+  <div class="ios-picker">
+    <div class="ios-head">
+      <span id="title">Select</span>
+      <button onclick="closePicker()">Done</button>
+    </div>
+    <div class="wheel-wrap">
+      <div class="wheel-highlight"></div>
+      <div class="wheel" id="wheel"></div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -308,6 +469,34 @@ refreshBtns();
 }
 
 calc();
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. How do I read an axial mold inductor color code?","acceptedAnswer":{"@type":"Answer","text":"Locate the band closest to one of the metal leads. Read the bands in order from that side to find the digits, multiplier, and tolerance."}},
+{"@type":"Question","name":"2. Why do some 5-band inductors start with a wide silver band?","acceptedAnswer":{"@type":"Answer","text":"A wide silver band on a 5-band inductor indicates a military-standard specification component, representing an established quality standard."}},
+{"@type":"Question","name":"3. What is the standard unit of measurement for color-coded inductors?","acceptedAnswer":{"@type":"Answer","text":"Axial inductors utilize microhenries (µH) as their base unit of calculation."}},
+{"@type":"Question","name":"4. What does the tolerance rating on an inductor mean?","acceptedAnswer":{"@type":"Answer","text":"The tolerance rating represents the expected manufacturing variations in inductance, expressed as a plus or minus percentage of its nominal value."}},
+{"@type":"Question","name":"5. How do axial inductors differ from axial resistors visually?","acceptedAnswer":{"@type":"Answer","text":"Though identical in physical structure, inductors are molded with a dark-green or olive body, whereas resistors typically have a beige, blue, or light gray body."}},
+{"@type":"Question","name":"6. Can I install an axial inductor in any direction?","acceptedAnswer":{"@type":"Answer","text":"Yes. Inductors are non-polarized components and can be connected safely in either direction in a circuit."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Inductor Color Code Calculator","item":"https://calcboy.com/tool/inductor-color-code-calculator"}
+]
+}
 </script>
 
 </body>
