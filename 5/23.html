@@ -1,109 +1,260 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diode Calculator</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zener & Diode Colour Code Calculator | CalcBoy</title>
+<meta name="description" content="Decode diode color bands to identify JEDEC, Pro Electron, and general classifications. Learn to read Zener and switching diode codes in real-time.">
+<meta name="keywords" content="diode color code calculator, zener diode color code, jedec diode code, pro electron diode code, 1N4148 color code, CalcBoy">
 <style>
-*{box-sizing:border-box}
-body{font-family:Arial;margin:0;padding:12px;background:#fff;color:#123}
-.wrap{max-width:1000px;margin:auto;text-align:center;padding:0 18px}
+#smd-calc,#smd-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+#smd-calc{width:100% !important;max-width:620px;margin:0 auto !important;padding:14px 10px !important;background:transparent;border:none}
+
+.wrap{width:100%;max-width:100% !important;margin:auto;text-align:center;padding:0;overflow:visible}
 .top{max-width:260px;margin:0 auto 18px;text-align:left}
-.controls{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px;text-align:left}
-.lbl{font-size:14px;margin-bottom:5px;white-space:nowrap}
 
-.pick-btn{
-  width:100%;height:44px;border:1px solid #8fa3bd;border-radius:8px;
-  font-size:16px;font-weight:bold;padding:6px 35px 6px 12px;
-  background:linear-gradient(#f9fcff,#c8d5e6 48%,#a9b9cf 50%,#edf3fb);
-  box-shadow:inset 0 1px 0 #fff,0 2px 5px #999;
-  position:relative;cursor:pointer;text-align:left;overflow:hidden;white-space:nowrap
-}
-.pick-btn:after{content:"⌄";position:absolute;right:12px;top:7px;font-size:22px}
-.sw{display:inline-block;width:18px;height:18px;border:1px solid #666;margin-right:8px;vertical-align:middle}
+/* Controls Grid Setup: 3 Columns for PC/Laptop */
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;text-align:left}
+.lbl{font-size:14px;margin-bottom:5px;white-space:nowrap;font-weight:700;color:#4b5563}
 
-.result{
-  max-width:360px;margin:22px auto 0;border:3px solid #73AD21;border-radius:22px;
-  padding:14px;font-size:24px;font-weight:bold;color:#0b6b18;background:#fbfffb
-}
+/* iPhone/iOS Style Picker Trigger Button */
+.pick-btn{width:100%;height:44px;border:1px solid #cfd6df;border-radius:8px;font-size:14px;font-weight:bold;padding:6px 30px 6px 12px;background:linear-gradient(#f9fcff,#c8d5e6 48%,#a9b9cf 50%,#edf3fb);box-shadow:inset 0 1px 0 #fff,0 2px 5px rgba(0,0,0,0.1);position:relative;cursor:pointer;text-align:left;overflow:hidden;white-space:nowrap}
+.pick-btn:after{content:"\2304";position:absolute;right:12px;top:7px;font-size:22px;color:#4b5563;line-height:1}
+.sw{display:inline-block;width:18px;height:18px;border:1px solid #666;margin-right:8px;vertical-align:middle;border-radius:3px}
 
+/* Results Highlight Box */
+.result{font-size:20px;font-weight:bold;margin:10px 0 16px;color:#e11d48;background:#fff5f5;padding:14px;border:1px solid #fecdd3;border-radius:12px}
+
+/* iOS Style Picker Mask & Wheel modal overlays */
 .ios-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.30);z-index:9999;padding:18px}
-.ios-picker{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:92%;max-width:420px;background:#d8dee9;border-radius:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,.4);padding:12px;z-index:10000
-}
-.ios-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:bold}
+.ios-picker{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:92%;max-width:420px;background:#d8dee9;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:12px;z-index:10000}
+.ios-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:bold;color:#1e293b}
 .ios-head button{border:0;background:#0b7cff;color:#fff;padding:7px 14px;border-radius:8px;font-weight:bold;cursor:pointer}
 .wheel-wrap{position:relative}
-.wheel{
-  height:210px;overflow-y:auto;border-radius:10px;border:1px solid #8e99aa;
-  background:linear-gradient(#eef3fb,#cbd6e7,#eef3fb);
-  scroll-snap-type:y mandatory;padding:84px 0;-webkit-overflow-scrolling:touch
-}
+.wheel{height:210px;overflow-y:auto;border-radius:10px;border:1px solid #8e99aa;background:linear-gradient(#eef3fb,#cbd6e7,#eef3fb);scroll-snap-type:y mandatory;padding:84px 0}
 .wheel::-webkit-scrollbar{width:0}
-.wheel div{height:42px;display:flex;align-items:center;padding:0 18px;font-size:22px;font-weight:bold;scroll-snap-align:center;cursor:pointer}
-.wheel-highlight{
-  position:absolute;left:0;right:0;top:84px;height:42px;
-  border-top:1px solid #6f7f98;border-bottom:1px solid #6f7f98;
-  background:rgba(255,255,255,.25);pointer-events:none
+.wheel div{height:42px;display:flex;align-items:center;padding:0 18px;font-size:20px;font-weight:bold;scroll-snap-align:center;cursor:pointer}
+.wheel-highlight{position:absolute;left:0;right:0;top:84px;height:42px;border-top:1px solid #6f7f98;border-bottom:1px solid #6f7f98;background:rgba(255,255,255,.25);pointer-events:none}
+
+/* DIRECT LAYERING FOR THE USER'S PROVIDED DIODE IMAGES */
+.diode {
+  position: relative;
+  width: 320px;
+  height: 120px;
+  margin: 10px auto 20px;
+  background: transparent;
+  overflow: hidden;
 }
 
-.diode{position:relative;width:320px;height:120px;margin:10px auto 10px}
-.diode-body{
-  position:absolute;left:35px;right:35px;top:22px;height:76px;border-radius:20px;
-  background:linear-gradient(145deg,#9d1f1f,#e95345,#a61e1e);
-  box-shadow:inset 0 6px 12px rgba(255,255,255,.25),inset 0 -6px 12px rgba(0,0,0,.4),0 8px 18px rgba(0,0,0,.25);
-  overflow:hidden
+/* Translucent overlay sitting perfectly on top of bands */
+.diode-body-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10; /* Foreground overlay */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
 }
-.diode-body:before,.diode-body:after{
-  content:"";position:absolute;top:0;width:24px;height:76px;background:linear-gradient(#ddd,#999);z-index:5
+
+/* EXACT WIDTH, HEIGHT, AND LEFT COORDINATES FROM YOUR ORIGINAL CODE */
+.band {
+  position: absolute;
+  top: 5px;
+  width: 34px; /* Matches transparent slit width */
+  height: 106px; /* Matches translucent glass capsule height */
+  z-index: 2; /* Layered background */
+  transition: background-color 0.2s ease;
 }
-.diode-body:before{left:0}.diode-body:after{right:0}
-.band{position:absolute;top:0;width:15px;height:76px;z-index:4}
-#band1{left:48px} #band2{left:82px} #band3{left:116px} #band4{left:150px} #band5{left:184px}
+
+#band1 { left: 70px; }
+#band2 { left: 104px; }
+#band3 { left: 152px; }
+#band4 { left: 173px; }
+#band5 { left: 195px; }
+
+/* Detailed result specifications cards */
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;text-align:left}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df;text-align:left}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+
+/* Unified Supporting Guides & Theoretical CSS */
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:left}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ef4444;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 
 @media(max-width:700px){
-  .wrap{padding-left:18px;padding-right:18px}
-  .controls{grid-template-columns:repeat(2,1fr);gap:14px 12px}
-  .lbl{font-size:13px;padding-left:2px}
-  .pick-btn{height:42px;font-size:14px;padding-left:10px;padding-right:30px}
-  .pick-btn:after{right:9px;top:7px;font-size:20px}
-  .result{font-size:20px}
-  .diode{width:100%;max-width:320px}
+/* Controls Grid Setup: 2 Columns for Mobile Layout */
+.controls{grid-template-columns:repeat(2,1fr);gap:14px 12px}
+.lbl{font-size:13px;padding-left:2px}
+
+/* Prevent text clipping in trigger buttons on 2-column mobile screens */
+.pick-btn{height:42px;font-size:11px !important;padding:6px 18px 6px 8px !important;}
+.pick-btn:after{right:6px;top:6px;font-size:16px !important}
+.sw {width:14px !important;height:14px !important;margin-right:4px !important;}
+
+.result{font-size:18px}
+.diode{width:100%;max-width:320px}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+
+/* Auto-scales iOS Selector wheel list to prevent long text clipping on mobile */
+.wheel div { font-size: 14px !important; padding: 0 10px !important; }
 }
 </style>
 </head>
-
 <body>
 
-<div class="wrap">
-  <div class="top">
-    <div class="lbl">Band Mode</div>
-    <div id="modeBox"></div>
-  </div>
-
-  <div class="controls">
-    <div id="box1"><div class="lbl" id="lbl1">First</div><div id="b1Box"></div></div>
-    <div id="box2"><div class="lbl" id="lbl2">Second</div><div id="b2Box"></div></div>
-    <div id="box3"><div class="lbl" id="lbl3">Third</div><div id="b3Box"></div></div>
-    <div id="box4"><div class="lbl" id="lbl4">Forth</div><div id="b4Box"></div></div>
-    <div id="box5"><div class="lbl" id="lbl5">Fifth</div><div id="b5Box"></div></div>
-  </div>
-
-  <div class="diode">
-    <div class="diode-body">
+<div id="smd-calc">
+  <div class="wrap">
+    
+    <!-- Axial Glass Diode Visual Model with PNG layer on top (Upper Position) -->
+    <div class="diode" id="diodeContainer">
+      <div class="diode-body-image" id="diodeOverlay"></div>
       <div class="band" id="band1"></div>
       <div class="band" id="band2"></div>
       <div class="band" id="band3"></div>
       <div class="band" id="band4"></div>
       <div class="band" id="band5"></div>
     </div>
+
+    <!-- Band Mode Selector (iOS Picker Button) -->
+    <div class="top">
+      <div class="lbl">Band Coding Standard</div>
+      <div id="modeBox"></div>
+    </div>
+
+    <!-- Quick Read Out Result -->
+    <div class="result" id="result">-</div>
+
+    <!-- Dynamic Pickers Grid -->
+    <div class="controls">
+      <div id="box1"><div class="lbl" id="lbl1">1st Band</div><div id="b1Box"></div></div>
+      <div id="box2"><div class="lbl" id="lbl2">2nd Band</div><div id="b2Box"></div></div>
+      <div id="box3"><div class="lbl" id="lbl3">3rd Band</div><div id="b3Box"></div></div>
+      <div id="box4"><div class="lbl" id="lbl4">4th Band</div><div id="b4Box"></div></div>
+      <div id="box5"><div class="lbl" id="lbl5">5th Band</div><div id="b5Box"></div></div>
+    </div>
   </div>
 
-  <div class="result" id="result"></div>
+  <div class="result-title">DETAILED SPECIFICATIONS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Decoded Part Code</div><div class="result-value" id="resVal">-</div></div>
+    <div class="result-card green"><div class="result-label">Substrate / Material</div><div class="result-value" id="resMat">-</div></div>
+    <div class="result-card purple"><div class="result-label">Diode Family / Application</div><div class="result-value" id="resFamily">-</div></div>
+    <div class="result-card orange"><div class="result-label">Coding Standard</div><div class="result-value" id="resClass">-</div></div>
+  </div>
+
+  <!-- Educational Theory Card sections -->
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Band Coding Standard</strong>EIA/JEDEC (e.g. 1N4148), Pro Electron (European standard e.g. BAX13), or single-band general parameters.</div>
+      <div class="paramItem"><strong>First Band (Prefix/Material)</strong>Identifies either the semiconductor substrate material (e.g. Silicon or Germanium) or JEDEC standard digits.</div>
+      <div class="paramItem"><strong>Second Band (Function/Application)</strong>Represents specialized signal categories such as low-leakage, varactors, Zeners, or secondary digits.</div>
+      <div class="paramItem"><strong>Suffix / Calibration Letters</strong>Optional trailing color band indicating tolerance categories or gain levels.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Silicon General Zener (Blue Band)</strong></p>
+        <p>A single blue band under standard classification identifies the component as a Zener Diode.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>1N4148 General Switching (JEDEC)</strong></p>
+        <p>Decodes via standard JEDEC 5-band sequence. Represents high-speed silicon planar switching structures.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Germanium Varactor (AAX series)</strong></p>
+        <p>Pro Electron standard: Band 1 (Germanium) + Band 2 (Varactor category) followed by numeric serial series identifiers.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Schottky Signal Diode (Green Band)</strong></p>
+        <p>Uses a single green band indicator. Identifies low forward-voltage metal-semiconductor Schottky junction barrier diodes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Axial leaded glass-body diodes (such as DO-35 or DO-41 form-factor casings) are extremely compact, making it difficult to print alphanumeric labels on their rounded surface. Manufacturers use color-coded bands to indicate part numbers.</p>
+    <p>These bands are usually offset closer to the **Cathode terminal (negative end)**. To decode, orient the diode so the thickest or most concentrated grouping of color lines is on the left, then read from left to right towards the cathode.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">JEDEC 5-Band: Indicated part is 1N + [Band 1 Digit][Band 2 Digit][Band 3 Digit][Band 4 Digit] + [Band 5 Suffix]</div>
+    <div class="formula">Pro Electron 4-Band: Part code is [Band 1 Material Letter][Band 2 Category Letter] + [Band 3 Digit][Band 4 Digit]</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Decoding a JEDEC 5-Band Diode (with Yellow, Red, Black, Yellow, and Brown Bands)</div>
+    <div class="formulaBox">Step 1: Read prefix - JEDEC standard series always implies the "1N" structure.</div>
+    <div class="formulaBox">Step 2: Read Band 1 (Yellow) = "4".</div>
+    <div class="formulaBox">Step 3: Read Band 2 (Red) = "2".</div>
+    <div class="formulaBox">Step 4: Read Band 3 (Black) = "0".</div>
+    <div class="formulaBox">Step 5: Read Band 4 (Yellow) = "4".</div>
+    <div class="formulaBox">Step 6: Read Band 5 (Brown) = "A" (Tolerance suffix). Decodes as "1N4204A".</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target standard using the interactive Band Coding Standard picker on the panel.</div>
+      <div class="aboutStep">Read the bands sequentially starting from the end furthest from the silver end caps.</div>
+      <div class="aboutStep">Tap each band picker button to open the convenient iOS selection wheel.</div>
+      <div class="aboutStep">The calculated values, standard categories, and substrate properties update in real-time.</div>
+    </div>
+  </section>
+
+  <!-- Complete Visible Frequently Asked Questions matching structured schema -->
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. Which end of the diode is the cathode?</strong></h3>
+    <p>The cathode (negative terminal) is indicated by the color bands or terminal stripe. On leaded axial diodes, color bands are clustered closer to the cathode end.</p>
+
+    <h3><strong>2. What is the difference between a Zener diode and a standard diode?</strong></h3>
+    <p>Standard diodes conduct only in the forward direction. Zener diodes are designed to conduct reliably in the reverse direction once a specific 'breakdown voltage' is reached, making them useful for voltage regulation.</p>
+
+    <h3><strong>3. What does the '1N' prefix stand for?</strong></h3>
+    <p>The '1N' prefix is part of the JEDEC standard, where '1' represents the number of active semiconductor junctions (diodes have 1 junction, transistors typically have 2, marked '2N').</p>
+
+    <h3><strong>4. How do I identify a Schottky diode via color bands?</strong></h3>
+    <p>Under general single-band coding standards, a single green band printed on the diode represents a Schottky classification.</p>
+  </section>
 </div>
 
+<!-- iPhone/iOS style scroll picker overlay structure -->
 <div class="ios-mask" id="mask">
   <div class="ios-picker">
     <div class="ios-head">
@@ -118,192 +269,296 @@ body{font-family:Arial;margin:0;padding:12px;background:#fff;color:#123}
 </div>
 
 <script>
-const modeData=[
-  ["4 BAND","diode4","#ddd"],
-  ["GENERAL DIODE","general","#ddd"],
-  ["JEDEC SERIES","jedec","#ddd"]
+// Hex Codes of Physical Bands
+const colorsHex = {
+  "black": "#1a1a1a",
+  "brown": "#8b5a2b",
+  "red": "#dc2626",
+  "orange": "#ea580c",
+  "yellow": "#eab308",
+  "green": "#16a34a",
+  "blue": "#2563eb",
+  "violet": "#7c3aed",
+  "grey": "#6b7280",
+  "white": "#ffffff"
+};
+
+const modes = [
+  ["4 BAND PRO ELECTRON", "diode4", "#ddd"],
+  ["JEDEC 5-BAND (1N)", "jedec", "#ddd"],
+  ["GENERAL (1-BAND)", "general", "#ddd"]
 ];
 
-const digit=[
- ["black","0","#000"],["brown","1","brown"],["red","2","red"],["orange","3","orange"],
- ["yellow","4","yellow"],["green","5","green"],["blue","6","blue"],["violet","7","violet"],
- ["grey","8","grey"],["white","9","#fff"]
+const digit = [
+  ["Black", "0", "#1a1a1a"],
+  ["Brown", "1", "#8b5a2b"],
+  ["Red", "2", "#dc2626"],
+  ["Orange", "3", "#ea580c"],
+  ["Yellow", "4", "#eab308"],
+  ["Green", "5", "#16a34a"],
+  ["Blue", "6", "#2563eb"],
+  ["Violet", "7", "#7c3aed"],
+  ["Grey", "8", "#6b7280"],
+  ["White", "9", "#ffffff"]
 ];
 
-const first4=[
- ["black","AA","#000"],
- ["red","BA","red"]
+const first4 = [
+  ["Black", "AA", "#1a1a1a"],
+  ["Red", "BA", "#dc2626"]
 ];
 
-const second4=[
- ["black","X","#000"],
- ["red","S","red"],
- ["yellow","T","yellow"],
- ["green","V","green"],
- ["blue","W","blue"],
- ["grey","Y","grey"],
- ["white","Z","#fff"]
+const second4 = [
+  ["Black", "X", "#1a1a1a"],
+  ["Red", "S", "#dc2626"],
+  ["Yellow", "T", "#eab308"],
+  ["Green", "V", "#16a34a"],
+  ["Blue", "W", "#2563eb"],
+  ["Grey", "Y", "#6b7280"],
+  ["White", "Z", "#ffffff"]
 ];
 
-const general=[
- ["black","General Purpose","#000"],
- ["yellow","Switching","yellow"],
- ["green","Schottkey","green"],
- ["blue","Zener","blue"]
+const general = [
+  ["Black (General Purpose)", "General Purpose", "#1a1a1a"],
+  ["Yellow (Switching)", "Switching", "#eab308"],
+  ["Green (Schottky)", "Schottky", "#16a34a"],
+  ["Blue (Zener)", "Zener", "#2563eb"]
 ];
 
-const jedec5=[
- ["brown","A","brown"],["red","B","red"],["orange","C","orange"],
- ["yellow","D","yellow"],["green","E","green"],["blue","F","blue"],
- ["violet","G","violet"],["grey","H","grey"],["white","J","#fff"]
+const jedec5 = [
+  ["Brown", "A", "#8b5a2b"],
+  ["Red", "B", "#dc2626"],
+  ["Orange", "C", "#ea580c"],
+  ["Yellow", "D", "#eab308"],
+  ["Green", "E", "#16a34a"],
+  ["Blue", "F", "#2563eb"],
+  ["Violet", "G", "#7c3aed"],
+  ["Grey", "H", "#6b7280"],
+  ["White", "J", "#ffffff"]
 ];
 
-let state={mode:"diode4",b1:"AA",b2:"X",b3:"0",b4:"0",b5:"A"};
-let btns={}, activeData=[], activeKey="";
+// App States (Initial standard is diode4)
+let state = { mode: "diode4", b1: "AA", b2: "X", b3: "0", b4: "0", b5: "A" };
+let btns = {}, activeData = [], activeKey = "";
 
-function makeBtn(id,data,key,name){
-  let b=document.createElement("div");
-  b.className="pick-btn";
-  b.onclick=function(){openPicker(data,key,name)};
-  document.getElementById(id).appendChild(b);
-  btns[key]=b;
-  setBtn(data,key);
+function makeBtn(id, data, key, name) {
+  let container = document.getElementById(id);
+  container.innerHTML = ""; // Clear existing triggers
+  let b = document.createElement("div");
+  b.className = "pick-btn";
+  b.onclick = function() { openPicker(data, key, name) };
+  container.appendChild(b);
+  btns[key] = b;
+  setBtn(data, key);
 }
 
-function setBtn(data,key){
-  let x=data.find(a=>a[1]==state[key]) || data[0];
-  btns[key].innerHTML='<span class="sw" style="background:'+x[2]+'"></span>'+x[0];
+function setBtn(data, key) {
+  let x = data.find(a => a[1] == state[key]) || data[0];
+  btns[key].innerHTML = '<span class="sw" style="background:' + x[2] + '"></span>' + x[0];
 }
 
-function openPicker(data,key,name){
-  activeData=data;
-  activeKey=key;
-  document.getElementById("title").innerText=name;
+function openPicker(data, key, name) {
+  activeData = data;
+  activeKey = key;
+  document.getElementById("title").innerText = name;
+  let wheel = document.getElementById("wheel");
+  wheel.innerHTML = "";
 
-  let wheel=document.getElementById("wheel");
-  wheel.innerHTML="";
-
-  data.forEach(function(x,idx){
-    let r=document.createElement("div");
-    r.innerHTML='<span class="sw" style="background:'+x[2]+'"></span>'+x[0];
-    r.onclick=function(){selectItem(idx)};
+  data.forEach(function(x, idx) {
+    let r = document.createElement("div");
+    r.innerHTML = '<span class="sw" style="background:' + x[2] + '"></span>' + x[0];
+    r.onclick = function() { selectItem(idx) };
     wheel.appendChild(r);
   });
 
-  document.getElementById("mask").style.display="block";
-  let current=data.findIndex(x=>x[1]==state[key]);
-  setTimeout(function(){ wheel.scrollTop=(current<0?0:current)*42; },30);
+  document.getElementById("mask").style.display = "block";
+
+  let current = data.findIndex(x => x[1] == state[key]);
+  setTimeout(function() {
+    wheel.scrollTop = (current < 0 ? 0 : current) * 42;
+  }, 30);
 }
 
-function selectItem(idx){
-  let x=activeData[idx];
-  state[activeKey]=x[1];
-  setBtn(activeData,activeKey);
+function selectItem(idx) {
+  let x = activeData[idx];
+  state[activeKey] = x[1];
+  setBtn(activeData, activeKey);
   calc();
   closePicker();
 }
 
-function closePicker(){
-  document.getElementById("mask").style.display="none";
+function closePicker() {
+  document.getElementById("mask").style.display = "none";
 }
 
-document.getElementById("mask").onclick=function(e){
-  if(e.target.id==="mask")closePicker();
+document.getElementById("mask").onclick = function(e) {
+  if (e.target.id === "mask") closePicker();
 };
 
-function colorOf(data,val){
-  return (data.find(x=>x[1]==val)||data[0])[2];
+function colorOf(data, val) {
+  return (data.find(x => x[1] == val) || data[0])[2];
 }
 
-makeBtn("modeBox",modeData,"mode","Band Mode");
-makeBtn("b1Box",first4,"b1","First");
-makeBtn("b2Box",second4,"b2","Second");
-makeBtn("b3Box",digit,"b3","Third");
-makeBtn("b4Box",digit,"b4","Forth");
-makeBtn("b5Box",jedec5,"b5","Fifth");
+// Instantiate triggers dynamically
+makeBtn("modeBox", modes, "mode", "Band Coding Standard");
+makeBtn("b1Box", first4, "b1", "First");
+makeBtn("b2Box", second4, "b2", "Second");
+makeBtn("b3Box", digit, "b3", "Third");
+makeBtn("b4Box", digit, "b4", "Fourth");
+makeBtn("b5Box", jedec5, "b5", "Fifth");
 
-function setControlsForMode(){
-  let mode=state.mode;
+function setControlsForMode() {
+  let mode = state.mode;
 
-  box1.style.display="block";
-  box2.style.display=mode==="general"?"none":"block";
-  box3.style.display=mode==="general"?"none":"block";
-  box4.style.display=mode==="general"?"none":"block";
-  box5.style.display=mode==="jedec"?"block":"none";
+  // Toggle container box displays dynamically
+  document.getElementById("box1").style.display = "block";
+  document.getElementById("box2").style.display = (mode === "general") ? "none" : "block";
+  document.getElementById("box3").style.display = (mode === "general") ? "none" : "block";
+  document.getElementById("box4").style.display = (mode === "general") ? "none" : "block";
+  document.getElementById("box5").style.display = (mode === "jedec") ? "block" : "none";
 
-  if(mode==="general"){
-    lbl1.innerText="Select Colour";
-    btns.b1.onclick=function(){openPicker(general,"b1","Select Colour")};
-    if(!general.find(x=>x[1]===state.b1)) state.b1="General Purpose";
-    setBtn(general,"b1");
+  let lbl1 = document.getElementById("lbl1");
+  let lbl2 = document.getElementById("lbl2");
+  let lbl3 = document.getElementById("lbl3");
+  let lbl4 = document.getElementById("lbl4");
+  let lbl5 = document.getElementById("lbl5");
+
+  if (mode === "general") {
+    lbl1.innerText = "Select Color";
+    btns.b1.onclick = function() { openPicker(general, "b1", "Select Color") };
+    if (!general.find(x => x[1] === state.b1)) state.b1 = "General Purpose";
+    setBtn(general, "b1");
   }
 
-  if(mode==="diode4"){
-    lbl1.innerText="First"; lbl2.innerText="Second"; lbl3.innerText="Third"; lbl4.innerText="Forth";
-    btns.b1.onclick=function(){openPicker(first4,"b1","First")};
-    btns.b2.onclick=function(){openPicker(second4,"b2","Second")};
-    btns.b3.onclick=function(){openPicker(digit,"b3","Third")};
-    btns.b4.onclick=function(){openPicker(digit,"b4","Forth")};
+  if (mode === "diode4") {
+    lbl1.innerText = "First"; lbl2.innerText = "Second"; lbl3.innerText = "Third"; lbl4.innerText = "Forth";
+    btns.b1.onclick = function() { openPicker(first4, "b1", "First") };
+    btns.b2.onclick = function() { openPicker(second4, "b2", "Second") };
+    btns.b3.onclick = function() { openPicker(digit, "b3", "Third") };
+    btns.b4.onclick = function() { openPicker(digit, "b4", "Forth") };
 
-    if(!first4.find(x=>x[1]===state.b1)) state.b1="AA";
-    if(!second4.find(x=>x[1]===state.b2)) state.b2="X";
-    if(!digit.find(x=>x[1]===state.b3)) state.b3="0";
-    if(!digit.find(x=>x[1]===state.b4)) state.b4="0";
+    if (!first4.find(x => x[1] === state.b1)) state.b1 = "AA";
+    if (!second4.find(x => x[1] === state.b2)) state.b2 = "X";
+    if (!digit.find(x => x[1] === state.b3)) state.b3 = "0";
+    if (!digit.find(x => x[1] === state.b4)) state.b4 = "0";
 
-    setBtn(first4,"b1"); setBtn(second4,"b2"); setBtn(digit,"b3"); setBtn(digit,"b4");
+    setBtn(first4, "b1"); setBtn(second4, "b2"); setBtn(digit, "b3"); setBtn(digit, "b4");
   }
 
-  if(mode==="jedec"){
-    lbl1.innerText="1 Band"; lbl2.innerText="2 Band"; lbl3.innerText="3 Band"; lbl4.innerText="4 Band"; lbl5.innerText="5 Band";
-    btns.b1.onclick=function(){openPicker(digit,"b1","1 Band")};
-    btns.b2.onclick=function(){openPicker(digit,"b2","2 Band")};
-    btns.b3.onclick=function(){openPicker(digit,"b3","3 Band")};
-    btns.b4.onclick=function(){openPicker(digit,"b4","4 Band")};
-    btns.b5.onclick=function(){openPicker(jedec5,"b5","5 Band")};
+  if (mode === "jedec") {
+    lbl1.innerText = "1 Band"; lbl2.innerText = "2 Band"; lbl3.innerText = "3 Band"; lbl4.innerText = "4 Band"; lbl5.innerText = "5 Band";
+    btns.b1.onclick = function() { openPicker(digit, "b1", "1 Band") };
+    btns.b2.onclick = function() { openPicker(digit, "b2", "2 Band") };
+    btns.b3.onclick = function() { openPicker(digit, "b3", "3 Band") };
+    btns.b4.onclick = function() { openPicker(digit, "b4", "4 Band") };
+    btns.b5.onclick = function() { openPicker(jedec5, "b5", "5 Band") };
 
-    if(!digit.find(x=>x[1]===state.b1)) state.b1="0";
-    if(!digit.find(x=>x[1]===state.b2)) state.b2="0";
-    if(!digit.find(x=>x[1]===state.b3)) state.b3="0";
-    if(!digit.find(x=>x[1]===state.b4)) state.b4="0";
-    if(!jedec5.find(x=>x[1]===state.b5)) state.b5="A";
+    if (!digit.find(x => x[1] === state.b1)) state.b1 = "0";
+    if (!digit.find(x => x[1] === state.b2)) state.b2 = "0";
+    if (!digit.find(x => x[1] === state.b3)) state.b3 = "0";
+    if (!digit.find(x => x[1] === state.b4)) state.b4 = "0";
+    if (!jedec5.find(x => x[1] === state.b5)) state.b5 = "A";
 
-    setBtn(digit,"b1"); setBtn(digit,"b2"); setBtn(digit,"b3"); setBtn(digit,"b4"); setBtn(jedec5,"b5");
+    setBtn(digit, "b1"); setBtn(digit, "b2"); setBtn(digit, "b3"); setBtn(digit, "b4"); setBtn(jedec5, "b5");
   }
 }
 
-function clearBands(){
-  [band1,band2,band3,band4,band5].forEach(b=>b.style.background="transparent");
+function clearBands() {
+  [band1, band2, band3, band4, band5].forEach(b => b.style.backgroundColor = "transparent");
 }
 
-function calc(){
-  setBtn(modeData,"mode");
+function calc() {
+  setBtn(modes, "mode");
   setControlsForMode();
   clearBands();
 
-  if(state.mode==="diode4"){
-    result.innerText=state.b1+state.b2+state.b3+state.b4;
-    band1.style.background=colorOf(first4,state.b1);
-    band2.style.background=colorOf(second4,state.b2);
-    band3.style.background=colorOf(digit,state.b3);
-    band4.style.background=colorOf(digit,state.b4);
+  let mode = state.mode;
+  let overlay = document.getElementById("diodeOverlay");
+
+  // Switch overlay based on mode
+  if (mode === "diode4") {
+    overlay.style.backgroundImage = "url('https://ik.imagekit.io/mak/color_code/diode4_aciTQiLU4.png')";
+    
+    let val = state.b1 + state.b2 + state.b3 + state.b4;
+    document.getElementById("result").innerText = "Decoded Code: " + val;
+    document.getElementById("resVal").innerText = val;
+    document.getElementById("resMat").innerText = (state.b1 === "AA") ? "Germanium Substrate" : "Silicon Substrate";
+    
+    let family = "Diode Application";
+    if (state.b2 === "X" || state.b2 === "V") family = "Varactor (Tuning)";
+    else if (state.b2 === "S") family = "High-Speed Switching";
+    else if (state.b2 === "T") family = "Power Rectifier";
+    else if (state.b2 === "W") family = "Demodulator / RF Detector";
+    else if (state.b2 === "Y") family = "Standard Rectification";
+    else if (state.b2 === "Z") family = "Zener Voltage Regulator";
+
+    document.getElementById("resFamily").innerText = family;
+    document.getElementById("resClass").innerText = "Pro Electron Standard";
+
+    document.getElementById("band1").style.backgroundColor = colorOf(first4, state.b1);
+    document.getElementById("band2").style.backgroundColor = colorOf(second4, state.b2);
+    document.getElementById("band3").style.backgroundColor = colorOf(digit, state.b3);
+    document.getElementById("band4").style.backgroundColor = colorOf(digit, state.b4);
   }
 
-  if(state.mode==="general"){
-    result.innerText=state.b1;
-    band1.style.background=colorOf(general,state.b1);
+  if (mode === "general") {
+    overlay.style.backgroundImage = "url('https://ik.imagekit.io/mak/color_code/diode1_fjQktmAOkI.png')";
+
+    document.getElementById("result").innerText = "Type: " + state.b1;
+    document.getElementById("resVal").innerText = state.b1;
+    document.getElementById("resMat").innerText = "Silicon / Germanium Standard";
+    document.getElementById("resFamily").innerText = (state.b1 === "Zener") ? "Voltage Regulator (Zener)" : "General Purpose";
+    document.getElementById("resClass").innerText = "General 1-Band Code";
+
+    document.getElementById("band1").style.backgroundColor = colorOf(general, state.b1);
   }
 
-  if(state.mode==="jedec"){
-    result.innerText="1N"+state.b1+state.b2+state.b3+state.b4+state.b5;
-    band1.style.background=colorOf(digit,state.b1);
-    band2.style.background=colorOf(digit,state.b2);
-    band3.style.background=colorOf(digit,state.b3);
-    band4.style.background=colorOf(digit,state.b4);
-    band5.style.background=colorOf(jedec5,state.b5);
+  if (mode === "jedec") {
+    overlay.style.backgroundImage = "url('https://ik.imagekit.io/mak/color_code/diode5_XMFa9YW3xZ.png')";
+
+    let val = "1N" + state.b1 + state.b2 + state.b3 + state.b4 + state.b5;
+    document.getElementById("result").innerText = "Decoded JEDEC: " + val;
+    document.getElementById("resVal").innerText = val;
+    document.getElementById("resMat").innerText = "Silicon Active Substrate";
+    document.getElementById("resFamily").innerText = "JEDEC Standard Series Diode";
+    document.getElementById("resClass").innerText = "JEDEC 5-Band (1N-Series)";
+
+    document.getElementById("band1").style.backgroundColor = colorOf(digit, state.b1);
+    document.getElementById("band2").style.backgroundColor = colorOf(digit, state.b2);
+    document.getElementById("band3").style.backgroundColor = colorOf(digit, state.b3);
+    document.getElementById("band4").style.backgroundColor = colorOf(digit, state.b4);
+    document.getElementById("band5").style.backgroundColor = colorOf(jedec5, state.b5);
   }
 }
 
+// Fire calculation
 calc();
 </script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. Which end of the diode is the cathode?","acceptedAnswer":{"@type":"Answer","text":"The cathode (negative terminal) is indicated by the color bands or terminal stripe. On leaded axial diodes, color bands are clustered closer to the cathode end."}},
+{"@type":"Question","name":"2. What is the difference between a Zener diode and a standard diode?","acceptedAnswer":{"@type":"Answer","text":"Standard diodes conduct only in the forward direction. Zener diodes are designed to conduct reliably in the reverse direction once a specific 'breakdown voltage' is reached, making them useful for voltage regulation."}},
+{"@type":"Question","name":"3. What does the '1N' prefix stand for?","acceptedAnswer":{"@type":"Answer","text":"The '1N' prefix is part of the JEDEC standard, where '1' represents the number of active semiconductor junctions (diodes have 1 junction, transistors typically have 2, marked '2N')."}},
+{"@type":"Question","name":"4. How do I identify a Schottky diode via color bands?","acceptedAnswer":{"@type":"Answer","text":"Under general single-band coding standards, a single green band printed on the diode represents a Schottky classification."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Zener & Diode Colour Code Calculator","item":"https://calcboy.com/tool/zener-diode-colour-code-calculator"}
+]
+}
+</script>
+
 </body>
 </html>
