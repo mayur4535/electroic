@@ -1,239 +1,601 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SMD Capacitor Code Calculator | 3-Digit and EIA Voltage | CalcBoy</title>
+<meta name="description" content="Decode SMD tantalum and ceramic capacitor codes to capacitance values and voltage ratings, or convert capacitance back to standard EIA codes in real-time.">
+<meta name="keywords" content="SMD capacitor code calculator, SMT tantalum capacitor, 3 digit capacitor code, read capacitor voltage code, CalcBoy">
 <style>
-*{box-sizing:border-box}
+#smd-calc,#smd-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+#smd-calc{width:100% !important;max-width:620px;margin:0 auto !important;padding:14px 10px !important;background:transparent;border:none}
 
-body{
-margin:0;
-font-family:Arial;
-background:#fff;
-text-align:center;
+.lbl{font-size:14px;margin-bottom:5px;font-weight:700;color:#4b5563}
+.calc-label{display:block;font-size:14px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff9f00;box-shadow:0 0 0 3px rgba(255,159,0,.15)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;text-align:center}
+.subTitle{font-size:13px;font-weight:900;color:#64748b;text-transform:uppercase;margin-top:20px;padding:10px 0 0;border-top:1px solid #e5e7eb}
+
+/* Molded Tantalum SMD Capacitor Body Style */
+.smd-container {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: 250px;
+  margin: 15px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+.smd-box{
+  position:relative;
+  width:100%;
+  max-width:280px;
+  height:180px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.cap-body {
+  position: relative;
+  width: 82%;
+  height: 120px;
+  background: #f1ad24; /* EIA Tantalum yellow-orange body */
+  border: 2.5px solid #28251e;
+  border-radius: 8px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.18), inset 0 6px 0 rgba(255,255,255,0.35), inset 0 -6px 0 rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+/* Left & Right Silver Terminals */
+.cap-terminal {
+  position: absolute;
+  width: 2%;
+  height: 70px;
+  background: linear-gradient(180deg, #9ca3af, #f3f4f6 35%, #d1d5db 65%, #6b7280);
+  border: 2px solid #28251e;
+  border-radius: 4px;
+  z-index: 2;
+}
+.term-left { left: 21px; }
+.term-right { right: 21px; }
+
+/* Polarity stripe representing the POSITIVE (Anode) side for Tantalum */
+.cap-polarity {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 33%; /* Stripe width set to 33% */
+  background: #8e5405; /* Solid dark stripe */
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-right: 2px solid #28251e;
+  z-index: 3;
 }
 
-.wrap{
-max-width:460px;
-margin:18px auto;
-padding:8px;
+/* Input Code placed inside the dark polarity stripe */
+.cap-input-ui {
+  position: absolute;
+  left: 65%; /* Centered within the 33% dark stripe */
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 90px;
+  height: 38px;
+  background: rgba(40, 37, 30, 0.85) !important;
+  border: 1.5px dashed rgba(255,255,255,0.3) !important;
+  color: #ffffff !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  outline: none !important;
+  letter-spacing: 1px !important;
+  border-radius: 6px !important;
+  padding: 0 !important;
+  z-index: 20;
 }
 
-.cap-box{
-position:relative;
-max-width:380px;
-height:230px;
-margin:auto;
+/* Dropdown placed inside the yellow-orange body */
+.cap-dropdown-ui {
+  position: absolute;
+  left: 17%; /* Centered in the remaining yellow area */
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 38px;
+  background: rgba(40, 37, 30, 0.85) !important;
+  border: 1.5px dashed rgba(255,255,255,0.3) !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  border-radius: 6px !important;
+  outline: none !important;
+  cursor: pointer;
+  padding: 0 !important;
+  text-align-last: center;
+  appearance: none;
+  -webkit-appearance: none;
+  z-index: 20;
+}
+.cap-dropdown-ui option {
+  background: #232428;
+  color: #fff;
 }
 
-.terminal{
-position:absolute;
-top:76px;
-width:12px;
-height:96px;
-background:linear-gradient(90deg,#444,#e4e4ef,#777);
-border:1.5px solid #111;
+/* Controls Layout: 3 Columns on PC / 2 Columns on Mobile */
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;text-align:left}
+
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+#wng{display:none;margin-top:14px;margin-bottom:6px;background:#fffbeb;border:1px solid #fef3c7;border-left:5px solid #d97706;border-radius:10px;padding:12px;font-size:13px;font-weight:700;color:#b45309;line-height:1.6;text-align:left}
+
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+
+/* Guaranteed spacing between SMT visualizer and technical details section */
+.visualizer-wrapper {
+  margin-bottom: 32px;
 }
 
-.terminal.left{left:0}
-.terminal.right{right:0}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:left}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff9f00;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 
-.cap-main{
-position:absolute;
-left:12px;
-right:12px;
-top:42px;
-height:148px;
-background:#f4b847;
-border:2px solid #111;
-box-shadow:
-inset 0 11px 0 rgba(255,215,105,.7),
-inset 0 -13px 0 rgba(105,70,0,.4);
+.footer{margin-top:30px;padding:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#94a3b8;font-weight:700;text-align:center}
+
+@media(max-width:700px){
+.controls{grid-template-columns:repeat(2,1fr);gap:14px 12px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.visualizer-wrapper { margin-bottom: 24px; }
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
+.cap-input-ui {
+  width: 52px;
+  height: 34px;
+  font-size: 14px !important;
 }
-
-.cap-main:before{
-content:"";
-position:absolute;
-left:-2px;right:-2px;top:-18px;height:18px;
-background:linear-gradient(#d99400,#ffd05a,#d99400);
-border:2px solid #111;border-bottom:0;
-}
-
-.cap-main:after{
-content:"";
-position:absolute;
-left:-2px;right:-2px;bottom:-18px;height:18px;
-background:linear-gradient(#654200,#d99d21,#654200);
-border:2px solid #111;border-top:0;
-}
-
-.polarity{
-position:absolute;
-left:13px;
-top:42px;
-width:42px;
-height:148px;
-background:#b96312;
-border-right:2px solid #111;
-}
-
-/* CENTER INPUT GROUP */
-.input-group{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-display:flex;
-align-items:center;
-gap:18px;
-z-index:20;
-}
-
-.voltage-select{
-width:70px;
-height:52px;
-font-size:28px;
-font-weight:bold;
-text-align:center;
-background:rgba(255,255,255,.25);
-border:1px solid #333;
-outline:none;
-}
-
-.code-input{
-width:120px;
-height:52px;
-font-size:36px;
-font-weight:bold;
-text-align:center;
-background:rgba(255,255,255,.25);
-border:1px solid #333;
-outline:none;
-}
-
-.result{
-margin:18px auto 0;
-border:2px solid #73AD21;
-border-radius:20px;
-padding:10px;
-width:240px;
-font-size:30px;
-font-weight:bold;
-}
-
-.voltage-result{
-font-size:18px;
-margin-top:4px;
-}
-
-@media(max-width:600px){
-.cap-box{
-max-width:320px;
-height:200px;
-}
-
-.input-group{
-gap:14px;
-}
-
-.voltage-select{
-width:62px;
-height:46px;
-font-size:24px;
-}
-
-.code-input{
-width:105px;
-height:46px;
-font-size:30px;
-}
-
-.result{
-font-size:26px;
-width:220px;
+.cap-dropdown-ui {
+  width: 52px;
+  height: 34px;
+  font-size: 14px !important;
 }
 }
 </style>
 </head>
-
 <body>
 
-<div class="wrap">
+<div id="smd-calc">
+  <div class="wrap">
+    <div class="visualizer-wrapper">
 
-<div class="cap-box">
+      <!-- Polished EIA Yellow Molded Tantalum Visualizer -->
+      <div class="smd-container">
+        <div class="smd-box">
+          <div class="cap-terminal term-left"></div>
+          <div class="cap-terminal term-right"></div>
+          
+          <div class="cap-body">
+            <!-- Anode (+) side polarity bar (Dark Colour) -->
+            <div class="cap-polarity"></div>
+            
+            <!-- Embedded Visualizer Inputs placed directly inside their respective zones -->
+            <!-- Input Cap (3-digit code) inside Dark Colour Stripe -->
+            <input id="capcode" class="cap-input-ui" type="text" maxlength="4" autocomplete="off" spellcheck="false" placeholder="106" value="106" oninput="onCodeInput()">
 
-<div class="terminal left"></div>
-<div class="terminal right"></div>
+            <!-- Dropdown Menu inside Chikni/Light yellow body -->
+            <select id="tolcode" class="cap-dropdown-ui" onchange="onCodeInput()">
+              <option value="e">e</option>
+              <option value="G">G</option>
+              <option value="J">J</option>
+              <option value="A">A</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="E" selected>E</option>
+              <option value="V">V</option>
+              <option value="H">H</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-<div class="cap-main"></div>
-<div class="polarity"></div>
+      <div class="subTitle">Convert Capacitance to Code</div>
+      <div class="controls">
+        <div style="grid-column: span 2;">
+          <span class="calc-label">Target Capacitance</span>
+          <div class="calc-row">
+            <input type="text" id="rset" placeholder="e.g. 10" oninput="onValueInput()">
+            <select id="runitset" onchange="onValueInput()">
+              <option value="-6" selected>µF</option>
+              <option value="-9">nF</option>
+              <option value="-12">pF</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <span class="calc-label">Rated Voltage</span>
+          <select id="rvoltage" onchange="onValueInput()">
+            <option value="e">2.5V [e]</option>
+            <option value="G">4V [G]</option>
+            <option value="J">6.3V [J]</option>
+            <option value="A">10V [A]</option>
+            <option value="C">16V [C]</option>
+            <option value="D">20V [D]</option>
+            <option value="E" selected>25V [E]</option>
+            <option value="V">35V [V]</option>
+            <option value="H">50V [H]</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="input-group">
+  <div id="errorBox">Invalid SMD code format. Provide a standard 3-digit code (e.g. 106).</div>
+  <div id="wng">Standard molded Tantalum capacitors use the letter prefix to signify rated working voltage.</div>
 
-<select id="tolcode" class="voltage-select">
-<option value="A">e</option>
-<option value="B">G</option>
-<option value="C">J</option>
-<option value="D">A</option>
-<option value="F">C</option>
-<option value="G">D</option>
-<option selected value="H">E</option>
-<option value="J">V</option>
-<option value="K">H</option>
-</select>
+  <div class="result-title">RESULTS</div>
 
-<input id="capcode" class="code-input" maxlength="3" placeholder="103" autocomplete="off" spellcheck="false">
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Rated Capacitance</div><div class="result-value" id="resVal">-</div></div>
+    <div class="result-card green"><div class="result-label">Rated Working Voltage</div><div class="result-value" id="resVolt">-</div></div>
+    <div class="result-card purple"><div class="result-label">Equivalent Value</div><div class="result-value" id="resEquiv">-</div></div>
+    <div class="result-card orange"><div class="result-label">Marking Standard</div><div class="result-value" id="resClass">-</div></div>
+  </div>
 
-</div>
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Capacitance Code</strong>Three-digit numeric representation: the first two are significant figures, followed by a base-10 multiplier.</div>
+      <div class="paramItem"><strong>Voltage Code Letter</strong>Standard EIA single-character prefix placed on the device body to denote the maximum DC working voltage.</div>
+      <div class="paramItem"><strong>Polarity Bar</strong>The vertical stripe indicates the positive (Anode) terminal on SMD Tantalum capacitors (contrasting with Aluminum electrolytic chips).</div>
+      <div class="paramItem"><strong>Base Calculations</strong>Capacitor multipliers are calculated natively in Picofarads (pF, 10^-12 Farads).</div>
+    </div>
+  </section>
 
-</div>
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>A106 Polarized Capacitor (10 µF, 10V)</strong></p>
+        <p>Prefix 'A' represents 10 Volts. Code '106' decodes as 10 × 10^6 pF = 10,000,000 pF (10 µF).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>E475 Power Line Filter (4.7 µF, 25V)</strong></p>
+        <p>Prefix 'E' represents 25 Volts. Code '475' decodes as 47 × 10^5 pF = 4.7 µF. Standard buck-converter output choke stabilizer.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>J226 Decoupling Capacitor (22 µF, 6.3V)</strong></p>
+        <p>Prefix 'J' represents 6.3 Volts. Code '226' decodes as 22 × 10^6 pF = 22 µF. Used in space-constrained logic rails.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>H105 High-Voltage Bypass (1 µF, 50V)</strong></p>
+        <p>Prefix 'H' represents 50 Volts. Code '105' decodes as 10 × 10^5 pF = 1.0 µF. Suited for automotive sensory interfaces.</p>
+      </div>
+    </div>
+  </section>
 
-<div class="result">
-<div id="capacitance">---</div>
-<div id="tolerance" class="voltage-result">16V</div>
-</div>
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Surface Mount Device (SMD) molded solid-electrolyte tantalum capacitors are preferred in low-profile electronic circuits due to their high volumetric efficiency and stable capacitance parameters over age.</p>
+    <p><strong>Polarity Warning:</strong> On SMD molded Tantalum chip capacitors, the colored stripe identifies the <strong>positive (Anode)</strong> terminal. Connecting the component backwards under bias can result in dielectric breakdown and component failure.</p>
+  </section>
 
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Calculated Value: Capacitance (pF) = (Digit 1 × 10 + Digit 2) × 10^Multiplier</div>
+    <div class="formula">Farad Unit Scale: 1 µF = 1,000 nF = 1,000,000 pF</div>
+    <div class="formula">
+      EIA Voltage Codes: <br>
+      e = 2.5V | G = 4V | J = 6.3V | A = 10V | C = 16V | D = 20V | E = 25V | V = 35V | H = 50V
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Decodifying an "E106" Molded Tantalum Capacitor</div>
+    <div class="formulaBox">Step 1: Read the voltage letter prefix: "E" maps to 25 Volts.</div>
+    <div class="formulaBox">Step 2: Take the first two numeric digits as base values: "10".</div>
+    <div class="formulaBox">Step 3: Identify the third digit as multiplier: "6" (representing 10^6).</div>
+    <div class="formulaBox">Step 4: Multiply base value by multiplier: 10 × 1,000,000 = 10,000,000 pF.</div>
+    <div class="formulaBox">Step 5: Convert units: 10,000,000 pF = 10,000 nF = 10 µF.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Locate the voltage letter and 3-digit numeric code printed on top of the SMD capacitor.</div>
+      <div class="aboutStep">Adjust the interactive dropdown and input box inside the visualizer body.</div>
+      <div class="aboutStep">The calculated values, working voltage, and alternate unit scales are computed instantly.</div>
+      <div class="aboutStep">To find the appropriate SMD marking code for a specific target value, adjust the manual conversion inputs below.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Decode electronic surface-mount parameters with high accuracy.</strong>
+      <p>This utility parses standard 3-digit coding, fractional 'R' decimal indicators, and standard EIA voltage-scaling codes.</p>
+    </div>
+    <p>Using the proper voltage ratings and respecting polarization rules prevents noise and stabilizes transient responses across dynamic consumer device PCB boards.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>EIA Standardization</span>Supports EIA voltage letters and standard E-series numeric coding.</div>
+      <div class="aboutMiniCard"><span>Integrated Visualizer</span>The Tantalum-style visual model displays interactive inputs natively.</div>
+      <div class="aboutMiniCard"><span>Tantalum Specifics</span>Highlights positive-stripe parameters to aid physical assembly safety.</div>
+      <div class="aboutMiniCard"><span>Privacy First</span>Executed strictly client-side to ensure zero tracking and instant calculations.</div>
+    </div>
+    <div class="aboutNote">Tip: Always allow a voltage de-rating factor of 50% for solid tantalum capacitors in switching circuit applications.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What does the stripe on an SMD tantalum capacitor represent?</strong></h3>
+    <p>The printed stripe on molded tantalum SMD capacitors represents the positive (Anode) terminal. This is opposite to aluminum electrolytic cans, where the band indicates the negative (Cathode) terminal.</p>
+
+    <h3><strong>2. How are values parsed if a decimal point is present?</strong></h3>
+    <p>For low values, an "R" represents a decimal point in picofarads. For example, "4R7" indicates 4.7 pF.</p>
+
+    <h3><strong>3. Why are many multi-layer ceramic capacitors (MLCC) completely unmarked?</strong></h3>
+    <p>Due to extremely compact dimensions and high-volume manufacture, MLCC devices rarely carry markings. An LCR meter is typically required to verify their properties.</p>
+
+    <h3><strong>4. What is voltage de-rating and why is it recommended for tantalum capacitors?</strong></h3>
+    <p>Tantalum capacitors are sensitive to voltage transients and current spikes. It is standard engineering practice to run them at 50% or less of their maximum rated working voltage to prevent electrical breakdown.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>SMD Resistor Code Calculator</strong>Convert standard 3-digit, 4-digit, and EIA-96 resistor markings.</div>
+      <div class="linkCard"><strong>SMD Inductor Code Calculator</strong>Identify inductor ratings from printed core alphanumeric characters.</div>
+      <div class="linkCard"><strong>Ceramic Capacitor Calculator</strong>Interpret radial and ceramic disc codes to capacitance ratings.</div>
+      <div class="linkCard"><strong>Bypass Capacitor Calculator</strong>Find resonant frequency thresholds for power rail noise filtration.</div>
+    </div>
+  </section>
 </div>
 
 <script>
-let tolval=[
-"2.5V",
-"4V",
-"6.3V",
-"10V",
-"16V",
-"20V",
-"25V",
-"35V",
-"50V"
-];
+// EIA Voltage ratings map
+const eiaVoltages = {
+  "e": "2.5V",
+  "G": "4V",
+  "J": "6.3V",
+  "A": "10V",
+  "C": "16V",
+  "D": "20V",
+  "E": "25V",
+  "V": "35V",
+  "H": "50V"
+};
 
-let codeBox=document.getElementById("capcode");
-let tolBox=document.getElementById("tolcode");
-
-codeBox.addEventListener("input",calc);
-tolBox.addEventListener("change",calc);
-
-function calc(){
-let v=codeBox.value.trim();
-
-if(v.length===3 && /^[0-9]{3}$/.test(v)){
-let value=parseInt(v.slice(0,2))*Math.pow(10,parseInt(v.slice(2)));
-document.getElementById("capacitance").innerHTML=format(value);
-}else{
-document.getElementById("capacitance").innerHTML="---";
+function formatCapacitance(valInF) {
+  let pF = valInF * 1e12;
+  if (pF < 1000) {
+    return { value: parseFloat(pF.toFixed(2)).toString(), unit: "pF" };
+  }
+  let nF = valInF * 1e9;
+  if (nF < 1000) {
+    return { value: parseFloat(nF.toFixed(2)).toString(), unit: "nF" };
+  }
+  let uF = valInF * 1e6;
+  if (uF < 1000) {
+    return { value: parseFloat(uF.toFixed(2)).toString(), unit: "µF" };
+  }
+  let mF = valInF * 1e3;
+  return { value: parseFloat(mF.toFixed(2)).toString(), unit: "mF" };
 }
 
-document.getElementById("tolerance").innerHTML=tolval[tolBox.selectedIndex] || "---";
+// Convert input codes inside the visualizer back to value specifications
+function onCodeInput(skipControlsSync = false) {
+  let rcode = document.getElementById('capcode').value.trim().toUpperCase();
+  let vcode = document.getElementById('tolcode').value;
+  let valFarad = null;
+  let stdClass = "Standard 3-Digit Code";
+  
+  document.getElementById('wng').style.display = "none";
+  document.getElementById("errorBox").style.display = "none";
+
+  // Check if a voltage letter prefix was entered directly inside the text field (e.g. "E106" or "A475")
+  if (rcode.length === 4 && rcode.match(/^[EGAJDVHC][0-9]{3}$/i)) {
+    let extractedVoltLetter = rcode.charAt(0);
+    let normalizedVoltLetter = Object.keys(eiaVoltages).find(k => k.toLowerCase() === extractedVoltLetter.toLowerCase());
+    if (normalizedVoltLetter) {
+      vcode = normalizedVoltLetter;
+      document.getElementById('tolcode').value = normalizedVoltLetter;
+    }
+    rcode = rcode.slice(1);
+    document.getElementById('capcode').value = rcode;
+  }
+
+  // Parse standard 3-digit code
+  if (rcode.match(/^[0-9]{3}$/) !== null) {
+    const baseVal = parseInt(rcode.slice(0, 2));
+    const exponent = parseInt(rcode.slice(2));
+    let valInPF = baseVal * Math.pow(10, exponent);
+    valFarad = valInPF * 1e-12; // Base picofarad scaling
+    document.getElementById('wng').style.display = "block";
+  } 
+  // Parse decimal point representations (e.g., 2R2, R47)
+  else if (rcode.match(/^([0-9])R([0-9])$/) !== null) {
+    let valInPF = parseFloat(rcode.replace("R", "."));
+    valFarad = valInPF * 1e-12;
+    stdClass = "Decimal 'R' Code (pF)";
+  } else if (rcode.match(/^R([0-9]{2})$/) !== null) {
+    let valInPF = parseFloat("0." + rcode.replace("R", ""));
+    valFarad = valInPF * 1e-12;
+    stdClass = "Decimal 'R' Code (pF)";
+  }
+
+  if (valFarad !== null) {
+    let formattedResult = formatCapacitance(valFarad);
+    let resValText = formattedResult.value + " " + formattedResult.unit;
+    
+    // Equivalent unit representations for auxiliary info box
+    let alternativeText = "";
+    if (formattedResult.unit === "µF") {
+      alternativeText = parseFloat((valFarad * 1e9).toFixed(2)) + " nF (" + parseFloat((valFarad * 1e12).toFixed(2)) + " pF)";
+    } else if (formattedResult.unit === "nF") {
+      alternativeText = parseFloat((valFarad * 1e12).toFixed(2)) + " pF (" + parseFloat((valFarad * 1e6).toFixed(4)) + " µF)";
+    } else if (formattedResult.unit === "pF") {
+      alternativeText = parseFloat((valFarad * 1e9).toFixed(4)) + " nF";
+    } else {
+      alternativeText = parseFloat((valFarad * 1e6).toFixed(2)) + " µF";
+    }
+
+    let selectedVoltageLabel = eiaVoltages[vcode] || "-";
+
+    document.getElementById("resVal").innerText = resValText;
+    document.getElementById("resVolt").innerText = selectedVoltageLabel;
+    document.getElementById("resEquiv").innerText = alternativeText;
+    document.getElementById("resClass").innerText = stdClass;
+
+    if (!skipControlsSync) {
+      silenceValueSync(valFarad, vcode);
+    }
+  } else {
+    document.getElementById("errorBox").style.display = "block";
+    document.getElementById("resVal").innerText = "-";
+    document.getElementById("resVolt").innerText = "-";
+    document.getElementById("resEquiv").innerText = "-";
+    document.getElementById("resClass").innerText = "-";
+  }
 }
 
-function format(v){
-if(v<1000)return v+" pF";
-if(v<1000000)return (v/1000)+" nF";
-return (v/1000000)+" µF";
+// Update the bottom manual entry form controls silently
+function silenceValueSync(valFarad, vLetter) {
+  const rset = document.getElementById("rset");
+  const runitset = document.getElementById("runitset");
+  const rvoltage = document.getElementById("rvoltage");
+
+  if (valFarad >= 1e-6) {
+    rset.value = parseFloat((valFarad / 1e-6).toFixed(4));
+    runitset.value = "-6"; // µF
+  } else if (valFarad >= 1e-9) {
+    rset.value = parseFloat((valFarad / 1e-9).toFixed(4));
+    runitset.value = "-9"; // nF
+  } else {
+    rset.value = parseFloat((valFarad / 1e-12).toFixed(4));
+    runitset.value = "-12"; // pF
+  }
+
+  rvoltage.value = vLetter;
 }
 
-calc();
+// Convert user target entry back to visualizer outputs
+function getRCodebyVal() {
+  const inputScalar = Math.pow(10, parseFloat(document.getElementById('runitset').value));
+  let parsedVal = parseFloat(document.getElementById('rset').value.replace(",", "."));
+  const chosenVoltLetter = document.getElementById('rvoltage').value;
+  
+  let resultStr = "";
+
+  if (!isNaN(parsedVal) && parsedVal > 0) {
+    parsedVal = Math.abs(parsedVal);
+    let valueInFarads = parsedVal * inputScalar;
+    let valueInPF = valueInFarads * 1e12;
+
+    const maxCapacitanceLimit = 990000 * 1e-6; // 990,000 µF max ceiling
+    const minCapacitanceLimit = 0.1 * 1e-12;   // 0.1 pF minimum limit
+
+    if (valueInFarads < minCapacitanceLimit || valueInFarads > maxCapacitanceLimit) {
+      document.getElementById("resVal").innerText = "Out of range (0.1pF to 990mF)";
+      document.getElementById("resVolt").innerText = "-";
+      document.getElementById("resEquiv").innerText = "-";
+      document.getElementById("resClass").innerText = "-";
+      document.getElementById("errorBox").style.display = "block";
+      document.getElementById("errorBox").innerText = "Value out of standard operational boundaries.";
+    } else {
+      if (valueInPF < 10) {
+        // Decimal code generation (e.g. 4R7, 1R0)
+        let resolvedString = parseFloat(valueInPF.toFixed(1));
+        resultStr = resolvedString.toString().replace(".", "R");
+        if (!resultStr.includes("R")) {
+          resultStr += "R0";
+        }
+      } else {
+        // Standard 3-digit EIA base computation
+        let exponent = 0;
+        let scaleVal = Math.round(valueInPF);
+        while (scaleVal >= 100) {
+          scaleVal /= 10;
+          exponent++;
+        }
+        resultStr = Math.trunc(scaleVal).toString() + exponent.toString();
+      }
+
+      document.getElementById('capcode').value = resultStr;
+      document.getElementById('tolcode').value = chosenVoltLetter;
+      
+      onCodeInput(true); // Sync parsed code details without infinite control looping
+    }
+  }
+}
+
+function onValueInput() {
+  getRCodebyVal();
+}
+
+window.onload = function() {
+  document.getElementById('capcode').focus();
+  onCodeInput();
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. What does the stripe on an SMD tantalum capacitor represent?","acceptedAnswer":{"@type":"Answer","text":"The printed stripe on molded tantalum SMD capacitors represents the positive (Anode) terminal. This is opposite to aluminum electrolytic cans, where the band indicates the negative (Cathode) terminal."}},
+{"@type":"Question","name":"2. How are values parsed if a decimal point is present?","acceptedAnswer":{"@type":"Answer","text":"For low values, an 'R' represents a decimal point in picofarads. For example, '4R7' indicates 4.7 pF."}},
+{"@type":"Question","name":"3. Why are many multi-layer ceramic capacitors (MLCC) completely unmarked?","acceptedAnswer":{"@type":"Answer","text":"Due to extremely compact dimensions and high-volume manufacture, MLCC devices rarely carry markings. An LCR meter is typically required to verify their properties."}},
+{"@type":"Question","name":"4. What is voltage de-rating and why is it recommended for tantalum capacitors?","acceptedAnswer":{"@type":"Answer","text":"Tantalum capacitors are sensitive to voltage transients and current spikes. It is standard engineering practice to run them at 50% or less of their maximum rated working voltage to prevent electrical breakdown."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"SMD Capacitor Code Calculator","item":"https://calcboy.com/tool/smd-capacitor-code-calculator"}
+]
+}
 </script>
 
 </body>
