@@ -1,310 +1,623 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SMD Inductor Code Calculator | 3-Digit, 4-Digit, and Decimal | CalcBoy</title>
+<meta name="description" content="Decode 3-digit, 4-digit, and decimal SMD inductor codes to inductance values and tolerances, or convert inductance back to standard SMT codes in real-time.">
+<meta name="keywords" content="SMD inductor code calculator, SMT inductor calculator, 3 digit inductor, read inductor code, chip inductor calculator, CalcBoy">
 <style>
-*{box-sizing:border-box}
+#smd-calc,#smd-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+#smd-calc{width:100% !important;max-width:620px;margin:0 auto !important;padding:14px 10px !important;background:transparent;border:none}
 
-body{
-margin:0;
-font-family:Arial, sans-serif;
-background:#fff;
-text-align:center;
+.lbl{font-size:14px;margin-bottom:5px;font-weight:700;color:#4b5563}
+.calc-label{display:block;font-size:14px;font-weight:700;color:#4b5563;margin-bottom:7px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+input,select{width:100%;height:43px;border:1px solid #cfd6df;border-radius:8px;padding:0 12px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+.unit-box{width:82px;min-width:82px;max-width:82px;height:43px;border:1px solid #cfd6df;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;text-align:center}
+.subTitle{font-size:13px;font-weight:900;color:#64748b;text-transform:uppercase;margin-top:20px;padding:10px 0 0;border-top:1px solid #e5e7eb}
+
+/* SMT Inductor Body Style - Redesigned to match the real Shielded Drum Core Image */
+.smd-container {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: 270px;
+  margin: 15px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
 }
-
-/* TOP MARGIN 40% */
-.smd-wrap{
-width:100%;
-max-width:520px;
-margin:0 auto;
-padding:18px 6px;
-}
-
 .smd-box{
-position:relative;
-width:100%;
-max-width:280px;
-height:280px;
-margin:16px auto 0;
-display:flex;
-align-items:center;
-justify-content:center;
+  position:relative;
+  width:100%;
+  max-width:250px;
+  height:250px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-
+/* Outer body utilizing responsive inline SVG shape */
 .inductor-ui{
-position:relative;
-width:100%;
-height:100%;
-background:#9a9aa6;
-border-radius:22%;
-box-shadow:
-inset 0 0 0 1px #111,
-0 8px 18px rgba(0,0,0,.35);
+  position:relative;
+  width:100%;
+  height:100%;
+  background:#1a1a1c; /* Dark outer bevel rim */
+  clip-path: url(#inductor-shape);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+/* Inner cap surface for the premium matte-finish and 3D depth look */
+.inductor-inner-face {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  background: #35363a; /* Matte dark-gray body cap face */
+  clip-path: url(#inductor-shape);
+  z-index: 2;
+}
+/* Solder notched slots cut into the sides of the drum core */
+.inductor-notch {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18%;
+  height: 14%;
+  background: #f6f8fb; /* Matches page background for realistic empty cutout effect */
+  z-index: 10;
+}
+.notch-left {
+  left: -1px;
+  border-radius: 0 100px 100px 0;
+  border: 4px solid #1a1a1c;
+  border-left: none;
+}
+.notch-right {
+  right: -1px;
+  border-radius: 100px 0 0 100px;
+  border: 4px solid #1a1a1c;
+  border-right: none;
 }
 
-.pad{
-position:absolute;
-width:26%;
-height:18%;
-background:#111;
-border-radius:50%;
-box-shadow:
-inset 0 4px 8px rgba(255,255,255,.18),
-inset 0 -5px 8px rgba(0,0,0,.8);
-z-index:1;
+/* Edit insert area nested inside core face */
+.smd-input {
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:50%;
+  height:24%;
+  background: #232428 !important; /* Contrast darker value plate */
+  border: 1.5px dashed rgba(255,255,255,0.25) !important;
+  color: #ffffff !important;
+  font-family: Arial, sans-serif !important;
+  font-size: clamp(22px, 6vw, 30px) !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  outline: none !important;
+  letter-spacing: 2px !important;
+  border-radius: 8px !important;
+  z-index: 50;
+  padding: 0 !important;
 }
 
-.p1{top:12%;left:11%}
-.p2{top:12%;right:11%}
-.p3{bottom:12%;left:11%}
-.p4{bottom:12%;right:11%}
+/* Controls Layout: 3 Columns on PC / 2 Columns on Mobile */
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;text-align:left}
 
-.coil-outer{
-position:absolute;
-left:15%;
-top:15%;
-width:70%;
-height:70%;
-border-radius:50%;
-background:#1d1d22;
-box-shadow:
-0 3px 8px rgba(0,0,0,.7),
-inset 0 0 0 2px #050505;
-z-index:2;
+#errorBox{display:none;margin-top:14px;margin-bottom:6px;color:#dc2626;font-size:14px;font-weight:800;text-align:center;border:2px solid #dc2626;padding:10px;border-radius:8px;background:#fef2f2}
+#wng{display:none;margin-top:14px;margin-bottom:6px;background:#fffbeb;border:1px solid #fef3c7;border-left:5px solid #d97706;border-radius:10px;padding:12px;font-size:13px;font-weight:700;color:#b45309;line-height:1.6;text-align:left}
+
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+
+/* Guaranteed spacing between SMT visualizer and technical details section */
+.visualizer-wrapper {
+  margin-bottom: 32px;
 }
 
-.coil-mid{
-position:absolute;
-left:20%;
-top:20%;
-width:60%;
-height:60%;
-border-radius:50%;
-background:#dcdce4;
-box-shadow:inset 0 0 0 2px #222;
-z-index:3;
-}
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:left}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 
-.coil-inner{
-position:absolute;
-left:24%;
-top:24%;
-width:52%;
-height:52%;
-border-radius:50%;
-background:#9d9da9;
-box-shadow:inset 0 0 0 1px #111;
-z-index:4;
-}
+.footer{margin-top:30px;padding:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#94a3b8;font-weight:700;text-align:center}
 
-.gap{
-position:absolute;
-left:14%;
-top:47%;
-width:8%;
-height:5%;
-background:#9a9aa6;
-border:1px solid #111;
-z-index:5;
-}
-
-/* INPUT FIXED */
-.SMDtexto{
-position:absolute;
-left:50%;
-top:50%;
-transform:translate(-50%,-50%);
-width:42%;
-height:22%;
-font-size:clamp(24px,8vw,38px);
-text-align:center;
-color:#fff;
-background:#2d2d34;
-border:0;
-outline:0;
-font-weight:bold;
-border-radius:8px;
-z-index:50;
-pointer-events:auto;
-}
-
-.outSMD{
-margin:14px auto 0;
-border-radius:22px;
-text-align:center;
-font-size:clamp(22px,7vw,36px);
-border:2px solid #73AD21;
-padding:7px 20px;
-width:min(88%,220px);
-font-weight:bold;
-}
-
-.formula{
-margin-top:14px;
-font-size:13px;
-font-weight:bold;
-line-height:1.5;
-color:#333;
-}
-
-@media(max-width:600px){
-.smd-box{
-max-width:245px;
-height:245px;
-margin:12px auto 0;
-}
-
-.outSMD{
-font-size:clamp(22px,7.5vw,34px);
-width:min(90%,210px);
-}
+@media(max-width:700px){
+.controls{grid-template-columns:repeat(2,1fr);gap:14px 12px}
+.calc-row{grid-template-columns:minmax(0,1fr) 72px}
+.unit-box{width:72px;min-width:72px;max-width:72px}
+.visualizer-wrapper { margin-bottom: 24px; }
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+.result-value{font-size:14px}
 }
 </style>
 </head>
-
 <body>
 
-<div class="smd-wrap">
+<!-- Responsive SVG ClipPath definition to shape flat cuts (top/bottom) and circular arcs (sides) -->
+<svg width="0" height="0" style="position: absolute; z-index: -9999;">
+  <defs>
+    <clipPath id="inductor-shape" clipPathUnits="objectBoundingBox">
+      <path d="M 0.25,0 L 0.75,0 C 0.93,0.05 1,0.23 1,0.5 C 1,0.77 0.93,0.95 0.75,1 L 0.25,1 C 0.07,0.95 0,0.77 0,0.5 C 0,0.23 0.07,0.05 0.25,0 Z" />
+    </clipPath>
+  </defs>
+</svg>
 
-<div class="smd-box">
-<div class="inductor-ui">
-<div class="pad p1"></div>
-<div class="pad p2"></div>
-<div class="pad p3"></div>
-<div class="pad p4"></div>
-<div class="coil-outer"></div>
-<div class="coil-mid"></div>
-<div class="coil-inner"></div>
-<div class="gap"></div>
+<div id="smd-calc">
+  <div class="wrap">
+    <div class="visualizer-wrapper">
 
-<input type="text" class="SMDtexto" id="code" value="0000" maxlength="4" autocomplete="off" spellcheck="false">
-</div>
-</div>
+      <!-- SMT Inductor Body Layout matched to your Reference Image -->
+      <div class="smd-container">
+        <div class="smd-box">
+          <div class="inductor-ui">
+            <!-- Bevel Depth Cap Face overlay -->
+            <div class="inductor-inner-face"></div>
+            <!-- Side terminal cutout slots -->
+            <div class="inductor-notch notch-left"></div>
+            <div class="inductor-notch notch-right"></div>
+            <!-- Interactive inputs overlay -->
+            <input id="smdrc" class="smd-input" type="text" autocomplete="off" spellcheck="false" placeholder="101" value="101" oninput="onCodeInput()" maxlength="5">
+          </div>
+        </div>
+      </div>
 
-<div class="outSMD" id="result">RES</div>
+      <div class="subTitle">Convert Inductance to Code</div>
+      <div class="controls">
+        <div style="grid-column: span 2;">
+          <span class="calc-label">Target Inductance</span>
+          <div class="calc-row">
+            <input type="text" id="rset" placeholder="e.g. 100" oninput="onValueInput()">
+            <select id="runitset" onchange="onValueInput()">
+              <option value="-3">mH</option>
+              <option value="-6" selected>µH</option>
+              <option value="-9">nH</option>
+              <option value="-12">pH</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <span class="calc-label">Tolerance</span>
+          <select id="rtolerance" onchange="onValueInput()">
+            <option value="J" selected>±5% [J]</option>
+            <option value="K">±10% [K]</option>
+            <option value="M">±20% [M]</option>
+            <option value="D">±0.3 nH [D]</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="formula">
-3 digit: AB × 10<sup>C</sup> µH<br>
-4 digit: ABC × 10<sup>D</sup> µH<br>
-R = decimal point
-</div>
+  <div id="errorBox">Invalid SMD code format. Check input value or character standard.</div>
+  <div id="wng">For ±20% tolerance, the 'M' letter is optional in actual markings.</div>
 
+  <div class="result-title">RESULTS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Rated Inductance</div><div class="result-value" id="resVal">-</div></div>
+    <div class="result-card green"><div class="result-label">Inductor Tolerance</div><div class="result-value" id="resTol">-</div></div>
+    <div class="result-card purple"><div class="result-label">Tolerance Range</div><div class="result-value" id="resRange">-</div></div>
+    <div class="result-card orange"><div class="result-label">Standard Class</div><div class="result-value" id="resClass">-</div></div>
+  </div>
+
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>SMD Inductor Code</strong>Alphanumeric characters marked directly on the face of the SMT inductor core.</div>
+      <div class="paramItem"><strong>Unit Definition</strong>Standard baseline measurements evaluated in Microhenries (µH) or Nanohenries (nH).</div>
+      <div class="paramItem"><strong>Tolerance Standard</strong>Precision tolerances representing J (±5%), K (±10%), M (±20%), or D (±0.3 nH).</div>
+      <div class="paramItem"><strong>Standard Scaling</strong>Determines the decimal point indicator based on 'R' (micro) or 'N' (nano) structures.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>101 Standard Inductor (100 µH)</strong></p>
+        <p>Decodes as 10 × 10^1 = 100 µH. Typically found in filtering power lines of circuit boards.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>4R7 Power Choke (4.7 µH)</strong></p>
+        <p>The letter 'R' acts as a decimal point, yielding 4.7 µH. Essential for DC-DC buck converters.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>22N Sub-Micro Choke (22 nH)</strong></p>
+        <p>The letter 'N' acts as a decimal point, yielding 22 nH. Used extensively in RF matching networks.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>123J High-Precision Choke (12 mH)</strong></p>
+        <p>Decodes as 12 × 10^3 µH = 12,000 µH (12 mH) with a ±5% precision rating.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Surface Mount Device (SMD) inductors are wire-wound or multilayer coils encapsulated inside a protective ferrite magnetic shield. Due to their compact size, they utilize printed character sets instead of colored rings.</p>
+    <p>Their leadless direct-solder design minimizes equivalent series resistance (ESR), preventing unwanted high-frequency noise spikes in switching regulator circuits.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">For 3-Digit System: Inductance = (Digit 1 × 10 + Digit 2) × 10^Multiplier (in µH)</div>
+    <div class="formula">For 'R' Notation: Represents decimal placement under microhenries scale (µH)</div>
+    <div class="formula">For 'N' Notation: Represents decimal placement under nanohenries scale (nH)</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Decodifying an "101" SMD Inductor (Shown in the visualizer above)</div>
+    <div class="formulaBox">Step 1: Extract the first two numbers as base values: "10".</div>
+    <div class="formulaBox">Step 2: Identify the third digit as multiplier: "1" (representing 10^1 = 10).</div>
+    <div class="formulaBox">Step 3: Multiply base value by multiplier: 10 × 10 = 100 µH.</div>
+    <div class="formulaBox">Step 4: Compute tolerance range: Standard ±20% yields (80 µH ... 120 µH).</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Locate the printed alphanumeric characters on the face of the active SMD inductor.</div>
+      <div class="aboutStep">Type the characters directly into the input field on the dark visualizer graphic.</div>
+      <div class="aboutStep">The calculated inductance rating, standard, and tolerances are computed in real-time.</div>
+      <div class="aboutStep">To reverse-calculate, simply enter targeted specifications into the manual inputs below.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>About This Calculator</h2>
+    <div class="aboutLead">
+      <strong>Evaluate SMD active components with high precision.</strong>
+      <p>This light, self-contained tool supports 3-digit, decimal micro, and decimal nano coding systems.</p>
+    </div>
+    <p>Using proper SMD components reduces circuit trace footprints while significantly improving line filter efficiency in compact smartphone and compute board applications.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>EIA Standards</span>Supports standard E6, E12, and high-frequency RF standards.</div>
+      <div class="aboutMiniCard"><span>Visual Verification</span>The round inductor graphic adapts to inputs dynamically.</div>
+      <div class="aboutMiniCard"><span>Decimal Handling</span>Fully resolves 'R' (micro) and 'N' (nano) decimal indicators.</div>
+      <div class="aboutMiniCard"><span>Privacy First</span>Uses self-contained JS calculations to run seamlessly without trackers.</div>
+    </div>
+    <div class="aboutNote">Tip: Always verify power choke parameters using an LCR bridge before final assembly.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What is an SMD inductor and how does it function?</strong></h3>
+    <p>An SMD inductor is a wire coil wrapped around a ferrite drum, directly soldered to PCB tracks to smooth out high-frequency switching current spikes.</p>
+
+    <h3><strong>2. What does the character 'R' mean in inductor markings?</strong></h3>
+    <p>The character 'R' represents a decimal point scaled in microhenries (µH). For example, "4R7" indicates 4.7 µH.</p>
+
+    <h3><strong>3. What does the character 'N' mean in inductor markings?</strong></h3>
+    <p>The character 'N' represents a decimal point scaled in nanohenries (nH). For example, "22N" indicates 22 nH.</p>
+
+    <h3><strong>4. How is tolerance evaluated if no code letters are specified?</strong></h3>
+    <p>When code markers do not specify precision limits (like J, K, or M), the device falls back to standard ±20% baseline tolerances.</p>
+
+    <h3><strong>5. What is the difference between power inductors and RF inductors?</strong></h3>
+    <p>Power inductors have high saturation currents designed to handle buck/boost regulators, whereas RF inductors feature high Q-factors designed to filter high-frequency communications.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>SMD Resistor Code Calculator</strong>Decode standard 3-digit, 4-digit, and EIA-96 resistor values.</div>
+      <div class="linkCard"><strong>Inductor Color Code Calculator</strong>Identify radial and axial leaded inductor values.</div>
+      <div class="linkCard"><strong>Ohm's Law Calculator</strong>Quickly evaluate power, current, resistance, and voltage steps.</div>
+      <div class="linkCard"><strong>LC Resonance Calculator</strong>Analyze resonant bandwidth frequencies across compound RF stages.</div>
+    </div>
+  </section>
+
+  
 </div>
 
 <script>
-let codeBox=document.getElementById("code");
-let result=document.getElementById("result");
+const tol = {
+  "D" : 0.3 * 1e-9, // 0.3 nH (measured in Henries)
+  "J" : 5,          // ±5%
+  "K" : 10,         // ±10%
+  "M" : 20          // ±20%
+};
 
-let ohm="H";
-let unit="";
-let unit1="µH";
-
-codeBox.addEventListener("click",function(){
-if(codeBox.value==="0000"){
-codeBox.value="";
-result.innerHTML="RES";
+function getKeyByValue(object, value) {
+	return Object.keys(object).find(key => object[key] === value);
 }
-});
-
-codeBox.addEventListener("focus",function(){
-if(codeBox.value==="0000"){
-codeBox.value="";
-result.innerHTML="RES";
+function setCode(code) {
+	document.getElementById('smdrc').value = code;
 }
-});
-
-codeBox.addEventListener("input",calc);
-codeBox.addEventListener("keyup",calc);
-codeBox.addEventListener("change",calc);
-
-function calc(){
-let v=codeBox.value.trim();
-
-if(v==="" || v==="0000"){
-result.innerHTML="RES";
-return;
+function getFraction(n) {
+	return Number(String(n).split('.')[1] || 0);
 }
-
-if(v.search(/([^0-9,rR])/i)>=0){
-result.innerHTML='<font color="red">Err.</font>';
-return;
-}
-
-let len=v.length;
-let upper=v.toUpperCase();
-
-if(len===3){
-if(upper.indexOf("R")!==-1){
-let pos=upper.indexOf("R");
-
-if(pos===0){
-result.innerHTML=upper.replace("R","0.")+ohm;
-}
-else if(pos===1){
-result.innerHTML=upper.replace("R",".")+unit1;
-}
-else{
-result.innerHTML='<font color="red">Err.</font>';
-}
-}
-else{
-let first=parseInt(parseInt(v).toString(10).slice(0,2));
-let last=parseInt(parseInt(v).toString(10).slice(2));
-let res=first*Math.pow(10,last);
-result.innerHTML=formatValue(res);
-}
-}
-else if(len===4){
-if(upper.indexOf("R")!==-1){
-let pos=upper.indexOf("R");
-
-if(pos===0){
-result.innerHTML=upper.replace("R","0.")+ohm;
-}
-else if(pos===1 || pos===2){
-result.innerHTML=upper.replace("R",".")+ohm;
-}
-else{
-result.innerHTML='<font color="red">Err.</font>';
-}
-}
-else{
-let first=parseInt(parseInt(v).toString(10).slice(0,3));
-let last=parseInt(parseInt(v).toString(10).slice(3));
-let res=first*Math.pow(10,last);
-result.innerHTML=formatValue(res);
-}
-}
-else if(len>4){
-result.innerHTML='<font color="red">error</font>';
-}
-else{
-result.innerHTML="Cal.";
-}
+function formatNumber(n) {
+	let ranges = [
+		{divider: 1e12 , suffix: 'T'},
+		{divider: 1e9 , suffix: 'G'},
+		{divider: 1e6 , suffix: 'M'},
+		{divider: 1e3 , suffix: 'k'},
+		{divider: 1e0 , suffix: ''},
+		{divider: 1e-3 , suffix: 'm'},
+		{divider: 1e-6 , suffix: 'µ'},
+		{divider: 1e-9 , suffix: 'n'},
+		{divider: 1e-12 , suffix: 'p'},
+		{divider: 1e-15 , suffix: 'f'}
+	];
+	for (let i = 0; i < ranges.length; i++) {
+		if (n >= ranges[i].divider) {
+			let t = (n / ranges[i].divider).toFixed(4);
+			let fr = getFraction(t);
+			if (fr == 0) {
+				t = Math.trunc(parseFloat(t)).toString();
+			} else {
+        t = parseFloat(t).toString(); // remove trailing zeroes
+      }
+			return {value: t.toString(), prefix: ranges[i].suffix};
+		}
+	}
+	return {value: n.toString(), prefix: ''};
 }
 
-function formatValue(res){
-if(res>999999999){
-res=res/1000000000;
-unit="N"+ohm;
-}
-else if(res<999999999 && res>999999){
-res=res/1000000;
-unit="µ"+ohm;
-}
-else if(res<999999 && res>999){
-res=res/1000;
-unit="m"+ohm;
-}
-else{
-unit=unit1;
+// Convert code inside round visualizer to inductance values
+function onCodeInput(skipControlsSync = false) {
+  const rcode = document.getElementById('smdrc').value.trim().toUpperCase();
+  var rnom = null, rtolKey = null;
+  var stdClass = "-";
+  
+  document.getElementById('wng').style.display = "none";
+
+  // Regex patterns from calculation logic
+  if(rcode.match('^[0-9]{3}$') !== null) {
+    const exponent = parseInt(rcode.slice(-1));
+    rnom = parseInt(rcode.slice(0, -1));
+    rnom *= Math.pow(10, exponent); // value in µH
+    rnom *= 1e-6; // convert to Henries
+    rtolKey = "M"; // 20% standard default
+    stdClass = "3-Digit Standard (µH)";
+    document.getElementById('wng').style.display = "block"; // warn optional 'M'
+  } else if(rcode.match('^(R[0-9]{2})$|^([0-9]R[0-9])$|^([0-9]{2}R)$') !== null) {
+    rnom = parseFloat(rcode.replace("R", "."));
+    rnom *= 1e-6; // convert to Henries
+    rtolKey = "M";
+    stdClass = "Decimal µH Code";
+    document.getElementById('wng').style.display = "block";
+  } else if(rcode.match('^(N[0-9]{2})$|^([0-9]N[0-9])$|^([0-9]{2}N)$') !== null) {
+    rnom = parseFloat(rcode.replace("N", "."));
+    rnom *= 1e-9; // convert to Henries
+    rtolKey = "M";
+    stdClass = "Decimal nH Code";
+    document.getElementById('wng').style.display = "block";
+  } else if(rcode.match('^[0-9]{3}[DJKM]$') !== null) {
+    const exponent = parseInt(rcode.slice(2, -1));
+    rnom = parseInt(rcode.slice(0, 2));
+    rnom *= Math.pow(10, exponent); // in µH
+    rnom *= 1e-6; // convert to Henries
+    rtolKey = rcode.slice(-1);
+    stdClass = "3-Digit Precision (" + rtolKey + ")";
+  } else if(rcode.match('^(R[0-9]{2}[DJKM])$|^([0-9]R[0-9][DJKM])$|^([0-9]{2}R[DJKM])$') !== null) {
+    rnom = parseFloat(rcode.slice(0, -1).replace("R", "."));
+    rnom *= 1e-6; // convert to Henries
+    rtolKey = rcode.slice(-1);
+    stdClass = "Decimal µH Precision (" + rtolKey + ")";
+  } else if(rcode.match('^(N[0-9]{2}[DJKM])$|^([0-9]N[0-9][DJKM])$|^([0-9]{2}N[DJKM])$') !== null) {
+    rnom = parseFloat(rcode.slice(0, -1).replace("N", "."));
+    rnom *= 1e-9; // convert to Henries
+    rtolKey = rcode.slice(-1);
+    stdClass = "Decimal nH Precision (" + rtolKey + ")";
+  }
+
+  if(rnom != null) {
+    document.getElementById("errorBox").style.display = "none";
+    
+    let result = formatNumber(rnom);
+    let nomStr = result.value + " " + result.prefix + "H";
+    
+    let rmin, rmax, tolStr;
+    if(rtolKey === "D") {
+      rmin = rnom - (0.3 * 1e-9);
+      rmax = rnom + (0.3 * 1e-9);
+      tolStr = "±0.3 nH";
+    } else {
+      let percentVal = 20;
+      if (rtolKey === "J") percentVal = 5;
+      else if (rtolKey === "K") percentVal = 10;
+      else if (rtolKey === "M") percentVal = 20;
+      else if (typeof rtolKey === "number") percentVal = rtolKey;
+      
+      rmin = rnom - (rnom / 100 * percentVal);
+      rmax = rnom + (rnom / 100 * percentVal);
+      tolStr = "±" + percentVal + "%";
+    }
+
+    let minRes = formatNumber(rmin);
+    let maxRes = formatNumber(rmax);
+    let rangeStr = "(" + minRes.value + " " + minRes.prefix + "H ... " + maxRes.value + " " + maxRes.prefix + "H)";
+
+    document.getElementById("resVal").innerText = nomStr;
+    document.getElementById("resTol").innerText = tolStr;
+    document.getElementById("resRange").innerText = rangeStr;
+    document.getElementById("resClass").innerText = stdClass;
+
+    if(!skipControlsSync) {
+      silenceValueSync(rnom, rtolKey);
+    }
+  } else {
+    document.getElementById("errorBox").style.display = "block";
+    document.getElementById("resVal").innerText = "-";
+    document.getElementById("resTol").innerText = "-";
+    document.getElementById("resRange").innerText = "-";
+    document.getElementById("resClass").innerText = "-";
+  }
 }
 
-return res+unit;
+function silenceValueSync(rnom, rtolKey) {
+  var rset = document.getElementById("rset");
+  var runitset = document.getElementById("runitset");
+  var rtolerance = document.getElementById("rtolerance");
+
+  if (rnom >= 1e-3) {
+    rset.value = +(rnom / 1e-3).toFixed(4);
+    runitset.value = "-3"; // mH
+  } else if (rnom >= 1e-6) {
+    rset.value = +(rnom / 1e-6).toFixed(4);
+    runitset.value = "-6"; // µH
+  } else if (rnom >= 1e-9) {
+    rset.value = +(rnom / 1e-9).toFixed(4);
+    runitset.value = "-9"; // nH
+  } else {
+    rset.value = +(rnom / 1e-12).toFixed(4);
+    runitset.value = "-12"; // pH
+  }
+
+  if (rtolKey === "D" || rtolKey === "J" || rtolKey === "K" || rtolKey === "M") {
+    rtolerance.value = rtolKey;
+  } else {
+    rtolerance.value = "M"; // default fallback to M
+  }
 }
 
-calc();
+function getRunit() {
+	return 10 ** parseFloat(document.getElementById('runitset').value);
+}
+function getRTol() {
+	return document.getElementById('rtolerance').value;
+}
+
+// Convert user manual value inputs back to SMD code
+function getRCodebyVal() {
+	var runit = getRunit();
+	var rval = Number(document.getElementById('rset').value.replace(",", "."));
+	var rtolLetter = getRTol();
+	var rvmax = 99000 * 1e-6; // max limit (99 mH)
+	var rvmin = 1 * 1e-9;    // min limit (1 nH)
+	let strCode = "";
+
+	if(!isNaN(rval) && rval > 0) {
+		rval = Math.abs(rval);
+		rval *= runit; // scale value to Henry
+
+		if (rval < rvmin || rval > rvmax) {
+			document.getElementById("resVal").innerText = "Out of standard range (1nH to 99mH)";
+      document.getElementById("resTol").innerText = "-";
+      document.getElementById("resRange").innerText = "-";
+      document.getElementById("resClass").innerText = "-";
+		} else {
+			if (rval < 0.1 * 1e-6) {
+        // Sub-micro values < 0.1 µH -> scale to nH using 'N'
+        let nHVal = rval / 1e-9;
+        if (nHVal >= 10) {
+          strCode = String(Math.trunc(nHVal)) + 'N';
+        } else {
+          nHVal = parseFloat(nHVal.toFixed(1));
+          if (nHVal === 10) {
+            strCode = "10N";
+          } else {
+            strCode = String(nHVal).replace(".", "N");
+          }
+        }
+			} else if (rval < 10 * 1e-6) {
+        // Small values < 10 µH -> scale to µH using 'R'
+        let uHVal = rval / 1e-6;
+        if (uHVal < 1) {
+          uHVal = parseFloat(uHVal.toFixed(2));
+          strCode = String(uHVal).replace("0.", "R");
+        } else {
+          uHVal = parseFloat(uHVal.toFixed(1));
+          if (uHVal === 10) {
+            strCode = "10R";
+          } else {
+            strCode = String(uHVal).replace(".", "R");
+          }
+        }
+			} else {
+        // Standard multi-digit code (µH base)
+        let uHVal = Math.round(rval / 1e-6);
+        for (let i = 0; i <= 9; i++) {
+          let vt = uHVal / Math.pow(10, i);
+          if (vt > 1 && vt < 100) {
+            strCode = String(Math.trunc(vt)) + String(i);
+            break;
+          }
+        }
+			}
+
+      // Append standard precision letter except if it's M with 20%
+      if (rtolLetter !== "M") {
+        strCode += rtolLetter;
+      }
+
+			setCode(strCode);
+      onCodeInput(true); // sync code silently to visualizer without infinite looping
+		}
+	}
+}
+
+function onValueInput() {
+  getRCodebyVal();
+}
+
+window.onload = function() {
+	document.getElementById('smdrc').focus();
+  onCodeInput();
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. What is an SMD inductor and how does it function?","acceptedAnswer":{"@type":"Answer","text":"An SMD inductor is a wire coil wrapped around a ferrite drum, directly soldered to PCB tracks to smooth out high-frequency switching current spikes."}},
+{"@type":"Question","name":"2. What does the character 'R' mean in inductor markings?","acceptedAnswer":{"@type":"Answer","text":"The character 'R' represents a decimal point scaled in microhenries (µH). For example, '4R7' indicates 4.7 µH."}},
+{"@type":"Question","name":"3. What does the character 'N' mean in inductor markings?","acceptedAnswer":{"@type":"Answer","text":"The character 'N' represents a decimal point scaled in nanohenries (nH). For example, '22N' indicates 22 nH."}},
+{"@type":"Question","name":"4. How is tolerance evaluated if no code letters are specified?","acceptedAnswer":{"@type":"Answer","text":"When code markers do not specify precision limits (like J, K, or M), the device falls back to standard ±20% baseline tolerances."}},
+{"@type":"Question","name":"5. What is the difference between power inductors and RF inductors?","acceptedAnswer":{"@type":"Answer","text":"Power inductors have high saturation currents designed to handle buck/boost regulators, whereas RF inductors feature high Q-factors designed to filter high-frequency communications."}}
+]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"SMD Inductor Code Calculator","item":"https://calcboy.com/tool/smd-inductor-code-calculator"}
+]
+}
 </script>
 
 </body>
