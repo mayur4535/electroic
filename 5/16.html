@@ -1,703 +1,570 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Film Capacitor Code Calculator | Alphanumeric & EIA metalfilm capacitor| CalcBoy</title>
+<meta name="description" content="Decode radial film and polyester capacitor alphanumeric codes to capacitance values and tolerance margins with our HD inline vector illustration calculator.">
+<meta name="keywords" content="film capacitor calculator, chocklet type capacitor colour code,polyester capacitor code, radial film capacitor, mylar capacitor decoder, capacitor tolerance code, active capacitor calculator">
 <style>
+#smd-calc,#smd-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
+#smd-calc{width:100% !important;max-width:620px;margin:0 auto !important;padding:14px 10px !important;background:transparent;border:none}
 
+.wrap{width:100%;max-width:100% !important;margin:auto;text-align:center;padding:0;overflow:visible}
+.top{max-width:260px;margin:0 auto 18px;text-align:left}
 
+/* HD Inline SVG Film Capacitor Container & Overlays */
+.film-container {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: 250px;
+  margin: 15px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+.film-box {
+  position: relative;
+  width: 250px;
+  height: 230px;
+  margin: 0 auto;
+}
+.film-svg {
+  width: 250px;
+  height: 230px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
 
+/* 
+  FIXED SEPARATE OVERLAY CSS: 
+  Prefixed with #smd-calc to guarantee isolated styled parameters 
+*/
+#smd-calc .film-input {
+  position: absolute;
+  width: 110px !important;
+  height: 50px !important;
+  background: rgba(255, 255, 255, 0.12) !important; /* Soft backdrop */
+  border: 1.5px dashed rgba(255, 255, 255, 0.45) !important; /* Distinct dashed indicator */
+  border-radius: 8px !important;
+  text-align: center;
+  padding: 0px !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 38px !important;
+  font-weight: 900 !important;
+  color: white !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  outline: none !important;
+  top: 65px !important; 
+  left: 45px !important; /* Positioned on the left side of the inner rect */
+  z-index: 10;
+  letter-spacing: 1px;
+}
+#smd-calc .film-select {
+  position: absolute;
+  width: 50px !important;
+  height: 50px !important;
+  background: rgba(255, 255, 255, 0.12) !important; /* Soft backdrop */
+  border: 1.5px dashed rgba(255, 255, 255, 0.45) !important; /* Distinct dashed indicator */
+  border-radius: 8px !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 34px !important;
+  font-weight: 900 !important;
+  color: black !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  outline: none !important;
+  cursor: pointer !important;
+  top: 64px !important; 
+  left: 160px !important; /* Positioned on the right side of the inner rect */
+  z-index: 10;
+  text-align-last: center;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  padding: 0 !important;
+  background-image: none !important; /* Clears any global styled arrows */
+}
 
+/* 
+  ISOLATED BOTTOM CONTROL FIELDS: 
+  Targeted via '.controls' parent container to prevent leakage into overlay elements 
+*/
+#smd-calc .controls input, #smd-calc .controls select {
+  width:100%;
+  height:43px;
+  border:1px solid #cfd6df;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
+}
+#smd-calc .controls select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%234b5563' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 8px 10px;
+  padding-right: 28px;
+}
+#smd-calc .controls input:focus, #smd-calc .controls select:focus {
+  border-color:#06b6d4;
+  box-shadow:0 0 0 3px rgba(6,182,212,0.15);
+}
+
+/* Controls Grid Setup: 3 Columns for PC/Laptop (Perfect spacing alignment) */
+.controls{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:14px;
+  margin:0 0 18px 0;
+  padding:0;
+  text-align:left;
+  width:100%;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 82px;
+  gap: 8px;
+  align-items: center;
+}
+.lbl{font-size:14px;margin-bottom:5px;white-space:nowrap;font-weight:700;color:#4b5563}
+.calc-label{display:block;font-size:14px;font-weight:700;color:#4b5563;margin-bottom:7px}
+
+/* Results Highlight Box */
+.result{font-size:20px;font-weight:bold;margin:10px 0 16px;color:#0f8f55;border:2px solid #52b788;background:#f0fdf4;border-radius:12px;padding:12px}
+
+/* Detailed result specifications cards */
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;text-align:left}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df;text-align:left}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+
+/* Supporting Technical Description sections */
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:left}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#52b788;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
+@media(max-width:700px){
+  .wrap{padding-left:10px;padding-right:10px}
+  .controls{
+    grid-template-columns:1fr !important; /* Stack columns vertically on mobile to avoid overlapping */
+    gap:14px 12px;
+  }
+  .lbl{font-size:13px;padding-left:2px}
+  .result{font-size:18px}
+  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .result-grid{grid-template-columns:1fr 1fr}
+}
 </style>
-<script>
+</head>
+<body>
 
-function calculatemult1 (multiplier,value)
-
-{if (multiplier==0)
-	{return value}
-else if (multiplier==1)
-	{return value *= 1000;}
-else if (multiplier==2)
-	{return value *= 1000000;}
-}
-
-function calculatemult2 (multiplier,value)
-//calculates multipliers Milli and Micro
-{if (multiplier==0)
-	{return value}
-else if (multiplier==1)
-	{return value /= 1000;}
-else if (multiplier==2)
-	{return value /= 1000000;}
-}
-
-function calculatemult3 (multiplier,value)
-//calculates multipliers Milli - Pico
-{if (multiplier==0)
-	{return value}
-else if (multiplier==1)
-	{return value /= 1000;}
-else if (multiplier==2)
-	{return value /= 1000000;}
-else if (multiplier==3)
-	{return value /= 1000000000}
-else if (multiplier==4)
-	{return value /= 1000000000000}
-}
-
-function format(value)
-//formats value with p - M suffix if appropriate
-{var sign = "";
-if (value==0) {return 0;}
-if (value < 0)
-	 {
-	 sign="-";
-	 value = Math.abs(value);
-	 }
-if (value<0.000000001)
-	{value *= 1000000000000;
-	return sign + round_res(value) + "p";}
-else if (value<0.000001)
-	{value *= 1000000000;
-	return sign + round_res(value) + "n";}
-else if (value<0.001)
-	{value *= 1000000;
-	return sign + round_res(value) + "u";}
-else if (value<1)
-	{value *= 1000;
-	return sign + round_res(value) + "m";}
-else if (value>=1000000)
-	{value /= 1000000;
-	return sign + round_res(value) + "M";}
-else if (value>=1000)
-	{value /= 1000;
-	return sign + round_res(value) + "k";}
-else	{return sign + round_res(value);}
-}
-
-function format2(value)
-//formats value with m - u suffix if appropriate
-{if (value==0) {return 0;}
-else if (value<0.000000001)
-	{value *= 1000000000000;
-	return round_res(value) + "p";}
-else if (value<0.000001)
-	{value *= 1000000000;
-	return round_res(value) + "n";}
-else if (value<0.001)
-	{value *= 1000000;
-	return round_res(value) + "u";}
-else if (value<1)
-	{value *= 1000;
-	return round_res(value) + "m";}
-else	{return round_res(value);}
-}
-
-function round_res(value)
-// rounds value to 3dp
-{return (Math.round(value*1000)) / 1000;}
-
-function GetPrefRes(ResValue, Series)
-// Get nearest preferred resistor value to ResValue for series selected from the radio buttons on the page
-{
-		if (ResValue < 1) {return 1;} // values < 1 return 1 ohm
-    else if (ResValue > 100000000) {return 100000000;} // values > 10M return 10 Mohm
-
-    var ScalingFactor = 1;
-    var MinDifference = 1000000000;
-
-        // load the array with the preferred values for the series selected
-    if (Series == "E12")
-				{			 		// E12 series
-				var ValArray = new Array(100, 120, 150, 180, 220, 270, 330, 390, 470, 560, 680, 820, 1000);
-				}
-				
-		else if (Series == "E24")
-				{  				 // E24 series
-      	var ValArray = new Array(100, 110, 120, 130, 150, 160, 180, 200, 220,
-        240, 270, 300, 330, 360, 390, 430, 470, 510, 560, 620, 680, 750,
-        820, 910, 1000);
-				}
-				
-		else if (Series == "E48")
-			 {					// E48 series
-       var ValArray = new Array(100, 105, 110, 115, 121, 127, 133, 140, 147,
-			 154, 162, 169, 178, 187, 196, 205, 215, 226, 237, 249, 261, 274,
-			 287, 301, 316, 332, 348, 365, 383, 402, 422, 442, 464, 487, 511,
-			 536, 562, 590, 619, 649, 681, 715, 750, 787, 825, 866, 909, 953,
-			 1000);
-			 }
-			 
-		else if (Series == "E96")
-			 {					// E96 series
-       var ValArray = new Array(100, 102, 105, 107, 110, 113, 115, 118, 121,
-			 124, 127, 130, 133, 137, 140, 143, 147, 150, 154, 158, 162, 165,
-			 169, 174, 178, 182, 187, 191, 196, 200, 205, 210, 215, 221, 226,
-			 232, 237, 243, 249, 255, 261, 267, 274, 280, 287, 294, 301, 309,
-			 316, 324, 332, 340, 348, 357, 365, 374, 383, 392, 402, 412, 422,
-			 432, 442, 453, 464, 475, 487, 491, 511, 523, 536, 549, 562, 576,
-			 590, 604, 619, 634, 649, 665, 681, 698, 715, 732, 750, 768, 787,
-			 806, 825, 845, 866, 887, 909, 931, 959, 976, 1000);
-			 }
-			 
- 		else
-			 { 				 // E192 series
-			 var ValArray = new Array(100, 101, 102, 104, 105, 106, 107, 109, 110,
-			 111, 113, 114, 115, 117, 118, 120, 121, 123, 124, 126, 127, 129,
-			 130, 132, 133, 135, 137, 138, 140, 142, 143, 145, 147, 149, 150,
-			 152, 154, 156, 158, 160, 162, 164, 165, 167, 169, 172, 174, 176,
-			 178, 180, 182, 184, 187, 189, 191, 193, 196, 198, 200, 203, 205,
-			 208, 210, 213, 215, 218, 221, 223, 226, 229, 232, 234, 237, 240,
-			 243, 246, 249, 252, 255, 258, 261, 264, 267, 271, 274, 277, 280,
-			 284, 287, 291, 294, 298, 301, 305, 309, 312, 316, 320, 324, 328,
-			 332, 336, 340, 344, 348, 352, 357, 361, 365, 370, 374, 379, 383,
-			 388, 392, 397, 402, 407, 412, 417, 422, 427, 432, 437, 442, 448,
-			 453, 459, 464, 470, 475, 481, 487, 493, 499, 505, 511, 517, 523,
-			 530, 536, 542, 549, 556, 562, 569, 576, 583, 590, 597, 604, 612,
-			 619, 626, 634, 642, 649, 657, 665, 673, 681, 690, 698, 706, 715,
-			 723, 732, 741, 750, 759, 768, 777, 787, 796, 806, 816, 825, 835,
-			 845, 856, 866, 876, 887, 898, 909, 920, 931, 942, 953, 965, 976,
-			 988, 1000);
-			 }
-
-       // first normalise the resistor value to the range 100-1000
-       // if value <100 multiply value to get required range
-       while (ResValue < 100)
-						{
-            ResValue *= 10;
-            ScalingFactor /= 10;
-						}
-			
-			// if value >=1000 divide value to get required range
-      while (ResValue >= 1000)
-            {
-						ResValue /= 10;
-            ScalingFactor *= 10;
-						}
-
-			for(i=0; i<ValArray.length; i++)
-			{
-			 		// calculate difference between resistor value and preferred value
-   				CurrentDifference = Math.abs(ResValue - ValArray[i]);
-      		if (CurrentDifference < MinDifference)
-				 		 {              
-				 		 // store new value as the closest preferred match so far
-         		MinDifference = CurrentDifference;
-         		PreferredValue = ValArray[i];
-         		}
-  		}
-      // multiply by scaling factor to get final preferred value
-      return (PreferredValue * ScalingFactor);
-}
-
-// return the value of the radio button that is checked
-// return an empty string if none are checked, or
-// there are no radio buttons
-function getCheckedValue(radioObj) {
-	if(!radioObj)
-		return "";
-	var radioLength = radioObj.length;
-	if(radioLength == undefined)
-		if(radioObj.checked)
-			return radioObj.value;
-		else
-			return "";
-	for(var i = 0; i < radioLength; i++) {
-		if(radioObj[i].checked) {
-			return radioObj[i].value;
-		}
-	}
-	return "";
-}
-
-function ShowError( ErrorText )
-// show error box with specified text
-{  
-	 var elem = document.getElementById("errorbox");
-	 // set error text
-	 elem.firstChild?elem.firstChild.data=ErrorText:elem.appendChild(document.createTextNode(ErrorText))
-	 // show error box
-	 elem.style.display='block';
-}
-
-function SetText( ElemID, Text )
-// set the contents of a div or span
-{  
-	 var elem = document.getElementById(ElemID);
-	 elem.firstChild?elem.firstChild.data=Text:elem.appendChild(document.createTextNode(Text))
-}
-
-function HideError()
-// hide error box
-{  
-	 var elem = document.getElementById("errorbox");
-	 elem.style.display='none';
-}
-
-
-function ShowErrorTip(divtoshow, elemposition, ErrorText)
-// show floating error box 'divtoshow' to right of element 'elemposition'
-{
- 	 var poselem = document.getElementById(elemposition);
-	 var divelem = document.getElementById(divtoshow);
-	 // position div to right of element elmposition	
-	 divelem.style.left = (findPosX(poselem) + poselem.offsetWidth + 5) + "px";
-	 divelem.style.top = (findPosY(poselem) - 2) + "px"; 
-	 // set error text
-	 divelem.firstChild?divelem.firstChild.data=ErrorText:divelem.appendChild(document.createTextNode(ErrorText))
-	 // show error box
-	 divelem.className="errortip";
-	 divelem.style.display='block';
-}
-
-function ShowInfoTip(divtoshow, elemposition, ErrorText)
-// show floating info box 'divtoshow' to right of element 'elemposition'
-{
- 	 var poselem = document.getElementById(elemposition);
-	 var divelem = document.getElementById(divtoshow);
-	 // position div to right of element elmposition	
-	 divelem.style.left = (findPosX(poselem) + poselem.offsetWidth + 5) + "px";
-	 divelem.style.top = (findPosY(poselem) - 2) + "px"; 
-	 // set error text
-	 divelem.firstChild?divelem.firstChild.data=ErrorText:divelem.appendChild(document.createTextNode(ErrorText))
-	 // show error box
-	 divelem.className="infotip";	 
-	 divelem.style.display='block';
-}
-
-function HideTip(divtohide)
-{
- 	var elem = document.getElementById(divtohide);
-	elem.style.display='none';
-}
-
-  function findPosX(obj)
-  {
-    var curleft = 0;
-    if(obj.offsetParent)
-        while(1) 
-        {
-          curleft += obj.offsetLeft;
-          if(!obj.offsetParent)
-            break;
-          obj = obj.offsetParent;
-        }
-    else if(obj.x)
-        curleft += obj.x;
-    return curleft;
-  }
-
-  function findPosY(obj)
-  {
-    var curtop = 0;
-    if(obj.offsetParent)
-        while(1)
-        {
-          curtop += obj.offsetTop;
-          if(!obj.offsetParent)
-            break;
-          obj = obj.offsetParent;
-        }
-    else if(obj.y)
-        curtop += obj.y;
-    return curtop;
-  }
-
-// popup layer code
-// poortions copyright 2006,2007 Bontrager Connection, LLC
-// http://bontragerconnection.com/ and http://www.willmaster.com/
-// Version: July 28, 2007
-var cX = 0; var cY = 0;
-
-function UpdateCursorPosition(e){ cX = e.pageX; cY = e.pageY;}
-document.onmousemove = UpdateCursorPosition;
-
-/*function AssignPosition(d) {
-    d.style.left = cX + "px";
-    d.style.top = cY  + "px";
-}*/
-
-function AssignPosition(d) {
-		// get viewport height & width
-		var vp_height = document.documentElement.clientHeight || window.innerHeight;
-		var vp_width = document.documentElement.clientWidth || window.innerWidth;
-		var v_scroll = document.documentElement.scrollTop || document.body.scrollTop;
-		// get element dimensions
-		var el = d.getBoundingClientRect();
-		
-		if (vp_width < 350)
-		{
-  		 	 // small screen - centre element
-  			 var el_left = (vp_width - el.width) / 2;
-				 var el_top = v_scroll + ((vp_height - el.height) / 2);
-  			 d.style.left = el_left + "px";
-  			 d.style.top = el_top + "px";
-				 //d.style.top = (cY + 5) + "px";
-		}
-		else
-		{
-		 		// otherwise position element at cursor
-		 		d.style.left = cX + "px";
-        d.style.top = (cY + 5) + "px";
-    		// check RH side of element is within viewport and move if not
-    		var overflow = vp_width - el.right - 10;
-    		if (overflow < 0) d.style.left = (el.left + overflow) + "px";
-		}
-}
-
-function HidePopup(d) {
-    if(d.length < 1) { return; }
-    dd = document.getElementById(d);
-    dd.style.display = "none";
-}
-
-function ShowPopup(d) {
-    if(d.length < 1) { return; }
-    var dd = document.getElementById(d);
-		dd.style.display = "block";
-    AssignPosition(dd);
+<div id="smd-calc">
+  <div class="wrap">
     
-}
+    <!-- Film Capacitor Alphanumeric Overlay Visualizer -->
+    <div class="film-container">
+      <div class="film-box">
+        <!-- Pure SVG matching your brown radial chiclet capacitor image perfectly -->
+        <svg class="film-svg" viewBox="0 0 250 230" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Realistic horizontal metallic gradient for lead wires -->
+            <linearGradient id="lead-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#9ca3af"/>
+              <stop offset="35%" stop-color="#f3f4f6"/>
+              <stop offset="65%" stop-color="#d1d5db"/>
+              <stop offset="100%" stop-color="#6b7280"/>
+            </linearGradient>
+            <!-- Curved volumetric shading for the plastic capsule body -->
+            <linearGradient id="body-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#3c1404"/>
+              <stop offset="12%" stop-color="#7a2e10"/>
+              <stop offset="28%" stop-color="#9a3e1c"/>
+              <stop offset="72%" stop-color="#9a3e1c"/>
+              <stop offset="88%" stop-color="#ca5b32"/>
+              <stop offset="100%" stop-color="#3c1404"/>
+            </linearGradient>
+          </defs>
 
-function TogglePopup(d) {
-    if(d.length < 1) { return; }
-    var dd = document.getElementById(d);
-    AssignPosition(dd);
-    dd.style.display=dd.style.display!="block"?"block":"none";
-}
-// end popup layer code
-// capacitor code calculator functions
-// copyright Simon Carter 2001
-// Please contact me via www.electronics2000.co.uk if you wish to use these
-// and ensure this header block remains intact
+          <!-- Metallic Wires/Leads at the bottom -->
+          <rect x="42" y="170" width="10" height="52" fill="url(#lead-grad)" stroke="#374151" stroke-width="1.5" rx="3"/>
+          <rect x="198" y="170" width="10" height="52" fill="url(#lead-grad)" stroke="#374151" stroke-width="1.5" rx="3"/>
 
-//Array of tolerance values
-var tolval = new Array()
-tolval[0] = "± 0.05%"
-tolval[1] = "± 0.1%"
-tolval[2] = "± 0.25%"
-tolval[3] = "± 0.5%"
-tolval[4] = "± 1%"
-tolval[5] = "± 2%"
-tolval[6] = "± 2.5%"
-tolval[7] = "± 5%"
-tolval[8] = "± 10%"
-tolval[9] = "± 15%"
-tolval[10] = "± 20%"
-tolval[11] = "± 30%"
-tolval[12]= "-0 TO +100%"
-tolval[13] = "-10 TO +30%"
-tolval[14] = "± 22%"
-tolval[15] = "-0 TO 50%"
-tolval[16] = "-0 TO 75%"
-tolval[17] = "-10 TO +100%"
-tolval[18] = "-20 TO +5%"
-tolval[19] = "-20 TO +80%"
+          <!-- High-gloss Rounded Chiclet Capacitor Body Casing -->
+          <rect x="15" y="10" width="220" height="165" rx="32" fill="url(#body-grad)" stroke="#1e0b02" stroke-width="2.5"/>
 
+          <!-- Molding Seam outline loops recreating the screenshot grid lines -->
+          <rect x="35" y="28" width="180" height="128" rx="10" fill="none" stroke="#1f0a02" stroke-width="1.5" opacity="0.65"/>
+          <line x1="15" y1="28" x2="35" y2="28" stroke="#1f0a02" stroke-width="1.5" opacity="0.65"/>
+          <line x1="215" y1="28" x2="235" y2="28" stroke="#1f0a02" stroke-width="1.5" opacity="0.65"/>
+          <line x1="15" y1="156" x2="35" y2="156" stroke="#1f0a02" stroke-width="1.5" opacity="0.65"/>
+          <line x1="215" y1="156" x2="235" y2="156" stroke="#1f0a02" stroke-width="1.5" opacity="0.65"/>
 
-//Array of tolerance codes
-var tolcode = new Array()
-tolcode[0] = "C"
-tolcode[1] = "D"
-tolcode[2] = "F"
-tolcode[3] = "G"
-tolcode[4] = "J"
-tolcode[5] = "K"
-tolcode[6] = "M"
-tolcode[7] = "Z"
+          <!-- SPECULAR HIGHLIGHT SHINES on left & right round boundaries -->
+          <path d="M 28 22 Q 40 22 40 45 L 40 140 Q 40 160 28 160" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.12" filter="blur(1px)"/>
+        </svg>
 
-function codetovalue (obj) {
-
-with (Math) {
-	code=obj.capcode.value;
-	if(code.length==3){
-		value= eval("" + code.substring(0,2) + "e" + (code.substring(2,3) - 12));
-		SetText("capacitance", format(value) + "F");}
-	else{	SetText("capacitance", "...");}
-	SetText("tolerance", tolval[obj.tolerancecode.selectedIndex]);
-	}
-}
-
-function valuetocode (obj) {
-
-  with (Math) {
-		if ((!obj.capval.value.length) || (isNaN(obj.capval.value))) SetText("coderesult", "...");
-  	else{
-  		value = eval(obj.capval.value);
-    	value = parseInt(calculatemult3((obj.capmult.selectedIndex+2),value * 1000000000000));
-    	value = value.toString();	
-    	if((value.length<2)||(value.length>11)) SetText("coderesult", "...");		 
-    	else SetText ("coderesult", eval("" + value.substring(0,2) + ((value.length-2))));
-    	SetText("tolresult", tolcode[obj.tolval.selectedIndex]);
-  	}
-	}
-}
-</script>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<form action="javascript:void(0)">
-<div class="bom">
-<table   style="width:250;
-  ">
-<tr ><td align="middle" style="font-size:35px;" ><p id="capacitance"></p></td><td  align="middle"style="font-size:20px;" ><p id="tolerance"></p></td></tr><tr><td height="15"></td></tr><tr>
-<td align="middle" colspan="2" ><p id="text" style="display:none; font-size:25px;">50V / 100V</p></td></tr>
-</table></div>
-
-<img src="https://ik.imagekit.io/mak/color_code/FILMCAP_MTesAPJ19I.png" alt="Paris" style="width:250;
-  margin-left:10;  
-   position: absolute; 
-  top: 30px;
-  left:40px;
- opacity:;">
-<form action="javascript:void(0)">
-
-<table class="calc">
-    <tr>
-      <td>
-        
-  			<input  name="capcode" id="capcode"  maxlength="3" tabindex="1" placeholder="103"onKeyup="codetovalue(this.form)"style="width: 120px;
-				height: 50px;
-				border: none !important;
-				background-color: #ffffff00;
-				text-align: center;
-				padding: 0px !important;
-  margin-left:10;  font-size:50;color:white;
-   position: absolute;
-  top: 85px;
-  left:75px;">
-				
-
-
-
-				
-				<select name="tolerancecode" id="tolcode" tabindex="2" onChange="codetovalue(this.form)"style=" position: absolute;
-  top: 84px;
-  left:195px;background-color: #ffffff00;border: none !important;width: 63px;font-size:45;color:WHITE;
-				height: 50px;">
-          <option value="A">A</option>
-          <option value="B">B&nbsp;&nbsp;/ Ж</option>
-          <option value="C">C&nbsp;&nbsp;/ У</option>
-          <option value="D">D&nbsp;&nbsp;/ Д</option>
-          <option value="F">F&nbsp;&nbsp;/ Р</option>
-          <option value="G">G&nbsp;&nbsp;/ Л </option>
-          <option selected value="H">H </option>
-          <option value="J">J&nbsp;&nbsp;/ И</option>
-          <option value="K">K&nbsp;&nbsp;/ C</option>
+        <!-- Positioned Inputs sitting perfectly separated inside the molded seam boundaries -->
+        <input id="capcode" class="film-input" type="text" maxlength="3" autocomplete="off" spellcheck="false" placeholder="103" value="103" oninput="onCodeInput()">
+        <select id="tolcode" class="film-select" onchange="onCodeInput()">
+          <option value="C">C</option>
+          <option value="D">D</option>
+          <option value="F">F</option>
+          <option value="G">G</option>
+          <option value="H" selected>H</option>
+          <option value="J">J</option>
+          <option value="K">K</option>
           <option value="L">L</option>
-          <option value="M">M&nbsp;&nbsp;/ B</option>
-          <option value="N">N&nbsp;&nbsp;/ Ф</option>
+          <option value="M">M</option>
+          <option value="N">N</option>
           <option value="P">P</option>
-          <option value="Q">Q </option>
+          <option value="Q">Q</option>
           <option value="S">S</option>
           <option value="T">T</option>
-           <option value="U">U&nbsp;&nbsp;/ Э</option>
-          <option value="W">W&nbsp;&nbsp;/ Ю </option>
-          <option value="Y">Y&nbsp;&nbsp;/ Б</option>
-          <option value="Z">Z&nbsp;&nbsp;/ A</option>
+          <option value="U">U</option>
+          <option value="W">W</option>
+          <option value="Y">Y</option>
+          <option value="Z">Z</option>
         </select>
-		
-			
- 
-<Button style=" display:none;
-   position: absolute;  border: none; width: 170px; height:5; background:brown;
-  top: 130px;
-  left: 90px;}
-.f5{width:90%" id="rr" ></Button>
+      </div>
+    </div>
 
+    <!-- Quick Result banner -->
+    <div class="result" id="result">-</div>
 
-</form>
+    <div class="subTitle">Convert Capacitance to Code</div>
+    <!-- Dynamic Manual Conversion Pickers Grid Matching Premium Aesthetics (Perfect Aligned) -->
+    <div class="controls">
+      <div style="grid-column: span 2;">
+        <span class="calc-label">Target Capacitance</span>
+        <div class="calc-row">
+          <input type="text" id="rset" placeholder="e.g. 10" oninput="onValueInput()">
+          <select id="runitset" onchange="onValueInput()">
+            <option value="-6">µF</option>
+            <option value="-9" selected>nF</option>
+            <option value="-12">pF</option>
+          </select>
+        </div>
+      </div>
+      
+      <div>
+        <span class="calc-label">Tol.</span>
+        <select id="rtolerance" onchange="onValueInput()">
+          <option value="A">±0.05% [A]</option>
+          <option value="B">±0.1% [B]</option>
+          <option value="C">±0.25% [C]</option>
+          <option value="D">±0.5% [D]</option>
+          <option value="F">±1% [F]</option>
+          <option value="G">±2% [G]</option>
+          <option value="H" selected>±3% [H]</option>
+          <option value="J">±5% [J]</option>
+          <option value="K">±10% [K]</option>
+          <option value="M">±20% [M]</option>
+          <option value="N">±30% [N]</option>
+          <option value="P">-0/+100% [P]</option>
+          <option value="Q">-10/+30% [Q]</option>
+          <option value="S">±22% [S]</option>
+          <option value="T">-0/50% [T]</option>
+          <option value="U">-0/75% [U]</option>
+          <option value="W">-10/+100% [W]</option>
+          <option value="Y">-20/+5% [Y]</option>
+          <option value="Z">-20/+80% [Z]</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-title">DETAILED SPECIFICATIONS</div>
+
+  <div class="result-grid">
+    <div class="result-card blue"><div class="result-label">Rated Capacitance</div><div class="result-value" id="resVal">-</div></div>
+    <div class="result-card green"><div class="result-label">Capacitor Tolerance</div><div class="result-value" id="resTol">-</div></div>
+    <div class="result-card purple"><div class="result-label">Tolerance Range</div><div class="result-value" id="resRange">-</div></div>
+    <div class="result-card orange"><div class="result-label">Standard / Class</div><div class="result-value" id="resClass">-</div></div>
+  </div>
+
+  <!-- Educational Theory block cards -->
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>Capacitance Markings</strong>Standard 3-digit alphanumeric codes (e.g. 103, 224) stamped directly on the protective epoxy coating.</div>
+      <div class="paramItem"><strong>Tolerance Code Suffix</strong>A trailing letter representing manufacturing limits ranging from ±0.05% (A) up to -20/+80% (Z).</div>
+      <div class="paramItem"><strong>Unit Definition</strong>Standard conversion thresholds calculated natively in Farads (F) and converted to µF, nF, or pF.</div>
+      <div class="paramItem"><strong>Voltage Limit Rating</strong>Some film markings include preceding letters indicating specific voltage tolerances.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>103H Film Capacitor (10 nF)</strong></p>
+        <p>Decodes as 10 × 10^3 pF = 10,000 pF (10 nF) with a precision rating of H (±3% tolerance).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>224K Polyester block (220 nF)</strong></p>
+        <p>Decodes as 22 × 10^4 pF = 220,000 pF (220 nF = 0.22 µF) with standard K (±10% tolerance).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>474J Power Filter (470 nF)</strong></p>
+        <p>Decodes as 47 × 10^4 pF = 470,000 pF (470 nF) with standard high-efficiency J (±5% tolerance).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>105M Mylar Coupling (1 µF)</strong></p>
+        <p>Decodes as 10 × 10^5 pF = 1,000,000 pF (1 µF) with M (±20% tolerance) inside high-density audio setups.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Film capacitors utilize a thin polymer plastic film (such as polyester, polypropylene, or polycarbonate) as the dielectric, layered with thin metallic electrodes.</p>
+    <p>Unlike ceramic disk capacitors, film capacitors have superior self-healing properties, exceptionally low equivalent series resistance (ESR), and high voltage stability, making them the standard choice for AC circuit networks, audio crossovers, and power supplies.</p>
+  </section>
+
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">For 3-Digit System: Capacitance (pF) = (Digit 1 × 10 + Digit 2) × 10^Multiplier</div>
+    <div class="formula">Conversion Ratios: 1,000 pF = 1 nF | 1,000,000 pF = 1 µF = 1,000 nF</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example: Decodifying an "224K" Film Capacitor</div>
+    <div class="formulaBox">Step 1: Extract the first two numbers as base values: "22".</div>
+    <div class="formulaBox">Step 2: Identify the third digit as multiplier: "4" (representing 10^4 = 10,000).</div>
+    <div class="formulaBox">Step 3: Multiply base value by multiplier: 22 × 10,000 = 220,000 pF.</div>
+    <div class="formulaBox">Step 4: Convert units: 220,000 pF = 220 nF = 0.22 µF with a ±10% precision rating.</div>
+  </section>
+
+  <section class="infoBox">
+    <h2>How to Use This Calculator</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Locate the printed alphanumeric figures on the face of the active film capacitor.</div>
+      <div class="aboutStep">Type the 3-digit capacity code and choose the tolerance letter directly inside the graphic.</div>
+      <div class="aboutStep">The rated capacitance, alternate unit representations, and tolerance range are computed instantly.</div>
+      <div class="aboutStep">To reverse-calculate, enter the targeted capacitance into the manual conversion panel below.</div>
+    </div>
+  </section>
+
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. What does the tolerance letter 'J' stand for in film capacitors?</strong></h3>
+    <p>The tolerance letter 'J' stands for a manufacturing deviation allowance of ±5% from the nominal capacitance rating.</p>
+
+    <h3><strong>2. Why are polypropylene capacitors preferred in audio crossovers?</strong></h3>
+    <p>Polypropylene caps have extremely low dielectric absorption, low dissipation factor, and minimum distortion profiles, preserving signal purity in acoustic speaker systems.</p>
+
+    <h3><strong>3. Are film capacitors polarized?</strong></h3>
+    <p>No, standard metalized polyester and film capacitors are non-polarized components. They can be safely wired in both AC and DC orientations.</p>
+
+    <h3><strong>4. How is tolerance range calculated?</strong></h3>
+    <p>The range represents the minimum and maximum boundaries of actual capacity. For example, a 100 nF capacitor with ±10% tolerance is guaranteed to measure between 90 nF and 110 nF.</p>
+  </section>
+
+  <!-- Dynamic Related Calculators Section -->
+  <section class="infoBox">
+    <h2>Related Calculators</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>SMD Resistor Code Calculator</strong>Decode standard 3-digit, 4-digit, and EIA-96 resistor values.</div>
+      <div class="linkCard"><strong>Ceramic Disk Capacitor Calculator</strong>Decode standard 3-digit and JEDEC disk components.</div>
+      <div class="linkCard"><strong>SMD Inductor Code Calculator</strong>Extract inductance values from printed core character markers.</div>
+      <div class="linkCard"><strong>Ohm's Law Calculator</strong>Quickly evaluate voltage, current, and resistance margins.</div>
+    </div>
+  </section>
 </div>
 
 <script>
-function openCity(evt, cityName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
+// Alphanumeric Tolerance parameters map (From User Input)
+const tolval = {
+  "A": "±0.05%", "B": "±0.1%", "C": "±0.25%", "D": "±0.5%", "F": "±1.0%",
+  "G": "±2.0%", "H": "±3.0%", "J": "±5.0%", "K": "±10.0%", "L": "±15.0%",
+  "M": "±20.0%", "N": "±30.0%", "P": "-0 TO +100%", "Q": "-10 TO +30%",
+  "S": "±22.0%", "T": "-0 TO 50%", "U": "-0 TO 75%", "W": "-10 TO +100%",
+  "Y": "-20 TO +5%", "Z": "-20 TO +80%"
+};
+
+function formatCapacitance(valInF) {
+  let pF = valInF * 1e12;
+  if (pF < 1000) {
+    return { value: parseFloat(pF.toFixed(2)).toString(), unit: "pF" };
   }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  let nF = valInF * 1e9;
+  if (nF < 1000) {
+    return { value: parseFloat(nF.toFixed(2)).toString(), unit: "nF" };
   }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " active";
+  let uF = valInF * 1e6;
+  if (uF < 1000) {
+    return { value: parseFloat(uF.toFixed(2)).toString(), unit: "µF" };
+  }
+  let mF = valInF * 1e3;
+  return { value: parseFloat(mF.toFixed(2)).toString(), unit: "mF" };
+}
+
+// Convert code overlaid on image to value
+function onCodeInput(skipControlsSync = false) {
+  let ccode = document.getElementById("capcode").value.trim();
+  let tcode = document.getElementById("tolcode").value;
+  let valFarads = null;
+
+  if (ccode.match(/^[0-9]{3}$/) !== null) {
+    let base = parseInt(ccode.slice(0, 2));
+    let exponent = parseInt(ccode.slice(-1));
+    let valInPF = base * Math.pow(10, exponent);
+    valFarads = valInPF * 1e-12; // Farads scaling
+  } else if (ccode.match(/^([0-9])R([0-9])$/) !== null) {
+    let valInPF = parseFloat(ccode.replace("R", "."));
+    valFarads = valInPF * 1e-12;
+  }
+
+  if (valFarads !== null) {
+    let result = formatCapacitance(valFarads);
+    let ratingStr = result.value + " " + result.unit;
+    let tolLabel = tolval[tcode] || "±20% default";
+
+    // Dynamic outcomes outcomes
+    document.getElementById("result").innerHTML = ratingStr + " &nbsp; " + tolLabel;
+    document.getElementById("resVal").innerText = ratingStr;
+    document.getElementById("resTol").innerText = tolLabel;
+
+    // Tolerance range computation
+    let toleranceValue = parseFloat(tolLabel.replace(/[^\d.-]/g, ''));
+    if (!isNaN(toleranceValue)) {
+      let limitMin = valFarads - (valFarads * (toleranceValue / 100));
+      let limitMax = valFarads + (valFarads * (toleranceValue / 100));
+      let minF = formatCapacitance(limitMin);
+      let maxF = formatCapacitance(limitMax);
+      document.getElementById("resRange").innerText = "(" + minF.value + " " + minF.unit + " ... " + maxF.value + " " + maxF.unit + ")";
+    } else {
+      document.getElementById("resRange").innerText = "Not Specified";
+    }
+
+    document.getElementById("resClass").innerText = "Standard Film Alphanumeric";
+
+    if (!skipControlsSync) {
+      silenceValueSync(valFarads, tcode);
+    }
+  } else {
+    document.getElementById("result").innerText = "-";
+    document.getElementById("resVal").innerText = "-";
+    document.getElementById("resTol").innerText = "-";
+    document.getElementById("resRange").innerText = "-";
+    document.getElementById("resClass").innerText = "-";
+  }
+}
+
+function silenceValueSync(valFarads, tolLetter) {
+  const rset = document.getElementById("rset");
+  const runitset = document.getElementById("runitset");
+  const rtolerance = document.getElementById("rtolerance");
+
+  if (valFarads >= 1e-6) {
+    rset.value = parseFloat((valFarads / 1e-6).toFixed(4));
+    runitset.value = "-6"; // µF
+  } else if (valFarads >= 1e-9) {
+    rset.value = parseFloat((valFarads / 1e-9).toFixed(4));
+    runitset.value = "-9"; // nF
+  } else {
+    rset.value = parseFloat((valFarads / 1e-12).toFixed(4));
+    runitset.value = "-12"; // pF
+  }
+
+  // Update selected dropdowns directly
+  if (tolval[tolLetter]) {
+    rtolerance.value = tolLetter;
+  }
+}
+
+// Convert targeted capacitance inputs to codes over the image
+function calcFromValueInput() {
+  let rval = parseFloat(document.getElementById("rset").value.replace(",", "."));
+  let runit = Math.pow(10, parseFloat(document.getElementById("runitset").value));
+  let chosenTol = document.getElementById("rtolerance").value;
+
+  if (!isNaN(rval) && rval > 0) {
+    let valueInFarads = rval * runit;
+    let valueInPF = valueInFarads * 1e12;
+    let codeStr = "";
+
+    if (valueInPF < 10) {
+      codeStr = valueInPF.toFixed(1).replace(".", "R");
+    } else {
+      let scaled = Math.round(valueInPF);
+      let exponent = 0;
+      while (scaled >= 100) {
+        scaled /= 10;
+        exponent++;
+      }
+      codeStr = Math.trunc(scaled).toString() + exponent.toString();
+    }
+
+    document.getElementById("capcode").value = codeStr;
+    document.getElementById("tolcode").value = chosenTol;
+    onCodeInput(true); // Silent update over image without loop
+  }
+}
+
+function onValueInput() {
+  calcFromValueInput();
+}
+
+window.onload = function() {
+  document.getElementById("capcode").focus();
+  onCodeInput();
 }
 </script>
-<script>
-function myFunction() {
-  var checkBox = document.getElementById("myCheck");
-  var rr = document.getElementById("rr");
-  var text = document.getElementById("text");
-  if (checkBox.checked == true){
-    rr.style.display = "block";
-    text.style.display = "block";
-   
-  } else {
-     rr.style.display = "none";
-     text.style.display = "none"; 
-  }
-  var text = document.getElementById("text");
-  if (checkBox.checked == true){
-    
-  } else {
-     
-  }
-}
 
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"Electronics Calculators","url":"https://example.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. What does the tolerance letter 'J' stand for in film capacitors?","acceptedAnswer":{"@type":"Answer","text":"The tolerance letter 'J' stands for a manufacturing deviation allowance of ±5.0% from the nominal capacitance rating."}},
+{"@type":"Question","name":"2. Why are polypropylene capacitors preferred in audio crossovers?","acceptedAnswer":{"@type":"Answer","text":"Polypropylene caps have extremely low dielectric absorption, low dissipation factor, and minimum distortion profiles, preserving signal purity in acoustic speaker systems."}},
+{"@type":"Question","name":"3. Are film capacitors polarized?","acceptedAnswer":{"@type":"Answer","text":"No, standard metalized polyester and film capacitors are non-polarized components. They can be safely wired in both AC and DC orientations."}},
+{"@type":"Question","name":"4. How is tolerance range calculated?","acceptedAnswer":{"@type":"Answer","text":"The range represents the minimum and maximum boundaries of actual capacity. For example, a 100 nF capacitor with ±10% tolerance is guaranteed to measure between 90 nF and 110 nF."}}
+]
+}
 </script>
-<style>
 
-
-.bom{
-  margin-left:10;  
-   position: absolute;
-  top: 275px;
-  left:42px; 
- opacity:;
- border-radius: 25px;
-  border: 2px solid #73AD21;
- 
-  width:250px; 
-  height: 92px; 
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"Calculators","item":"https://example.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://example.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Film Capacitor Code Calculator","item":"https://example.com/tool/film-capacitor-code-calculator"}
+]
 }
-.check{
-  margin-left:10;  
-   position: absolute;
-  top: 373px;
-  left:42px; 
- opacity:;
- border-radius: 15px;
-  border: 2px solid red;
-  font-size:25;
-  width:250px; 
-   
-}
-body { 
-  background: ; 
-}
-.intro{
-    width:200;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:2px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+</script>
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
-
-
-   
-  }
-
-/* Style the tab */
-.tab {
-  overflow: hidden;
-  border: 10px solid #ccc;
- 
-  background-color: #f1f1f1;
-  text-align:center;
-}
-
-/* Style the buttons inside the tab */
-.tab button {
-  background-color: inherit;
-  
-  float:center;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 15px;
-  transition: 0.3s;
-  font-size: 70px;
-}
-
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #c4cc;
-}
-
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-  align:center;
-}
-.tab1 {
-border-radius: 25px;
-  background: #167A04;
-  padding: 20px; 
-  width: 100px;
-  height: 150px;
-  font-size:40px;
-  color:white;
-}
-
-
-</style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		 						
+</body>
+</html>
