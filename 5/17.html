@@ -1,470 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Integrated Circuit Color Code Calculator | CalcBoy</title>
+<meta name="description" content="Decode vintage Integrated Circuit (IC) color codes. Instantly find manufacturer prefixes, series numbers, and logic family details in real-time.">
+<meta name="keywords" content="ic color code, integrated circuit calculator, chip decoder, part number color bands, CalcBoy">
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;margin:0 !important;padding:0 !important;background:#f6f8fb;color:#123}
+body.lock-scroll{overflow:hidden}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<div class="iir">
+#ic-calc{width:100% !important;max-width:620px;margin:0 auto !important;padding:14px 10px !important;background:transparent;border:none}
+.wrap{max-width:100% !important;margin:auto;text-align:center;padding:0;overflow:visible}
 
-   <button onclick="document.getElementById('id033').style.display='block'" class="w3-button w3-black">&#8505;</button>
+/* Interactive IC Visual Container - Horizontal Display */
+.ic-visual {
+  position: relative;
+  width: 320px;
+  height: 185px;
+  margin: 15px auto 25px;
+  background: transparent;
+}
+.ic-visual img {
+  position: absolute;
+  width: 300px;
+  left: 20px;
+  top: 50px;
+  z-index: 10;
+  pointer-events: none;
+}
+.ic-color-band {
+  position: absolute;
+  z-index: 2; /* Color layers sit behind transparent image slits */
+  pointer-events: none;
+  transition: background-color 0.25s ease;
+}
 
-  <div id="id033" class="w3-modal">
-    <div class="w3-modal-content w3-card-4">
-      <header class="w3-container w3-teal"> 
-        <span onclick="document.getElementById('id033').style.display='none'"                             
-        class="w3-button w3-display-topmiddle">&times;</span>
-        <h2>full forms</h2>
-      </header>
-      <div class="w3-container">
-      <hr>  
-     <table align="middle"style="border-style: dotted;">
-<tr><td>CA=RCA (analog)</td><td>CD=RCA (digital)</td></tr>
-<tr><td>GD=Goldstar (digital)</td><td>HA=Hitachi (analog)</td></tr>
-<tr><td>HD=Hitachi (digital)</td><td>MC=Motorola</td></tr>
-<tr><td>TA=Toshiba</td><td>TC=Toshiba</td></tr>
-<tr><td colspan="2"align="middle">DM=National Semiconductor (digital)</td></tr></table>
-  <hr>
-        <footer class="w3-container w3-teal">
-        
-      </footer>
+/* Original coordinate configurations aligned natively on the horizontal IC layout */
+#first  { top: 61px; left: 47px;  width: 24px; height: 99px; }
+#second { top: 61px; left: 90px; width: 24px; height: 99px; }
+#third  { top: 61px; left: 134px; width: 25px; height: 99px; }
+#fourth { top: 61px; left: 177px; width: 24px; height: 99px; }
+
+/* Selection Controls Grid: Strict 2 Columns for both Mobile and PC */
+.controls{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 12px;margin-bottom:18px;text-align:left}
+.lbl{font-size:13px;margin-bottom:5px;font-weight:700;color:#4b5563;padding-left:2px}
+
+/* iPhone/iOS Style Picker Trigger Button */
+.pick-btn{width:100%;height:42px;border:1px solid #8fa3bd;border-radius:8px;font-size:13px;font-weight:bold;padding:6px 18px 6px 8px;background:linear-gradient(#f9fcff,#c8d5e6 48%,#a9b9cf 50%,#edf3fb);box-shadow:inset 0 1px 0 #fff,0 2px 5px rgba(0,0,0,0.1);position:relative;cursor:pointer;text-align:left;overflow:hidden;white-space:nowrap}
+.pick-btn:after{content:"⌄";position:absolute;right:9px;top:7px;font-size:20px}
+.sw{display:inline-block;width:15px;height:15px;border:1px solid #666;margin-right:6px;vertical-align:middle;border-radius:3px}
+
+/* Results Highlight Box */
+.result{margin:18px auto;border-radius:22px;border:3px solid #73AD21;padding:14px 18px;width:100%;max-width:420px;font-size:20px;font-weight:bold;background:#fff;color:#123;text-align:center;line-height:1.4}
+
+/* Dynamic Decoded Fullform Box */
+.fullform-box {
+  margin: 0 auto 18px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px dashed #16a34a;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #155724;
+  max-width: 420px;
+  font-size: 13.5px;
+  text-align: center;
+}
+
+/* Highly Realistic iOS Bottom Sheet Picker Styles */
+.ios-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.40);z-index:9999;opacity:0;transition:opacity 0.3s ease}
+.ios-mask.show{opacity:1}
+.ios-picker{position:fixed;left:0;right:0;bottom:0;width:100%;background:rgba(245, 245, 247, 0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.15);z-index:10000;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);padding-bottom:env(safe-area-inset-bottom,20px)}
+.ios-picker.show{transform:translateY(0)}
+.ios-head{display:flex;justify-content:space-between;align-items:center;height:48px;padding:0 16px;border-bottom:1px solid rgba(0,0,0,0.1);font-weight:600}
+.ios-head .title{font-size:16px;color:#1c1c1e}
+.ios-head button{border:0;background:transparent;color:#007aff;font-size:16px;font-weight:600;cursor:pointer;padding:0}
+.ios-head button.cancel{font-weight:400;color:#8e8e93}
+.wheel-wrap{position:relative;height:220px;overflow:hidden;perspective:1000px}
+
+/* iOS 3D cylindrical shadow overlay */
+.wheel-wrap::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 75px;
+  background: linear-gradient(to bottom, rgba(245,245,247,0.98) 0%, rgba(245,245,247,0) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+.wheel-wrap::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 75px;
+  background: linear-gradient(to top, rgba(245,245,247,0.98) 0%, rgba(245,245,247,0) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+.wheel{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;padding:88px 0;scrollbar-width:none}
+.wheel::-webkit-scrollbar{display:none}
+.wheel-item{height:44px;display:flex;align-items:center;justify-content:center;font-size:19px;color:#000;font-weight:500;scroll-snap-align:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transform-style:preserve-3d;backface-visibility:hidden;transition:transform 0.1s ease, opacity 0.1s ease}
+.wheel-item .sw{display:inline-block;width:15px;height:15px;border:1px solid #666;margin-right:8px;vertical-align:middle;border-radius:3px}
+.wheel-highlight{position:absolute;left:12px;right:12px;top:88px;height:44px;border-top:0.5px solid rgba(0, 0, 0, 0.12);border-bottom:0.5px solid rgba(0, 0, 0, 0.12);background:rgba(0,0,0,0.03);border-radius:8px;pointer-events:none}
+
+/* Detailed result specifications cards */
+.result-title{margin-top:30px;margin-bottom:14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#7b8794;text-align:left}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result-card{min-height:82px;padding:16px;border-radius:12px;border:1px solid #cfd6df;text-align:left}
+.result-card.blue{background:#eef5ff;border-color:#bcd7ff}
+.result-card.green{background:#ecfdf5;border-color:#bbf7d0}
+.result-card.purple{background:#f5f3ff;border-color:#ddd6fe}
+.result-card.orange{background:#fff7ed;border-color:#fed7aa}
+.result-card.blue .result-label,.result-card.blue .result-value{color:#2359e8}
+.result-card.green .result-label,.result-card.green .result-value{color:#16a34a}
+.result-card.purple .result-label,.result-card.purple .result-value{color:#7c3aed}
+.result-card.orange .result-label,.result-card.orange .result-value{color:#ea580c}
+.result-label{font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.result-value{font-size:16px;font-weight:900;word-break:break-word;line-height:1.2;min-height:22px}
+
+/* Unified Supporting Guides & Theoretical CSS */
+.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:left}
+.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px}
+.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
+.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
+.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
+.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
+.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
+.aboutSteps{counter-reset:step;display:grid;gap:8px;margin:12px 0}
+.aboutStep{position:relative;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:11px 11px 11px 42px;font-size:13px;font-weight:700;color:#475467;line-height:1.55}
+.aboutStep:before{counter-increment:step;content:counter(step);position:absolute;left:11px;top:11px;width:22px;height:22px;border-radius:50%;background:#ff7a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+
+@media(max-width:700px){
+.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+.result-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="ic-calc">
+  <div class="wrap">
+    
+    <!-- 1. Native Horizontal Visual Representation of the IC -->
+    <div class="ic-visual">
+      <img src="https://ik.imagekit.io/mak/color_code/ic_4_band__2__d6rDopetAS.png" alt="Integrated Circuit">
+      <div class="ic-color-band" id="first"></div>
+      <div class="ic-color-band" id="second"></div>
+      <div class="ic-color-band" id="third"></div>
+      <div class="ic-color-band" id="fourth"></div>
     </div>
 
+    <!-- 2. Quick Read Out Result Box (Centered) -->
+    <div class="result" id="result">-</div>
 
-</div> </div> 
+    <!-- 3. Dynamic Decoded Fullform Box -->
+    <div class="fullform-box" id="fullform-info">Prefix: RCA (digital)</div>
 
-<div class="cd">
-<table class="bom"  style="font-size:15px;  ">
-<tr ><td align="middle"><h3 id="temp1"></h3></td></tr>
-<tr ><td align="middle"><h3 id="temp2"></h3></td></tr>
+    <!-- 4. Dynamic Selection Control Grid -->
+    <div class="controls">
+      <div><div class="lbl">1st Band (Prefix)</div><div id="band1Box"></div></div>
+      <div><div class="lbl">2nd Band (Series)</div><div id="band2Box"></div></div>
+      <div><div class="lbl">3rd Band (Value)</div><div id="band3Box"></div></div>
+      <div><div class="lbl">4th Band (Value)</div><div id="band4Box"></div></div>
+    </div>
+  </div>
 
-</table></div>
+  <div class="result-title">DETAILED SPECIFICATIONS</div>
 
-<Button style="width:90%;
-   position: absolute; border: none; HEIGHT:99; width: 24px; 
-  top: 61px;
-  left: 57px;"id="first" ></Button>
-<Button style="width:90%; border: none; width: 24px; HEIGHT:99; 
-   position: absolute;
-  top: 61px;
-  left: 100px;"id="second" ></Button>
-<Button style="width:90%;
-   position: absolute; border: none; HEIGHT:99;  width: 25px;
-  border: none;
-  border-radius: ;
-  top: 61px;
-  left: 144px;"id="third" ></Button>
-<Button style="fwidth:90%;
-   position: absolute;  border: none; width: 24px; HEIGHT:99; top: 61px;
-  left: 187px;}
-.f5{width:90%"id="fourth" ></Button>
+  <div class="result-grid">
+    <div class="result-card blue">
+      <div class="result-label">Decoded Part ID</div>
+      <div class="result-value" id="resPartNumber">-</div>
+    </div>
+    <div class="result-card green">
+      <div class="result-label">Manufacturer Prefix</div>
+      <div class="result-value" id="resMfr">-</div>
+    </div>
+    <div class="result-card purple">
+      <div class="result-label">Series Identifier</div>
+      <div class="result-value" id="resSeries">-</div>
+    </div>
+    <div class="result-card orange">
+      <div class="result-label">Logic Type</div>
+      <div class="result-value" id="resLogic">-</div>
+    </div>
+  </div>
 
+  <!-- Educational Theory sections -->
+  <section class="infoBox">
+    <h2>Integrated Circuit Manufacturer Abbreviations</h2>
+    <div class="paramGrid">
+      <div class="paramItem"><strong>CA Prefix</strong>RCA (Analog IC classification). Represented by a Brown color band.</div>
+      <div class="paramItem"><strong>CD Prefix</strong>RCA (Digital CMOS logic chip). Represented by a Red color band.</div>
+      <div class="paramItem"><strong>DM Prefix</strong>National Semiconductor (Digital logic). Represented by an Orange color band.</div>
+      <div class="paramItem"><strong>GD Prefix</strong>Goldstar (Digital logic). Represented by a Yellow color band.</div>
+      <div class="paramItem"><strong>HA / HD Prefix</strong>Hitachi Analog (HA) or Hitachi Digital (HD). Represented by Green and Blue bands.</div>
+      <div class="paramItem"><strong>MC Prefix</strong>Motorola logic semiconductors. Represented by a Violet color band.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Vintage IC Color Band Identification</h2>
+    <p>In early logic circuits, manufactures utilized a colored system to print part numbers on small plastic dual-inline (DIP) packages where traditional text could smear or fade. Reading from left-to-right, the bands resolve directly into the manufacturing prefix and logic category index.</p>
+  </section>
 
- 
- 
-<img src="https://ik.imagekit.io/mak/color_code/ic_4_band__2__d6rDopetAS.png" alt="Paris" ">
+  <section class="infoBox">
+    <h2>Formulas & String Decryption Logic</h2>
+    <div class="formulaBox">Part Number = Band 1 (Prefix) + Band 2 (Series) + Band 3 (Value) + Band 4 (Value)</div>
+    <div class="formulaBox">The values are cleanly concatenated to reveal the standard logic code (such as CD4017 or MC14011).</div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Step-by-Step Example</h2>
+    <div class="formulaBox">Example Selected: Red, Yellow, Brown, Grey</div>
+    <div class="formulaBox">Step 1: First Band (Red) represents RCA Digital prefix (CD).</div>
+    <div class="formulaBox">Step 2: Second Band (Yellow) represents 4 series.</div>
+    <div class="formulaBox">Step 3: Third Band (Brown) represents 1 value.</div>
+    <div class="formulaBox">Step 4: Fourth Band (Grey) represents 8 value. Concluding value = CD4018 logic chip.</div>
+  </section>
 
+  <section class="infoBox">
+    <h2>How to Correctly Read IC Codes</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Locate the alignment notch at one end of the integrated circuit body.</div>
+      <div class="aboutStep">Orient the chip notch upwards or to the left side of the layout.</div>
+      <div class="aboutStep">Match the color stripes starting from the notch side to determine part identification.</div>
+      <div class="aboutStep">Read the final output code to source modern logic IC drop-in replacements.</div>
+    </div>
+  </section>
 
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    <h3><strong>1. Why did manufacturers use color bands on ICs instead of printed text?</strong></h3>
+    <p>Early laser and ink stamping techniques were fragile and could rub off easily during assembly or when exposed to common circuit board solvents. Color bands offered a high-durability alternative.</p>
 
-  <div class="container">
-<table class="cal" style="font-size:15px;">
-<tr><td align="middle">&nbsp;&nbsp;&nbsp;&nbsp;<b>1 Band</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2 Band</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>3 Band</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>4 Band</td></tr>
-<tr><td> 
-
-
-
-
-
-   
-
-  <select name="" id="firstColumn">
-    <option  class="black"></option>
-  <option value="0" class="black" >Black</option>
-  <option value="CA" class="brown" >Brown</option>
-  <option value="CD" class="red" >Red</option>
-  <option value="DM" class="orange">Orange</option>
-  <option value="GD" class="yellow">Yellow</option>
-  <option value="HA" class="green">Green</option>
-  <option value="HD" class="blue">Blue</option>
-  <option value="MC" class="violet">Violet</option>
-  <option value="TA" class="grey">Grey</option>
-  <option value="TC" class="white">White</option>
-  
-</select></td><td>
-
-    <select name=""  id="secondColumn">
-    <option  class="black"></option>
-  <option value="0" class="black">Black</option>
-  <option value="1" class="brown">Brown</option>
-  <option value="2" class="red">Red</option>
-  <option value="3" class="orange">Orange</option>
-  <option value="4" class="yellow">Yellow</option>
-  <option value="14" class="green">Green</option>
-  <option value="34" class="blue">Blue</option>
-  <option value="40" class="violet">Violet</option>
-  <option value="74" class="grey">Grey</option>
-  <option value="140" class="white">White</option>
-  
-</select></td><td>
-
-    <select name=""  id="thirdColumn">
-   <option  class="black"></option>
-  <option value="0" class="black">Black</option>
-  <option value="1" class="brown">Brown</option>
-  <option value="2" class="red">Red</option>
-  <option value="3" class="orange">Orange</option>
-  <option value="4" class="yellow">Yellow</option>
-  <option value="5" class="green">Green</option>
-  <option value="6" class="blue">Blue</option>
-  <option value="7" class="violet">Violet</option>
-  <option value="8" class="grey">Grey</option>
-  <option value="9" class="white">White</option>
-  
-</select></td><td>
-
-    <select name="" id="fourthColumn">
-   <option  class="black"></option>
-  <option value="0" class="black">Black</option>
-  <option value="1" class="brown">Brown</option>
-  <option value="2" class="red">Red</option>
-  <option value="3" class="orange">Orange</option>
-  <option value="4" class="yellow">Yellow</option>
-  <option value="5" class="green">Green</option>
-  <option value="6" class="blue">Blue</option>
-  <option value="7" class="violet">Violet</option>
-  <option value="8" class="grey">Grey</option>
-  <option value="9" class="white">White</option>
-</select></td>
-
+    <h3><strong>2. Are these color codes still used today?</strong></h3>
+    <p>No, standard modern logic microchips feature highly readable printed laser markings. However, decoding these indicators remains vital for preserving and repairing vintage computing hardware.</p>
+  </section>
 </div>
 
-
-  
-</body>
-
-</html>
-
-
-
+<!-- iOS Wheel Picker Overlay (Repositioned to real slide-up bottom sheet) -->
+<div class="ios-mask" id="mask">
+  <div class="ios-picker" id="picker" onclick="event.stopPropagation()">
+    <div class="ios-head">
+      <button class="cancel" onclick="closePicker()">Cancel</button>
+      <span class="title" id="title">Select</span>
+      <button onclick="confirmSelection()">Done</button>
+    </div>
+    <div class="wheel-wrap">
+      <div class="wheel-highlight"></div>
+      <div class="wheel" id="wheel"></div>
+    </div>
+  </div>
+</div>
 
 <script>
+// Standard Color Values Map
+const colorsHex = {
+  black: "#111111",
+  brown: "#8b5a2b",
+  red: "#dc2626",
+  orange: "#ea580c",
+  yellow: "#eab308",
+  green: "#16a34a",
+  blue: "#2563eb",
+  violet: "#7c3aed",
+  grey: "#6b7280",
+  white: "#ffffff"
+};
 
-function calculate(columnFirst, columnSecond, columnThird) {
-  
-  var columnFirst = document.getElementById('firstColumn').value;
-  var columnSecond = document.getElementById('secondColumn').value;
-  var columnThird = document.getElementById('thirdColumn').value;
-  var columnFourth = document.getElementById('fourthColumn').value;
-   
-  var wynik;
+// 1st Band Options (Manufacturer Prefix)
+const band1Opts = [
+  ["Black (0)", "0", colorsHex.black],
+  ["Brown (CA - RCA Analog)", "CA", colorsHex.brown],
+  ["Red (CD - RCA Digital)", "CD", colorsHex.red],
+  ["Orange (DM - Nat Semi)", "DM", colorsHex.orange],
+  ["Yellow (GD - Goldstar)", "GD", colorsHex.yellow],
+  ["Green (HA - Hitachi)", "HA", colorsHex.green],
+  ["Blue (HD - Hitachi)", "HD", colorsHex.blue],
+  ["Violet (MC - Motorola)", "MC", colorsHex.violet],
+  ["Grey (TA - Toshiba)", "TA", colorsHex.grey],
+  ["White (TC - Toshiba)", "TC", colorsHex.white]
+];
 
-  if (columnThird == 0) {
-    wynik = parseInt(columnFirst) + parseInt(columnSecond);
-  } else {
-    wynik = (parseInt(columnFirst) + parseInt(columnSecond)) * parseInt(columnThird);
-  }
-  return wynik;
+// 2nd Band Options (Series Number)
+const band2Opts = [
+  ["Black (0)", "0", colorsHex.black],
+  ["Brown (1)", "1", colorsHex.brown],
+  ["Red (2)", "2", colorsHex.red],
+  ["Orange (3)", "3", colorsHex.orange],
+  ["Yellow (4)", "4", colorsHex.yellow],
+  ["Green (14)", "14", colorsHex.green],
+  ["Blue (34)", "34", colorsHex.blue],
+  ["Violet (40)", "40", colorsHex.violet],
+  ["Grey (74)", "74", colorsHex.grey],
+  ["White (140)", "140", colorsHex.white]
+];
+
+// 3rd Band Options (Value)
+const band3Opts = [
+  ["Black (0)", "0", colorsHex.black],
+  ["Brown (1)", "1", colorsHex.brown],
+  ["Red (2)", "2", colorsHex.red],
+  ["Orange (3)", "3", colorsHex.orange],
+  ["Yellow (4)", "4", colorsHex.yellow],
+  ["Green (5)", "5", colorsHex.green],
+  ["Blue (6)", "6", colorsHex.blue],
+  ["Violet (7)", "7", colorsHex.violet],
+  ["Grey (8)", "8", colorsHex.grey],
+  ["White (9)", "9", colorsHex.white]
+];
+
+// 4th Band Options (Value)
+const band4Opts = [
+  ["Black (0)", "0", colorsHex.black],
+  ["Brown (1)", "1", colorsHex.brown],
+  ["Red (2)", "2", colorsHex.red],
+  ["Orange (3)", "3", colorsHex.orange],
+  ["Yellow (4)", "4", colorsHex.yellow],
+  ["Green (5)", "5", colorsHex.green],
+  ["Blue (6)", "6", colorsHex.blue],
+  ["Violet (7)", "7", colorsHex.violet],
+  ["Grey (8)", "8", colorsHex.grey],
+  ["White (9)", "9", colorsHex.white]
+];
+
+// Exact manufacturer abbreviation mapping
+const mfrFullNames = {
+  "0": "Standard / None",
+  "CA": "RCA (analog)",
+  "CD": "RCA (digital)",
+  "DM": "National Semiconductor (digital)",
+  "GD": "Goldstar (digital)",
+  "HA": "Hitachi (analog)",
+  "HD": "Hitachi (digital)",
+  "MC": "Motorola",
+  "TA": "Toshiba",
+  "TC": "Toshiba"
+};
+
+// State management
+let state = {
+  band1: "CD", // RCA Digital default
+  band2: "40", // 40 Series default
+  band3: "1",  // 1 default
+  band4: "1"   // 1 default
+};
+
+let btns = {}, activeData = [], activeKey = "";
+let isScrolling = false;
+
+function makeBtn(id, key, name) {
+  let container = document.getElementById(id);
+  container.innerHTML = "";
+  let b = document.createElement("div");
+  b.className = "pick-btn";
+  b.onclick = function() { openPicker(getData(key), key, name) };
+  container.appendChild(b);
+  btns[key] = b;
+  setBtn(getData(key), key);
 }
 
-let select = document.querySelectorAll("select");
+function getData(key) {
+  if (key === "band1") return band1Opts;
+  if (key === "band2") return band2Opts;
+  if (key === "band3") return band3Opts;
+  if (key === "band4") return band4Opts;
+}
 
+function setBtn(data, key) {
+  let x = data.find(a => a[1] === state[key]) || data[0];
+  btns[key].innerHTML = '<span class="sw" style="background:' + x[2] + '"></span>' + x[0];
+}
 
-select.forEach(function (element,){
-  element.addEventListener("change", function() {
-      // console.log(this)
-      let listOption = this.options[this.selectedIndex].id;
-      this.style.backgroundColor = listOption;
-      if (listOption == "black" || listOption == "blue") {
-        this.style.color = "white";
-      } else {
-        this.style.color = "black";
+// 3D Rotational transforms for elements inside wheel on scroll
+function handleWheelScroll() {
+  let wheel = document.getElementById("wheel");
+  const rect = wheel.getBoundingClientRect();
+  const centerY = rect.top + rect.height / 2;
+  const items = wheel.querySelectorAll(".wheel-item");
+  
+  items.forEach((item) => {
+    const itemRect = item.getBoundingClientRect();
+    const itemY = itemRect.top + itemRect.height / 2;
+    const distance = Math.abs(centerY - itemY);
+    
+    // Scale opacity and sizing relative to center distance
+    const normalized = Math.min(distance / 110, 1); 
+    const scale = 1 - normalized * 0.15;
+    const opacity = 1 - normalized * 0.65;
+    const rotateX = (itemY - centerY) * 0.28;
+    
+    item.style.transform = `scale(${scale}) rotateX(${rotateX}deg)`;
+    item.style.opacity = opacity;
+  });
+}
+
+function openPicker(data, key, name) {
+  activeData = data; activeKey = key;
+  document.body.classList.add("lock-scroll");
+  document.getElementById("title").innerText = name;
+  let wheel = document.getElementById("wheel");
+  wheel.innerHTML = "";
+  
+  isScrolling = false;
+  wheel.addEventListener('scroll', function() {
+    isScrolling = true;
+    handleWheelScroll();
+    clearTimeout(wheel.scrollTimeout);
+    wheel.scrollTimeout = setTimeout(function() {
+      isScrolling = false;
+    }, 150);
+  }, { passive: true });
+
+  data.forEach(function(x, idx) {
+    let r = document.createElement("div");
+    r.className = "wheel-item";
+    r.innerHTML = '<span class="sw" style="background:' + x[2] + '"></span>' + x[0];
+    
+    // Select and Auto-Hide when an item is tapped or clicked
+    const selectHandler = function(e) {
+      if (!isScrolling) {
+        e.preventDefault();
+        state[activeKey] = x[1];
+        refreshBtns();
+        calc();
+        closePicker();
       }
-      showResult();
-
-  })
-})
- 
-
-function showResult() {
-  let calculationResult = calculate();
-  let columnFourth = document.getElementById('fourthColumn').value;
-   
-     
-   let columnFirst = document.getElementById('firstColumn').value;
-   let columnSecond = document.getElementById('secondColumn').value;
-   let columnThird = document.getElementById('thirdColumn').value;
-
+    };
+    r.addEventListener('touchend', selectHandler, { passive: false });
+    r.addEventListener('click', selectHandler);
+    
+    wheel.appendChild(r);
+  });
   
+  let mask = document.getElementById("mask");
+  let picker = document.getElementById("picker");
+  
+  mask.style.display = "block";
+  void mask.offsetHeight; // Forces frame rendering before transition runs
+  
+  mask.classList.add("show");
+  picker.classList.add("show");
+  
+  let current = data.findIndex(x => x[1] === state[key]);
+  setTimeout(function() { 
+    wheel.scrollTop = (current < 0 ? 0 : current) * 44; 
+    handleWheelScroll();
+  }, 50);
+}
+
+// Fallback manual confirm function if the user presses "Done"
+function confirmSelection() {
+  let wheel = document.getElementById("wheel");
+  let idx = Math.round(wheel.scrollTop / 44);
+  if (idx < 0) idx = 0;
+  if (idx >= activeData.length) idx = activeData.length - 1;
+  
+  let x = activeData[idx];
+  state[activeKey] = x[1];
+  refreshBtns();
+  calc();
+  closePicker();
+}
+
+function closePicker() {
+  document.body.classList.remove("lock-scroll");
+  let mask = document.getElementById("mask");
+  let picker = document.getElementById("picker");
+  
+  mask.classList.remove("show");
+  picker.classList.remove("show");
+  
+  setTimeout(() => {
+    mask.style.display = "none";
+  }, 300);
+}
+
+document.getElementById("mask").onclick = function(e) {
+  if (e.target.id === "mask") closePicker();
+};
+
+// Initialize Controls 
+makeBtn("band1Box", "band1", "1st Band (Prefix)");
+makeBtn("band2Box", "band2", "2nd Band (Series)");
+makeBtn("band3Box", "band3", "3rd Band (Value)");
+makeBtn("band4Box", "band4", "4th Band (Value)");
+
+function refreshBtns() {
+  ["band1", "band2", "band3", "band4"].forEach(k => setBtn(getData(k), k));
+}
+
+function calc() {
+  let columnFirst = state.band1;
+  let columnSecond = state.band2;
+  let columnThird = state.band3;
+  let columnFourth = state.band4;
+
+  let icPartNumber = columnFirst + columnSecond + columnThird + columnFourth;
+
+  // Set the clean center readout 
+  document.getElementById("result").innerText = icPartNumber;
+
+  // Dynamically resolve full manufacturer names from selection parameters
+  let fullFormValue = mfrFullNames[columnFirst] || "Standard prefix";
+  document.getElementById("fullform-info").innerText = "Full Form: " + columnFirst + " = " + fullFormValue;
+
+  // Dynamic band backgrounds rendering behind absolute positioning coordinates
+  document.getElementById("first").style.backgroundColor = band1Opts.find(x => x[1] === columnFirst)[2];
+  document.getElementById("second").style.backgroundColor = band2Opts.find(x => x[1] === columnSecond)[2];
+  document.getElementById("third").style.backgroundColor = band3Opts.find(x => x[1] === columnThird)[2];
+  document.getElementById("fourth").style.backgroundColor = band4Opts.find(x => x[1] === columnFourth)[2];
+
+  // Map to modern specifications cards
+  document.getElementById("resPartNumber").innerText = icPartNumber;
+  document.getElementById("resMfr").innerText = fullFormValue;
+  document.getElementById("resSeries").innerText = columnSecond + "00 Series";
+  document.getElementById("resLogic").innerText = "Logic Gate Integrated Circuit";
+
+  const resStd = document.getElementById("resStandard");
+  if (resStd) resStd.innerText = "Commercial JEDEC";
+
+  refreshBtns();
+}
+
+// Initial calculation run
+calc();
+</script>
+
+<script type="application/ld+json">
 {
-document.getElementById("temp1").innerHTML=columnFirst + columnSecond + columnThird + columnFourth;
-}
- 
-
-}
- 
-
-  
-</script>
-
-
-<script>
-$("#firstColumn").change(function(){
-    var color = $("option:selected", this).attr("class");
-    $("#firstColumn").attr("class", color);
-    $("#first").attr("class", color);
-    
-});
-
-$("#secondColumn").change(function(){
-    var color = $("option:selected", this).attr("class");
-    $("#secondColumn").attr("class", color);
-    $("#second").attr("class", color);
-    
-});
-
-$("#thirdColumn").change(function(){
-    var color = $("option:selected", this).attr("class");
-    $("#thirdColumn").attr("class", color);
-    $("#third").attr("class", color);
-    
-});
-
-$("#fourthColumn").change(function(){
-    var color = $("option:selected", this).attr("class");
-    $("#fourthColumn").attr("class", color);
-    $("#fourth").attr("class", color);
-    
-});
-
-
-
-
-
-
-
-
-
-</script>
- 
-
-<style>
-.cd {
-  
-}
-img {width:300;
-  margin-left:10;  
-   position: absolute;
-  top: 50px;
-  left:20px;
- opacity:;
-  
-} 
-img {width:300;
-  margin-left:10;  
-   position: absolute;
-  top: 50px;
-  left:20px;
- opacity:;
-  
-} 
-.bom{
-  margin-left:10;  
-   position: absolute;
-  top: 250px;
-  left:42px;
- opacity:;
- border-radius: 25px;
-  border: 2px solid #73AD21;
-  padding: 20px;
-  width:250px;
-  font-size:25;
-}
-.black {
-    background-color: black;
-}
-.brown {
-    background-color: brown;
-}
-.red {
-    background-color: red;
-}
-.orange {
-    background-color: orange;
-}
-
-.yellow {
-    background-color: yellow;
-}
-
-.green {
-    background-color: green;
-}
-
-.blue {
-    background-color: blue;
-}
-
-.violet {
-    background-color: violet;
-}
-
-.grey {
-    background-color: grey;
-}
-
-.white {
-    background-color: white;
-}
-.gold {
-    background-color: gold;
-}
-.silver {
-    background-color: silver;
-}
-
-
-
-
-
-.ff{
-   position: absolute; border: none; width: 20px;
-  top:5px;
-  
-  margin: center;}
-
-
-
-
-
-
-@import url('https://fonts.googleapis.com/css?family=Montserrat');
-
-* {
-  font-family: "Montserrat";
-}
-
-
-.container {
-position:absolute;
-  bottom:10;
-  margin: ;
- 
-}
-
-select {
-  display: inline-block;
-  margin-left: 20px;
-  width:53.7;
-  height: 120px;
-  text-align:center ;
-  background-color: black;
-  color: white;
-  -webkit-appearance: none;
-  
-  padding-left: 10px;
-}
- 
- 
-</style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style>
-
-html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}
-
-
-
-
-
-
-
-/* End extract */
-html,body{font-family:Verdana,sans-serif;font-size:15px;line-height:1.5}html{overflow-x:hidden}
-h1{font-size:36px}h2{font-size:30px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}.w3-serif{font-family:serif}
-
-
-
-
-                                                                                border
-
-.w3-btn,.w3-button{border:none;display:inline-block;padding:px px;font-size:50px;vertical-align:middle;overflow:hidden;text-decoration:none;color:inherit;background-color:inherit;text-align:center;cursor:pointer;white-space:nowrap}
-
-
-
-
-
-
-
-
-
-.w3-modal{z-index:3;display:none;padding-top:100px;position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgb(0,0,0);background-color:rgba(0,0,0,0.4)}
-
-
-
-.w3-modal-content{margin:auto;background-color:#fff;position:relati;padding:0;outline:0;width:6000px}
-
-
-
-
-.w3-container:after,.w3-container:before,.w3-panel:after,.w3-panel:before,.w3-row:after,.w3-row:before,.w3-row-padding:after,.w3-row-padding:before,
-.w3-cell-row:before,.w3-cell-row:after,.w3-clear:after,.w3-clear:before,.w3-bar:before,.w3-bar:after{content:"";display:table;clear:both}
-
-
-@media (min-width:601px){.w3-col.m1{width:8.33333%}.w3-col.m2{width:16.66666%}.w3-col.m3,.w3-quarter{width:24.99999%}.w3-col.m4,.w3-third{width:33.33333%}
-
-
-
-.w3-display-topmiddle{position:absolute;left:50%;top:0;transform:translate(-50%,0%);-ms-transform:translate(-50%,0%)}
-
-.w3-display-container:hover .w3-display-hover{display:block}.w3-display-container:hover span.w3-display-hover{display:inline-block}.w3-display-hover{display:none}
-
-
-
-
-
-.w3-teal,.w3-hover-teal:hover{color:#fff!important;background-color:#009688!important}
-.w3-yellow,.w3-hover-yellow:hover{color:#000!important;background-color:#ffeb3b!important}
-.w3-white,.w3-hover-white:hover{color:#000!important;background-color:#fff!important}
-
-
-                                               border colour 
-.w3-black,.w3-hover-black:hover{color:#fff!important;background-color:red!important}
-
-</style>
-
-<script>
-// Get the modal
-var modal = document.getElementById('id01');
-
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-   
-  
-  
-  
-  
-  
-  
-  }
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
+"mainEntity":[
+{"@type":"Question","name":"1. Why did manufacturers use color bands on ICs instead of printed text?","acceptedAnswer":{"@type":"Answer","text":"Early laser and ink stamping techniques were fragile and could rub off easily during assembly or when exposed to common circuit board solvents. Color bands offered a high-durability alternative."}},
+{"@type":"Question","name":"2. Are these color codes still used today?","acceptedAnswer":{"@type":"Answer","text":"No, standard modern logic microchips feature highly readable printed laser markings. However, decoding these indicators remains vital for preserving and repairing vintage computing hardware."}}
+]
 }
 </script>
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"BreadcrumbList",
+"itemListElement":[
+{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
+{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
+{"@type":"ListItem","position":3,"name":"Integrated Circuit Color Code Calculator","item":"https://calcboy.com/tool/integrated-circuit-color-code-calculator"}
+]
+}
+</script>
+
+</body>
+</html>
