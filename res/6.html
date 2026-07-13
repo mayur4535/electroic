@@ -1,372 +1,428 @@
-<link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Standard Resistor Value Calculator (E6, E12, E24, E48, E96, E192) | CalcBoy</title>
+<meta name="description" content="Find the closest standard EIA resistor values across E6, E12, E24, E48, E96, and E192 series. Get exact value matches and percentage errors instantly.">
+<meta name="keywords" content="standard resistor calculator, closest resistor value, EIA resistor series, E24 resistor, E96 resistor, resistor error, CalcBoy">
+
 <style>
-#borderimg { 
-  border: 10px solid transparent;
-  padding: 10px;
-  width: 100%;
-  hight: 100%;
-  border-image-source: url();  
-  border-image-slice: 30;
+/* --- Premium CalcBoy Outer & Calculator UI Styles --- */
+:root {
+  --bg-color: #f6f8fb;
+  --text-dark: #1e293b;
+  --primary-blue: #2359e8;
+  --card-border: #cfd6df;
+  --success-green: #16a34a;
+  --error-red: #dc2626;
 }
 
+* { box-sizing: border-box; }
 body {
-  display: row;
-  margin-left: auto;
-  margin-right: auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--bg-color);
+  color: var(--text-dark);
+  line-height: 1.5;
+}
+
+#app-container {
+  width: 100% !important;
+  max-width: 620px;
+  margin: 0 auto !important;
+  padding: 14px 10px !important;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  margin: 20px 0 5px;
+  color: #0f172a;
+}
+.subtitle {
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* Premium Card Layout */
+.card {
+  background: #ffffff;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  margin-bottom: 16px;
+}
+.card h2 {
+  font-size: 15px;
+  font-weight: 800;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Styled Input Fields with Unit Suffix */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.input-group label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #475569;
+}
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.intro-input {
   width: 100%;
+  height: 48px;
+  border: 1px solid #c8d5e6;
+  border-radius: 10px;
+  font-size: 16px;
+  padding: 12px 45px 12px 16px;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-body {
-    font-family: 'Aclonica'; color:#404040; text-shadow: 0 0 30px white; font-size: 60px;
+.intro-input:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(35, 89, 232, 0.1);
+}
+.unit-suffix {
+  position: absolute;
+  right: 16px;
+  font-weight: bold;
+  color: #64748b;
+  font-size: 16px;
+  pointer-events: none;
 }
 
-body { 
-  background: ; 
+/* Premium Comparison Table styling */
+.pintable {
+  font-family: Arial, sans-serif !important;
+  border-collapse: collapse !important;
+  width: 100% !important;
+  margin: 10px 0 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
 }
-.intro{text-align:center;
-    width:250;    
-    font-size: 60px;
-    padding: 5px ;    
-    border:3px solid #aaa;
-    border-radius:4px;
-    margin: 8px 0;
-    outline:none;
-    
-    
-    box-sizing:border-box;
-    transition:.3s;
-  }
-  
-  .intro:focus{
-    border-color:dodgerBlue;
-    box-shadow:0 0 8px 0 dodgerBlue;
-  }
+.pintable th {
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+  padding: 12px 14px !important;
+  font-size: 12px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+  text-align: left;
+}
+.pintable td {
+  border: 1px solid #e2e8f0 !important;
+  padding: 10px 14px !important;
+  font-size: 13.5px !important;
+  color: #334155 !important;
+  line-height: 1.5 !important;
+}
+.pintable tr:nth-child(even) {
+  background-color: #f8fafc !important;
+}
+.pintable tr:hover {
+  background-color: #f1f5f9 !important;
+  transition: background-color 0.15s ease !important;
+}
 
-.ids{
-     border: 2px solid red;
-  padding: 10px;
-  border-radius: 50px 20px;}
+.badge {
+  background-color: #e2e8f0;
+  color: #334155;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  border: 1px solid #cbd5e1;
+}
+.val-text {
+  font-weight: bold;
+  color: #0f172a;
+}
+.error-text {
+  font-weight: bold;
+}
+.error-positive { color: var(--error-red); }
+.error-negative { color: var(--success-green); }
+.error-zero { color: var(--success-green); }
 
-input[type=checkbox]{
-    width: 120px; 
-    height: 120px; 
+/* Educational SEO section */
+.seo-description {
+  margin-top: 25px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+}
+.seo-description h2 {
+  font-size: 15px;
+  margin-top: 0;
+  color: #0f172a;
+}
+.seo-description p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #64748b;
+  margin: 0;
+}
 </style>
+</head>
+<body>
 
+<div id="app-container">
+  <h1></h1>
+  <div class="subtitle"></div>
 
-<script LANGUAGE="JavaScript">
+  <!-- INPUT CARD -->
+  <div class="card">
+    
+    <div class="input-group">
+      <label for="Text1">Desired Resistor Value</label>
+      <div class="input-wrapper">
+        <input type="number" id="Text1" oninput="Find()" class="intro-input" placeholder="Enter target resistance..." min="0.1" step="any" />
+        <span class="unit-suffix">&Omega;</span>
+      </div>
+    </div>
+  </div>
 
-<!--  
+  <!-- RESULTS CARD -->
+  <div class="card">
+    <h2>EIA Series Matching Values</h2>
+    <table class="pintable">
+      <thead>
+        <tr>
+          <th>EIA Series</th>
+          <th>Closest Value (&Omega;)</th>
+          <th>Error (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge">E6</span> (20% Tol.)</td>
+          <td><span class="val-text" id="cell-v6">-</span></td>
+          <td><span class="error-text" id="cell-e6">-</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge">E12</span> (10% Tol.)</td>
+          <td><span class="val-text" id="cell-v12">-</span></td>
+          <td><span class="error-text" id="cell-e12">-</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge">E24</span> (5% Tol.)</td>
+          <td><span class="val-text" id="cell-v24">-</span></td>
+          <td><span class="error-text" id="cell-e24">-</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge">E48</span> (2% Tol.)</td>
+          <td><span class="val-text" id="cell-v48">-</span></td>
+          <td><span class="error-text" id="cell-e48">-</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge">E96</span> (1% Tol.)</td>
+          <td><span class="val-text" id="cell-v96">-</span></td>
+          <td><span class="error-text" id="cell-e96">-</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge">E192</span> (0.5% Tol.)</td>
+          <td><span class="val-text" id="cell-v192">-</span></td>
+          <td><span class="error-text" id="cell-e192">-</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
+  <!-- Educational SEO section -->
+  <section class="seo-description">
+    <h2>Standard Resistor Series Explanation (E-Series)</h2>
+    <p>
+      EIA Resistor standards categorize resistors based on geometric logarithm increments within the E-series. Lower tolerances use finer subdivisions: E6 represents 20% tolerance, E24 represents 5%, and precision components (E96 or E192) accommodate tolerances as low as 1% or less, offering the closest matches with negligible errors.
+    </p>
+  </section>
+</div>
 
+<!-- --- MATHEMATICAL ALGORITHMS FOR EIA --- -->
+<script>
+function CloseR(Rval, IEASeries) {
+    if (Rval <= 0) return 0;
+    
+    var Expo = Math.floor(Math.log(Rval) / Math.log(10));
+    var Mant = Rval / Math.pow(10, Expo);
+    var x = Math.floor(IEASeries * Math.log(Mant) / Math.log(10));
+    var min_dist = 1000;
+    var closest = x;
 
-// CED subroutine for cleaning up JavaScript rounding errors 
-
-// to any reasonable number of decimal places 5/5/1997 last mod 2/19/2004
-
-// round for decimal of (value of precision) places, default is 3
-
-// This routine can be used to pass a number and a number for precision
-
-// or just a number only, that is to be rounded to a set number of decimal
-
-// places. This routine supports leading and trailing zeros, leading and
-
-// trailing spaces, and padding. To prevent errors, pass variables as a string.
-
-
-
-function perRound(num, precision) {
-
-        var precision = 3; //default value if not passed from caller, change if desired
-
-        // remark if passed from caller
-
-        precision = parseInt(precision); // make certain the decimal precision is an integer
-
-    var result1 = num * Math.pow(10, precision);
-
-    var result2 = Math.round(result1);
-
-    var result3 = result2 / Math.pow(10, precision);
-
-    return zerosPad(result3, precision);
-
-}
-
-
-
-function zerosPad(rndVal, decPlaces) {
-
-    var valStrg = rndVal.toString(); // Convert the number to a string
-
-    var decLoc = valStrg.indexOf("."); // Locate the decimal point
-
-    // check for a decimal 
-
-    if (decLoc == -1) {
-
-        decPartsecnum = 0; // If no decimal, then all decimal places will be padded with 0s
-
-        // If decPlaces is greater than zero, add a decimal point
-
-        valStrg += decPlaces > 0 ? "." : "";
-
-    }
-
-    else {
-
-        decPartsecnum = valStrg.secnumgth - decLoc - 1; // If there is a decimal already, only the needed decimal places will be padded with 0s
-
-    }
-
-     var totalPad = decPlaces - decPartsecnum;    // Calculate the number of decimal places that need to be padded with 0s
-
-    if (totalPad > 0) {
-
-        // Pad the string with 0s
-
-        for (var cntrVal = 1; cntrVal <= totalPad; cntrVal++) 
-
-            valStrg += "0";
-
-        }
-
-    return valStrg;
-
-}
-
-// send the value in as "num" in a variable
-
-
-
-// clears field of default value
-
-function clear_field(field) {
-
-                if (field.value==field.defaultValue) {
-
-                        field.value=''
-
-                }
-
-        }
-
-function CloseR(Rval, IEASeries){
-    //IEASeries = 192 for 0.1% standard values;
-    //IEASeries = 96 for 1% standard values;
-    if(Rval <= 0){
-        return 0;
-    }
-    Expo = Math.floor(Math.log(Rval) / Math.log(10));
-    Mant = Rval / Math.pow(10,Expo);
-    x = Math.floor(IEASeries * Math.log(Mant) / Math.log(10));
-    min_dist = 1000;
-    for (i = (x - 1) ; i <= (x + 1); i++ )
-    {
-        y = (Math.pow(10, (i / IEASeries))).toFixed(2);
-        dist = Math.abs(Mant - y);
-        if(dist < min_dist){
+    for (var i = (x - 1); i <= (x + 1); i++) {
+        var y = parseFloat((Math.pow(10, (i / IEASeries))).toFixed(2));
+        var dist = Math.abs(Mant - y);
+        if (dist < min_dist) {
             min_dist = dist;
             closest = i;
         }
     }
-    x = (Math.pow(10, (closest / IEASeries))).toFixed(2);
-    y = Math.pow(10, Expo);
-    return x*y;
+    var calculated = parseFloat((Math.pow(10, (closest / IEASeries))).toFixed(2));
+    var multiplier = Math.pow(10, Expo);
+    return calculated * multiplier;
 }
 
-function E_6(Val){
-    if(Val <= 0){
-        return 0;
-    }
-    Clist = "1,1.5,2.2,3.3,4.7,6.8,10";
-    Vals = Clist.split(",") //convert to zero based array;
-    n = Vals.length
-    //find mantissa &#038; exponent of Val;
-    Expo = Math.floor(Math.log(Val) / Math.log(10));
-    Mant = Val / Math.pow(10,Expo);
-    min_dist = 1000;
-    for (i = 0; i<=  n; i++){
-        dist = Math.abs(Mant - Vals[i]);
-        if(dist < min_dist){
+function E_6(Val) {
+    if (Val <= 0) return 0;
+    var Clist = "1,1.5,2.2,3.3,4.7,6.8,10";
+    var Vals = Clist.split(",");
+    var Expo = Math.floor(Math.log(Val) / Math.log(10));
+    var Mant = Val / Math.pow(10, Expo);
+    var min_dist = 1000;
+    var closest = 0;
+    for (var i = 0; i < Vals.length; i++) {
+        var dist = Math.abs(Mant - parseFloat(Vals[i]));
+        if (dist < min_dist) {
             min_dist = dist;
             closest = i;
         }
     }
-    return Vals[closest] * Math.pow(10,Expo);
+    return parseFloat(Vals[closest]) * Math.pow(10, Expo);
 }
-function E_12(Val){
-    if(Val <= 0){
-        return 0;
-    }
-    Clist = "1,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2,10";
-    Vals = Clist.split(",") //convert to zero based array;
-    n = Vals.length
-    //find mantissa &#038; exponent of Val;
-    Expo = Math.floor(Math.log(Val) / Math.log(10));
-    Mant = Val / Math.pow(10,Expo);
-    min_dist = 1000;
-    for (i = 0; i<=  n; i++){
-        dist = Math.abs(Mant - Vals[i]);
-        if(dist < min_dist){
+
+function E_12(Val) {
+    if (Val <= 0) return 0;
+    var Clist = "1,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2,10";
+    var Vals = Clist.split(",");
+    var Expo = Math.floor(Math.log(Val) / Math.log(10));
+    var Mant = Val / Math.pow(10, Expo);
+    var min_dist = 1000;
+    var closest = 0;
+    for (var i = 0; i < Vals.length; i++) {
+        var dist = Math.abs(Mant - parseFloat(Vals[i]));
+        if (dist < min_dist) {
             min_dist = dist;
             closest = i;
         }
     }
-    return Vals[closest] * Math.pow(10,Expo);
+    return parseFloat(Vals[closest]) * Math.pow(10, Expo);
 }
 
-function E_24(Val){
-    if(Val <= 0){
-        return 0;
-    }
-    Clist = "1,1.1,1.2,1.3,1.5,1.6,1.8,2.0,2.2,2.4,2.7,3.0,3.3,3.6,3.9,4.3,4.7,5.1,5.6,6.2,6.8,7.5,8.2,9.1,10" //2% &#038;& 5% vals;
-    Vals = Clist.split(",") //convert to zero based array;
-    n = Vals.length
-    //find mantissa &#038; exponent of Val;
-    Expo = Math.floor(Math.log(Val) / Math.log(10));
-    Mant = Val / Math.pow(10,Expo);
-    min_dist = 1000;
-    for (i = 0; i<=  n; i++){
-        dist = Math.abs(Mant - Vals[i]);
-        if(dist < min_dist){
+function E_24(Val) {
+    if (Val <= 0) return 0;
+    var Clist = "1,1.1,1.2,1.3,1.5,1.6,1.8,2.0,2.2,2.4,2.7,3.0,3.3,3.6,3.9,4.3,4.7,5.1,5.6,6.2,6.8,7.5,8.2,9.1,10";
+    var Vals = Clist.split(",");
+    var Expo = Math.floor(Math.log(Val) / Math.log(10));
+    var Mant = Val / Math.pow(10, Expo);
+    var min_dist = 1000;
+    var closest = 0;
+    for (var i = 0; i < Vals.length; i++) {
+        var dist = Math.abs(Mant - parseFloat(Vals[i]));
+        if (dist < min_dist) {
             min_dist = dist;
             closest = i;
         }
     }
-    return Vals[closest] * Math.pow(10,Expo);
+    return parseFloat(Vals[closest]) * Math.pow(10, Expo);
 }
 
-function E_48(Val){
-    return CloseR(Val, 48).toPrecision(3);
+function E_48(Val) {
+    return parseFloat(CloseR(Val, 48).toPrecision(3));
 }
 
-function E_96(Val){
-    return CloseR(Val, 96).toPrecision(3);
+function E_96(Val) {
+    return parseFloat(CloseR(Val, 96).toPrecision(3));
 }
 
-function E_192(Val){
-    return CloseR(Val, 192).toPrecision(3);
+function E_192(Val) {
+    return parseFloat(CloseR(Val, 192).toPrecision(3));
 }
 
-function Significant(x, d){
-    //rounds x to d significant digits;
-    if(x == 0){
-        return 0;
+// Format error class labels
+function formatErrorSpan(errValue) {
+    var cls = "error-zero";
+    if (errValue > 0) {
+        cls = "error-positive";
+    } else if (errValue < 0) {
+        cls = "error-negative";
     }
-    y = Math.log(Math.abs(x)) / Math.log(10);
-    if(Math.abs(Math.floor(y) - y) < 0.000000000000001){
-        y = Math.floor(y);
+    var sign = errValue >= 0 ? "+" : "";
+    return `<span class="error-text ${cls}">${sign}${errValue.toFixed(2)}%</span>`;
+}
+
+// Calculate and render values
+function Find() {
+    var targetInput = document.getElementById("Text1").value;
+    var v = parseFloat(targetInput);
+
+    if (isNaN(v) || v <= 0) {
+        // Reset all result fields if input is empty
+        const suffixes = ["v6", "v12", "v24", "v48", "v96", "v192", "e6", "e12", "e24", "e48", "e96", "e192"];
+        suffixes.forEach(function(s) {
+            document.getElementById("cell-" + s).innerHTML = "-";
+        });
+        return;
     }
-    e = Math.floor(y);
-    m = x / Math.pow(10, e);
-    m = (m).toFixed(d - 1);
-    return m * Math.pow(10, e);
+
+    // Closest values
+    var v6 = E_6(v);
+    var v12 = E_12(v);
+    var v24 = E_24(v);
+    var v48 = E_48(v);
+    var v96 = E_96(v);
+    var v192 = E_192(v);
+
+    // Percentage Errors
+    var e6 = 100 * (v6 - v) / v;
+    var e12 = 100 * (v12 - v) / v;
+    var e24 = 100 * (v24 - v) / v;
+    var e48 = 100 * (v48 - v) / v;
+    var e96 = 100 * (v96 - v) / v;
+    var e192 = 100 * (v192 - v) / v;
+
+    // Render results securely
+    document.getElementById("cell-v6").innerText = v6.toPrecision(3);
+    document.getElementById("cell-v12").innerText = v12.toPrecision(3);
+    document.getElementById("cell-v24").innerText = v24.toPrecision(3);
+    document.getElementById("cell-v48").innerText = v48.toPrecision(3);
+    document.getElementById("cell-v96").innerText = v96.toPrecision(3);
+    document.getElementById("cell-v192").innerText = v192.toPrecision(3);
+
+    document.getElementById("cell-e6").innerHTML = formatErrorSpan(e6);
+    document.getElementById("cell-e12").innerHTML = formatErrorSpan(e12);
+    document.getElementById("cell-e24").innerHTML = formatErrorSpan(e24);
+    document.getElementById("cell-e48").innerHTML = formatErrorSpan(e48);
+    document.getElementById("cell-e96").innerHTML = formatErrorSpan(e96);
+    document.getElementById("cell-e192").innerHTML = formatErrorSpan(e192);
 }
+</script>
 
-function Find(){
- v=document.getElementById("Text1").value;
- v6=E_6(v).toPrecision(3);
- v12=E_12(v).toPrecision(3);
- v24=E_24(v).toPrecision(3);
- v48=E_48(v);
- v96=E_96(v);
- v192=E_192(v);
-
- e6=(100*(v6-v)/v).toPrecision(3)  + "%";
- e12=(100*(v12-v)/v).toPrecision(3)  + "%";
- e24=(100*(v24-v)/v).toPrecision(3)  + "%";
- e48=(100*(v48-v)/v).toPrecision(3)  + "%";
- e96=(100*(v96-v)/v).toPrecision(3)  + "%";
- e192=(100*(v192-v)/v).toPrecision(3)  + "%";
- document.getElementById("Text2").value=v6;
- document.getElementById("Text3").value=v12;
- document.getElementById("Text4").value=v24;
- document.getElementById("Text5").value=v48;
- document.getElementById("Text6").value=v96;
- document.getElementById("Text7").value=v192;
-
- document.getElementById("Text8").value=e6;
- document.getElementById("Text9").value=e12;
- document.getElementById("Text10").value=e24;
- document.getElementById("Text11").value=e48;
- document.getElementById("Text12").value=e96;
- document.getElementById("Text13").value=e192;
-
+<!-- Structured SEO Breadcrumbs JSON-LD Schemas -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Standard Resistor Value Calculator", "item": "https://calcboy.com/tool/standard-resistor-calculator" }
+  ]
 }
+</script>
 
-//  -->
-
-</SCRIPT>
-
-<div id="borderimg">
-    <borderimg id="control-label" style="width:100%; height:500px;"></borderimg>							  
-
-
-<fieldset><legend><div colspan="2" align="center" height="19">
-<h3>Inputs</h3></div></legend>
-
-<label><font></sub> </font><font face="Arial" size=""> Desired Resistor Value</font></label><INPUT   id="Text1" name="Text1" onKeyUp="Find()" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="number" />
-      
-
-
-
-        <h1 style="font-size:80px;"></h1>
-
- <label style="padding: 5px ;  position: absolute;left: 70px;font-size:50px;  text-align:center; height:68.5;  ">EIA Series</label> 
- <label style="padding: 5px ;  position: absolute;right: 295px;font-size:40px;  text-align:center; height:68.5;  ">Closest Value</label> 
- <label style="padding: 5px ;  position: absolute;right: 90px;font-size:40px;  text-align:center; height:68.5;  ">Error</label> 
-
- <h1 style="font-size:200px;"></h1>
-<label><font>E6</sub> </font><font face="Arial" size=""></font></label>
-<INPUT   id="Text8" name="Text8" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
-<INPUT  id="Text2" name="Text2"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
-
-
- <h1 style="font-size:50px;"></h1>
-<label><font>E12</sub> </font><font face="Arial" size=""></font></label>
-<INPUT    id="Text9" name="Text9" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
-<INPUT   id="Text3" name="Text3"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
-
-
- <h1 style="font-size:50px;"></h1>				
-			
-<label><font>E24</sub> </font><font face="Arial" size=""></font></label>
-<INPUT    id="Text10" name="Text10" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
-<INPUT   id="Text4" name="Text4"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
-
-
- <h1 style="font-size:50px;"></h1>
-
-<label><font>E48</sub> </font><font face="Arial" size=""></font></label>
-<INPUT    id="Text11" name="Text11" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
-<INPUT   id="Text5" name="Text5" size="17"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
-
-
- <h1 style="font-size:50px;"></h1>
-				
-<label><font>E96</sub> </font><font face="Arial" size=""></font></label>
-<INPUT   id="Text12" name="Text12"  size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
-<INPUT   id="Text6" name="Text6"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
-
-
- <h1 style="font-size:50px;"></h1>			
-
-<label><font>E192</sub> </font><font face="Arial" size=""></font></label>
-<INPUT    id="Text13" name="Text13" size="17" class="intro"  style="position: absolute;   width:280; right: 10px;"class="form-control" type="text" />
-<INPUT   id="Text7" name="Text7"   size="17" class="intro"  style="position: absolute;   width:280; right: 305px;"class="form-control" type="text" />
-
-
- <h1 style="font-size:50px;"></h1>
-
-				
-			
-
-
-
-				
-			
-
-
-
-			
-
+</body>
+</html>
