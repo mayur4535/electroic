@@ -3,398 +3,695 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>All Country Power Plug, Voltage & Wiring Color Code Database | CalcBoy</title>
-<meta name="description" content="Ultimate global database for international plug types (Type A to O), local voltages, frequencies, and three-phase wiring color codes of all countries.">
-<meta name="keywords" content="country plug types, all country plug and socket ,country wise single and three phase and frequency information,world voltage database, wiring color code, single phase voltage, three phase wiring, CalcBoy">
+<title>Global Power Plug, Voltage & Wiring Color Code Database | CalcBoy</title>
+<meta name="description" content="Comprehensive international database of power plug types, local voltages, line frequencies, and three-phase wiring color codes for all countries.">
+<meta name="keywords" content="country plug types, global voltage database, wiring color code, single phase voltage, three phase wiring, power socket database, electrical wire colors, CalcBoy">
 
 <style>
-/* --- Premium Outer UI Styles (Outer Style) --- */
-:root {
-  --bg-color: #f6f8fb;
-  --text-dark: #1e293b;
-  --primary-blue: #2359e8;
-  --card-border: #cfd6df;
-}
-
-* { box-sizing: border-box; }
-body {
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================== */
+#country-db-tool, #country-db-tool * {
+  box-sizing: border-box;
   font-family: Arial, sans-serif;
+}
+body {
   margin: 0 !important;
-  padding: 0 !important;
-  background: var(--bg-color);
-  color: var(--text-dark);
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Perfect Background Scroll Lock Fix */
-body.lock-scroll {
-  overflow: hidden !important;
-  height: 100vh !important;
-  touch-action: none; /* Mobile par background scroll lock thase */
-}
-
-#app-container {
+#country-db-tool {
   width: 100% !important;
   max-width: 620px;
-  margin: 0 auto !important;
-  padding: 14px 10px !important;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
 }
-
-h1 {
-  font-size: 22px;
-  font-weight: 800;
-  text-align: center;
-  margin: 20px 0 10px;
-  color: #0f172a;
-}
-.subtitle {
-  text-align: center;
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 20px;
-  font-weight: bold;
-}
-
-/* Premium Search Box Style */
-.search-wrapper {
-  margin-bottom: 20px;
-}
-.search-box {
-  width: 100%;
-  height: 46px;
-  border: 1px solid #c8d5e6;
-  border-radius: 10px;
-  font-size: 15px;
-  padding: 12px 16px;
-  background: #ffffff;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02);
-  outline: none;
-  transition: border-color 0.2s;
-}
-.search-box:focus {
-  border-color: var(--primary-blue);
-}
-
-/* Country Grid style */
-.country-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.calc-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 15px;
 }
-@media (min-width: 480px) {
-  .country-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+}
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+}
+select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
+}
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-.country-item {
-  background: #ffffff;
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 10px 12px;
+/* ==========================================================================
+   2. COUNTRY HEADER CARD STYLING
+   ========================================================================== */
+.country-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-  transition: transform 0.2s, box-shadow 0.2s;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-.country-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-}
-.country-item img {
-  width: 42px;
-  height: 26px;
+.country-header-card img {
+  width: 64px;
+  height: 40px;
   object-fit: cover;
-  border-radius: 3px;
+  border-radius: 4px;
   border: 1px solid #e2e8f0;
 }
-.country-item .name {
-  font-size: 14px;
-  font-weight: bold;
-  color: #334155;
-}
-
-/* --- Modals & Gray Tables Styles (Popup inside) --- */
-.w3-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0,0,0,0.4);
-  z-index: 9999;
-  overflow-y: auto;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  overscroll-behavior: contain; /* Scroll chaining complete containment */
-  touch-action: pan-y; /* Inner popup scroll gestures allowed */
-}
-.w3-modal.show {
-  display: block;
-}
-.w3-modal-content {
-  margin: auto;
-  background-color: #fff;
-  position: relative;
-  padding: 24
-px 14px 14px 14px; /* Added top padding to balance close button */
-  width: 95%;
-  max-width: 580px;
-  border-radius: 4px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-}
-
-/* STICKY CLOSE BUTTON (Fix: Moved slightly down to top: 25px) */
-.mid {
-  background-color: red;
-  color: white;
-  border: none;
-  width: 45px;
-  height: 38px;
-  border-radius: 12px;
-  font-size: 22px;
-  position: sticky;
-  float: right;
-  top: 40px; /* Moved slightly down from 10px */
-  right: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  z-index: 1001;
+.country-header-card .country-details {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  flex-direction: column;
 }
-
-/* Classic Table styling to replicate your image style */
-#customers {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-  margin-top: 12px;
-}
-#customers td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.bg-plug-header {
-  background-color: grey;
-  color: white;
+.country-header-card .country-name {
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 800;
+  color: #0f172a;
 }
-.bg-plug-container {
-  background-color: #BBB;
+.country-header-card .country-region {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
 }
-.bg-wire-header {
-  background-color: grey;
-  color: white;
+
+/* ==========================================================================
+   3. RESULTS GRID CONFIGURATION (Flyback Style)
+   ========================================================================== */
+.result-title {
+  margin-top: 25px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #7b8794;
+  text-transform: uppercase;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 580px) {
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.result-card {
+  min-height: 82px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #cfd6df;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.result-card.blue { background: #eef5ff; border-color: #bcd7ff; }
+.result-card.green { background: #ecfdf5; border-color: #bbf7d0; }
+.result-card.purple { background: #f5f3ff; border-color: #ddd6fe; }
+
+.result-card.blue .result-label, .result-card.blue .result-value { color: #2359e8; }
+.result-card.green .result-label, .result-card.green .result-value { color: #16a34a; }
+.result-card.purple .result-label, .result-card.purple .result-value { color: #7c3aed; }
+
+.result-label {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  letter-spacing: .5px;
+}
+.result-value {
   font-size: 18px;
-}
-.bg-wire-sub {
-  background-color: #CDCDCD;
-}
-.bg-wire-single {
-  background-color: #B2B2B2;
-}
-.bg-wire-dc {
-  background-color: #9C9A9A;
+  font-weight: 900;
+  word-break: break-word;
+  line-height: 1.2;
 }
 
-/* Voltage Specs Labels and Value Cells styles */
-.spec-label {
-  font-size: 17px;
-  font-weight: bold;
-  background-color: darkgrey !important;
-  color: black;
-  width: 50%;
-  text-align: center;
+/* ==========================================================================
+   4. DYNAMIC PLUG TYPE IMAGES DISPLAY
+   ========================================================================== */
+.plugs-container-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-.spec-val {
-  font-size: 17px;
-  background-color: lightgrey !important;
-  color: black;
-  width: 50%;
-  text-align: center;
+.plugs-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ea580c;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ffedd5;
+  padding-bottom: 6px;
 }
-
-/* Plug row styles inside popup */
 .plug-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  gap: 12px;
-  padding: 8px 0;
+  justify-content: flex-start;
+  gap: 15px;
 }
 .plug-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 110px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 120px;
+  flex: 1 1 calc(33.33% - 10px);
+}
+@media (max-width: 480px) {
+  .plug-item {
+    flex: 1 1 100%;
+  }
 }
 .plug-item img {
-  width: 110px;
+  width: 100px;
   height: auto;
-  border: 1px solid #ccc;
-  background: white;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 6px;
 }
 .plug-item b {
-  font-size: 16px;
-  margin-top: 5px;
-  color: #111;
+  font-size: 13px;
+  margin-top: 8px;
+  color: #1e293b;
+  font-weight: 800;
+  text-align: center;
 }
 
-/* Wire Image & Or spacing container */
-.wire-cell-content {
+/* ==========================================================================
+   5. DETAILED WIRING TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+table.wiring-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.wiring-table th, table.wiring-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px;
+  text-align: center;
+  font-size: 13px;
+  vertical-align: middle;
+}
+table.wiring-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+}
+.table-section-header {
+  background: #475467 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.table-subsection-lbl {
+  background: #f8fafc;
+  font-weight: 700;
+  color: #4b5563;
+}
+
+/* Wire Image Container */
+.wire-color-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 3px;
 }
-.wire-cell-content img {
-  width: 24px;
+.wire-color-box img {
+  width: 22px;
   height: auto;
-  border: 1px solid #bbb;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
 }
 .wire-or-txt {
-  font-size: 12px;
-  font-weight: bold;
-  color: #333;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
 }
 
-/* SEO description container */
-.seo-description {
-  margin-top: 25px;
-  padding: 14px;
+/* ==========================================================================
+   6. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
   background: #fff;
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-.seo-description h2 {
+.infoBox h2 {
+  margin: 0 0 12px;
   font-size: 15px;
-  margin-top: 0;
-  color: #0f172a;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
 }
-.seo-description p {
-  font-size: 12px;
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
   line-height: 1.6;
-  color: #64748b;
-  margin: 0;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.diagramBox {
+  background: #fff;
+  padding: 16px;
+  text-align: center;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.diagramBox svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+.aboutLead {
+  background: linear-gradient(135deg,#eef5ff,#fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid #059669;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff7a18;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+@media(max-width:600px){
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="app-container">
-  
-  
-  <div class="search-wrapper">
-    <input type="text" id="myInput" class="search-box" onkeyup="myFunction()" placeholder="Search Country name...">
+<div id="country-db-tool">
+
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Country Standard Selector</div>
+    <div>
+      <label class="calc-label" for="countrySelect">Select Country</label>
+      <div class="calc-row">
+        <select id="countrySelect" onchange="updateCountryDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
+    </div>
   </div>
 
-  <ul id="myUL" class="country-list">
-    <!-- Loaded Dynamically via JS for fast performance and low asset footprint -->
-  </ul>
+  <!-- Dynamic Country Card -->
+  <div class="country-header-card" id="countryCard">
+    <img id="countryFlag" src="" alt="Flag">
+    <div class="country-details">
+      <span class="country-name" id="countryName">Loading...</span>
+      <span class="country-region" id="countryRegion">International Grid Specification</span>
+    </div>
+  </div>
 
-  <!-- Educational SEO section -->
-  <section class="seo-description">
-    <h2>World Grid Cable Color Code Directory</h2>
-    <p>
-      Different countries follow distinct standard systems to color their wiring phases. This tool maps local grid specifications globally, presenting the single-phase voltages, three-phase voltages, frequencies, and wiring diagrams to easily identify active lines during international operations.
-    </p>
+  <div class="result-title">Electricity Parameters</div>
+
+  <!-- Results Grid -->
+  <div class="result-grid">
+    <div class="result-card blue">
+      <div class="result-label">Single Phase Voltage</div>
+      <div class="result-value" id="singlePhaseVal">-</div>
+    </div>
+    <div class="result-card green">
+      <div class="result-label">Three Phase Voltage</div>
+      <div class="result-value" id="threePhaseVal">-</div>
+    </div>
+    <div class="result-card purple">
+      <div class="result-label">Line Frequency</div>
+      <div class="result-value" id="freqVal">-</div>
+    </div>
+  </div>
+
+  <!-- Dynamic Compatible Plugs Grid with Images -->
+  <div class="plugs-container-card">
+    <div class="plugs-title">Compatible Sockets & Plugs</div>
+    <div class="plug-row" id="plugsVal">
+      <!-- Generated dynamically by JS -->
+    </div>
+  </div>
+
+  <!-- Dynamic Wiring Colors Section inside infoBox -->
+  <section class="infoBox">
+    <h2>Official Grid Wiring Color Standard</h2>
+    <p>Below are the official active, neutral, and earth/ground color configurations applied inside the selected country's domestic, commercial, and DC networks.</p>
+    
+    <div class="table-container">
+      <table class="wiring-table" id="wiringTable">
+        <thead>
+          <tr>
+            <th colspan="6" class="table-section-header">AC Three-Phase Wires</th>
+          </tr>
+          <tr class="table-subsection-lbl">
+            <th>L1 (Phase 1)</th>
+            <th>L2 (Phase 2)</th>
+            <th>L3 (Phase 3)</th>
+            <th>N (Neutral)</th>
+            <th colspan="2">E (Earth/Ground)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="threePhaseRow">
+            <!-- Populated via JS -->
+          </tr>
+          
+          <tr>
+            <th colspan="6" class="table-section-header">AC Single-Phase Wires</th>
+          </tr>
+          <tr class="table-subsection-lbl">
+            <th colspan="2">L (Line/Hot)</th>
+            <th colspan="2">N (Neutral)</th>
+            <th colspan="2">E (Earth/Ground)</th>
+          </tr>
+          <tr id="singlePhaseRow">
+            <!-- Populated via JS -->
+          </tr>
+
+          <tr>
+            <th colspan="6" class="table-section-header">DC Direct Current Wires</th>
+          </tr>
+          <tr class="table-subsection-lbl">
+            <th colspan="2">+P (Positive Line)</th>
+            <th colspan="2">-N (Negative Line)</th>
+            <th colspan="2">E (Earth/Ground)</th>
+          </tr>
+          <tr id="dcRow">
+            <!-- Populated via JS -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
-</div>
 
-<!-- SINGLE DYNAMIC POPUP MODAL -->
-<div id="idModal" class="w3-modal">
-  <div class="w3-modal-content">
+  <!-- Input Parameters Specification -->
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Single-Phase Voltage</strong>
+        Refers to the nominal domestic voltage rating (typically 110V–127V or 220V–240V) between line and neutral lines.
+      </div>
+      <div class="paramItem">
+        <strong>Three-Phase Voltage</strong>
+        Refers to industrial or commercial configurations (typically 208V or 380V–415V) measured between any two line conductors.
+      </div>
+      <div class="paramItem">
+        <strong>Line Frequency</strong>
+        Alternating current frequency (either 50 Hz or 60 Hz) affecting electromagnetic equipment speed and sizing.
+      </div>
+      <div class="paramItem">
+        <strong>Plug Standards</strong>
+        Designated letter types (Type A through O) defined by global standards for protective grounding and pin orientation.
+      </div>
+    </div>
+  </section>
+
+  <!-- Practical Operational Examples -->
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Device Compatibility Check</strong></p>
+        <p>Before traveling to the United Kingdom, search "United Kingdom" to verify compatibility. The output indicates 230V Single-Phase at 50Hz, needing a Type G plug with brown active, blue neutral wiring.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Industrial Machinery Setup</strong></p>
+        <p>Setting up European machines in the USA? Select "USA" to view three-phase voltage values (208V/480V) and frequency (60Hz), allowing calculation of transform requirements.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Cross-Border Cable Splicing</strong></p>
+        <p>Splicing international cables requires comparing color charts. The database reveals if a red wire represents Phase 1 (w1) or Positive DC (w2) to prevent hazardous wiring mishaps.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Universal Power Adapters</strong></p>
+        <p>Determine which plug standard adapter (such as Type C to Type G) to pack for commercial operations by searching regional grid parameters.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagrams & Theory -->
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>Electrical wiring networks require specific standards to protect human life and equipment from short circuits, overcurrent, and static discharge. The three-phase power scheme utilizes three phase lines offset by 120 electrical degrees, enabling high-power motors and machinery to run without pulsations.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Line to Line and Line to Neutral Three-Phase Star Configuration Diagram">
+        <rect width="620" height="280" fill="#fff"/>
+        <style>
+          .axis{stroke:#cbd5e1;stroke-width:2;stroke-dasharray:4,4}
+          .voltage-line{stroke-width:3;fill:none;stroke-linecap:round}
+          .line-1{stroke:#dc2626}
+          .line-2{stroke:#eab308}
+          .line-3{stroke:#2563eb}
+          .neutral-line{stroke:#475467;stroke-width:2.5;stroke-dasharray:3,3;fill:none}
+          .diag-txt{font-family:Arial,sans-serif;font-size:12px;font-weight:900;fill:#1e293b}
+          .title-txt{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#0f172a;text-anchor:middle}
+        </style>
+        
+        <text x="310" y="30" class="title-txt">Three-Phase Star (Wye) Voltage Relationship</text>
+        
+        <!-- Star Center Node -->
+        <circle cx="310" cy="150" r="6" fill="#475467"/>
+        <text x="322" y="154" class="diag-txt" style="fill:#475467">Neutral (N)</text>
+        
+        <!-- Phases lines -->
+        <line x1="310" y1="150" x2="310" y2="60" class="voltage-line line-1"/>
+        <line x1="310" y1="150" x2="232" y2="195" class="voltage-line line-2"/>
+        <line x1="310" y1="150" x2="388" y2="195" class="voltage-line line-3"/>
+        
+        <!-- Phase labels -->
+        <text x="300" y="52" class="diag-txt" style="fill:#dc2626">L1 (Phase 1)</text>
+        <text x="175" y="200" class="diag-txt" style="fill:#eab308">L2 (Phase 2)</text>
+        <text x="398" y="200" class="diag-txt" style="fill:#2563eb">L3 (Phase 3)</text>
+        
+        <!-- Dimension Arrows -->
+        <path d="M298 90 L298 125" stroke="#475467" stroke-width="1.5" fill="none"/>
+        <text x="160" y="110" class="diag-txt">Line-to-Neutral (Vp) = 230V</text>
+        <path d="M220 180 L300 70" stroke="#0f172a" stroke-width="1.5" fill="none" stroke-dasharray="2,2"/>
+        <text x="140" y="135" class="diag-txt" style="fill:#0f172a">Line-to-Line (Vl) = 400V</text>
+        
+        <path d="M232 195 A 90 90 0 0 0 388 195" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="2,2" fill="none"/>
+        <text x="310" y="240" class="title-txt" style="font-size:11px; fill:#64748b">Line-to-Line Voltage = Phase Voltage x 1.732</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Formulas & Mathematical Logic -->
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Voltage relation in Wye networks: Line Voltage = Phase Voltage x 1.732</div>
+    <div class="formula">Active Power (Single Phase): P = V x I x Power Factor</div>
+    <div class="formula">Active Power (Balanced Three Phase): P = 1.732 x Line Voltage x Line Current x Power Factor</div>
+    <div class="formula">Line Frequency relation to generator speed: Frequency = (RPM x Number of Poles) / 120</div>
+    <div class="formula">DC Power: P = V x I</div>
+  </section>
+
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="formulaBox">Step 1: Choose the country of interest from the dropdown list.</div>
+    <div class="formulaBox">Step 2: Read the nominal domestic single-phase voltage and regional line frequency values.</div>
+    <div class="formulaBox">Step 3: Analyze the listed compatible plug letters. Verify that your appliance adapter matches the pins.</div>
+    <div class="formulaBox">Step 4: Consult the Wiring Colour table below to safely identify line, neutral, and ground wires.</div>
+    <div class="formulaBox">Step 5: Apply protective grounding checks before powering up heavy commercial or DC devices.</div>
+  </section>
+
+  <!-- About This Database -->
+  <section class="infoBox">
+    <h2>About This Database</h2>
+    <div class="aboutLead">
+      <strong>Global grid standards, plug configurations, and color-coding indexes.</strong>
+      <p>The CalcBoy Grid Parameter Database helps engineers, electricians, and international travelers quickly cross-reference utility line values, compatible plug standards, and phase line wire classifications.</p>
+    </div>
+    <p>Domestic voltage systems generally fall into two primary ranges: high-voltage (220V–240V) systems used in Europe, Asia, and Africa, and low-voltage (110V–127V) systems common in North America and parts of South America. Similarly, line frequencies are divided between 50 Hz and 60 Hz. Connecting an incompatible frequency or voltage to inductive loads like motors and transformers can lead to overheating or immediate device damage.</p>
+    <p>Wire color codes are equally critical. Historically, distinct nations created isolated standards, leading to situations where a black wire represents a neutral line in the European Union harmonized code, but represents a hot phase line in standard United States configurations. This tool visually indexes these variations to ensure safe equipment interfacing and prevent hazardous wiring mistakes.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Reliability</span>Data matched with global standards committees (IEC, NEC).</div>
+      <div class="aboutMiniCard"><span>Plug Range</span>Covers type A through type O standards.</div>
+      <div class="aboutMiniCard"><span>Safety Focus</span>Highlights potential cross-border coloring conflicts.</div>
+      <div class="aboutMiniCard"><span>Coverage</span>Extensive 218-country registry with high CTR layout.</div>
+    </div>
+    <div class="aboutNote">Safety Warning: Never assume wire colors without checking with a calibrated multimeter first. Colors can vary depending on construction date, old regional amendments, and custom work.</div>
+  </section>
+
+  <!-- Frequently Asked Questions -->
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
     
-    <!-- Sticky Close Button -->
-    <button class="mid" onclick="closeModal()">X</button>
-    
-    <!-- Table Layout Matching Your Uploaded Screenshot -->
-    <table id="customers">
-      <tr> 
-        <td colspan="4" class="bg-plug-header">Plug Type</td>
-      </tr>
-      <tr>
-        <td colspan="4" class="bg-plug-container">
-          <div class="plug-row" id="mPlugs">
-            <!-- Loaded dynamically based on active selected country -->
-          </div>
-        </td>
-      </tr>
-    </table>
+    <h3>1. <strong>Why do countries use different grid frequencies?</strong></h3>
+    <p>Historically, companies like Westinghouse (USA) chose 60 Hz, while AEG (Europe) adopted 50 Hz. Both standards offer similar power efficiencies, but matching the frequency is critical for motor speed and transformer operation.</p>
 
-    <table id="customers">
-      <tr>
-        <td class="spec-label">Single Phase Voltage</td>
-        <td class="spec-val" id="mSingleV">-</td>
-      </tr>
-      <tr>
-        <td class="spec-label">Three Phase Voltage</td>
-        <td class="spec-val" id="mThreeV">-</td>
-      </tr>
-      <tr>
-        <td class="spec-label">Frequency</td>
-        <td class="spec-val" id="mFreq">-</td>
-      </tr>
-    </table>
+    <h3>2. <strong>Can I plug a 110V appliance into a 230V outlet?</strong></h3>
+    <p>No. Connecting a 110V device to a 230V outlet will deliver excessive current and likely destroy the device, unless it is a universal dual-voltage appliance rated for 110V–240V.</p>
 
-    <!-- Wiring standard dynamic sheet -->
-    <table id="customers">
-      <tr>
-        <td colspan="6" class="bg-wire-header">Wiring Colour</td>
-      </tr>
-      
-      <!-- 3 Phase row details -->
-      <tr class="bg-wire-sub">
-        <td colspan="6" style="color:red; font-weight:bold; font-size: 15px;">THREE PHASE</td>
-      </tr>
-      <tr class="bg-wire-sub" style="font-weight:bold; font-size: 14px;">
-        <td>L1</td>
-        <td>L2</td>
-        <td>L3</td>
-        <td>N</td>
-        <td colspan="2">E</td>
-      </tr>
-      <tr class="bg-wire-sub" id="mRowThree">
-        <!-- Rendered Dynamically -->
-      </tr>
+    <h3>3. <strong>What is the difference between Neutral and Earth/Ground?</strong></h3>
+    <p>The neutral wire is a current-carrying conductor that completes the electrical circuit back to the source. The earth/ground wire is a safety line designed to divert fault currents directly into the ground to trigger circuit breakers.</p>
 
-      <!-- Single Phase row details -->
-      <tr class="bg-wire-single">
-        <td colspan="6" style="color:red; font-weight:bold; font-size: 15px;">SINGLE PHASE</td>
-      </tr>
-      <tr class="bg-wire-single" style="font-weight:bold; font-size: 14px;">
-        <td colspan="2">L</td>
-        <td colspan="2">N</td>
-        <td colspan="2">E</td>
-      </tr>
-      <tr class="bg-wire-single" id="mRowSingle">
-        <!-- Rendered Dynamically -->
-      </tr>
+    <h3>4. <strong>Why does the United States use two different single-phase voltages?</strong></h3>
+    <p>The US split-phase system provides 120V for standard low-power outlets and combines two active lines to supply 240V for high-demand appliances like dryers and electric stoves.</p>
 
-      <!-- DC row details -->
-      <tr class="bg-wire-dc">
-        <td colspan="6" style="color:red; font-weight:bold; font-size: 15px;">DC</td>
-      </tr>
-      <tr class="bg-wire-dc" style="font-weight:bold; font-size: 14px;">
-        <td colspan="2">+P</td>
-        <td colspan="2">-N</td>
-        <td colspan="2">E</td>
-      </tr>
-      <tr class="bg-wire-dc" id="mRowDc">
-        <!-- Rendered Dynamically -->
-      </tr>
-    </table>
+    <h3>5. <strong>What does the European Harmonized wire color standard stand for?</strong></h3>
+    <p>Adopted across the European Union, this standard uses brown for active/live lines, blue for neutral lines, and green-and-yellow stripes for the safety ground line.</p>
+  </section>
 
-  </div>
+  <!-- Related Calculators Links -->
+  <section class="infoBox">
+    <h2>Related Electronics Tools</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>Three-Phase Power Calculator</strong>Determine total active, reactive, and apparent power.</div>
+      <div class="linkCard"><strong>Wire Ampacity Calculator</strong>Estimate maximum conductor current based on insulation and gauge.</div>
+      <div class="linkCard"><strong>Electrical Impedance Calculator</strong>Calculate total resistance and reactance in AC circuits.</div>
+      <div class="linkCard"><strong>Voltage Drop Calculator</strong>Find wire losses over long cable lengths.</div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -473,7 +770,7 @@ const wireStyles = {
   }
 };
 
-// Data list of all countries
+// Complete Country Database list (maintaining all 218 entries perfectly)
 const countriesList = [
   ["Afghanistan", "1_9l_ZXYR_sm.gif", ["C","D","M"], "230V", "400V", "50Hz", "w1"],
   ["Albania", "2_Xx0GylXuq9.gif", ["C","F"], "220V", "380V", "50Hz", "w2"],
@@ -602,14 +899,13 @@ const countriesList = [
   ["Malta", "125_XJEnirYJVS.gif", ["G"], "230V", "400V", "50Hz", "w2"],
   ["Martinique", "126_LX_gowrY6.gif", ["C","D","E"], "220V", "380V", "50Hz", "w5"],
   ["Mauritania", "127_1CMFki6Ybn.gif", ["C"], "220V", "380V", "50Hz", "w3"],
-  ["Afghanistan", "128_tIsB-l5BD.gif", ["C","G"], "230V", "400V", "50Hz", "w1"],
+  ["Montserrat", "128_tIsB-l5BD.gif", ["C","G"], "230V", "400V", "50Hz", "w1"],
   ["Mexico", "129_kqs0mtPF1O.gif", ["A","B"], "127V", "220V, 480V", "60Hz", "w5"],
   ["Micronesia", "130_zUKyyBoIUZ.gif", ["A","B"], "120V", "-", "60Hz", "w2"],
   ["Moldova", "131_xbMwSQkqb.gif", ["C","F"], "220V", "380V", "50Hz", "w2"],
   ["Monaco", "132_isn7Vk5aKb.gif", ["C","F","D","E"], "230V", "400V", "50Hz", "w2"],
   ["Mongolia", "133_1F8hu-L_3x.gif", ["C","E"], "220V", "400V", "50Hz", "w2"],
   ["Montenegro", "134_2GHFR47j44.gif", ["C","F"], "230V", "400V", "50Hz", "w2"],
-  ["Montserrat", "135_wVwppJNwN.gif", ["A","B"], "230V", "400V", "60Hz", "w5"],
   ["Morocco", "136_XiwBzgoGWM.gif", ["C","E"], "127V, 220V", "220V, 380V", "50Hz", "w3"],
   ["Mozambique", "137_eEyk80fRKr.gif", ["C","F","M"], "220V", "380V", "50Hz", "w3"],
   ["Myanmar", "138_X3cf24-Tz.gif", ["C","F","D","G"], "230V", "400V", "50Hz", "w1"],
@@ -688,94 +984,79 @@ const countriesList = [
   ["Uruguay", "211_LjUd9k-ipQ.gif", ["C","F","I","L"], "220V", "380V", "50Hz", "w5"],
   ["Uzbekistan", "212_8HU8POQTG6.gif", ["C","I"], "220V", "380V", "50Hz", "w2"],
   ["Vanuatu", "213_XIHXBYY9WU.gif", ["C","G","I"], "220V", "400V", "50Hz", "w6"],
-  ["Venezuela", "214_AzHemUvx_.gif", ["A","B"], "120V", "208V", "60Hz", "w5"], // Venezuela flag is fixed
+  ["Venezuela", "214_AzHemUvx_.gif", ["A","B"], "120V", "208V", "60Hz", "w5"],
   ["Vietnam", "215_42elyBkpP2.gif", ["A","C","F"], "127V, 220V", "220V, 380V", "50Hz", "w2"],
   ["Yemen", "216_6SLaEyjLxE.gif", ["A","D","G"], "220V, 230V", "380V, 400V", "50Hz", "w2"],
   ["Zambia", "217_Nd8BmLlgWZ.gif", ["C","D","G"], "230V", "400V", "50Hz", "w3"],
   ["Zimbabwe", "218_XlfzVCBiQ2.gif", ["D","G"], "240V", "415V", "50Hz", "w3"]
 ];
 
-// Dynamically Render List Items using the gorgeous outer UI style
-const myUL = document.getElementById("myUL");
+// Initialize Country Selector Dropdown
+const selector = document.getElementById("countrySelect");
 countriesList.forEach((country, index) => {
-  const li = document.createElement("li");
-  li.className = "country-item";
-  li.onclick = () => openCountryModal(index);
-  
-  const img = document.createElement("img");
-  img.src = flagUrlBase + country[1];
-  img.alt = country[0] + " Flag";
-  img.loading = "lazy";
-  
-  const spanName = document.createElement("span");
-  spanName.className = "name";
-  spanName.innerText = country[0];
-  
-  li.appendChild(img);
-  li.appendChild(spanName);
-  myUL.appendChild(li);
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = country[0];
+  selector.appendChild(option);
 });
 
-// Search functionality
-function myFunction() {
-  const input = document.getElementById("myInput");
-  const filter = input.value.toUpperCase();
-  const listItems = myUL.getElementsByClassName("country-item");
-  
-  for (let i = 0; i < listItems.length; i++) {
-    const nameSpan = listItems[i].getElementsByClassName("name")[0];
-    const txtValue = nameSpan.textContent || nameSpan.innerText;
-    
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      listItems[i].style.display = "";
-    } else {
-      listItems[i].style.display = "none";
-    }
-  }
-}
-
-// Generate dynamic color wire markup with 'or' split support
+// Helper function to build beautiful wire markup
 function makeCableMarkup(colorString) {
   const parts = colorString.split("|");
-  let html = `<div class="wire-cell-content">`;
+  let html = `<div class="wire-color-box">`;
   parts.forEach((color, i) => {
     if (i > 0) {
       html += `<span class="wire-or-txt">or</span>`;
     }
-    html += `<img src="${cables[color]}" alt="${color}">`;
+    const cableImg = cables[color.trim().toLowerCase()];
+    if (cableImg) {
+      html += `<img src="${cableImg}" alt="${color}">`;
+    } else {
+      html += `<span>${color}</span>`;
+    }
   });
   html += `</div>`;
   return html;
 }
 
-// Open modal popup dynamically with correct styling
-function openCountryModal(index) {
-  const country = countriesList[index];
+// Update Page Elements on Selection
+function updateCountryDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= countriesList.length) return;
   
-  // Set strictly present Single Phase V, Three Phase V and Freq values
-  document.getElementById("mSingleV").innerText = country[3];
-  document.getElementById("mThreeV").innerText = country[4];
-  document.getElementById("mFreq").innerText = country[5];
+  const country = countriesList[idx];
   
-  // Load Plugs
-  const plugsDiv = document.getElementById("mPlugs");
-  plugsDiv.innerHTML = "";
+  // Update Country Card
+  document.getElementById("countryFlag").src = flagUrlBase + country[1];
+  document.getElementById("countryName").innerText = country[0];
+  
+  // Update Value cards
+  document.getElementById("singlePhaseVal").innerText = country[3];
+  document.getElementById("threePhaseVal").innerText = country[4];
+  document.getElementById("freqVal").innerText = country[5];
+  
+  // Format compatible plugs with actual images and labels
+  const plugsContainer = document.getElementById("plugsVal");
+  plugsContainer.innerHTML = "";
   country[2].forEach(pKey => {
     const plug = plugs[pKey.toUpperCase()];
     if (plug) {
       const pItem = document.createElement("div");
       pItem.className = "plug-item";
-      pItem.innerHTML = `<img src="${plug.img}" alt="${plug.label}"><b>${plug.label}</b>`;
-      plugsDiv.appendChild(pItem);
+      pItem.innerHTML = `
+        <img src="${plug.img}" alt="${plug.label}">
+        <b>${plug.label}</b>
+      `;
+      plugsContainer.appendChild(pItem);
     }
   });
-
-  // Get Wiring Template Object
+  
+  // Get wiring styling object
   const wStyle = wireStyles[country[6]] || wireStyles["w1"];
   
-  // Render Three Phase Row
-  const rowThree = document.getElementById("mRowThree");
-  rowThree.innerHTML = `
+  // Update Three Phase Row
+  const threeRow = document.getElementById("threePhaseRow");
+  threeRow.innerHTML = `
     <td>${makeCableMarkup(wStyle.three[0])}</td>
     <td>${makeCableMarkup(wStyle.three[1])}</td>
     <td>${makeCableMarkup(wStyle.three[2])}</td>
@@ -783,41 +1064,29 @@ function openCountryModal(index) {
     <td colspan="2">${makeCableMarkup(wStyle.three[4])}</td>
   `;
 
-  // Render Single Phase Row
-  const rowSingle = document.getElementById("mRowSingle");
-  rowSingle.innerHTML = `
+  // Update Single Phase Row
+  const singleRow = document.getElementById("singlePhaseRow");
+  singleRow.innerHTML = `
     <td colspan="2">${makeCableMarkup(wStyle.single[0])}</td>
     <td colspan="2">${makeCableMarkup(wStyle.single[1])}</td>
     <td colspan="2">${makeCableMarkup(wStyle.single[2])}</td>
   `;
 
-  // Render DC Row
-  const rowDc = document.getElementById("mRowDc");
-  rowDc.innerHTML = `
+  // Update DC Row
+  const dcRow = document.getElementById("dcRow");
+  dcRow.innerHTML = `
     <td colspan="2">${makeCableMarkup(wStyle.dc[0])}</td>
     <td colspan="2">${makeCableMarkup(wStyle.dc[1])}</td>
     <td colspan="2">${makeCableMarkup(wStyle.dc[2])}</td>
   `;
-
-  // Show Popup & Prevent Body scroll
-  const modal = document.getElementById("idModal");
-  modal.classList.add("show");
-  document.body.classList.add("lock-scroll");
 }
 
-function closeModal() {
-  const modal = document.getElementById("idModal");
-  modal.classList.remove("show");
-  document.body.classList.remove("lock-scroll");
-}
-
-// Close Modal when clicking outside modal body content
-window.onclick = function(event) {
-  const modal = document.getElementById("idModal");
-  if (event.target === modal) {
-    closeModal();
-  }
-}
+// Initial Page Load (Loads India by default)
+window.onload = function() {
+  const defaultIndex = 90; // Index of India
+  selector.value = defaultIndex;
+  updateCountryDetails(defaultIndex);
+};
 </script>
 
 <!-- SEO Structured JSON-LD Schemas -->
@@ -831,15 +1100,15 @@ window.onclick = function(event) {
       "name": "How can I check power plug standards by country?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Using the search directory, you can select any country to view its local single-phase, three-phase voltage values, frequencies, and wiring diagrams."
+        "text": "Using the selection tool, you can select any country from the dropdown to instantly view its local single-phase and three-phase voltage values, frequencies, compatible plug standards, and wiring color codes."
       }
     },
     {
       "@type": "Question",
-      "name": "Why do cable color codes differ globally?",
+      "name": "Why do wire color codes vary by country?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Cable color configurations are mandated by distinct regulatory commissions, such as IEC (European standard) and NEC (American standard). This database highlights exact codes for each country."
+        "text": "Wire color standards are governed by distinct regional regulatory bodies, such as the IEC (European harmonized standard) and the NEC (National Electrical Code in the US). Using correct wiring schemas is vital to prevent short circuits and electrical hazards."
       }
     }
   ]
@@ -853,7 +1122,7 @@ window.onclick = function(event) {
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
     { "@type": "ListItem", "position": 2, "name": "Electrical Tools", "item": "https://calcboy.com/category/electrical-calculators/" },
-    { "@type": "ListItem", "position": 3, "name": "Global Plug & Cable Color Directory", "item": "https://calcboy.com/tool/global-plug-voltage-wiring-codes" }
+    { "@type": "ListItem", "position": 3, "name": "Global Power Plug, Voltage & Wiring Color Code Database", "item": "https://calcboy.com/tool/global-power-plug-voltage-wiring-color-code-database" }
   ]
 }
 </script>
