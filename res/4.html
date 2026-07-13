@@ -1,12 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Thermocouple Color Codes & Calibration Standards | CalcBoy</title>
-<meta name="description" content="Technical reference database for global thermocouple color codes and alloy specifications. Compare ANSI, IEC, BS, DIN, NF, and JIS calibration standards.">
-<meta name="keywords" content="thermocouple color code, thermocouple calibration, ANSI MC96.1, IEC 60584-3, Type K thermocouple, Type J thermocouple, EMF millivolts table">
+<meta name="description" content="Technical reference database for global thermocouple color codes, alloy combinations, and temperature ranges. Compare ANSI, IEC, BS, DIN, NF, and JIS calibration standards.">
+<meta name="keywords" content="thermocouple color code, thermocouple calibration, ANSI MC96.1, IEC 60584-3, Type K thermocouple, Type J thermocouple, EMF millivolts table, CalcBoy">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://calcboy.com/tool/thermocouple-color-codes-reference">
 
@@ -19,2000 +18,744 @@
 
 <!-- Twitter Card Meta Tags -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Thermocouple Color Codes & Calibration Standards">
+<meta name="twitter:title" content="Thermocouple Color Codes & Calibration Standards | CalcBoy">
 <meta name="twitter:description" content="Complete structural index of national and international thermocouple insulation color codes.">
 
 <style>
-/* પ્રારંભિક હાઇડ ક્લાસ (લોડિંગ વખતે ફ્લિકર અટકાવવા) */
-#myUL { display: none; }
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================== */
+#thermocouple-db-tool, #thermocouple-db-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
+}
+#thermocouple-db-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+}
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+}
+select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
+}
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.standard-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.standard-header-card .badge {
+  background: #ffedd5;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 900;
+}
+.standard-header-card .standard-details {
+  display: flex;
+  flex-direction: column;
+}
+.standard-header-card .standard-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.standard-header-card .standard-region {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. TYPE CARD DISPLAY STYLING (CalcBoy Premium Style)
+   ========================================================================== */
+.type-list-container {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.type-card {
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.type-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+.type-badge {
+  background: linear-gradient(90deg,#ff7a18,#ff4b00);
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.type-wire-img img {
+  width: 90px;
+  height: auto;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 4px;
+  display: block;
+}
+
+/* Internal specification table inside type card */
+table.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+table.specs-table td {
+  border: 1px solid #e2e8f0;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #475569;
+}
+table.specs-table td.lbl {
+  background: #f8fafc;
+  font-weight: 800;
+  color: #1e293b;
+  width: 40%;
+}
+table.specs-table td.val {
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   4. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.diagramBox {
+  background: #fff;
+  padding: 16px;
+  text-align: center;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.diagramBox svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+.aboutLead {
+  background: linear-gradient(135deg,#eef5ff,#fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid #059669;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff7a18;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+@media(max-width:600px){
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 <body>
 
+<div id="thermocouple-db-tool">
 
-
-  <div class="search-wrapper">
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Thermocouple names.." title="Type in a name">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Calibration Standard Selector</div>
+    <div>
+      <label class="calc-label" for="standardSelect">Select Standard</label>
+      <div class="calc-row">
+        <select id="standardSelect" onchange="updateCalibrationDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
+    </div>
   </div>
 
-  <ul id="myUL">
-    <!-- 1. IEC584-3 (INTERNATIONAL) -->
-    <li><a href="#">
-      <button onclick="document.getElementById('id01').style.display='block'" class="w3-button1 w3-black" align="left">
-      <font class="aa">IEC584-3</font></button></a>
-      <div id="id01" class="w3-modal">
-        <div class="w3-modal-content w3-card-4">
-          <div class="w3-container">
-            <button class="mid">X</button>
-            <font STYLE="COLOR:green; padding:11px;FONT-SIZE:25PX;Horizontal-align:middle;Vertical-align:middle;">IEC584-3 (INTERNATIONAL)</font>
-            <table id="customers">
-              <colgroup>
-                <col width="221" style="mso-width-source:userset;mso-width-alt:8082;width:166pt">
-                <col width="46" style="mso-width-source:userset;mso-width-alt:1682;width:35pt">
-                <col width="200" style="mso-width-source:userset;mso-width-alt:7314;width:150pt">
-              </colgroup>
-              <tbody>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>T</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Cu</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/1_mQ3FDR1Vv.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/400°C <br> -454°F/752°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">- 6.258mV / 20.872mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>J</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Fe</td>
-                </tr> 
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/2_HAq8bCD93N.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-210°C/1200°C <br> -346°F/2193°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-8.095mV / 69.553mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>E</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/3_4GBp8pKPT.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1000°C <br> -454°F/1832°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-9.835mV / 76.373mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>K</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-AI</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/4_KoWU5yfPu.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1372°C <br> -454°F/2501°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-6.458mV / 54.886mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>N</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr-Si</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-Si-Mg</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/5_U85koOTKL0.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1300°C <br> -450°F/2372°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-4.345mV / 47.513mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>S</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh10%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/6_-jBnuvE49.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.235mV / 18.693mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>R</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh13%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/6_-jBnuvE49.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.226mV / 21.103mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>B</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh30%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/7_dojDVKOFs.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/820°C <br> -32°F/3308°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0mV / 13.820mV</td>
-                </tr>
-                <tr height="0" style="display:none">
-                  <td width="221" style="width:166pt"></td>
-                  <td width="46" style="width:35pt"></td>
-                  <td width="200" style="width:150pt"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <footer class="w3-container w3-teal"></footer>
-        </div>
-      </div>
-    </li>
+  <!-- Dynamic Standard Card -->
+  <div class="standard-header-card" id="standardCard">
+    <div class="badge" id="standardCode">TC</div>
+    <div class="standard-details">
+      <span class="standard-name" id="standardName">Loading...</span>
+      <span class="standard-region" id="standardRegion">Calibration Specification</span>
+    </div>
+  </div>
 
-    <!-- 2. IEC584-3 (Intrinsically Safe) -->
-    <li><a href="#">
-      <button onclick="document.getElementById('id02').style.display='block'" class="w3-button1 w3-black" align="left">
-      <font class="aa">IEC584-3 (Intrinsically Safe)</font></button></a>
-      <div id="id02" class="w3-modal">
-        <div class="w3-modal-content w3-card-4">
-          <div class="w3-container">
-            <button class="mid">X</button>
-            <font STYLE="COLOR:green; padding:11px;FONT-SIZE:20PX;Horizontal-align:middle;Vertical-align:middle;">IEC584-3(Intrinsically Safe)(INTERNATIONAL)</font>
-            <table id="customers">
-              <colgroup>
-                <col width="221" style="mso-width-source:userset;mso-width-alt:8082;width:166pt">
-                <col width="73" style="mso-width-source:userset;mso-width-alt:2669;width:55pt">
-                <col width="170" style="mso-width-source:userset;mso-width-alt:6217;width:128pt">
-              </colgroup>
-              <tbody>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>T</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Cu</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/8_hDQv2RUrD.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>J</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Fe</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/9_b9yXNCqoH.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>E</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/10_YFMUXa7lG.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>K</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-AI</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/11_MYC1YngTdL.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>N</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr-Si</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-Si-Mg</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/12_B2ejSKvbZ.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>S</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh10%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/13_neSIoGjhf.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>R</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh13%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/13_neSIoGjhf.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>B</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh30%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/14_OucGQIxhO.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="0" style="display:none">
-                  <td width="221" style="width:166pt"></td>
-                  <td width="73" style="width:55pt"></td>
-                  <td width="170" style="width:128pt"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <footer class="w3-container w3-teal"></footer>
-        </div>
-      </div>
-    </li>
+  <div class="result-title">Thermocouple Type Breakdown</div>
 
-    <!-- 3. ANSI MC96.1 -->
-    <li><a href="#">
-      <button onclick="document.getElementById('id03').style.display='block'" class="w3-button1 w3-black" align="left">
-      <font class="aa">ANSI MC96.1</font></button></a>
-      <div id="id03" class="w3-modal">
-        <div class="w3-modal-content w3-card-4">
-          <div class="w3-container">
-            <button class="mid">X</button>
-            <font STYLE="COLOR:green; padding:11px;FONT-SIZE:25PX;Horizontal-align:middle;Vertical-align:middle;">ANSI MC96.1 (US & CANADA)</font>
-            <table id="customers">
-              <colgroup>
-                <col width="221" style="mso-width-source:userset;mso-width-alt:8082;width:166pt">
-                <col width="68" style="mso-width-source:userset;mso-width-alt:2486;width:51pt">
-                <col width="244" style="mso-width-source:userset;mso-width-alt:8923;width:183pt">
-              </colgroup>
-              <tbody>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>T</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Cu</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/15_rXFtkx_1e.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">270°C/400°C <br> -454°F/752°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">- 6.258mV / 20.872mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>J</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Fe</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/16_LeiJL9JemW.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-210°C/1200°C <br> -346°F/2193°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-8.095mV / 69.553mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>E</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/17_rn8ksnh2J.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1000°C <br> -454°F/1832°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-9.835mV / 76.373mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>K</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-AI</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/18_bz3klzcIU.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1372°C <br> -454°F/2501°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-6.458mV / 54.886mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>N</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr-Si</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-Si-Mg</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/19_fs-QE4Cct.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1300°C <br> -450°F/2372°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-4.345mV / 47.513mV</td>
-                </tr>
-                <tr height="0" style="display:none">
-                  <td width="221" style="width:166pt"></td>
-                  <td width="68" style="width:51pt"></td>
-                  <td width="244" style="width:183pt"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <footer class="w3-container w3-teal"></footer>
-        </div>
-      </div>
-    </li>
+  <!-- Dynamic Type Card Display Grid -->
+  <div class="type-list-container" id="typeListContainer">
+    <!-- Generated dynamically by JS -->
+  </div>
 
-    <!-- 4. ANSI MC96.1 (Extension) -->
-    <li><a href="#">
-      <button onclick="document.getElementById('id04').style.display='block'" class="w3-button1 w3-black" align="left">
-      <font class="aa">ANSI MC96.1 (Extension)</font></button></a>
-      <div id="id04" class="w3-modal">
-        <div class="w3-modal-content w3-card-4">
-          <div class="w3-container">
-            <button class="mid">X</button>
-            <font STYLE="COLOR:green; padding:11px;FONT-SIZE:25PX;Horizontal-align:middle;Vertical-align:middle;">ANSI MC96.1 (Extension) (US & CANADA)</font>
-            <table id="customers">
-              <colgroup>
-                <col width="221" style="mso-width-source:userset;mso-width-alt:8082;width:166pt">
-                <col width="64" style="width:48pt">
-                <col width="201" style="mso-width-source:userset;mso-width-alt:7350;width:151pt">
-              </colgroup>
-              <tbody>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>T</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Cu</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/20_yWWw6AUkw.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">0°C/200°C <br> 32°F/392°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>J</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Fe</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/21_LJr-Nn5wQ.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">0°C/200°C <br> 32°F/392°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>E</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/22_kU242TjY9U.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">0°C/200°C <br> 32°F/392°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>K</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-AI</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/23_w3y_6SadX.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">0°C/200°C <br> 32°F/392°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>N</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr-Si</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-Si-Mg</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/24_uX6eZU1VB.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">0°C/200°C <br> 32°F/392°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>S</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh10%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/25_4UmdVmQ_5.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">0°C/200°C <br> 32°F/392°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>R</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh13%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/25_4UmdVmQ_5.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">0°C/200°C <br> 32°F/392°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>B</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh30%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/26_5LhvTc-hF.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">0°C/100°C <br> 32°F/212°F</td>
-                </tr>
-                <tr height="0" style="display:none">
-                  <td width="221" style="width:166pt"></td>
-                  <td width="64" style="width:48pt"></td>
-                  <td width="201" style="width:151pt"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <footer class="w3-container w3-teal"></footer>
-        </div>
+  <!-- Calibration Standards & Wire Parameters -->
+  <section class="infoBox">
+    <h2>Calibration Standards & Wire Parameters</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Alloy Combination</strong>
+        Distinct positive (+) and negative (-) metal compositions used to generate thermoelectric voltage differences.
       </div>
-    </li>
-
-    <!-- 5. BS1843 -->
-    <li><a href="#">
-      <button onclick="document.getElementById('id05').style.display='block'" class="w3-button1 w3-black" align="left">
-      <font class="aa">BS1843</font></button></a>
-      <div id="id05" class="w3-modal">
-        <div class="w3-modal-content w3-card-4">
-          <div class="w3-container">
-            <button class="mid">X</button>
-            <font>BS1843 (British,Czech)</font>
-            <table id="customers">
-              <colgroup>
-                <col width="221" style="mso-width-source:userset;mso-width-alt:8082;width:166pt">
-                <col width="64" style="width:48pt">
-                <col width="195" style="mso-width-source:userset;mso-width-alt:7131;width:146pt">
-              </colgroup>
-              <tbody>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>T</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Cu</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/27_iZsGL43Jf.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/400°C <br> -454°F/752°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">- 6.258mV / 20.872mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>J</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Fe</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/028_JJ3rbK-KpV.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-210°C/1200°C <br> -346°F/2193°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-8.095mV / 69.553mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>E</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/29_JnSW2OfFN.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1000°C <br> -454°F/1832°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-9.835mV / 76.373mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>K</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-AI</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/030_16PatKsMK.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1372°C <br> -454°F/2501°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-6.458mV / 54.886mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>N</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr-Si</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-Si-Mg</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/30_Plubs4UL9d.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1300°C <br> -450°F/2372°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-4.345mV / 47.513mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>S</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh10%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/31_fFxYNcA9D.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.235mV / 18.693mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>R</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh13%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/31_fFxYNcA9D.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.226mV / 21.103mV</td>
-                </tr>
-                <tr height="0" style="display:none">
-                  <td width="221" style="width:166pt"></td>
-                  <td width="64" style="width:48pt"></td>
-                  <td width="195" style="width:146pt"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <footer class="w3-container w3-teal"></footer>
-        </div>
+      <div class="paramItem">
+        <strong>Maximum Temperature</strong>
+        The operational limits under which the specific thermocouple junction calibration can safely maintain accuracy.
       </div>
-    </li>
-
-    <!-- 6. DIN43710 -->
-    <li><a href="#">
-      <button onclick="document.getElementById('id06').style.display='block'" class="w3-button1 w3-black" align="left">
-      <font class="aa">DIN43710</font></button></a>
-      <div id="id06" class="w3-modal">
-        <div class="w3-modal-content w3-card-4">
-          <div class="w3-container">
-            <button class="mid">X</button>
-            <font>DIN43710 (German & Netherland)</font>
-            <table id="customers">
-              <colgroup>
-                <col width="221" style="mso-width-source:userset;mso-width-alt:8082;width:166pt">
-                <col width="46" style="mso-width-source:userset;mso-width-alt:1682;width:35pt">
-                <col width="200" style="mso-width-source:userset;mso-width-alt:7314;width:150pt">
-              </colgroup>
-              <tbody>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>T</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Cu</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/32_PfXpnk_sXA.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/400°C <br> -454°F/752°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">- 6.258mV / 20.872mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>J</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Fe</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/33_T6zjQwZX1.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-210°C/1200°C <br> -346°F/2193°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-8.095mV / 69.553mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>E</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/34_BfzEtYxyn.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1000°C <br> -454°F/1832°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-9.835mV / 76.373mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>K</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-AI</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/35_X8c7qpqqE.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1372°C <br> -454°F/2501°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-6.458mV / 54.886mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>S</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh10%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/36_2VpdD-dxj.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.235mV / 18.693mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>R</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh13%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/36_2VpdD-dxj.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.226mV / 21.103mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>B</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh30%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/37_jYJQ8kJ9z7.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/820°C <br> -32°F/3308°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0mV / 13.820mV</td>
-                </tr>
-                <tr height="0" style="display:none">
-                  <td width="221" style="width:166pt"></td>
-                  <td width="46" style="width:35pt"></td>
-                  <td width="200" style="width:150pt"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <footer class="w3-container w3-teal"></footer>
-        </div>
+      <div class="paramItem">
+        <strong>EMF Over Max Temp</strong>
+        The generated electromotive force span measured in millivolts (mV) corresponding to the temperature extremes.
       </div>
-    </li>
-
-    <!-- 7. NFC42-324 -->
-    <li><a href="#">
-      <button onclick="document.getElementById('id07').style.display='block'" class="w3-button1 w3-black" align="left">
-      <font class="aa">NFC42-324</font></button></a>
-      <div id="id07" class="w3-modal">
-        <div class="w3-modal-content w3-card-4">
-          <div class="w3-container">
-            <button class="mid">X</button>
-            <font>NFC42-324 (French)</font>
-            <table id="customers">
-              <colgroup>
-                <col width="221" style="mso-width-source:userset;mso-width-alt:8082;width:166pt">
-                <col width="46" style="mso-width-source:userset;mso-width-alt:1682;width:35pt">
-                <col width="200" style="mso-width-source:userset;mso-width-alt:7314;width:150pt">
-              </colgroup>
-              <tbody>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>T</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Cu</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/38_pFb-KspGL.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/400°C <br> -454°F/752°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">- 6.258mV / 20.872mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>J</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Fe</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/39_TV_MA5cscZ.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-210°C/1200°C <br> -346°F/2193°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-8.095mV / 69.553mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>E</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/40_kKZY59Pse.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1000°C <br> -454°F/1832°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-9.835mV / 76.373mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>K</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-AI</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/41_tStinJH6j.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1372°C <br> -454°F/2501°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-6.458mV / 54.886mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>S</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh10%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/42_xZvDEeeKT.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.235mV / 18.693mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>R</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh13%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/42_xZvDEeeKT.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.226mV / 21.103mV</td>
-                </tr>
-                <tr height="0" style="display:none">
-                  <td width="221" style="width:166pt"></td>
-                  <td width="46" style="width:35pt"></td>
-                  <td width="200" style="width:150pt"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <footer class="w3-container w3-teal"></footer>
-        </div>
+      <div class="paramItem">
+        <strong>Insulation Colors</strong>
+        Standardized jacket and lead color coding defined by global committees (ANSI, IEC, BS) to specify polarization.
       </div>
-    </li>
+    </div>
+  </section>
 
-    <!-- 8. JISC1610 -->
-    <li><a href="#">
-      <button onclick="document.getElementById('id08').style.display='block'" class="w3-button1 w3-black" align="left">
-      <font class="aa">JISC1610</font></button></a>
-      <div id="id08" class="w3-modal">
-        <div class="w3-modal-content w3-card-4">
-          <div class="w3-container">
-            <button class="mid">X</button>
-            <font>JISC1610 (Japanese)</font>
-            <table id="customers">
-              <colgroup>
-                <col width="221" style="mso-width-source:userset;mso-width-alt:8082;width:166pt">
-                <col width="46" style="mso-width-source:userset;mso-width-alt:1682;width:35pt">
-                <col width="200" style="mso-width-source:userset;mso-width-alt:7314;width:150pt">
-              </colgroup>
-              <tbody>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>T</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Cu</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/43_uWPcO8bpp.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/400°C <br> -454°F/752°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">- 6.258mV / 20.872mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>J</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Fe</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/44_nkA_Kqu_TN.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-210°C/1200°C <br> -346°F/2193°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-8.095mV / 69.553mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>E</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Cu-Ni</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/45_i9VolGxw_z.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1000°C <br> -454°F/1832°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-9.835mV / 76.373mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>K</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Ni-Cr</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>Ni-AI</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/46_KIxHez-90.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-270°C/1372°C <br> -454°F/2501°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-6.458mV / 54.886mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>S</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh10%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/47_pM1ObMfHk.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.235mV / 18.693mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>R</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh13%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/47_pM1ObMfHk.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/1768°C <br> -58°F/3214°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0.226mV / 21.103mV</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" colspan="3" style="height:15.0pt;mso-ignore:colspan"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <th colspan="3" height="20" class="xl65" width="467" style="height:15.0pt;width:351pt text-align:center; background-color:lightgreen;"><b>B</b></th>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td rowspan="2" height="40" class="xl66" style="height:30.0pt">Alloy Combination</td>
-                  <td>Lead +</td>
-                  <td>Pt-Rh30%</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Lead -</td>
-                  <td>pt</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Image</td>
-                  <td colspan="2" class="xl65"><img src="https://ik.imagekit.io/mak/resources/thermocouple/48_2fEP39Uzl.png" class="w3-border" alt="Norway" style="padding:px;width:100px;"></td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">Maximum T/C Grand Temp. Range</td>
-                  <td colspan="2" class="xl65">-50°C/820°C <br> -32°F/3308°F</td>
-                </tr>
-                <tr height="20" style="height:15.0pt">
-                  <td height="20" style="height:15.0pt">EMF (mV) Over Max Temp. Range</td>
-                  <td colspan="2" class="xl65">-0mV / 13.820mV</td>
-                </tr>
-                <tr height="0" style="display:none">
-                  <td width="221" style="width:166pt"></td>
-                  <td width="46" style="width:35pt"></td>
-                  <td width="200" style="width:150pt"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <footer class="w3-container w3-teal"></footer>
-        </div>
+  <!-- Practical Operational Examples -->
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Industrial Oven Wiring</strong></p>
+        <p>When wiring a Type K sensor to a controller, select the US standard "ANSI MC96.1" to verify that the yellow lead is positive (+) and the red lead is negative (-).</p>
       </div>
-    </li>
+      <div class="exampleCard">
+        <p><strong>International Machinery Commissioning</strong></p>
+        <p>Commissioning European machinery? Select the "IEC584-3" standard from our selector to identify Type J wires (black positive, white negative) correctly.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Bench Calibration Testing</strong></p>
+        <p>Connect unknown thermocouple leads to a voltmeter. Measure output millivolts under cold and hot points, and match EMF values against Type lists to verify sensor calibration.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Legacy System Refurbishing</strong></p>
+        <p>Refurbishing legacy British systems? Check the "BS1843" color index to map brown and blue Type T extension leads safely without damaging controllers.</p>
+      </div>
+    </div>
+  </section>
 
-  </ul>
+  <!-- Diagrams & Theory -->
+  <section class="infoBox">
+    <h2>Diagrams & Theory</h2>
+    <p>A thermocouple works on the principle of the Seebeck Effect. When two dissimilar metals are joined at one end (hot junction) and kept at a different temperature at the other end (cold reference junction), an electromotive force (EMF) is generated that is directly proportional to the temperature difference.</p>
+
+    <div class="diagramBox">
+      <svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Thermocouple Operating Principle and Junctions Diagram">
+        <rect width="620" height="200" fill="#fff"/>
+        <style>
+          .wire{stroke-width:3;fill:none}
+          .alloy-a{stroke:#dc2626}
+          .alloy-b{stroke:#2563eb}
+          .junction{fill:#1e293b}
+          .arrow{stroke:#475569;stroke-width:1.5;fill:none}
+          .txt{font-family:Arial,sans-serif;font-size:12px;font-weight:900;fill:#1e293b}
+          .title{font-family:Arial,sans-serif;font-size:14px;font-weight:900;fill:#0f172a;text-anchor:middle}
+        </style>
+        
+        <text x="310" y="30" class="title">Seebeck Effect Thermocouple Junction Loop</text>
+        
+        <!-- Hot Junction -->
+        <circle cx="120" cy="110" r="6" class="junction"/>
+        <text x="80" y="85" class="txt" style="fill:#dc2626">Hot Junction (T1)</text>
+        
+        <!-- Thermocouple Wires -->
+        <path d="M120 110 C 200 60, 350 60, 420 100" class="wire alloy-a"/>
+        <path d="M120 110 C 200 160, 350 160, 420 120" class="wire alloy-b"/>
+        
+        <text x="250" y="55" class="txt" style="fill:#dc2626">Alloy A (Positive Conductor)</text>
+        <text x="250" y="170" class="txt" style="fill:#2563eb">Alloy B (Negative Conductor)</text>
+        
+        <!-- Cold Junction Reference and Output -->
+        <rect x="420" y="85" width="120" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+        <circle cx="420" cy="100" r="4" class="junction"/>
+        <circle cx="420" cy="120" r="4" class="junction"/>
+        
+        <text x="440" y="105" class="txt" style="font-size:10px;">Reference (T2)</text>
+        <text x="440" y="125" class="txt" style="font-size:11px; fill:#ea580c; font-weight:bold;">EMF Output (mV)</text>
+        
+        <path d="M360 110 L380 110" class="arrow"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Formulas & Mathematical Logic -->
+  <section class="infoBox">
+    <h2>Formulas & Mathematical Logic</h2>
+    <div class="formula">Seebeck Relationship: Electromotive Force (EMF) = Seebeck Coefficient x (Hot Temperature - Cold Temperature)</div>
+    <div class="formula">Approximated Thermoelectric Voltage: E = a x dT + b x (dT x dT)</div>
+    <div class="formula">Cold Junction Compensation (CJC): Measured Voltage (V_total) = Junction Voltage (V_tc) + Reference Voltage (V_ref)</div>
+    <div class="formula">Temperature from EMF (Polynomial): Temp = c0 + c1 x E + c2 x (E x E) + c3 x (E x E x E)</div>
+  </section>
+
+  <!-- Step-by-Step Selection Walkthrough -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the calibration standard (such as IEC584-3, ANSI MC96.1, or BS1843) from the selector dropdown.</div>
+      <div class="aboutStep">Review the updated standard card showing the respective regional jurisdiction.</div>
+      <div class="aboutStep">Locate your thermocouple type (Type K, J, T, etc.) inside the dynamic results list.</div>
+      <div class="aboutStep">Identify positive (+) and negative (-) alloy combinations, max temperature metrics, and wire color-coding illustrations.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
+  <section class="infoBox">
+    <h2>About This Database</h2>
+    <div class="aboutLead">
+      <strong>Global thermocouple wire color indexes, temperature ranges, and EMF ratings.</strong>
+      <p>The CalcBoy Thermocouple Calibration and Color Directory provides reference parameters to help engineers and technicians identify temperature sensor configurations globally.</p>
+    </div>
+    <p>Thermocouples are highly versatile temperature sensors used across industrial manufacturing, HVAC, scientific research, and food processing lines. Because they are passive devices operating on microvolt thermoelectric differentials, matching polarity and alloy extensions is critical. Reversing polarity will introduce significant errors, causing measured temperatures to register backward.</p>
+    <p>This lookup tool simplifies identification by matching alloy compositions, temperature spans, and EMF outputs with country-specific insulation coloring. It serves as a unified reference library to prevent installation failures and improve diagnostics in multi-national facilities.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Standards</span>ANSI, IEC, BS, DIN, NF, and JIS standards listed.</div>
+      <div class="aboutMiniCard"><span>Precision</span>Lists exact positive/negative alloy combinations.</div>
+      <div class="aboutMiniCard"><span>Utility</span>Shows realistic wire jacket graphics for quick checks.</div>
+      <div class="aboutMiniCard"><span>Ranges</span>Covers cryogenic to high-temperature limits (-270°C to 1768°C).</div>
+    </div>
+    <div class="aboutNote">Operational Warning: Always keep thermocouple extension wires shielded from electromagnetic interference (EMI) and power lines to avoid signal noise and control loop instabilities.</div>
+  </section>
+
+  <!-- Frequently Asked Questions -->
+  <section class="infoBox">
+    <h2>Frequently Asked Questions</h2>
+    
+    <h3>1. <strong>Why are thermocouple wires color-coded?</strong></h3>
+    <p>Because thermocouples are polarized devices, color coding allows installers to identify positive (+) and negative (-) leads easily. Reversing these wires results in inaccurate readings that shift in the opposite direction of temperature changes.</p>
+
+    <h3>2. <strong>What is the difference between standard and extension grade wire?</strong></h3>
+    <p>Standard thermocouple grade wire is used to construct the actual measuring junction, whereas extension grade wire is a lower-cost option used to transmit the signal from the sensor probe to the controller over longer distances.</p>
+
+    <h3>3. <strong>Why is Type K the most commonly used thermocouple?</strong></h3>
+    <p>Type K (Chromel/Alumel) is highly popular due to its wide temperature range (-270°C to 1372°C), robust oxidation resistance, and relatively low cost compared to noble metal types.</p>
+
+    <h3>4. <strong>What is Cold Junction Compensation (CJC)?</strong></h3>
+    <p>Thermocouples measure the difference in temperature between two junctions. Cold Junction Compensation uses an additional temperature sensor at the controller terminals to calculate and add the reference temperature, yielding the absolute measurement.</p>
+
+    <h3>5. <strong>Why does Type B not require cold junction compensation?</strong></h3>
+    <p>Type B (Platinum/Rhodium) has an extremely low EMF output at low temperatures. Below 50°C, the output is virtually zero, making cold junction compensation unnecessary in most standard applications.</p>
+  </section>
+
+  <!-- Related Electronics Tools -->
+  <section class="infoBox">
+    <h2>Related Electronics Tools</h2>
+    <div class="linkGrid">
+      <div class="linkCard"><strong>RTD PT100 Calculator</strong>Identify resistance values corresponding to PT100 temperature sensors.</div>
+      <div class="linkCard"><strong>NTC Thermistor Calculator</strong>Calculate temperature values based on thermistor beta parameters.</div>
+      <div class="linkCard"><strong>Wire Resistance Calculator</strong>Estimate long extension lead losses and line impedances.</div>
+      <div class="linkCard"><strong>Instrument Gain Calculator</strong>Find ideal amplification factors for thermocouple signal conditioners.</div>
+    </div>
+  </section>
+
 </div>
 
-<!-- =========================================================================
-   ડાયનેમિક અલ્ટ્રા-સ્ટેબલ જાવાસ્ક્રિપ્ટ અને CSS ઇન્જેક્શન (૧૦૦% સિક્યોર લોડિંગ)
-   ========================================================================= -->
 <script>
-const premiumStyles = `
-/* --- CalcBoy Custom Styles for Thermocouples App --- */
-:root {
-  --bg-color: #f6f8fb;
-  --text-dark: #1e293b;
-  --primary-blue: #2359e8;
-  --card-border: #cfd6df;
-}
+// Highly Optimized Image Path Variables to avoid repetition and keep code light
+const tcUrlBase = "https://ik.imagekit.io/mak/resources/thermocouple/";
 
-body {
-  background-color: var(--bg-color) !important;
-  color: var(--text-dark) !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* iOS અને એન્ડ્રોઇડ બેકગ્રાઉન્ડ સ્ક્રોલ લોક પ્રોપર્ટી */
-body.lock-scroll {
-  overflow: hidden !important;
-  height: 100vh !important;
-  position: fixed !important;
-  width: 100% !important;
-}
-
-#myUL, #myInput, .seo-description {
-  max-width: 620px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-/* App Header Styling */
-body h1 {
-  background-color: transparent !important;
-  color: #0f172a !important;
-  font-size: 24px !important;
-  font-weight: 800 !important;
-  text-align: center !important;
-  margin: 20px 0 5px !important;
-}
-.subtitle {
-  text-align: center !important;
-  font-size: 13px !important;
-  color: #64748b !important;
-  margin-bottom: 25px !important;
-  font-weight: bold !important;
-}
-
-/* Premium Search Box */
-#myInput {
-  display: block !important;
-  width: 100% !important;
-  height: 48px !important;
-  border: 1px solid #c8d5e6 !important;
-  border-radius: 12px !important;
-  font-size: 15px !important;
-  padding: 12px 16px 12px 40px !important;
-  background: #ffffff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%2364748b" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.11-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>') no-repeat 14px center !important;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02) !important;
-  outline: none !important;
-  transition: border-color 0.2s, box-shadow 0.2s !important;
-  margin-top: 20px !important;
-  margin-bottom: 20px !important;
-}
-#myInput:focus {
-  border-color: var(--primary-blue) !important;
-  box-shadow: 0 0 0 3px rgba(35, 89, 232, 0.1) !important;
-}
-
-/* Modernized grid layout */
-#myUL {
-  list-style-type: none !important;
-  padding: 0 10px !important;
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 12px !important;
-}
-@media (min-width: 480px) {
-  #myUL { grid-template-columns: repeat(2, 1fr) !important; }
-}
-#myUL li { margin: 0 !important; list-style-type: none !important; }
-#myUL li a { text-decoration: none !important; display: block !important; }
-
-/* Cards Styling */
-#myUL li a button.w3-button1.w3-black,
-#myUL button.w3-button1 {
-  width: 100% !important;
-  background: #ffffff !important;
-  border: 1px solid var(--card-border) !important;
-  border-radius: 10px !important;
-  padding: 14px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  cursor: pointer !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.03) !important;
-  transition: transform 0.2s, box-shadow 0.2s !important;
-  outline: none !important;
-  text-align: left !important;
-  height: auto !important;
-}
-#myUL li a button.w3-button1.w3-black:hover,
-#myUL button.w3-button1:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.05) !important;
-}
-#myUL li a button.w3-button1.w3-black font,
-#myUL button.w3-button1 font {
-  color: var(--primary-blue) !important;
-  font-weight: bold !important;
-  font-size: 15px !important;
-  padding: 0 !important;
-  font-family: Arial, sans-serif !important;
-}
-#myUL li a button.w3-button1.w3-black::after,
-#myUL button.w3-button1::after {
-  content: 'Color Code' !important;
-  background: #f1f5f9 !important;
-  color: #64748b !important;
-  font-size: 10px !important;
-  padding: 3px 8px !important;
-  border-radius: 6px !important;
-  font-weight: bold !important;
-  border: 1px solid #e2e8f0 !important;
-}
-
-/* Modal window styling with native scroll support */
-div.w3-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  z-index: 99999 !important;
-  overflow-y: auto !important; /* અંદર સ્ક્રોલિંગ ચાલુ રાખશે */
-  padding-top: 30px !important;
-  padding-bottom: 30px !important;
-  -webkit-overflow-scrolling: touch !important; /* iOS સ્મૂધ ટચ સ્ક્રોલ */
-}
-div.w3-modal-content {
-   margin: 5% auto !important; /* ઉપરથી ૧૦% નું માર્જિન આપોઆપ સેટ થઈ જશે */
-  background-color: #fff !important;
-  position: relative !important;
-  padding: 24px 16px 20px 16px !important;
-  width: 95% !important;
-  max-width: 580px !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
-  border: 1px solid var(--card-border) !important;
-}
-
-/* Sticky close button inside modal content */
-/* Close Button ને સ્ક્રીન પર એક જ જગ્યાએ બિલકુલ સ્થિર (Fixed) રાખવા માટેનું અપડેટેડ CSS */
-button.mid {
-  background-color: #ef4444 !important;
-  color: white !important;
-  border: none !important;
-  width: 38px !important;
-  height: 38px !important;
-  border-radius: 8px !important;
-  font-size: 18px !important;
-  position: fixed !important; /* હવે બટન સ્ક્રોલ કરવા છતાં પણ સ્થિર રહેશે */
-  top: 50px !important; /* પોપઅપમાં ઉપરથી અંતર */
-  right: calc(50% - 275px) !important; /* કન્ટેન્ટ બોડી પ્રમાણે જમણે આપોઆપ સ્થિર રહેશે */
-  font-weight: bold !important;
-  cursor: pointer !important;
-  z-index: 999999 !important; /* બધી ઈમેજો અને વિગતોથી ઉપર રહેશે */
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
-  margin: 0 !important;
-}
-@media (max-width: 600px) {
-  button.mid {
-    right: 25px !important;
-    top: 80px !important;
+// Thermocouple Database Structure (Extracted perfectly from your original file)
+const standardDetails = [
+  {
+    name: "IEC584-3 (INTERNATIONAL)",
+    code: "IEC",
+    region: "International Standard",
+    types: [
+      { t: "T", plus: "Cu", minus: "Cu-Ni", img: tcUrlBase + "1_mQ3FDR1Vv.png", range: "-270°C/400°C (-454°F/752°F)", emf: "-6.258mV / 20.872mV" },
+      { t: "J", plus: "Fe", minus: "Cu-Ni", img: tcUrlBase + "2_HAq8bCD93N.png", range: "-210°C/1200°C (-346°F/2193°F)", emf: "-8.095mV / 69.553mV" },
+      { t: "E", plus: "Ni-Cr", minus: "Cu-Ni", img: tcUrlBase + "3_4GBp8pKPT.png", range: "-270°C/1000°C (-454°F/1832°F)", emf: "-9.835mV / 76.373mV" },
+      { t: "K", plus: "Ni-Cr", minus: "Ni-Al", img: tcUrlBase + "4_KoWU5yfPu.png", range: "-270°C/1372°C (-454°F/2501°F)", emf: "-6.458mV / 54.886mV" },
+      { t: "N", plus: "Ni-Cr-Si", minus: "Ni-Si-Mg", img: tcUrlBase + "5_U85koOTKL0.png", range: "-270°C/1300°C (-450°F/2372°F)", emf: "-4.345mV / 47.513mV" },
+      { t: "S", plus: "Pt-Rh10%", minus: "Pt", img: tcUrlBase + "6_-jBnuvE49.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.235mV / 18.693mV" },
+      { t: "R", plus: "Pt-Rh13%", minus: "Pt", img: tcUrlBase + "6_-jBnuvE49.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.226mV / 21.103mV" },
+      { t: "B", plus: "Pt-Rh30%", minus: "Pt-Rh6%", img: tcUrlBase + "7_dojDVKOFs.png", range: "-50°C/820°C (-32°F/1472°F)", emf: "0mV / 13.820mV" }
+    ]
+  },
+  {
+    name: "IEC584-3 (Intrinsically Safe)",
+    code: "IEC-IS",
+    region: "International Intrinsically Safe Standard",
+    types: [
+      { t: "T", plus: "Cu", minus: "Cu-Ni", img: tcUrlBase + "8_hDQv2RUrD.png", range: "-270°C/400°C (-454°F/752°F)", emf: "-6.258mV / 20.872mV" },
+      { t: "J", plus: "Fe", minus: "Cu-Ni", img: tcUrlBase + "9_b9yXNCqoH.png", range: "-210°C/1200°C (-346°F/2193°F)", emf: "-8.095mV / 69.553mV" },
+      { t: "E", plus: "Ni-Cr", minus: "Cu-Ni", img: tcUrlBase + "10_YFMUXa7lG.png", range: "-270°C/1000°C (-454°F/1832°F)", emf: "-9.835mV / 76.373mV" },
+      { t: "K", plus: "Ni-Cr", minus: "Ni-Al", img: tcUrlBase + "11_MYC1YngTdL.png", range: "-270°C/1372°C (-454°F/2501°F)", emf: "-6.458mV / 54.886mV" },
+      { t: "N", plus: "Ni-Cr-Si", minus: "Ni-Si-Mg", img: tcUrlBase + "12_B2ejSKvbZ.png", range: "-270°C/1300°C (-450°F/2372°F)", emf: "-4.345mV / 47.513mV" },
+      { t: "S", plus: "Pt-Rh10%", minus: "Pt", img: tcUrlBase + "13_neSIoGjhf.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.235mV / 18.693mV" },
+      { t: "R", plus: "Pt-Rh13%", minus: "Pt", img: tcUrlBase + "13_neSIoGjhf.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.226mV / 21.103mV" },
+      { t: "B", plus: "Pt-Rh30%", minus: "Pt-Rh6%", img: tcUrlBase + "14_OucGQIxhO.png", range: "-50°C/820°C (-32°F/1472°F)", emf: "0mV / 13.820mV" }
+    ]
+  },
+  {
+    name: "ANSI MC96.1",
+    code: "ANSI",
+    region: "United States & Canada Standard",
+    types: [
+      { t: "T", plus: "Cu", minus: "Cu-Ni", img: tcUrlBase + "15_rXFtkx_1e.png", range: "-270°C/400°C (-454°F/752°F)", emf: "-6.258mV / 20.872mV" },
+      { t: "J", plus: "Fe", minus: "Cu-Ni", img: tcUrlBase + "16_LeiJL9JemW.png", range: "-210°C/1200°C (-346°F/2193°F)", emf: "-8.095mV / 69.553mV" },
+      { t: "E", plus: "Ni-Cr", minus: "Cu-Ni", img: tcUrlBase + "17_rn8ksnh2J.png", range: "-270°C/1000°C (-454°F/1832°F)", emf: "-9.835mV / 76.373mV" },
+      { t: "K", plus: "Ni-Cr", minus: "Ni-Al", img: tcUrlBase + "18_bz3klzcIU.png", range: "-270°C/1372°C (-454°F/2501°F)", emf: "-6.458mV / 54.886mV" },
+      { t: "N", plus: "Ni-Cr-Si", minus: "Ni-Si-Mg", img: tcUrlBase + "19_fs-QE4Cct.png", range: "-270°C/1300°C (-450°F/2372°F)", emf: "-4.345mV / 47.513mV" }
+    ]
+  },
+  {
+    name: "ANSI MC96.1 (Extension)",
+    code: "ANSI-EXT",
+    region: "United States & Canada Extension Standard",
+    types: [
+      { t: "T", plus: "Cu", minus: "Cu-Ni", img: tcUrlBase + "20_yWWw6AUkw.png", range: "0°C/200°C (32°F/392°F)", emf: "-6.258mV / 20.872mV" },
+      { t: "J", plus: "Fe", minus: "Cu-Ni", img: tcUrlBase + "21_LJr-Nn5wQ.png", range: "0°C/200°C (32°F/392°F)", emf: "-8.095mV / 69.553mV" },
+      { t: "E", plus: "Ni-Cr", minus: "Cu-Ni", img: tcUrlBase + "22_kU242TjY9U.png", range: "0°C/200°C (32°F/392°F)", emf: "-9.835mV / 76.373mV" },
+      { t: "K", plus: "Ni-Cr", minus: "Ni-Al", img: tcUrlBase + "23_w3y_6SadX.png", range: "0°C/200°C (32°F/392°F)", emf: "-6.458mV / 54.886mV" },
+      { t: "N", plus: "Ni-Cr-Si", minus: "Ni-Si-Mg", img: tcUrlBase + "24_uX6eZU1VB.png", range: "0°C/200°C (32°F/392°F)", emf: "-4.345mV / 47.513mV" },
+      { t: "S", plus: "Pt-Rh10%", minus: "Pt", img: tcUrlBase + "25_4UmdVmQ_5.png", range: "0°C/200°C (32°F/392°F)", emf: "-0.235mV / 18.693mV" },
+      { t: "R", plus: "Pt-Rh13%", minus: "Pt", img: tcUrlBase + "25_4UmdVmQ_5.png", range: "0°C/200°C (32°F/392°F)", emf: "-0.226mV / 21.103mV" },
+      { t: "B", plus: "Pt-Rh30%", minus: "Pt-Rh6%", img: tcUrlBase + "26_5LhvTc-hF.png", range: "0°C/100°C (32°F/212°F)", emf: "0mV / 13.820mV" }
+    ]
+  },
+  {
+    name: "BS1843",
+    code: "BS",
+    region: "British & Czech Standards",
+    types: [
+      { t: "T", plus: "Cu", minus: "Cu-Ni", img: tcUrlBase + "27_iZsGL43Jf.png", range: "-270°C/400°C (-454°F/752°F)", emf: "-6.258mV / 20.872mV" },
+      { t: "J", plus: "Fe", minus: "Cu-Ni", img: tcUrlBase + "028_JJ3rbK-KpV.png", range: "-210°C/1200°C (-346°F/2193°F)", emf: "-8.095mV / 69.553mV" },
+      { t: "E", plus: "Ni-Cr", minus: "Cu-Ni", img: tcUrlBase + "29_JnSW2OfFN.png", range: "-270°C/1000°C (-454°F/1832°F)", emf: "-9.835mV / 76.373mV" },
+      { t: "K", plus: "Ni-Cr", minus: "Ni-Al", img: tcUrlBase + "030_16PatKsMK.png", range: "-270°C/1372°C (-454°F/2501°F)", emf: "-6.458mV / 54.886mV" },
+      { t: "N", plus: "Ni-Cr-Si", minus: "Ni-Si-Mg", img: tcUrlBase + "30_Plubs4UL9d.png", range: "-270°C/1300°C (-450°F/2372°F)", emf: "-4.345mV / 47.513mV" },
+      { t: "S", plus: "Pt-Rh10%", minus: "Pt", img: tcUrlBase + "31_fFxYNcA9D.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.235mV / 18.693mV" },
+      { t: "R", plus: "Pt-Rh13%", minus: "Pt", img: tcUrlBase + "31_fFxYNcA9D.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.226mV / 21.103mV" },
+      { t: "B", plus: "Pt-Rh30%", minus: "Pt-Rh6%", img: tcUrlBase + "37_jYJQ8kJ9z7.png", range: "-50°C/820°C (-32°F/1472°F)", emf: "0mV / 13.820mV" }
+    ]
+  },
+  {
+    name: "DIN43710",
+    code: "DIN",
+    region: "German & Netherlands Standards",
+    types: [
+      { t: "T", plus: "Cu", minus: "Cu-Ni", img: tcUrlBase + "32_PfXpnk_sXA.png", range: "-270°C/400°C (-454°F/752°F)", emf: "-6.258mV / 20.872mV" },
+      { t: "J", plus: "Fe", minus: "Cu-Ni", img: tcUrlBase + "33_T6zjQwZX1.png", range: "-210°C/1200°C (-346°F/2193°F)", emf: "-8.095mV / 69.553mV" },
+      { t: "E", plus: "Ni-Cr", minus: "Cu-Ni", img: tcUrlBase + "34_BfzEtYxyn.png", range: "-270°C/1000°C (-454°F/1832°F)", emf: "-9.835mV / 76.373mV" },
+      { t: "K", plus: "Ni-Cr", minus: "Ni-Al", img: tcUrlBase + "35_X8c7qpqqE.png", range: "-270°C/1372°C (-454°F/2501°F)", emf: "-6.458mV / 54.886mV" },
+      { t: "S", plus: "Pt-Rh10%", minus: "Pt", img: tcUrlBase + "36_2VpdD-dxj.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.235mV / 18.693mV" },
+      { t: "R", plus: "Pt-Rh13%", minus: "Pt", img: tcUrlBase + "36_2VpdD-dxj.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.226mV / 21.103mV" },
+      { t: "B", plus: "Pt-Rh30%", minus: "Pt-Rh6%", img: tcUrlBase + "37_jYJQ8kJ9z7.png", range: "-50°C/820°C (-32°F/1472°F)", emf: "0mV / 13.820mV" }
+    ]
+  },
+  {
+    name: "NFC42-324",
+    code: "NFC",
+    region: "French Standard",
+    types: [
+      { t: "T", plus: "Cu", minus: "Cu-Ni", img: tcUrlBase + "38_pFb-KspGL.png", range: "-270°C/400°C (-454°F/752°F)", emf: "-6.258mV / 20.872mV" },
+      { t: "J", plus: "Fe", minus: "Cu-Ni", img: tcUrlBase + "39_TV_MA5cscZ.png", range: "-210°C/1200°C (-346°F/2193°F)", emf: "-8.095mV / 69.553mV" },
+      { t: "E", plus: "Ni-Cr", minus: "Cu-Ni", img: tcUrlBase + "40_kKZY59Pse.png", range: "-270°C/1000°C (-454°F/1832°F)", emf: "-9.835mV / 76.373mV" },
+      { t: "K", plus: "Ni-Cr", minus: "Ni-Al", img: tcUrlBase + "41_tStinJH6j.png", range: "-270°C/1372°C (-454°F/2501°F)", emf: "-6.458mV / 54.886mV" },
+      { t: "S", plus: "Pt-Rh10%", minus: "Pt", img: tcUrlBase + "42_xZvDEeeKT.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.235mV / 18.693mV" },
+      { t: "R", plus: "Pt-Rh13%", minus: "Pt", img: tcUrlBase + "42_xZvDEeeKT.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.226mV / 21.103mV" }
+    ]
+  },
+  {
+    name: "JISC1610",
+    code: "JIS",
+    region: "Japanese Standard",
+    types: [
+      { t: "T", plus: "Cu", minus: "Cu-Ni", img: tcUrlBase + "43_uWPcO8bpp.png", range: "-270°C/400°C (-454°F/752°F)", emf: "-6.258mV / 20.872mV" },
+      { t: "J", plus: "Fe", minus: "Cu-Ni", img: tcUrlBase + "44_nkA_Kqu_TN.png", range: "-210°C/1200°C (-346°F/2193°F)", emf: "-8.095mV / 69.553mV" },
+      { t: "E", plus: "Ni-Cr", minus: "Cu-Ni", img: tcUrlBase + "45_i9VolGxw_z.png", range: "-270°C/1000°C (-454°F/1832°F)", emf: "-9.835mV / 76.373mV" },
+      { t: "K", plus: "Ni-Cr", minus: "Ni-Al", img: tcUrlBase + "46_KIxHez-90.png", range: "-270°C/1372°C (-454°F/2501°F)", emf: "-6.458mV / 54.886mV" },
+      { t: "S", plus: "Pt-Rh10%", minus: "Pt", img: tcUrlBase + "47_pM1ObMfHk.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.235mV / 18.693mV" },
+      { t: "R", plus: "Pt-Rh13%", minus: "Pt", img: tcUrlBase + "47_pM1ObMfHk.png", range: "-50°C/1768°C (-58°F/3214°F)", emf: "-0.226mV / 21.103mV" },
+      { t: "B", plus: "Pt-Rh30%", minus: "Pt-Rh6%", img: tcUrlBase + "48_2fEP39Uzl.png", range: "-50°C/820°C (-32°F/1472°F)", emf: "0mV / 13.820mV" }
+    ]
   }
-}
-button.mid:hover {
-  background-color: #dc2626 !important;
-}
+];
 
-/* Beautiful Premium Info Box for SEO Description */
-.seo-description {
-  margin-top: 30px !important;
-  padding: 20px !important;
-  background: #ffffff !important;
-  border: 1px solid var(--card-border) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
-  text-align: left !important;
-}
-.seo-description h2 {
-  font-size: 16px !important;
-  font-weight: bold !important;
-  color: #0f172a !important;
-  margin-top: 0 !important;
-  margin-bottom: 10px !important;
-  border-bottom: 2px solid #f1f5f9 !important;
-  padding-bottom: 8px !important;
-}
-.seo-description p {
-  font-size: 13px !important;
-  line-height: 1.6 !important;
-  color: #475569 !important;
-  margin: 0 !important;
-}
-`;
-
-// ૨. ડાયનેમિક CSS ઇન્જેક્શન મેકેનિઝમ
-const styleNode = document.createElement("style");
-styleNode.type = "text/css";
-styleNode.appendChild(document.createTextNode(premiumStyles));
-document.head.appendChild(styleNode);
-
-// ૩. ગ્લોબલ હાઇજેક સેટઅપ (બ્રાઉઝર બેક બટન ટ્રેકિંગ)
-const originalAdd = window.addEventListener;
-const originalRemove = window.removeEventListener;
-const capturedPopstateListeners = [];
-
-window.addEventListener = function(type, listener, options) {
-  if (type === "popstate" && listener !== myPopstateHandler) {
-    capturedPopstateListeners.push({ listener, options });
-  }
-  return originalAdd.call(this, type, listener, options);
-};
-
-window.removeEventListener = function(type, listener, options) {
-  if (type === "popstate") {
-    const index = capturedPopstateListeners.findIndex(item => item.listener === listener);
-    if (index > -1) {
-      capturedPopstateListeners.splice(index, 1);
-    }
-  }
-  return originalRemove.call(this, type, listener, options);
-};
-
-function detachThemeListeners() {
-  capturedPopstateListeners.forEach(item => {
-    originalRemove.call(window, "popstate", item.listener, item.options);
-  });
-}
-
-function restoreThemeListeners() {
-  capturedPopstateListeners.forEach(item => {
-    originalAdd.call(window, "popstate", item.listener, item.options);
-  });
-}
-
-// ૪. અલ્ટ્રા હાઇજેક બેક બટન ટ્રેકિંગ અને પર્ફેક્ટ સિંક્રોનસ ક્લિક હેન્ડલર સેટઅપ
-let activeModalId = null;
-let isHandlingHistory = false;
-let scrollPosition = 0;
-
-// સિંક્રોનસ કેપ્ચરિંગ ક્લિક લિસ્ટનર - એન્કર ટેગ અને ઈનલાઈન ટ્રીગર ક્રેશને ૧૦0% અટકાવશે
-document.addEventListener("click", function(event) {
-  // Case 1: જ્યારે યુઝર આઈસી બટન કે તેની અંદરના આઈકોન પર ક્લિક કરે
-  const openBtn = event.target.closest("button.w3-button1");
-  if (openBtn) {
-    event.preventDefault(); // લિંક રીલોડ અટકાવશે
-    event.stopPropagation();
-    
-    const onclickStr = openBtn.getAttribute("onclick") || "";
-    const match = onclickStr.match(/'([^']+)'/);
-    const modalId = match ? match[1] : null;
-
-    if (modalId && activeModalId !== modalId) {
-      scrollPosition = window.pageYOffset;
-      activeModalId = modalId;
-      
-      // એન્ડ્રોઇડ ક્રોમ માટે સિંક્રોનસ હિસ્ટ્રી પુશ (User Gesture સિક્યોર)
-      window.history.pushState({ modalId: modalId }, "");
-      
-      // પોપઅપ સચોટ ઓપનિંગ
-      const modal = document.getElementById(modalId);
-      if (modal) {
-        modal.style.display = "block";
-      }
-
-      // બેકગ્રાઉન્ડ સ્ક્રોલિંગ લોક
-      document.body.style.top = `-${scrollPosition}px`;
-      document.body.classList.add("lock-scroll");
-      
-      detachThemeListeners();
-    }
-    return;
-  }
-
-  // Case 2: જ્યારે યુઝર X બટન અથવા મોડલની બહાર ક્લિક કરીને જાતે બંધ કરે
-  const closeBtn = event.target.closest("button.mid");
-  const backdrop = event.target.classList.contains("w3-modal") ? event.target : null;
-  if ((closeBtn || backdrop) && activeModalId) {
-    event.preventDefault();
-    event.stopPropagation();
-    window.history.back(); // હિસ્ટ્રી રીસેટ (પોપસ્ટેટ ઇવેન્ટ ટ્રિગર કરશે)
-  }
-}, true); // 'true' કેપ્ચરિંગ એક્ટિવેટ
-
-// ૫. એન્ડ્રોઇડ સિસ્ટમ બેક બટન લિસ્ટનર (કૅપ્ચરિંગ ફેઝ 'true' સાથે)
-function myPopstateHandler(event) {
-  if (activeModalId) {
-    event.stopImmediatePropagation();
-    event.stopPropagation();
-    
-    const modal = document.getElementById(activeModalId);
-    if (modal) {
-      isHandlingHistory = true;
-      modal.style.display = "none"; // પોપઅપ બંધ કરશે (ઓબ્ઝર્વર આપોઆપ થીમ એક્ટિવેટ અને અનલોક કરી દેશે)
-      setTimeout(() => { isHandlingHistory = false; }, 50);
-    }
-    
-    // પૃષ્ઠભૂમિ (background) ને ફરીથી મુક્ત કરશે
-    document.body.classList.remove("lock-scroll");
-    document.body.style.top = '';
-    window.scrollTo(0, scrollPosition); // સ્ક્રોલ પોઝિશન પૂર્વવત
-    
-    restoreThemeListeners();
-    activeModalId = null;
-  }
-}
-
-window.addEventListener("popstate", myPopstateHandler, true);
-
-// ૬. લિસ્ટ વિઝિબિલિટી કંટ્રોલ ઓન લોડ
-document.addEventListener("DOMContentLoaded", function() {
-  const originalUL = document.getElementById("myUL");
-  if (originalUL) {
-    originalUL.style.display = "grid";
-  }
+// Initialize drop-down menu
+const selector = document.getElementById("standardSelect");
+standardDetails.forEach((std, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = std.name;
+  selector.appendChild(option);
 });
 
-// ૭. કસ્ટમ ક્લીન સર્ચ ફિલ્ટર
-function myFunction() {
-  const input = document.getElementById("myInput");
-  const filter = input.value.toUpperCase();
-  const listItems = document.querySelectorAll("#myUL li");
+// Update page display with selected calibration details
+function updateCalibrationDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= standardDetails.length) return;
   
-  listItems.forEach(li => {
-    const nameSpan = li.querySelector("font") || li.querySelector("button");
-    if (nameSpan) {
-      const txtValue = nameSpan.textContent || nameSpan.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        li.style.display = "";
-      } else {
-        li.style.display = "none";
-      }
-    }
+  const std = standardDetails[idx];
+  
+  // Set Main Standard Title block Info
+  document.getElementById("standardCode").innerText = std.code;
+  document.getElementById("standardName").innerText = std.name;
+  document.getElementById("standardRegion").innerText = std.region;
+  
+  // Populate the thermocouple types listing dynamically
+  const container = document.getElementById("typeListContainer");
+  container.innerHTML = "";
+  
+  std.types.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "type-card";
+    card.innerHTML = `
+      <div class="type-header">
+        <span class="type-badge">Type ${item.t}</span>
+        <div class="type-wire-img">
+          <img src="${item.img}" alt="Type ${item.t} Cable Graphic">
+        </div>
+      </div>
+      <table class="specs-table">
+        <tbody>
+          <tr>
+            <td class="lbl">Alloy (+)</td>
+            <td class="val">${item.plus}</td>
+          </tr>
+          <tr>
+            <td class="lbl">Alloy (-)</td>
+            <td class="val">${item.minus}</td>
+          </tr>
+          <tr>
+            <td class="lbl">Grand Temp. Range</td>
+            <td class="val">${item.range}</td>
+          </tr>
+          <tr>
+            <td class="lbl">EMF (mV) Range</td>
+            <td class="val">${item.emf}</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+    container.appendChild(card);
   });
 }
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load "IEC584-3 (INTERNATIONAL)" on boot
+  selector.value = defaultIdx;
+  updateCalibrationDetails(defaultIdx);
+};
 </script>
+
+<!-- SEO Structured JSON-LD Schemas -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I identify thermocouple wire polarity by color?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Thermocouple wire color codes vary by standard. For example, under the US ANSI MC96.1 standard, the negative lead is always red, while the positive lead's color depends on the type (e.g., yellow for Type K). Use our selector tool to check alternative international conventions like IEC and BS."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does Type K have a wide temperature range?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Type K thermocouples are composed of Chromel (Ni-Cr) and Alumel (Ni-Al) alloys, which provide exceptional oxidation and corrosion resistance at high temperatures up to 1372°C."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electrical Tools", "item": "https://calcboy.com/category/electrical-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Thermocouple Color Codes & Calibration Standards", "item": "https://calcboy.com/tool/thermocouple-color-codes-reference" }
+  ]
+}
+</script>
+
+</body>
+</html>
