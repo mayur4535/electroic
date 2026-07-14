@@ -3,286 +3,420 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Arduino, Teensy & MCU Boards Pinouts Guide | CalcBoy</title>
-<meta name="description" content="Complete, exhaustive pin-by-pin specifications and custom vector diagrams for 50+ Arduino, Teensy, ATmega, and ATTiny development boards.">
+<title>Arduino, Teensy &amp; MCU Boards Pinouts Guide | CalcBoy</title>
+<meta name="description" content="Complete, exhaustive pin-by-pin specifications and custom vector diagrams for Arduino, Teensy, ATmega, and ATTiny development boards.">
 <meta name="keywords" content="Arduino Uno pinout, Arduino Nano wiring, Teensy 4.1 pinout, ATmega328P pin layout, ATTiny85 ISP, Arduino Mega 2560 pins, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/arduino-teensy-mcu-pinouts-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Arduino, Teensy &amp; MCU Boards Pinouts Guide | CalcBoy">
+<meta property="og:description" content="Access complete, exhaustive pin-by-pin specifications and custom vector layouts for Arduino, Teensy, and raw AVR/ARM microcontrollers.">
+<meta property="og:url" content="https://calcboy.com/tool/arduino-teensy-mcu-pinouts-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Arduino, Teensy &amp; MCU Boards Pinouts Guide | CalcBoy">
+<meta name="twitter:description" content="Unified engineering reference directory for open-source microcontroller boards and raw processor IC pinouts.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#arduino-pinouts-calc,#arduino-pinouts-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#arduino-pinouts-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#arduino-pinouts-tool, #adafruit-pinouts-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#arduino-pinouts-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
 }
-.pinout-item-card:hover {
-  border-color:#ff6a00;
-  box-shadow:0 4px 12px rgba(255,106,0,.08);
+.calc-grid {
+  display: grid;
+  gap: 15px;
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#ff6a00;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
 }
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
 }
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
 }
-
-/* Modal Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:auto;
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:20px 10px;
+select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
 }
-.w3-modal-content {
-  background:#fff;
-  margin:20px auto;
-  width:100%;
-  max-width:580px;
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-.mid {
-  position:sticky !important;
-  top:10% !important;
-  right:16px !important;
-  float:right !important;
-  z-index:1010 !important;
-  width:36px;
-  height:36px;
-  background-color:red !important;
-  border:none !important;
-  border-radius:50% !important;
-  color:white !important;
-  font-size:16px !important;
-  font-weight:900 !important;
-  cursor:pointer !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-shadow:0 4px 6px rgba(0,0,0,0.15);
-  transition:background-color 0.2s, transform 0.1s;
-  margin-top:-8px;
-  margin-right:-8px;
-}
-.mid:hover {
-  background-color:#cc0000 !important;
-  transform:scale(1.05);
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Inner Modal Elements */
-.table1 {width:100%;text-align:left;clear:both}
-.diagramBox {
-  background:#f8fafc;
-  padding:16px;
-  text-align:center;
-  margin:12px auto;
-  border:1px solid #e2e8f0;
-  border-radius:12px;
-  overflow-x:auto;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-.diagramBox svg {
-  width:100%;
-  max-width:480px;
-  height:auto;
-  display:block;
-  margin:auto;
+.connector-header-card .badge {
+  background: #ffedd5;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
 }
 
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ea580c;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ffedd5;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
+  display: flex;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
+}
+.vector-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 140px;
+  justify-content: center;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
+}
+.vector-box:hover {
+  transform: scale(1.02);
+  border-color: #ff6a00;
+}
+.vector-box svg {
+  max-width: 100%;
+  height: auto;
+}
+.vector-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
 .img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:8px;
-  margin-bottom:16px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
 }
 
-/* Standardized Tables */
-table {
-  width:100%;
-  border-collapse:collapse;
-  margin:15px 0 20px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  overflow:hidden;
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
 }
-th {
-  background:#f1f5f9;
-  color:#1e293b;
-  font-size:13px;
-  font-weight:900;
-  padding:12px 14px;
-  text-align:left;
-  border-bottom:2px solid #e2e8f0;
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
 }
-td {
-  padding:10px 14px;
-  font-size:13px;
-  color:#475467;
-  border-bottom:1px solid #edf2f7;
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
 }
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #475467 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
-
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutNote {
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-left: 5px solid #ff6a00;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9a3412;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff6a00;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="arduino-pinouts-calc">
+<div id="arduino-pinouts-tool">
 
-  <div class="search-container">
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Arduino Boards Pinouts..." title="Type in a name">
-  </div>
-
-  <ul id="myUL">
-    <!-- List of 52 Cards with data attributes for dynamic modal generation -->
-    <li><a href="#" onclick="openModal('id01'); return false;" class="pinout-item-card"><span class="card-tag">AVR Microcontroller</span><div class="card-inner"><span class="card-title">Arduino UNO</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id02'); return false;" class="pinout-item-card"><span class="card-tag">AVR Microcontroller</span><div class="card-inner"><span class="card-title">Arduino Leonardo</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id03'); return false;" class="pinout-item-card"><span class="card-tag">32-Bit ARM</span><div class="card-inner"><span class="card-title">Arduino DUE</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id04'); return false;" class="pinout-item-card"><span class="card-tag">Specialty Board</span><div class="card-inner"><span class="card-title">Arduino Esplora</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id05'); return false;" class="pinout-item-card"><span class="card-tag">Arduino Mega</span><div class="card-inner"><span class="card-title">Arduino Mega 2560</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id06'); return false;" class="pinout-item-card"><span class="card-tag">USB Host / Android</span><div class="card-inner"><span class="card-title">Arduino ADK</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id07'); return false;" class="pinout-item-card"><span class="card-tag">Ethernet Wired</span><div class="card-inner"><span class="card-title">Arduino Ethernet</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id08'); return false;" class="pinout-item-card"><span class="card-tag">Compact Board</span><div class="card-inner"><span class="card-title">Arduino Mini</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id09'); return false;" class="pinout-item-card"><span class="card-tag">Compact Board</span><div class="card-inner"><span class="card-title">Arduino Micro</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id010'); return false;" class="pinout-item-card"><span class="card-tag">Compact Board</span><div class="card-inner"><span class="card-title">Arduino Nano V2</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id011'); return false;" class="pinout-item-card"><span class="card-tag">Compact Board</span><div class="card-inner"><span class="card-title">Arduino Nano V3</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0150'); return false;" class="pinout-item-card"><span class="card-tag">Prototyping</span><div class="card-inner"><span class="card-title">Arduino Pro</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id012'); return false;" class="pinout-item-card"><span class="card-tag">Compact Board</span><div class="card-inner"><span class="card-title">Arduino Pro Mini</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id013'); return false;" class="pinout-item-card"><span class="card-tag">Compact Board</span><div class="card-inner"><span class="card-title">Arduino Pro Micro</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id014'); return false;" class="pinout-item-card"><span class="card-tag">Wireless Prototyping</span><div class="card-inner"><span class="card-title">Arduino Fio</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id015'); return false;" class="pinout-item-card"><span class="card-tag">Expansion Shield</span><div class="card-inner"><span class="card-title">Arduino Tre (Shield)</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id016'); return false;" class="pinout-item-card"><span class="card-tag">Arduino Classic</span><div class="card-inner"><span class="card-title">Arduino Duemilanove</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id017'); return false;" class="pinout-item-card"><span class="card-tag">32-Bit ARM</span><div class="card-inner"><span class="card-title">Arduino Zero</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id019'); return false;" class="pinout-item-card"><span class="card-tag">Wearable Tech</span><div class="card-inner"><span class="card-title">Arduino Lilypad</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0120'); return false;" class="pinout-item-card"><span class="card-tag">Wearable Tech</span><div class="card-inner"><span class="card-title">Arduino Lilypad USB</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0128'); return false;" class="pinout-item-card"><span class="card-tag">Wearable Tech</span><div class="card-inner"><span class="card-title">Arduino Lilypad Simple</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0153'); return false;" class="pinout-item-card"><span class="card-tag">Wearable Tech</span><div class="card-inner"><span class="card-title">Arduino Lilypad Simple Snap</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0121'); return false;" class="pinout-item-card"><span class="card-tag">Specialty Board</span><div class="card-inner"><span class="card-title">Arduino Genuino 101</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0122'); return false;" class="pinout-item-card"><span class="card-tag">Compact Board</span><div class="card-inner"><span class="card-title">Arduino Gemma</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0123'); return false;" class="pinout-item-card"><span class="card-tag">Wireless IoT</span><div class="card-inner"><span class="card-title">Arduino MKR1000</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0124'); return false;" class="pinout-item-card"><span class="card-tag">32-Bit ARM</span><div class="card-inner"><span class="card-title">Arduino MKR Zero</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0125'); return false;" class="pinout-item-card"><span class="card-tag">Dual Processor IoT</span><div class="card-inner"><span class="card-title">Arduino YUN</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0126'); return false;" class="pinout-item-card"><span class="card-tag">Dual Processor IoT</span><div class="card-inner"><span class="card-title">Arduino YUN Mini</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0127'); return false;" class="pinout-item-card"><span class="card-tag">Specialty Board</span><div class="card-inner"><span class="card-title">Arduino Robot</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0129'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy 1.0</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0130'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy++ 1.0</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0131'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy 2.0</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0132'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy++ 2.0</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0133'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy 3.0</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0134'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy 3.1</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0135'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy LC</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0136'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy 3.2</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0137'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy 3.5</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0138'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy 3.6</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0139'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy 4.0</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0140'); return false;" class="pinout-item-card"><span class="card-tag">Teensy Board</span><div class="card-inner"><span class="card-title">Teensy 4.1</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0141'); return false;" class="pinout-item-card"><span class="card-tag">AVR Chip</span><div class="card-inner"><span class="card-title">ATmega 1248P P/Isp</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0142'); return false;" class="pinout-item-card"><span class="card-tag">AVR Chip</span><div class="card-inner"><span class="card-title">ATmega 1248P V2 P/Isp</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0143'); return false;" class="pinout-item-card"><span class="card-tag">AVR Chip</span><div class="card-inner"><span class="card-title">ATmega 2560</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0144'); return false;" class="pinout-item-card"><span class="card-tag">AVR Chip</span><div class="card-inner"><span class="card-title">ATmega 328</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0145'); return false;" class="pinout-item-card"><span class="card-tag">AVR Chip</span><div class="card-inner"><span class="card-title">ATmega 32U4</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0146'); return false;" class="pinout-item-card"><span class="card-tag">AVR Chip</span><div class="card-inner"><span class="card-title">ATmega 644P P/Isp</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0147'); return false;" class="pinout-item-card"><span class="card-tag">AVR Chip</span><div class="card-inner"><span class="card-title">ATTiny Generic P/Isp</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0148'); return false;" class="pinout-item-card"><span class="card-tag">AVR Chip</span><div class="card-inner"><span class="card-title">ATTiny 84 ATTiny 44 P/Isp</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0149'); return false;" class="pinout-item-card"><span class="card-tag">Specialty Board</span><div class="card-inner"><span class="card-title">Sparkfun Microview 328</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0151'); return false;" class="pinout-item-card"><span class="card-tag">Compatible Board</span><div class="card-inner"><span class="card-title">$9 ARDUINO Compatible</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id0152'); return false;" class="pinout-item-card"><span class="card-tag">IoT Module</span><div class="card-inner"><span class="card-title">ARIA G25 (ACME System)</span><span class="card-arrow">&#x2192;</span></div></a></li>
-  </ul>
-
-  <!-- Shared Dynamic Modal Container -->
-  <div id="dynamicModal" class="w3-modal">
-    <div class="w3-modal-content">
-      <button class="mid" onclick="closeModal()">X</button>
-      <div id="modalTarget" class="table1">
-        <!-- Content dynamically generated via JavaScript -->
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Board Pinout Selector</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Development Board</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
       </div>
     </div>
   </div>
 
-  <!-- Educational & SEO Sections -->
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">AVR Microcontroller</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Pinout Map</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
+    
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+  </div>
+
+  <!-- Input Parameters Specification -->
   <section class="infoBox">
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
-      <div class="paramItem"><strong>Dynamic Index Filter</strong>The unified search box filters physical board labels, CPU cores, or alternate pin assignments instantly.</div>
-      <div class="paramItem"><strong>Active Window Triggers</strong>Clicking any development board card activates a modal layer containing high-resolution layouts and pin references.</div>
-      <div class="paramItem"><strong>Sizing Specification</strong>Proper wiring cross-sections prevent signal attenuation on SPI, I2C, and high-frequency clock lines.</div>
-      <div class="paramItem"><strong>Processor Pin Mapping</strong>Direct hardware pins are mapped to the corresponding board headers, identifying physical configurations and power lines.</div>
+      <div class="paramItem">
+        <strong>Pin Muxing Capabilities</strong>
+        Details on port pins designed to share general-purpose input/output (GPIO), analog inputs, PWM, and communications.
+      </div>
+      <div class="paramItem">
+        <strong>Operating Voltage (3.3V vs 5V)</strong>
+        Voltage logic level constraints defining safety margins for high-level inputs to avoid destroying internal gates.
+      </div>
+      <div class="paramItem">
+        <strong>Primary Bus Interfaces</strong>
+        Dedicated line paths mapped to SPI (MISO/MOSI/SCK), I2C (SDA/SCL), and serial UART (TX/RX) standards.
+      </div>
+      <div class="paramItem">
+        <strong>Power Sourcing Schemes</strong>
+        Power routing configurations allocating load paths across USB, battery inputs (VBAT), and regulated pin rails.
+      </div>
     </div>
   </section>
 
+  <!-- Practical Operational Examples -->
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
     <div class="exampleGrid">
@@ -305,19 +439,33 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
-    <h2>Board Design & Serial Interfaces Theory</h2>
+    <h2>Board Design &amp; Serial Interfaces Theory</h2>
     <p>Development boards provide safe physical access to microcontrollers by routing raw silicon pins to standardized header layouts. These boards include voltage regulation, USB-to-serial conversion, and filtering components to protect the processor. High-speed serial interfaces (like SPI and I2C) are broken out alongside analog-to-digital converter (ADC) channels, allowing the board to communicate with sensors and peripherals without signal degradation.</p>
     <div class="aboutNote">Tip: Standard Arduino UNO and Nano boards run at 5V logic. Connecting them directly to 3.3V boards (such as Teensy 3.x/4.x or MKR series) without level shifters can damage the inputs.</div>
   </section>
 
+  <!-- Formulas & Hardware Calculations -->
   <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
+    <h2>Formulas &amp; Hardware Calculations</h2>
     <div class="formula">ADC Voltage conversion formula: V_in = (Analog_Value * V_reference) / (2^Resolution_bits - 1)</div>
     <div class="formula">Baud rate error formula: Error_percent = |(Actual_Baud - Target_Baud) / Target_Baud| * 100</div>
     <div class="formula">SPI Bus Clock Frequency: SCLK = System_Clock / Clock_Prescaler</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target microcontroller using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the board's class and primary chipset.</div>
+      <div class="aboutStep">Study the customized 2D vector layout showing board structure and pin orientation.</div>
+      <div class="aboutStep">Consult the exhaustive connection table below the diagram to locate specific peripheral assignments.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
   <section class="infoBox">
     <h2>About This Reference Guide</h2>
     <div class="aboutLead">
@@ -334,6 +482,7 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
     <h3><strong>1. What is the difference between Arduino UNO and Leonardo pinouts?</strong></h3>
@@ -355,8 +504,9 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     <p>The In-Circuit Serial Programming (ICSP) header provides direct SPI bus access (MISO, MOSI, SCK, Reset, VCC, GND). This allows you to flash bootloaders or firmware directly to the main processor without using the USB-to-serial chip.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
       <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Verify primary and secondary winding values.</div>
       <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure magnetic storage parameters in active units.</div>
@@ -367,736 +517,519 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-// High fidelity, exhaustive dataset of all 52 Boards
-const pinoutsData = {
-  "id01": {
+// Master Arduino & Teensy Boards Pinouts Database
+const packageDetails = [
+  {
     name: "Arduino UNO",
-    color: "#00979d",
-    processor: "ATmega328P",
-    desc: "Exhaustive Pin Map",
-    pins: [
-      { pin: "1", label: "RESET", desc: "Active-low reset trigger" },
-      { pin: "2", label: "D0 / RX", desc: "UART Serial Receive" },
-      { pin: "3", label: "D1 / TX", desc: "UART Serial Transmit" },
-      { pin: "4", label: "D2", desc: "External Interrupt 0" },
-      { pin: "5", label: "D3", desc: "External Interrupt 1 / PWM Output" },
-      { pin: "6", label: "D4", desc: "Digital I/O Channel" },
-      { pin: "7", label: "VCC", desc: "+5V Positive main power rail" },
-      { pin: "8", label: "GND", desc: "Common Ground return" },
-      { pin: "9", label: "XTAL1", desc: "Crystal oscillator input" },
-      { pin: "10", label: "XTAL2", desc: "Crystal oscillator output" },
-      { pin: "11", label: "D5", desc: "Timer Channel / PWM Output" },
-      { pin: "12", label: "D6", desc: "Timer Channel / PWM Output" },
-      { pin: "13", label: "D7", desc: "Digital I/O Channel" },
-      { pin: "14", label: "D8", desc: "Digital I/O Channel" },
-      { pin: "15", label: "D9", desc: "Timer Channel / PWM Output" },
-      { pin: "16", label: "D10 / SS", desc: "SPI Slave Select / PWM" },
-      { pin: "17", label: "D11 / MOSI", desc: "SPI Master Out Slave In / PWM" },
-      { pin: "18", label: "D12 / MISO", desc: "SPI Master In Slave Out" },
-      { pin: "19", label: "D13 / SCK", desc: "SPI Serial Clock / Onboard LED" },
-      { pin: "20", label: "AVCC", desc: "Analog peripheral supply voltage (+5V)" },
-      { pin: "21", label: "AREF", desc: "Analog reference input voltage limit" },
-      { pin: "22", label: "GND", desc: "Common Ground return path" },
-      { pin: "23", label: "A0", desc: "Analog Input Channel 0" },
-      { pin: "24", label: "A1", desc: "Analog Input Channel 1" },
-      { pin: "25", label: "A2", desc: "Analog Input Channel 2" },
-      { pin: "26", label: "A3", desc: "Analog Input Channel 3" },
-      { pin: "27", label: "A4 / SDA", desc: "Analog Input Channel 4 / I2C Data line" },
-      { pin: "28", label: "A5 / SCL", desc: "Analog Input Channel 5 / I2C Clock line" }
+    tag: "AVR Microcontroller",
+    subtitle: "ATmega328P Processor Board Pinout",
+    svgs: [
+      {
+        label: "Arduino Uno Layout",
+        html: `
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="200" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="170" fill="#00979d" rx="6" opacity="0.85"/>
+            <!-- MCU Core -->
+            <rect x="120" y="80" width="80" height="60" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="110" fill="#38bdf8" font-size="10" text-anchor="middle" font-weight="bold">ATmega328P</text>
+            <!-- Headers -->
+            <rect x="30" y="25" width="260" height="12" fill="#1e293b" rx="2" stroke="#fff" stroke-width="1"/>
+            <rect x="30" y="163" width="130" height="12" fill="#1e293b" rx="2" stroke="#fff" stroke-width="1"/>
+            <rect x="170" y="163" width="120" height="12" fill="#1e293b" rx="2" stroke="#fff" stroke-width="1"/>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Arduino UNO Pin Connections (Exhaustive List)",
+        columns: ["Pin Label", "Core ATmega328 Pin", "Usage / Alternate Function Details"],
+        rows: [
+          ["RESET", "1", "Active-low reset trigger"],
+          ["D0 / RX", "2", "UART Serial Receive"],
+          ["D1 / TX", "3", "UART Serial Transmit"],
+          ["D2", "4", "External Interrupt 0"],
+          ["D3", "5", "External Interrupt 1 / PWM Output"],
+          ["D4", "6", "Digital I/O Channel"],
+          ["VCC", "7", "+5V Positive main power rail"],
+          ["GND", "8", "Common Ground return"],
+          ["XTAL1", "9", "Crystal oscillator input"],
+          ["XTAL2", "10", "Crystal oscillator output"],
+          ["D5", "11", "Timer Channel / PWM Output"],
+          ["D6", "12", "Timer Channel / PWM Output"],
+          ["D7", "13", "Digital I/O Channel"],
+          ["D8", "14", "Digital I/O Channel"],
+          ["D9", "15", "Timer Channel / PWM Output"],
+          ["D10 / SS", "16", "SPI Slave Select / PWM"],
+          ["D11 / MOSI", "17", "SPI Master Out Slave In / PWM"],
+          ["D12 / MISO", "18", "SPI Master In Slave Out"],
+          ["D13 / SCK", "19", "SPI Serial Clock / Onboard LED"],
+          ["AVCC", "20", "Analog peripheral supply voltage (+5V)"],
+          ["AREF", "21", "Analog reference input voltage limit"],
+          ["GND", "22", "Common Ground return path"],
+          ["A0", "23", "Analog Input Channel 0"],
+          ["A1", "24", "Analog Input Channel 1"],
+          ["A2", "25", "Analog Input Channel 2"],
+          ["A3", "26", "Analog Input Channel 3"],
+          ["A4 / SDA", "27", "Analog Input Channel 4 / I2C Data line"],
+          ["A5 / SCL", "28", "Analog Input Channel 5 / I2C Clock line"]
+        ]
+      }
     ]
   },
-  "id02": {
+  {
     name: "Arduino Leonardo",
-    color: "#00979d",
-    processor: "ATmega32U4",
-    desc: "Exhaustive Pin Map",
-    pins: [
-      { pin: "D0 / RX", label: "RXD", desc: "UART Serial Input" },
-      { pin: "D1 / TX", label: "TXD", desc: "UART Serial Transmit" },
-      { pin: "D2 / SDA", label: "SDA", desc: "I2C Serial Data" },
-      { pin: "D3 / SCL", label: "SCL", desc: "I2C Serial Clock" },
-      { pin: "D4", label: "A6", desc: "Digital I/O / Analog Input A6" },
-      { pin: "D5", label: "PWM", desc: "Digital I/O / PWM Output" },
-      { pin: "D6", label: "A7", desc: "Digital I/O / Analog Input A7" },
-      { pin: "D7", label: "GPIO", desc: "Digital I/O Channel" },
-      { pin: "D8", label: "A8", desc: "Digital I/O / Analog Input A8" },
-      { pin: "D9", label: "A9", desc: "Digital I/O / Analog Input A9" },
-      { pin: "D10", label: "A10", desc: "Digital I/O / Analog Input A10" },
-      { pin: "D11", label: "PWM", desc: "Digital I/O / PWM Output" },
-      { pin: "D12", label: "A11", desc: "Digital I/O / Analog Input A11" },
-      { pin: "D13", label: "SCK", desc: "Digital I/O / Onboard LED" },
-      { pin: "A0", label: "Analog 0", desc: "Analog Input" },
-      { pin: "A1", label: "Analog 1", desc: "Analog Input" },
-      { pin: "A2", label: "Analog 2", desc: "Analog Input" },
-      { pin: "A3", label: "Analog 3", desc: "Analog Input" },
-      { pin: "A4", label: "Analog 4", desc: "Analog Input" },
-      { pin: "A5", label: "Analog 5", desc: "Analog Input" },
-      { pin: "RESET", label: "RST", desc: "Hardware Reset" },
-      { pin: "VCC", label: "5V", desc: "Main Power Supply Output" },
-      { pin: "3.3V", label: "3V3", desc: "Regulated Power Output" },
-      { pin: "GND", label: "Ground", desc: "Common Ground reference" }
+    tag: "AVR Microcontroller",
+    subtitle: "ATmega32U4 Native USB Board Pinout",
+    svgs: [
+      {
+        label: "Arduino Leonardo Layout",
+        html: `
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="200" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="170" fill="#00979d" rx="6" opacity="0.85"/>
+            <!-- MCU Core -->
+            <rect x="120" y="80" width="80" height="60" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="110" fill="#38bdf8" font-size="10" text-anchor="middle" font-weight="bold">ATmega32U4</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Arduino Leonardo Pin Assignments",
+        columns: ["Pin Label", "Core Port", "Alternate Function Details"],
+        rows: [
+          ["D0 / RX", "PD2", "UART Serial Receive"],
+          ["D1 / TX", "PD3", "UART Serial Transmit"],
+          ["D2 / SDA", "PD1", "I2C Serial Data"],
+          ["D3 / SCL", "PD0", "I2C Serial Clock"],
+          ["D4 / A6", "PD4", "Analog Input A6"],
+          ["D5", "PC6", "PWM Output"],
+          ["D6 / A7", "PD7", "Analog Input A7 / PWM"],
+          ["D7", "PE6", "Digital I/O Channel"],
+          ["D8 / A8", "PB4", "Analog Input A8"],
+          ["D9 / A9", "PB5", "Analog Input A9 / PWM"],
+          ["D10 / A10", "PB6", "Analog Input A10 / PWM"],
+          ["D11", "PB7", "PWM Output"],
+          ["D12 / A11", "PD6", "Analog Input A11"],
+          ["D13", "PC7", "PWM Output / Onboard LED"],
+          ["A0 - A5", "ADC", "Dedicated 10-bit analog inputs"],
+          ["3.3V", "Regulator", "3.3V regulated power rail"]
+        ]
+      }
     ]
   },
-  "id03": {
+  {
     name: "Arduino DUE",
-    color: "#00979d",
-    processor: "AT91SAM3X8E",
-    desc: "3.3V ARM Core Pinout Map",
-    pins: [
-      { pin: "D0 - D53", label: "GPIO / PWM", desc: "Exhaustive high-density I/O pins" },
-      { pin: "A0 - A11", label: "Analog Inputs", desc: "12-bit Analog-to-Digital Converter channels" },
-      { pin: "DAC0 / DAC1", label: "Analog Outputs", desc: "True Digital-to-Analog outputs (12-bit)" },
-      { pin: "SDA / SCL", label: "I2C0", desc: "Primary I2C system bus" },
-      { pin: "SDA1 / SCL1", label: "I2C1", desc: "Secondary I2C system bus" },
-      { pin: "CANTX / CANRX", label: "CAN Bus", desc: "Onboard Controller Area Network transceivers" },
-      { pin: "3.3V", label: "VCC", desc: "Regulated 3.3V Power Out" },
-      { pin: "GND", label: "Ground", desc: "Common Ground reference" }
+    tag: "32-Bit ARM",
+    subtitle: "Atmel SAM3X8E Cortex-M3 Board Pinout",
+    svgs: [
+      {
+        label: "Arduino Due Layout",
+        html: `
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="200" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="170" fill="#0284c7" rx="6" opacity="0.85"/>
+            <!-- MCU Core -->
+            <rect x="120" y="80" width="80" height="60" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="110" fill="#38bdf8" font-size="10" text-anchor="middle" font-weight="bold">SAM3X8E</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Arduino Due Key Interface Pinouts",
+        columns: ["Pad Label", "Primary Function", "Signal Description"],
+        rows: [
+          ["D0 - D53", "Digital I/O / PWM", "Exhaustive high-density bidirectional channels (3.3V logic)"],
+          ["A0 - A11", "12-Bit Analog Input", "12-bit Analog-to-Digital Converter channels"],
+          ["DAC0 / DAC1", "Analog Out", "True Digital-to-Analog outputs"],
+          ["SDA / SCL", "I2C0", "Primary I2C system bus"],
+          ["SDA1 / SCL1", "I2C1", "Secondary I2C system bus"],
+          ["CANTX / CANRX", "CAN Bus", "Controller Area Network logic outputs"],
+          ["3.3V", "Regulator Out", "Regulated positive power output"],
+          ["GND", "Ground Reference", "Main system common ground"]
+        ]
+      }
     ]
   },
-  "id04": {
-    name: "Arduino Esplora",
-    color: "#00539b",
-    processor: "ATmega32U4",
-    desc: "Gaming and Sensor Board",
-    pins: [
-      { pin: "Joystick X", label: "Analog Input", desc: "Onboard analog joystick X-axis sensor" },
-      { pin: "Joystick Y", label: "Analog Input", desc: "Onboard analog joystick Y-axis sensor" },
-      { pin: "Slider", label: "Analog Input", desc: "Onboard slide potentiometer" },
-      { pin: "Light Sensor", label: "Analog Input", desc: "Onboard phototransistor" },
-      { pin: "Temp Sensor", label: "Analog Input", desc: "Onboard thermistor temperature monitor" },
-      { pin: "LED Blue", label: "D9 / PWM", desc: "Onboard RGB LED blue element" },
-      { pin: "LED Green", label: "D10 / PWM", desc: "Onboard RGB LED green element" },
-      { pin: "LED Red", label: "D11 / PWM", desc: "Onboard RGB LED red element" },
-      { pin: "Buzzer", label: "D6", desc: "Onboard piezo acoustic driver" }
-    ]
-  },
-  "id05": {
+  {
     name: "Arduino Mega 2560",
-    color: "#00979d",
-    processor: "ATmega2560",
-    desc: "Standard Mega Layout",
-    pins: [
-      { pin: "D0 - D13", label: "GPIO / PWM", desc: "Main Digital I/O channels" },
-      { pin: "D14 - D21", label: "UART 1/2/3", desc: "Three additional hardware serial transceivers" },
-      { pin: "D22 - D53", label: "Digital IO", desc: "Double-row extension headers" },
-      { pin: "A0 - A15", label: "Analog Inputs", desc: "16-channel 10-bit analog conversion" },
-      { pin: "SDA / SCL", label: "I2C", desc: "Dedicated system bus" },
-      { pin: "VCC / 3.3V", label: "Power out", desc: "+5V and 3.3V regulated rails" },
-      { pin: "GND", label: "Ground", desc: "Common Ground Reference" }
+    tag: "Arduino Mega",
+    subtitle: "ATmega2560 High Pin-Count Board Pinout",
+    svgs: [
+      {
+        label: "Arduino Mega Layout",
+        html: `
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="200" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="170" fill="#00979d" rx="6" opacity="0.85"/>
+            <!-- MCU Core -->
+            <rect x="110" y="80" width="100" height="60" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="110" fill="#38bdf8" font-size="10" text-anchor="middle" font-weight="bold">ATmega2560</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Arduino Mega 2560 Header Map",
+        columns: ["Header Pin Group", "Primary Signal", "Functional Capability"],
+        rows: [
+          ["D0 - D13", "GPIO / PWM", "Main Digital I/O channels (with hardware PWM)"],
+          ["D14 - D21", "UART 1/2/3", "Three additional hardware serial transceivers"],
+          ["D22 - D53", "Digital I/O", "Double-row extension headers on tail edge"],
+          ["A0 - A15", "Analog Inputs", "16-channel 10-bit analog conversion"],
+          ["SDA / SCL", "I2C Bus", "Dedicated I2C system bus lines"],
+          ["VCC / 3.3V", "Power Rails", "+5V and 3.3V regulated output rails"]
+        ]
+      }
     ]
   },
-  "id06": {
-    name: "Arduino ADK",
-    color: "#00979d",
-    processor: "ATmega2560",
-    desc: "Mega layout with MAX3421E USB Host chip",
-    pins: [
-      { pin: "D0 - D53", label: "GPIO", desc: "Exhaustive Mega-compatible digital pins" },
-      { pin: "A0 - A15", label: "Analog Inputs", desc: "16-channel Analog-to-Digital converter" },
-      { pin: "USB HOST", label: "MAX3421E", desc: "Direct hardware USB device connector" },
-      { pin: "VCC", label: "5V Out", desc: "Regulated power output" },
-      { pin: "GND", label: "Ground", desc: "Common Ground return" }
-    ]
-  },
-  "id07": {
-    name: "Arduino Ethernet",
-    color: "#00979d",
-    processor: "ATmega328P",
-    desc: "W5100 Ethernet Controller integration",
-    pins: [
-      { pin: "D0 - D13", label: "GPIO", desc: "Digital I/O channels" },
-      { pin: "A0 - A5", label: "Analog", desc: "6-channel analog inputs" },
-      { pin: "D4", label: "SD_CS", desc: "SPI Chip Select for onboard MicroSD slot" },
-      { pin: "D10", label: "W5100_CS", desc: "SPI Chip Select for onboard W5100 chip" },
-      { pin: "GND", label: "Ground", desc: "Common Ground reference" }
-    ]
-  },
-  "id08": {
-    name: "Arduino Mini",
-    color: "#00979d",
-    processor: "ATmega328P",
-    desc: "Exhaustive Layout",
-    pins: [
-      { pin: "1", label: "TX0", desc: "UART Serial Transmit" },
-      { pin: "2", label: "RX1", desc: "UART Serial Receive" },
-      { pin: "3", label: "RST", desc: "Active-low reset trigger" },
-      { pin: "4", label: "GND", desc: "Common Ground return" },
-      { pin: "5", label: "D2", desc: "External Interrupt 0" },
-      { pin: "6", label: "D3", desc: "External Interrupt 1 / PWM" },
-      { pin: "7", label: "D4", desc: "Digital I/O" },
-      { pin: "8", label: "D5", desc: "Timer Channel / PWM" },
-      { pin: "9", label: "D6", desc: "Timer Channel / PWM" },
-      { pin: "10", label: "D7", desc: "Digital I/O" },
-      { pin: "11", label: "D8", desc: "Digital I/O" },
-      { pin: "12", label: "D9", desc: "Timer Channel / PWM" },
-      { pin: "13", label: "D10 / SS", desc: "SPI CS / PWM" },
-      { pin: "14", label: "D11 / MOSI", desc: "SPI MOSI" },
-      { pin: "15", label: "D12 / MISO", desc: "SPI MISO" },
-      { pin: "16", label: "D13 / SCK", desc: "SPI SCK / LED" },
-      { pin: "17", label: "A0", desc: "Analog Input 0" },
-      { pin: "18", label: "A1", desc: "Analog Input 1" },
-      { pin: "19", label: "A2", desc: "Analog Input 2" },
-      { pin: "20", label: "A3", desc: "Analog Input 3" },
-      { pin: "21", label: "VCC", desc: "Regulated +5V Power out" },
-      { pin: "22", label: "RST", desc: "System Reset" },
-      { pin: "23", label: "GND", desc: "Common Ground return" },
-      { pin: "24", label: "RAW", desc: "Unregulated Power Input" }
-    ]
-  },
-  "id09": {
-    name: "Arduino Micro",
-    color: "#00979d",
-    processor: "ATmega32U4",
-    desc: "Standard Micro Layout",
-    pins: [
-      { pin: "D0 / RX", label: "RXD", desc: "UART Serial Input" },
-      { pin: "D1 / TX", label: "TXD", desc: "UART Serial Transmit" },
-      { pin: "D2 / SDA", label: "SDA", desc: "I2C Serial Data" },
-      { pin: "D3 / SCL", label: "SCL", desc: "I2C Serial Clock" },
-      { pin: "D4", label: "A6", desc: "Analog Input A6" },
-      { pin: "D5", label: "PWM", desc: "Hardware timer PWM output" },
-      { pin: "D6", label: "A7", desc: "Analog Input A7" },
-      { pin: "D7", label: "GPIO", desc: "Digital I/O" },
-      { pin: "D8", label: "A8", desc: "Analog Input A8" },
-      { pin: "D9", label: "A9", desc: "Analog Input A9" },
-      { pin: "D10", label: "A10", desc: "Analog Input A10" },
-      { pin: "D11", label: "MOSI", desc: "SPI Master Out" },
-      { pin: "D12", label: "MISO", desc: "SPI Master In" },
-      { pin: "D13", label: "SCK", desc: "SPI Clock / LED" },
-      { pin: "A0 - A5", label: "Analog", desc: "Main analog converter input channels" }
-    ]
-  },
-  "id010": {
-    name: "Arduino Nano V2",
-    color: "#00979d",
-    processor: "ATmega168",
-    desc: "Legacy Nano Layout",
-    pins: [
-      { pin: "1 - 30", label: "Pinout Mappings", desc: "Exhaustive layout matching the standard Arduino Nano V3, using the ATmega168 chip instead of ATmega328." }
-    ]
-  },
-  "id011": {
-    name: "Arduino Nano V3",
-    color: "#00979d",
-    processor: "ATmega328P",
-    desc: "Classic compact platform",
-    pins: [
-      { pin: "1", label: "D13", desc: "SPI Serial Clock / Onboard LED" },
-      { pin: "2", label: "3.3V", desc: "Regulated output voltage rails" },
-      { pin: "3", label: "REF", desc: "Analog Reference reference line" },
-      { pin: "4", label: "A0", desc: "Analog Input Channel 0" },
-      { pin: "5", label: "A1", desc: "Analog Input Channel 1" },
-      { pin: "6", label: "A2", desc: "Analog Input Channel 2" },
-      { pin: "7", label: "A3", desc: "Analog Input Channel 3" },
-      { pin: "8", label: "A4", desc: "Analog Input Channel 4 / I2C Data" },
-      { pin: "9", label: "A5", desc: "Analog Input Channel 5 / I2C Clock" },
-      { pin: "10", label: "A6", desc: "Analog Input Channel 6 (ADC only)" },
-      { pin: "11", label: "A7", desc: "Analog Input Channel 7 (ADC only)" },
-      { pin: "12", label: "5V", desc: "Regulated +5V Output rail" },
-      { pin: "13", label: "RST", desc: "Active-low external reset" },
-      { pin: "14", label: "GND", desc: "Common Ground return" },
-      { pin: "15", label: "VIN", desc: "Unregulated external power input" },
-      { pin: "16", label: "TX1", desc: "UART Serial Transmit" },
-      { pin: "17", label: "RX0", desc: "UART Serial Receive" },
-      { pin: "18", label: "RST", desc: "Secondary reset line" },
-      { pin: "19", label: "GND", desc: "Common ground reference" },
-      { pin: "20", label: "D2", desc: "External Interrupt 0" },
-      { pin: "21", label: "D3", desc: "External Interrupt 1 / PWM" },
-      { pin: "22", label: "D4", desc: "General-purpose I/O" },
-      { pin: "23", label: "D5", desc: "Timer Channel / PWM" },
-      { pin: "24", label: "D6", desc: "Timer Channel / PWM" },
-      { pin: "25", label: "D7", desc: "General-purpose I/O" },
-      { pin: "26", label: "D8", desc: "General-purpose I/O" },
-      { pin: "27", label: "D9", desc: "Timer Channel / PWM" },
-      { pin: "28", label: "D10", desc: "SPI CS / PWM" },
-      { pin: "29", label: "D11", desc: "SPI MOSI / PWM" },
-      { pin: "30", label: "D12", desc: "SPI MISO" }
-    ]
-  },
-  "id0150": {
-    name: "Arduino Pro",
-    color: "#00979d",
-    processor: "ATmega328P",
-    desc: "Single-sided development platform",
-    pins: [
-      { pin: "1 - 28", label: "Header Ports", desc: "Shares full hardware compatibility with standard ATmega328P Uno boards in a flat profile." }
-    ]
-  },
-  "id012": {
-    name: "Arduino Pro Mini",
-    color: "#00979d",
-    processor: "ATmega328P",
-    desc: "Ultra mini module",
-    pins: [
-      { pin: "1 - 24", label: "Standard Pinout", desc: "Exhaustive layout matching the standard Arduino Mini, with optimized regulator structures for battery applications." }
-    ]
-  },
-  "id013": {
-    name: "Arduino Pro Micro",
-    color: "#00979d",
-    processor: "ATmega32U4",
-    desc: "Compact USB core module",
-    pins: [
-      { pin: "1 - 24", label: "Digital / Analog", desc: "Exhaustive layout matching the standard Arduino Micro (Atmega32u4), featuring native USB integration." }
-    ]
-  },
-  "id014": {
-    name: "Arduino Fio",
-    color: "#00979d",
-    processor: "ATmega328P",
-    desc: "Designed for XBee and wireless arrays",
-    pins: [
-      { pin: "D0 - D13", label: "GPIO", desc: "Digital I/O channels" },
-      { pin: "A0 - A7", label: "Analog", desc: "8-channel analog inputs" },
-      { pin: "XBee Socket", label: "Pins 1-10", desc: "Direct hardware mapping for Zigbee modules" }
-    ]
-  },
-  "id015": {
-    name: "Arduino Tre (Shield)",
-    color: "#1d4ed8",
-    processor: "Sitara AM335x",
-    desc: "High-performance Linux expansion",
-    pins: [
-      { pin: "AM335x Headers", label: "GPIO", desc: "High-speed Sitara CPU outputs" },
-      { pin: "AVR Headers", label: "Arduino", desc: "Dedicated coprocessor Arduino pins" }
-    ]
-  },
-  "id016": {
-    name: "Arduino Duemilanove",
-    color: "#00979d",
-    processor: "ATmega328P / 168",
-    desc: "Legacy board architecture",
-    pins: [
-      { pin: "1 - 28", label: "UNO Compatible", desc: "Predecessor to the UNO, completely compatible with standard 28-pin shields." }
-    ]
-  },
-  "id017": {
-    name: "Arduino Zero",
-    color: "#00979d",
-    processor: "ATSAMD21G18",
-    desc: "32-Bit ARM Prototyping",
-    pins: [
-      { pin: "D0 - D13", label: "GPIO", desc: "ARM 3.3V logic level pins" },
-      { pin: "A0 - A5", label: "Analog", desc: "12-bit Analog-to-Digital Converter channels" },
-      { pin: "DAC0", label: "Analog Out", desc: "True 10-bit analog output line" }
-    ]
-  },
-  "id019": {
-    name: "Arduino Lilypad",
-    color: "#be185d",
-    processor: "ATmega328P / 168V",
-    desc: "Wearable e-textiles platform",
-    pins: [
-      { pin: "Sew-Pads", label: "Circular Layout", desc: "Wearable, conductive thread friendly sew-pads: GND, 3.3V, RX, TX, D2-D13, A0-A5." }
-    ]
-  },
-  "id0120": {
-    name: "Arduino Lilypad USB",
-    color: "#be185d",
-    processor: "ATmega32U4",
-    desc: "Wearable e-textiles with native USB",
-    pins: [
-      { pin: "Sew-Pads", label: "Circular Layout", desc: "ATmega32u4 configuration: GND, 3.3V, RX, TX, D2-D12, A0-A5, featuring on-board USB transceivers." }
-    ]
-  },
-  "id0128": {
-    name: "Arduino Lilypad Simple",
-    color: "#be185d",
-    processor: "ATmega328P",
-    desc: "Simplified wearable system",
-    pins: [
-      { pin: "Sew-Pads", label: "Circular Layout", desc: "Optimized connection pads: GND, 3.3V, D5-D11, A2-A5, with integrated LiPo charger." }
-    ]
-  },
-  "id0153": {
-    name: "Arduino Lilypad Simple Snap",
-    color: "#be185d",
-    processor: "ATmega328P",
-    desc: "Wearable snap-connector board",
-    pins: [
-      { pin: "Snaps", label: "Exhaustive List", desc: "24 metallic snap connection terminals replacing standard pads for quick attachment." }
-    ]
-  },
-  "id0121": {
-    name: "Arduino Genuino 101",
-    color: "#00979d",
-    processor: "Intel Curie",
-    desc: "BLE & 6-Axis IMU integration",
-    pins: [
-      { pin: "D0 - D13", label: "GPIO", desc: "Intel Curie 3.3V logic level pins" },
-      { pin: "A0 - A5", label: "Analog", desc: "Sensor subsystem analog inputs" }
-    ]
-  },
-  "id0122": {
-    name: "Arduino Gemma",
-    color: "#00979d",
-    processor: "ATtiny85",
-    desc: "Wearable compact platform",
-    pins: [
-      { pin: "Pads", label: "ATtiny85", desc: "VOUT, GND, 3.3V, D0 (SDA), D1 (LED), D2 (SCL/Analog)." }
-    ]
-  },
-  "id0123": {
-    name: "Arduino MKR1000",
-    color: "#00979d",
-    processor: "ATSAMD21G18",
-    desc: "Wireless IoT Platform",
-    pins: [
-      { pin: "D0 - D14", label: "GPIO", desc: "3.3V logic general-purpose pins" },
-      { pin: "A0 - A6", label: "Analog", desc: "12-bit ADC inputs, DAC0 analog output" }
-    ]
-  },
-  "id0124": {
-    name: "Arduino MKR Zero",
-    color: "#00979d",
-    processor: "ATSAMD21G18",
-    desc: "ARM platform with MicroSD slot",
-    pins: [
-      { pin: "D0 - D14", label: "GPIO", desc: "3.3V logic general-purpose pins" },
-      { pin: "SD_CS", label: "Digital 4", desc: "Dedicated SPI chip select line for MicroSD slot" }
-    ]
-  },
-  "id0125": {
-    name: "Arduino YUN",
-    color: "#00979d",
-    processor: "ATmega32U4 / AR9331",
-    desc: "Dual Processor Linux/AVR Board",
-    pins: [
-      { pin: "D0 - D13", label: "GPIO", desc: "Standard 32u4 microcontroller pins" },
-      { pin: "MIPS AR9331", label: "Linux", desc: "Dedicated WiFi / Ethernet OpenWrt Linux interface" }
-    ]
-  },
-  "id0126": {
-    name: "Arduino YUN Mini",
-    color: "#00979d",
-    processor: "ATmega32U4 / AR9331",
-    desc: "Compact dual processor module",
-    pins: [
-      { pin: "Header", label: "Pins 1-40", desc: "Exposes critical AVR and Linux system lines in a dense layout." }
-    ]
-  },
-  "id0127": {
-    name: "Arduino Robot",
-    color: "#00979d",
-    processor: "ATmega32U4 (x2)",
-    desc: "Dual microcontroller robotic motor platform",
-    pins: [
-      { pin: "Motor Board", label: "32u4", desc: "Manages wheels, encoders, and motor drivers." },
-      { pin: "Control Board", label: "32u4", desc: "Manages display, sensors, and expansion boards." }
-    ]
-  },
-  "id0129": {
-    name: "Teensy 1.0",
-    color: "#7c3aed",
-    processor: "AT90USB162",
-    desc: "Legacy USB core",
-    pins: [
-      { pin: "1 - 24", label: "Dense Layout", desc: "Exposes 24 hardware pins including hardware USB and SPI." }
-    ]
-  },
-  "id0130": {
-    name: "Teensy++ 1.0",
-    color: "#7c3aed",
-    processor: "AT90USB646",
-    desc: "High-pin legacy platform",
-    pins: [
-      { pin: "1 - 40", label: "Exhaustive List", desc: "Extended pins with additional timers and hardware ports." }
-    ]
-  },
-  "id0131": {
-    name: "Teensy 2.0",
-    color: "#7c3aed",
-    processor: "ATmega32U4",
-    desc: "USB keyboard emulator core",
-    pins: [
-      { pin: "1 - 25", label: "Compact Layout", desc: "Exposes standard 32u4 pin assignments in a highly optimized layout." }
-    ]
-  },
-  "id0132": {
-    name: "Teensy++ 2.0",
-    color: "#7c3aed",
-    processor: "AT90USB1286",
-    desc: "High-capacity AVR developer board",
-    pins: [
-      { pin: "1 - 46", label: "Exhaustive List", desc: "Full chip breakout providing multiple serial buffers and timers." }
-    ]
-  },
-  "id0133": {
-    name: "Teensy 3.0",
-    color: "#7c3aed",
-    processor: "MK20DX128",
-    desc: "32-Bit ARM Cortex-M4 @ 48MHz",
-    pins: [
-      { pin: "D0 - D33", label: "GPIO", desc: "32-bit ARM logic pins, 3.3V limit" },
-      { pin: "Analog", label: "A0-A13", desc: "High-accuracy analog input channels" }
-    ]
-  },
-  "id0134": {
-    name: "Teensy 3.1",
-    color: "#7c3aed",
-    processor: "MK20DX256",
-    desc: "32-Bit ARM Cortex-M4 @ 72MHz",
-    pins: [
-      { pin: "1 - 28", label: "5V Tolerant", desc: "First 5V tolerant M4 board, ideal for classic interface setups." }
-    ]
-  },
-  "id0135": {
-    name: "Teensy LC",
-    color: "#7c3aed",
-    processor: "MKL26Z64",
-    desc: "Low-Cost ARM Cortex-M0+ @ 48MHz",
-    pins: [
-      { pin: "1 - 27", label: "M0+ Core", desc: "Low-power optimized pin breakout with dedicated DAC output." }
-    ]
-  },
-  "id0136": {
-    name: "Teensy 3.2",
-    color: "#7c3aed",
-    processor: "MK20DX256",
-    desc: "Improved Teensy 3.1",
-    pins: [
-      { pin: "1 - 28", label: "Pinout", desc: "Maintains hardware compatibility with Teensy 3.1 with an upgraded regulator." }
-    ]
-  },
-  "id0137": {
-    name: "Teensy 3.5",
-    color: "#7c3aed",
-    processor: "MK64FX512",
-    desc: "Cortex-M4 @ 120MHz with MicroSD",
-    pins: [
-      { pin: "D0 - D57", label: "Exhaustive GPIO", desc: "High-density digital and analog signals, fully 5V tolerant." }
-    ]
-  },
-  "id0138": {
-    name: "Teensy 3.6",
-    color: "#7c3aed",
-    processor: "MK66FX1M0",
-    desc: "Cortex-M4 @ 180MHz, USB Host",
-    pins: [
-      { pin: "D0 - D63", label: "Exhaustive GPIO", desc: "High-frequency compute pins, strictly 3.3V logic." }
-    ]
-  },
-  "id0139": {
+  {
     name: "Teensy 4.0",
-    color: "#7c3aed",
-    processor: "MIMXRT1062",
-    desc: "Cortex-M7 @ 600MHz",
-    pins: [
-      { pin: "1 - 28", label: "Pins", desc: "Compact form factor, ultra-high-speed CPU pins, strictly 3.3V logic." }
+    tag: "Teensy Board",
+    subtitle: "ARM Cortex-M7 @ 600MHz Board Pinout",
+    svgs: [
+      {
+        label: "Teensy 4.0 Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#7c3aed" rx="6" opacity="0.85"/>
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#a78bfa" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#a78bfa" font-size="11" text-anchor="middle" font-weight="bold">i.MX RT1062</text>
+            <text x="160" y="95" fill="#cbd5e1" font-size="8" text-anchor="middle">ARM Cortex-M7</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Teensy 4.0 Pin Assignment",
+        columns: ["Pin Label", "Digital / Analog Capabilities", "Core Peripheral Protocol Map"],
+        rows: [
+          ["D0 / RX1", "Digital I/O", "UART1 RX Receive line"],
+          ["D1 / TX1", "Digital I/O", "UART1 TX Transmit line"],
+          ["D2-D5", "Digital I/O", "General purpose I/O / PWM"],
+          ["D6", "Digital I/O", "General purpose I/O / PWM"],
+          ["D7 / RX2", "Digital I/O", "UART2 RX Receive line"],
+          ["D8 / TX2", "Digital I/O", "UART2 TX Transmit line"],
+          ["D9-D10", "Digital I/O", "General purpose I/O / PWM"],
+          ["D11 / MOSI", "Digital I/O", "SPI MOSI line"],
+          ["D12 / MISO", "Digital I/O", "SPI MISO line"],
+          ["D13 / SCK", "Digital I/O", "SPI SCK Clock / Onboard LED"],
+          ["A0 - A9", "Analog Input / Digital", "12-bit ADC Input channels"],
+          ["SDA / SCL", "I2C0 Bus", "Primary I2C system data and clock"]
+        ]
+      }
     ]
   },
-  "id0140": {
+  {
     name: "Teensy 4.1",
-    color: "#7c3aed",
-    processor: "MIMXRT1062",
-    desc: "Cortex-M7 @ 600MHz with Ethernet & SD",
-    pins: [
-      { pin: "D0 - D54", label: "Exhaustive List", desc: "Exposes USB Host, SD slot, and 10/100 Ethernet interface pins." }
+    tag: "Teensy Board",
+    subtitle: "ARM Cortex-M7 @ 600MHz Board with Ethernet/SD",
+    svgs: [
+      {
+        label: "Teensy 4.1 Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#7c3aed" rx="6" opacity="0.85"/>
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#a78bfa" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#a78bfa" font-size="11" text-anchor="middle" font-weight="bold">i.MX RT1062</text>
+            <text x="160" y="95" fill="#cbd5e1" font-size="8" text-anchor="middle">Teensy 4.1 Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Teensy 4.1 Pin Assignment Extension",
+        columns: ["Pin Label", "Digital / Analog Capabilities", "Core Peripheral Protocol Map"],
+        rows: [
+          ["D0 - D13", "General GPIO", "Standard SPI, I2C, and UART1/UART2 lines"],
+          ["D14 - D23 (A0-A9)", "Analog / Digital", "Primary 12-bit analog input channels"],
+          ["D24 - D41 (A10-A17)", "Analog / Digital", "Secondary analog input channels on outer pins"],
+          ["D42 - D54", "Extended GPIO", "Expansion header lines (strictly 3.3V logic)"],
+          ["USB Host", "USB Pads", "Onboard USB Host transceiver connections"],
+          ["Ethernet", "DP83825 Grid", "Direct 10/100 Ethernet interface pins"]
+        ]
+      }
     ]
   },
-  "id0141": {
-    name: "ATmega 1248P P/Isp",
-    color: "#111827",
-    processor: "ATmega1248P",
-    desc: "Chip Pinout",
-    pins: [
-      { pin: "1 - 40", label: "PDIP Breakout", desc: "Full chip pin map including dual USART buffers, SPI, and ISP." }
+  {
+    name: "ATmega328P (Raw PDIP Chip)",
+    tag: "AVR Chip",
+    subtitle: "ATmega328P Dual-Inline 28-Pin Outlines",
+    svgs: [
+      {
+        label: "PDIP-28 Layout",
+        html: `
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="200" fill="#1e293b" rx="10"/>
+            <rect x="80" y="20" width="160" height="160" fill="#111827" rx="4" stroke="#475569" stroke-width="2"/>
+            <circle cx="160" cy="30" r="8" fill="#475569" />
+            <text x="160" y="100" fill="#cbd5e1" font-size="10" text-anchor="middle" font-weight="bold">ATmega328P</text>
+            <text x="160" y="115" fill="#64748b" font-size="8" text-anchor="middle">PDIP-28</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "ATmega328P PDIP-28 Pinout Specifications",
+        columns: ["Pin", "Port Name", "Usage / Alternate Function Details"],
+        rows: [
+          ["1", "PC6 / RESET", "Active-low external system hardware reset"],
+          ["2", "PD0 / RXD", "UART Serial Input (Digital 0)"],
+          ["3", "PD1 / TXD", "UART Serial Transmit (Digital 1)"],
+          ["4", "PD2 / INT0", "External Interrupt 0 (Digital 2)"],
+          ["5", "PD3 / INT1 / PWM", "External Interrupt 1 (Digital 3)"],
+          ["6", "PD4 / T0", "Timer 0 clock input (Digital 4)"],
+          ["7", "VCC", "Positive supply voltage (+5V nominal)"],
+          ["8", "GND", "Common Ground return"],
+          ["9", "PB6 / XTAL1", "Crystal oscillator input 1"],
+          ["10", "PB7 / XTAL2", "Crystal oscillator input 2"],
+          ["11", "PD5 / T1 / PWM", "Timer 1 clock input (Digital 5)"],
+          ["12", "PD6 / AIN0 / PWM", "Analog Comparator Positive (Digital 6)"],
+          ["13", "PD7 / AIN1", "Analog Comparator Negative (Digital 7)"],
+          ["14", "PB0 / ICP1", "Input Capture Pin (Digital 8)"],
+          ["15", "PB1 / OC1A / PWM", "Timer 1 Output A (Digital 9)"],
+          ["16", "PB2 / SS / PWM", "SPI Slave Select (Digital 10)"],
+          ["17", "PB3 / MOSI / PWM", "SPI Master Out (Digital 11)"],
+          ["18", "PB4 / MISO", "SPI Master In (Digital 12)"],
+          ["19", "PB5 / SCK", "SPI Serial Clock / Onboard LED (Digital 13)"],
+          ["20", "AVCC", "Analog supply voltage (+5V)"],
+          ["21", "AREF", "Analog reference voltage input"],
+          ["22", "GND", "Common Ground return"],
+          ["23", "PC0 / ADC0", "Analog Input Channel 0"],
+          ["24", "PC1 / ADC1", "Analog Input Channel 1"],
+          ["25", "PC2 / ADC2", "Analog Input Channel 2"],
+          ["26", "PC3 / ADC3", "Analog Input Channel 3"],
+          ["27", "PC4 / ADC4 / SDA", "Analog Input Channel 4 / I2C SDA"],
+          ["28", "PC5 / ADC5 / SCL", "Analog Input Channel 5 / I2C SCL"]
+        ]
+      }
     ]
   },
-  "id0142": {
-    name: "ATmega 1248P V2 P/Isp",
-    color: "#111827",
-    processor: "ATmega1248P",
-    desc: "V2 Chip Pinout",
-    pins: [
-      { pin: "1 - 40", label: "PDIP Breakout", desc: "Optimized V2 routing profiles for custom PCB designs." }
-    ]
-  },
-  "id0143": {
-    name: "ATmega 2560",
-    color: "#111827",
-    processor: "ATmega2560-16AU",
-    desc: "TQFP-100 Pinout",
-    pins: [
-      { pin: "1 - 100", label: "Exhaustive List", desc: "Detailed 100-pin mapping for custom board designers and PCB routing." }
-    ]
-  },
-  "id0144": {
-    name: "ATmega 328",
-    color: "#111827",
-    processor: "ATmega328P-PU",
-    desc: "PDIP-28 Pinout",
-    pins: [
-      { pin: "1 - 28", label: "Exhaustive List", desc: "Detailed 28-pin schematic, including VCC, GND, Crystal, Reset, and standard ports B, C, D." }
-    ]
-  },
-  "id0145": {
-    name: "ATmega 32U4",
-    color: "#111827",
-    processor: "ATmega32U4-AU",
-    desc: "TQFP-44 Pinout",
-    pins: [
-      { pin: "1 - 44", label: "Exhaustive List", desc: "Detailed 44-pin USB-equipped micro controller breakout mapping." }
-    ]
-  },
-  "id0146": {
-    name: "ATmega 644P P/Isp",
-    color: "#111827",
-    processor: "ATmega644P",
-    desc: "PDIP-40 Pinout",
-    pins: [
-      { pin: "1 - 40", label: "Exhaustive List", desc: "Comprehensive 40-pin PDIP layout, commonly used for RepRap 3D printer controllers." }
-    ]
-  },
-  "id0147": {
-    name: "ATTiny Generic P/Isp",
-    color: "#111827",
-    processor: "ATTiny85 / 45 / 25",
-    desc: "PDIP-8 Pinout",
-    pins: [
-      { pin: "1", label: "PB5 / RESET", desc: "System Reset" },
-      { pin: "2", label: "PB3 / XTAL1 / Analog A3", desc: "Oscillator Input / Analog input" },
-      { pin: "3", label: "PB4 / XTAL2 / Analog A2", desc: "Oscillator Output / Analog input" },
-      { pin: "4", label: "GND", desc: "Ground Reference" },
-      { pin: "5", label: "PB0 / MOSI / SDA", desc: "SPI MOSI / I2C SDA" },
-      { pin: "6", label: "PB1 / MISO / LED", desc: "SPI MISO / Onboard Indicator LED" },
-      { pin: "7", label: "PB2 / SCK / SCL / Analog A1", desc: "SPI Clock / I2C Clock / Analog input" },
-      { pin: "8", label: "VCC", desc: "Positive operating supply voltage" }
-    ]
-  },
-  "id0148": {
-    name: "ATTiny 84 ATTiny 44 P/Isp",
-    color: "#111827",
-    processor: "ATTiny84 / 44",
-    desc: "PDIP-14 Pinout",
-    pins: [
-      { pin: "1 - 14", label: "Exhaustive List", desc: "Detailed 14-pin mapping containing dedicated hardware SPI and ADC channels." }
-    ]
-  },
-  "id0149": {
-    name: "Sparkfun Microview 328",
-    color: "#1e293b",
-    processor: "ATmega328P",
-    desc: "OLED display integrated microcontroller",
-    pins: [
-      { pin: "1 - 16", label: "Breadboard Header", desc: "Exposes 16 hardware pins for programming and interfacing alongside the built-in screen." }
-    ]
-  },
-  "id0151": {
-    name: "$9 ARDUINO Compatible",
-    color: "#0f172a",
-    processor: "LGT8F328P",
-    desc: "Cloned microcontroller architecture",
-    pins: [
-      { pin: "1 - 30", label: "UNO Clone Pinout", desc: "Full compatibility with classic Arduino Uno configurations with an enhanced clock engine." }
-    ]
-  },
-  "id0152": {
-    name: "ARIA G25 (ACME System)",
-    color: "#0369a1",
-    processor: "Atmel SAM9G25",
-    desc: "System-on-Module ARM9 @ 400MHz",
-    pins: [
-      { pin: "Pads 1 - 60", label: "Exhaustive SMT List", desc: "Exposes high-speed USB host, Ethernet MAC, and Linux peripheral system lines." }
+  {
+    name: "ATTiny85 (Raw PDIP Chip)",
+    tag: "AVR Chip",
+    subtitle: "ATTiny85 Dual-Inline 8-Pin Outlines",
+    svgs: [
+      {
+        label: "PDIP-8 Layout",
+        html: `
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="120" fill="#1e293b" rx="10"/>
+            <rect x="50" y="20" width="100" height="80" fill="#111827" rx="3" stroke="#475569" stroke-width="1.5"/>
+            <text x="100" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle" font-weight="bold">ATTiny85</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "ATTiny85 PDIP-8 Pinout Mappings",
+        columns: ["Pin", "Port Name", "Usage / Alternate Function Details"],
+        rows: [
+          ["1", "PB5 / RESET", "Active-low Reset line / Analog Input A0"],
+          ["2", "PB3 / XTAL1 / Analog A3", "Oscillator Input / Analog input"],
+          ["3", "PB4 / XTAL2 / Analog A2", "Oscillator Output / Analog input / PWM"],
+          ["4", "GND", "Common Ground return reference"],
+          ["5", "PB0 / MOSI / SDA", "SPI MOSI / I2C SDA data channel line"],
+          ["6", "PB1 / MISO / LED", "SPI MISO / Onboard Indicator LED"],
+          ["7", "PB2 / SCK / SCL / Analog A1", "SPI Clock / I2C SCL clock / Analog input"],
+          ["8", "VCC", "Positive supply voltage (+3.3V to 5V nominal)"]
+        ]
+      }
     ]
   }
-};
+];
 
-// Open Modal and populate it dynamically
-function openModal(id) {
-  const board = pinoutsData[id];
-  if (!board) return;
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
 
-  const target = document.getElementById('modalTarget');
+// Update display with selected board parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
   
-  // Create beautiful customized SVG on-the-fly to prevent copyright issues
-  const svgTemplate = `
-    <div class="diagramBox">
-      <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
-        <rect width="320" height="160" fill="#0f172a" rx="10"/>
-        <rect x="15" y="15" width="290" height="130" fill="${board.color || '#0284c7'}" rx="6" opacity="0.85"/>
-        <!-- MCU Core -->
-        <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
-        <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">${board.processor}</text>
-        <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
-        <!-- Highlights -->
-        <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-        <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-        <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">${board.name.toUpperCase()} PIN REFERENCE</text>
-      </svg>
-    </div>
-    <div class="img-caption">Diagram: Interactive hardware mapping for ${board.name}</div>
-  `;
-
-  // Create Table dynamic rows ensuring NO pins are missing
-  let tableRows = '';
-  board.pins.forEach(p => {
-    tableRows += `
-      <tr>
-        <td><strong>${p.pin}</strong></td>
-        <td>${p.label}</td>
-        <td>${p.desc || ""}</td>
-      </tr>
-    `;
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
   });
-
-  const tableTemplate = `
-    <table>
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
       <thead>
         <tr>
-          <th>Pin / Pad</th>
-          <th>Signal Label</th>
-          <th>Description</th>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
         </tr>
       </thead>
-      <tbody>
-        ${tableRows}
-      </tbody>
-    </table>
-  `;
-
-  target.innerHTML = `
-    <h2>${board.name} Pinout Reference</h2>
-    ${svgTemplate}
-    ${tableTemplate}
-  `;
-
-  document.getElementById('dynamicModal').style.display = 'block';
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
 }
 
-function closeModal() {
-  document.getElementById('dynamicModal').style.display = 'none';
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
+}
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first board entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+};
+</script>
+
+<!-- SEO Structured JSON-LD Schemas -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between Arduino UNO and Leonardo pinouts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The UNO uses the ATmega328P with fixed hardware SPI/I2C pins. The Leonardo uses the ATmega32U4, which features native USB. This shifts the SPI pins to the ICSP header and changes the analog input pin locations."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do Teensy boards feature much higher pin densities?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Teensy boards use advanced ARM Cortex-M processors. These chips break out a larger number of hardware timers, PWM channels, multiple serial ports, and secondary SPI/I2C buses on a compact board area."
+      }
+    }
+  ]
 }
 </script>
 
 <script type="application/ld+json">
 {
-"@context":"https://schema.org",
-"@type":"FAQPage",
-"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
-"mainEntity":[
-{"@type":"Question","name":"1. What is the difference between T568A and T568B wiring?","acceptedAnswer":{"@type":"Answer","text":"The only functional difference is that pin pairs 2 (orange) and 3 (green) are swapped. T568A is commonly used in federal and legacy systems, while T568B is the standard for most commercial and residential networks."}},
-{"@type":"Question","name":"2. Can I plug an RJ11 connector into an RJ45 jack?","acceptedAnswer":{"@type":"Answer","text":"Physically yes, but it is not recommended. The smaller RJ11 connector can bend and permanently damage the outer pins (Pins 1 and 8) of the female RJ45 wall jack."}},
-{"@type":"Question","name":"3. What do the terms \"Tip\" and \"Ring\" mean in telephony?","acceptedAnswer":{"@type":"Answer","text":"These terms originate from legacy manual telephone switchboards. \"Tip\" refers to the positive side of the line connected to the plug tip, while \"Ring\" refers to the negative side connected to the metal ring behind the tip."}},
-{"@type":"Question","name":"4. What is the difference between RJ48 and RJ45?","acceptedAnswer":{"@type":"Answer","text":"Both use the same physical 8P8C modular connector, but they have different wiring configurations. RJ45 is used for local area networks, while RJ48 (such as RJ48C and RJ48X) is used for T1/E1 digital telecom lines and requires shielded wiring."}},
-{"@type":"Question","name":"5. Why German TAE wiring have multiple lettered contacts?","acceptedAnswer":{"@type":"Answer","text":"The TAE (Telekommunikations-Anschluss-Einheit) standard uses mechanical switching contacts (a2 and b2) to route signals in series through auxiliary devices (like fax machines or modems) back to the main telephone line."}},
-{"@type":"Question","name":"6. How are RJ21 connectors used in enterprise telephony?","acceptedAnswer":{"@type":"Answer","text":"Also known as Amphenol or Telco connectors, RJ21 connectors contain 50 pins to carry 25 individual analog telephone lines over a single trunk cable, simplifying wiring in office telephone closets."}}
-]
-}
-</script>
-
-<script type="application/ld+json">
-{
-"@context":"https://schema.org",
-"@type":"BreadcrumbList",
-"itemListElement":[
-{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
-{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
-{"@type":"ListItem","position":3,"name":"Registered Jack Pinouts Reference Guide","item":"https://calcboy.com/tool/registered-jack-pinouts-reference-guide"}
-]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Arduino, Teensy & MCU Boards Pinouts Guide", "item": "https://calcboy.com/tool/arduino-teensy-mcu-pinouts-guide" }
+  ]
 }
 </script>
 
