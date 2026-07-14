@@ -6,136 +6,155 @@
 <title>Exhaustive IC Package Reference Guide | CalcBoy</title>
 <meta name="description" content="Exhaustive design reference guide for IC packages. Separate cards with precise dimensions, JEDEC standards, and footprint tables for TSSOP, SSOP, SOIC, PLCC, LCC, and TSOP.">
 <meta name="keywords" content="VSSOP dimensions, TSSOP pitch, TSOP Type 1, TSOP Type 2, SSOP footprint, SOIC J Lead, QSOP pitch, PLCC size, MSOP, LCC Chip Carrier, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/ic-package-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Exhaustive IC Package Reference Guide | CalcBoy">
+<meta property="og:description" content="Access complete JEDEC engineering specifications for surface-mount IC packages. Compare body widths, lead pitch spacing, and terminal envelopes.">
+<meta property="og:url" content="https://calcboy.com/tool/ic-package-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Exhaustive IC Package Reference Guide | CalcBoy">
+<meta name="twitter:description" content="Comprehensive engineering database of JEDEC IC packages and dynamic lead pitch calculator.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#semiconductor-pkg-calc,#semiconductor-pkg-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#semiconductor-pkg-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#semiconductor-pkg-tool, #semiconductor-pkg-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#009688;
-  box-shadow:0 0 0 3px rgba(0,150,136,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#semiconductor-pkg-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+}
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
   cursor: pointer;
 }
-.pinout-item-card:hover {
-  border-color:#009688;
-  box-shadow:0 4px 12px rgba(0,150,136,.08);
+select:focus {
+  border-color: #009688;
+  box-shadow: 0 0 0 3px rgba(0,150,136,.12);
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#009688;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
-}
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
-}
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Modal Overlay Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:hidden; /* Lock viewport scroll completely */
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:10px;
-}
-.w3-modal-content {
-  background:#fff;
-  margin:80px auto 20px; /* Pushed down to clear header bar completely */
-  width:100%;
-  max-width:580px;
-  max-height:85vh; /* Restored comfortable height */
-  overflow-y:auto;  /* Enable vertical scroll inside the content box */
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-
-/* Red Close Button: Viewport-Locked */
-.mid {
-  position: fixed !important;
-  top: 100px !important;  
-  right: 25px !important;
-  z-index: 10010 !important;
-  width: 50px !important;
-  height: 40px !important;
-  background-color: red !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-size: 25px !important;
-  font-weight: bold !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  text-decoration: none;
-}
-.mid:hover {
-  background-color: #cc0000 !important;
-  transform: scale(1.05);
-}
-
-/* Inline Diagram Styling */
-.diagram-container {
-  width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
   border-radius: 12px;
   padding: 16px;
-  margin: 12px auto 6px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.connector-header-card .badge {
+  background: #e0f2f1;
+  color: #009688;
+  border: 1px solid #b2dfdb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #009688;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e0f2f1;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
   display: flex;
   gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
 }
-.vector-view {
+.vector-box {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -143,16 +162,17 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   background: #fff;
   border: 1px solid #edf2f7;
   border-radius: 8px;
-  padding: 8px;
+  padding: 12px;
   min-height: 140px;
   justify-content: center;
-  cursor: zoom-in; /* Indicate clickable zoom action */
-  transition: transform 0.2s;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
 }
-.vector-view:hover {
+.vector-box:hover {
   transform: scale(1.02);
+  border-color: #009688;
 }
-.vector-view svg {
+.vector-box svg {
   max-width: 100%;
   height: auto;
 }
@@ -161,80 +181,185 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   font-weight: 800;
   color: #64748b;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+.img-caption {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
+}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #374151 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.table1 {width:100%;text-align:left;clear:both}
-
-.img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:6px;
-  margin-bottom:16px;
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-
-/* Standardized Tables & Scroll wrappers */
-.table-responsive {
-  width: 100%;
-  max-height: 380px; /* Lock height of scroll container inside the modal */
-  overflow-y: auto;  /* Enable vertical scroll inside the container */
-  overflow-x: auto;  /* Enable horizontal scroll for wide tables */
-  margin: 15px 0 0;
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutLead {
+  background: linear-gradient(135deg,#eef5ff,#fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #e0f2f1;
+  border: 1px solid #b2dfdb;
+  border-left: 5px solid #009688;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00796b;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  -webkit-overflow-scrolling: touch;
-  position: relative; /* Establish scroll context for sticky TH elements */
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
 }
-table {
-  width: 100%;
-  border-collapse: separate; /* Essential: separate allows sticky TH positioning to work */
-  border-spacing: 0;
-  background: #fff;
-  overflow: hidden;
-  table-layout: auto; /* Columns scale dynamically based on text length */
-}
-th {
-  background: #f1f5f9 !important; /* Solid background so scrolling text is hidden behind */
-  color: #1e293b;
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #009688;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   font-weight: 900;
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 2px solid #e2e8f0;
-  box-shadow: inset 0 -2px 0 #e2e8f0; /* Crisp bottom border that doesn't scroll away */
-  position: -webkit-sticky !important; /* Support iOS Safari */
-  position: sticky !important;
-  top: 0 !important; /* Lock to the top of the scroll container */
-  z-index: 20 !important; /* Stay on top of TD elements */
-  white-space: nowrap; /* Prevent headers from wrapping awkwardly */
 }
-td {
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #475467;
-  border-bottom: 1px solid #edf2f7;
-  white-space: nowrap; /* Keep values on a single line for smooth horizontal scrolling */
-}
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
-
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
 
 /* Simple working calculator inputs styling */
 .calc-field-group {display:flex; flex-direction:column; gap:8px; margin-bottom:12px;}
@@ -245,715 +370,49 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 .calc-result-display {margin-top:12px; padding:12px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; font-size:13px; font-weight:700; color:#166534;}
 
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="semiconductor-pkg-calc">
+<div id="semiconductor-pkg-tool">
 
-  <!-- SELECTION HUB: Search and Card List -->
-  <div id="selectionWorkspace">
-    <div class="search-container">
-      <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search IC Package (e.g. TSSOP, PLCC)..." title="Type in a package name">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">SMT Component Selection</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select IC Package Standard</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
     </div>
-
-    <ul id="myUL">
-      
-      <li>
-        <div onclick="openPackage('id01')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Gull Wing Fine-Pitch</span>
-              <span class="card-title">VSSOP Gull Wing Packages</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id02')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Gull Wing Fine-Pitch</span>
-              <span class="card-title">TSSOP Gull Wing Packages</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id03')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Thin Small Outline</span>
-              <span class="card-title">TSOP Type 1 &amp; Type 2 Packages</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id04')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Shrink Small Outline</span>
-              <span class="card-title">SSOP Gull Wing Packages</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id05')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Plastic Leaded Chip Carrier</span>
-              <span class="card-title">PLCC Packages (J-Lead Array)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id06')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Mini Small Outline</span>
-              <span class="card-title">MSOP Gull Wing Packages</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id07')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Leadless Chip Carrier</span>
-              <span class="card-title">LCC Chip Carrier Packages</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id08')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Small Outline Integrated Circuit</span>
-              <span class="card-title">SOIC Gull Wing &amp; J-Lead Packages</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id09')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Quarter-Size Small Outline</span>
-              <span class="card-title">QSOP &amp; QVSOP Package Series</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-    </ul>
   </div>
 
-  <!-- DETAILS HUB: Modal Popups -->
-  <div id="detailsWorkspace">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">Gull Wing Fine-Pitch</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Wire Mapping</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <!-- CARD 1: VSSOP -->
-    <div id="id01" class="w3-modal">
-      <button class="mid" onclick="closePackage('id01')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">VSSOP Gull Wing Fine-Pitch</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="35" y="20" width="70" height="50" fill="#1e293b" rx="2" />
-                <line x1="20" y1="30" x2="35" y2="30" stroke="#cbd5e1" stroke-width="4" />
-                <line x1="20" y1="45" x2="35" y2="45" stroke="#cbd5e1" stroke-width="4" />
-                <line x1="20" y1="60" x2="35" y2="60" stroke="#cbd5e1" stroke-width="4" />
-                <line x1="105" y1="30" x2="120" y2="30" stroke="#cbd5e1" stroke-width="4" />
-                <line x1="105" y1="45" x2="120" y2="45" stroke="#cbd5e1" stroke-width="4" />
-                <line x1="105" y1="60" x2="120" y2="60" stroke="#cbd5e1" stroke-width="4" />
-                <circle cx="45" cy="30" r="3" fill="#cbd5e1" />
-              </svg>
-              <div class="vector-label">VSSOP Standard Gull Wing</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: VSSOP GULL WING STRUCTURE (CLICK TO ENLARGE)</div>
-
-          <h3>VSSOP Pack Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead Count</th>
-                  <th>Body Width (mils / mm)</th>
-                  <th>Lead Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>8</td><td>2.0 x 2.3mm</td><td>0.5mm</td></tr>
-                <tr><td>8</td><td>2.0 x 2.3mm</td><td>0.5mm</td></tr>
-                <tr><td>10</td><td>3.0 x 3.0mm</td><td>0.5mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
     </div>
-
-    <!-- CARD 2: TSSOP -->
-    <div id="id02" class="w3-modal">
-      <button class="mid" onclick="closePackage('id02')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">TSSOP Gull Wing Fine-Pitch</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="30" y="20" width="80" height="50" fill="#1e293b" rx="2" />
-                <line x1="15" y1="30" x2="30" y2="30" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="15" y1="40" x2="30" y2="40" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="15" y1="50" x2="30" y2="50" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="15" y1="60" x2="30" y2="60" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="110" y1="30" x2="125" y2="30" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="110" y1="40" x2="125" y2="40" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="110" y1="50" x2="125" y2="50" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="110" y1="60" x2="125" y2="60" stroke="#cbd5e1" stroke-width="3" />
-                <circle cx="40" cy="30" r="2.5" fill="#cbd5e1" />
-              </svg>
-              <div class="vector-label">TSSOP Layout Profile</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: TSSOP LEAD OUTLINES (CLICK TO ENLARGE)</div>
-
-          <h3>TSSOP - Gull Wing Fine-Pitch Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead Count</th>
-                  <th>Body Width (mils / mm)</th>
-                  <th>Lead Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>8</td><td>173 mils (4.4mmX3.0mm)</td><td>0.65mm</td></tr>
-                <tr><td>14</td><td>173 mils (4.4mmX5.0mm)</td><td>0.65mm</td></tr>
-                <tr><td>16</td><td>173 mils (4.4mmX5.0mm)</td><td>0.65mm</td></tr>
-                <tr><td>20</td><td>173 mils (4.4mmX6.5mm)</td><td>0.65mm</td></tr>
-                <tr><td>24</td><td>173 mils (4.4mmX7.8mm)</td><td>0.65mm</td></tr>
-                <tr><td>28</td><td>173 mils (4.4mmX9.7mm)</td><td>0.65mm</td></tr>
-                <tr><td>28</td><td>240 mils (6.1mmX9.7mm)</td><td>0.65mm</td></tr>
-                <tr><td>30</td><td>173 mils (4.4mmX7.8mm)</td><td>0.5mm</td></tr>
-                <tr><td>32</td><td>240 mils (6.1mmX11mm)</td><td>0.65mm</td></tr>
-                <tr><td>38</td><td>173 mils (4.4mmX9.7mm)</td><td>0.5mm</td></tr>
-                <tr><td>38</td><td>240 mils (6.1mmX12.5mm)</td><td>0.65mm</td></tr>
-                <tr><td>44</td><td>173 mils (4.4mmX11.3mm)</td><td>0.5mm</td></tr>
-                <tr><td>48</td><td>173 mils (4.4mmX9.7mm)</td><td>0.4mm</td></tr>
-                <tr><td>48</td><td>240 mils (6.1mmX12.5mm)</td><td>0.5mm</td></tr>
-                <tr><td>56</td><td>173 mils (4.4mmX11.3mm)</td><td>0.4mm</td></tr>
-                <tr><td>56</td><td>240 mils (6.1mmX14mm)</td><td>0.5mm</td></tr>
-                <tr><td>64</td><td>240 mils (6.1mmX17mm)</td><td>0.5mm</td></tr>
-                <tr><td>80</td><td>240 mils (6.1mmX17mm)</td><td>0.4mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 3: TSOP TYPE 1 & TYPE 2 -->
-    <div id="id03" class="w3-modal">
-      <button class="mid" onclick="closePackage('id03')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">TSOP Type 1 &amp; Type 2</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="40" y="20" width="60" height="50" fill="#1e293b" rx="2" />
-                <line x1="40" y1="10" x2="40" y2="20" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="50" y1="10" x2="50" y2="20" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="60" y1="10" x2="60" y2="20" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="70" y1="10" x2="70" y2="20" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="80" y1="10" x2="80" y2="20" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="90" y1="10" x2="90" y2="20" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="40" y1="70" x2="40" y2="80" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="50" y1="70" x2="50" y2="80" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="60" y1="70" x2="60" y2="80" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="70" y1="70" x2="70" y2="80" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="80" y1="70" x2="80" y2="80" stroke="#cbd5e1" stroke-width="2" />
-                <line x1="90" y1="70" x2="90" y2="80" stroke="#cbd5e1" stroke-width="2" />
-              </svg>
-              <div class="vector-label">TSOP Type 1 (End Leads)</div>
-            </div>
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="25" width="90" height="40" fill="#1e293b" rx="2" />
-                <line x1="15" y1="35" x2="25" y2="35" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="15" y1="45" x2="25" y2="45" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="15" y1="55" x2="25" y2="55" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="115" y1="35" x2="125" y2="35" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="115" y1="45" x2="125" y2="45" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="115" y1="55" x2="125" y2="55" stroke="#cbd5e1" stroke-width="2.5" />
-              </svg>
-              <div class="vector-label">TSOP Type 2 (Side Leads)</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: TSOP TYPE 1 VS TYPE 2 PROFILES (CLICK TO ENLARGE)</div>
-
-          <h3>1. TSOP Type 1 Outline Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Leads</th>
-                  <th>Size</th>
-                  <th>Lead Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>28</td><td>8 x 13.4mm</td><td>0.55mm</td></tr>
-                <tr><td>28 / 32</td><td>8 x 20mm</td><td>0.5mm</td></tr>
-                <tr><td>32</td><td>8 x 14mm</td><td>0.5mm</td></tr>
-                <tr><td>32</td><td>8 x 20mm</td><td>0.5mm</td></tr>
-                <tr><td>40</td><td>10 x 14mm</td><td>0.5mm</td></tr>
-                <tr><td>40</td><td>10 x 20mm</td><td>0.5mm</td></tr>
-                <tr><td>48</td><td>12 x 20mm</td><td>0.5mm</td></tr>
-                <tr><td>56</td><td>14 x 20mm</td><td>0.5mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>2. TSOP Type 2 Outline Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Leads</th>
-                  <th>Size</th>
-                  <th>Lead Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>32</td><td>10 x 21mm</td><td>1.27mm</td></tr>
-                <tr><td>40 / 44</td><td>10 x 18.4mm</td><td>0.8mm</td></tr>
-                <tr><td>44</td><td>10 x 18.4mm</td><td>0.8mm</td></tr>
-                <tr><td>44 / 50</td><td>10 x 21mm</td><td>0.8mm</td></tr>
-                <tr><td>50</td><td>10 x 21mm</td><td>0.8mm</td></tr>
-                <tr><td>54</td><td>10 x 22.2mm</td><td>0.8mm</td></tr>
-                <tr><td>66</td><td>10 x 22.2mm</td><td>0.65mm</td></tr>
-                <tr><td>86</td><td>10 x 22.6mm</td><td>0.5mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 4: SSOP -->
-    <div id="id04" class="w3-modal">
-      <button class="mid" onclick="closePackage('id04')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">SSOP - Gull Wing</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="20" width="90" height="50" fill="#1e293b" rx="2" />
-                <line x1="10" y1="30" x2="25" y2="30" stroke="#cbd5e1" stroke-width="3.5" />
-                <line x1="10" y1="45" x2="25" y2="45" stroke="#cbd5e1" stroke-width="3.5" />
-                <line x1="10" y1="60" x2="25" y2="60" stroke="#cbd5e1" stroke-width="3.5" />
-                <line x1="115" y1="30" x2="130" y2="30" stroke="#cbd5e1" stroke-width="3.5" />
-                <line x1="115" y1="45" x2="130" y2="45" stroke="#cbd5e1" stroke-width="3.5" />
-                <line x1="115" y1="60" x2="130" y2="60" stroke="#cbd5e1" stroke-width="3.5" />
-              </svg>
-              <div class="vector-label">Standard SSOP</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: SSOP OUTLINE (CLICK TO ENLARGE)</div>
-
-          <h3>SSOP Gull Wing Outline Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead</th>
-                  <th>Body Width (mils / mm)</th>
-                  <th>Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>8</td><td>208 mils (5.3mmX3.0mm)</td><td>0.65mm</td></tr>
-                <tr><td>14</td><td>208 mils (5.3mmX6.2mm)</td><td>0.65mm</td></tr>
-                <tr><td>16</td><td>208 mils (5.3mmX6.2mm)</td><td>0.65mm</td></tr>
-                <tr><td>20</td><td>208 mils (5.3mmX7.2mm)</td><td>0.65mm</td></tr>
-                <tr><td>24</td><td>208 mils (5.3mmX8.2mm)</td><td>0.65mm</td></tr>
-                <tr><td>28</td><td>208 mils (5.3mmX10.2mm)</td><td>0.65mm</td></tr>
-                <tr><td>36</td><td>300 mils (7.5mmX15.4mm)</td><td>0.8mm</td></tr>
-                <tr><td>48</td><td>300 mils (7.5mmX15.9mm)</td><td>0.635mm</td></tr>
-                <tr><td>56</td><td>300 mils (7.5mmX18.4mm)</td><td>0.635mm</td></tr>
-                <tr><td>8</td><td>2.0 x 2.3mm</td><td>0.65mm</td></tr>
-                <tr><td>10</td><td>3.0 x 3.0mm</td><td>0.5mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 5: PLCC -->
-    <div id="id05" class="w3-modal">
-      <button class="mid" onclick="closePackage('id05')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">PLCC (Plastic Leaded Chip Carrier)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="30" y="15" width="80" height="80" fill="#1e293b" rx="6" />
-                <path d="M 40,15 L 40,5 M 60,15 L 60,5 M 80,15 L 80,5 M 100,15 L 100,5" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
-                <path d="M 40,95 L 40,105 M 60,95 L 60,105 M 80,95 L 80,105 M 100,95 L 100,105" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
-                <path d="M 30,30 L 20,30 M 30,50 L 20,50 M 30,70 L 20,70" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
-                <path d="M 110,30 L 120,30 M 110,50 L 120,50 M 110,70 L 120,70" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
-              </svg>
-              <div class="vector-label">PLCC package (J-Lead)</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: PLCC PIN SHAPE CONFIGURATION (CLICK TO ENLARGE)</div>
-
-          <h3>PLCC Size &amp; Pitch Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Number Leads</th>
-                  <th>Body Size</th>
-                  <th>Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>18</td><td>7.4MM X 12.5MM</td><td>1.27MM</td></tr>
-                <tr><td>20</td><td>8.9MM X 8.9MM</td><td>1.27MM</td></tr>
-                <tr><td>28</td><td>11.5MM X 11.5MM</td><td>1.27MM</td></tr>
-                <tr><td>32</td><td>11.5MM X 14MM</td><td>1.7MM</td></tr>
-                <tr><td>44</td><td>16.6MM X 16.6MM</td><td>1.7MM</td></tr>
-                <tr><td>52</td><td>19.1MM X 19.1MM</td><td>1.27MM</td></tr>
-                <tr><td>68</td><td>24.2MM X 24.2MM</td><td>1.27MM</td></tr>
-                <tr><td>84</td><td>29.3MM X 29.3MM</td><td>1.27MM</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 6: MSOP -->
-    <div id="id06" class="w3-modal">
-      <button class="mid" onclick="closePackage('id06')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">MSOP (Mini Small Outline Package)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="40" y="25" width="60" height="40" fill="#1e293b" rx="2" />
-                <line x1="25" y1="35" x2="40" y2="35" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="25" y1="45" x2="40" y2="45" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="25" y1="55" x2="40" y2="55" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="100" y1="35" x2="115" y2="35" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="100" y1="45" x2="115" y2="45" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="100" y1="55" x2="115" y2="55" stroke="#cbd5e1" stroke-width="3" />
-                <circle cx="48" cy="35" r="2.5" fill="#cbd5e1" />
-              </svg>
-              <div class="vector-label">Standard MSOP Micro Profile</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: MSOP DETAIL (CLICK TO ENLARGE)</div>
-
-          <h3>MSOP Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead</th>
-                  <th>Body Width (mils / mm)</th>
-                  <th>Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>8</td><td>118 mils (3.0mmX3.0mm)</td><td>0.65mm</td></tr>
-                <tr><td>10</td><td>118 mils (3.0mmX3.0mm)</td><td>0.5mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 7: LCC -->
-    <div id="id07" class="w3-modal">
-      <button class="mid" onclick="closePackage('id07')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">LCC (Leadless Chip Carrier)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="30" y="15" width="80" height="80" fill="#2d3748" rx="4" />
-                <!-- Leadless Pads around perimeter -->
-                <rect x="40" y="15" width="6" height="12" fill="#d69e2e" />
-                <rect x="55" y="15" width="6" height="12" fill="#d69e2e" />
-                <rect x="70" y="15" width="6" height="12" fill="#d69e2e" />
-                <rect x="85" y="15" width="6" height="12" fill="#d69e2e" />
-                <rect x="40" y="83" width="6" height="12" fill="#d69e2e" />
-                <rect x="55" y="83" width="6" height="12" fill="#d69e2e" />
-                <rect x="70" y="83" width="6" height="12" fill="#d69e2e" />
-                <rect x="85" y="83" width="6" height="12" fill="#d69e2e" />
-              </svg>
-              <div class="vector-label">LCC Hermetic Topography</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: LCC METRIC LAYOUT (CLICK TO ENLARGE)</div>
-
-          <h3>LCC - Chip Carrier Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Number Leads</th>
-                  <th>Body Size Inch</th>
-                  <th>Body Size Metric</th>
-                  <th>Lead Pitch Inch</th>
-                  <th>Lead Pitch Metric</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>3</td><td>0.12" x 0.10" CERSOT23</td><td>3.05mm x 2.54mm UB Type</td><td>0.075"</td><td>1.90mm</td></tr>
-                <tr><td>3</td><td>0.12" x 0.10" CERSOT23</td><td>3.05mm x 2.54mm UB Type</td><td>0.075"</td><td>1.90mm</td></tr>
-                <tr><td>4</td><td>0.15" x 0.22" UA Type</td><td>3.8mm x 5.6mm UA Type</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>6</td><td>0.17" x 0.245" U Type</td><td>4.32mm x 6.22mm U Type</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>16</td><td>0.28" x 0.35"</td><td>7.1mm x 8.9mm</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>18</td><td>0.28" x 0.35"</td><td>7.1mm x 8.9mm</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>20</td><td>0.35" SQ.</td><td>8.9mm SQ.</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>28</td><td>0.45" SQ.</td><td>11.4mm SQ.</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>32</td><td>0.45" x 0.55"</td><td>12.4 x 14mm</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>40</td><td>0.48" SQ.</td><td>12.2mm SQ.</td><td>0.040"</td><td>1.016mm</td></tr>
-                <tr><td>44</td><td>0.65" SQ.</td><td>16.5mm SQ.</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>48</td><td>0.56" SQ.</td><td>14.2mm SQ.</td><td>0.040"</td><td>1.016mm</td></tr>
-                <tr><td>52</td><td>0.75" SQ.</td><td>19.1mm SQ.</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>68</td><td>0.95" SQ.</td><td>24.1mm SQ.</td><td>0.050"</td><td>1.27mm</td></tr>
-                <tr><td>84</td><td>1.15" SQ.</td><td>29.2mm SQ.</td><td>0.050"</td><td>1.27mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 8: SOIC -->
-    <div id="id08" class="w3-modal">
-      <button class="mid" onclick="closePackage('id08')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">SOIC Gull Wing &amp; J-Lead</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="20" width="90" height="50" fill="#1e293b" rx="2" />
-                <path d="M 10,35 Q 20,35 25,35 M 10,55 Q 20,55 25,55" stroke="#cbd5e1" stroke-width="4.5" fill="none" />
-                <path d="M 130,35 Q 120,35 115,35 M 130,55 Q 120,55 115,55" stroke="#cbd5e1" stroke-width="4.5" fill="none" />
-              </svg>
-              <div class="vector-label">SOIC Gull Wing (Standard)</div>
-            </div>
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="20" width="90" height="50" fill="#1e293b" rx="2" />
-                <path d="M 25,35 L 20,35 L 20,50 L 25,50" stroke="#cbd5e1" stroke-width="4" fill="none" />
-                <path d="M 115,35 L 120,35 L 120,50 L 115,50" stroke="#cbd5e1" stroke-width="4" fill="none" />
-              </svg>
-              <div class="vector-label">SOIC J-Lead Profile</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: SOIC GULL WING VS J-LEAD (CLICK TO ENLARGE)</div>
-
-          <h3>1. SOIC - Gull Wing Specifications (50 mils/1.27mm Pitch)</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead</th>
-                  <th>Body Width</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>8</td><td>150 mils (3.9mmX4.9mm)</td></tr>
-                <tr><td>8</td><td>208 mils (5.28mmX5.28mm)</td></tr>
-                <tr><td>14</td><td>150 mils (3.9mmX8.7mm)</td></tr>
-                <tr><td>14</td><td>208 mils (5.3mmX10.2mm)</td></tr>
-                <tr><td>14</td><td>220 mils (5.6mmX9.9mm)</td></tr>
-                <tr><td>16</td><td>150 mils (3.9mmX9.9mm)</td></tr>
-                <tr><td>16</td><td>208 mils (5.3mmX10.2mm)</td></tr>
-                <tr><td>16</td><td>220 mils (5.6mmX11.2mm)</td></tr>
-                <tr><td>16</td><td>300 mils (7.5mmX10.3mm)</td></tr>
-                <tr><td>18</td><td>300 mils (7.5mmX11.6mm)</td></tr>
-                <tr><td>20</td><td>300 mils (7.5mmX12.8mm)</td></tr>
-                <tr><td>24</td><td>300 mils (7.5mmX15.4mm)</td></tr>
-                <tr><td>24</td><td>330 mils (8.4mmX15.8mm)</td></tr>
-                <tr><td>28</td><td>300 mils (7.5mmX17.9mm)</td></tr>
-                <tr><td>28</td><td>330~350 mils (8.4~8.9mmX18.1mm)</td></tr>
-                <tr><td>32</td><td>300 mils (7.5mmX20.8mm)</td></tr>
-                <tr><td>32</td><td>330~350 mils (8.4~8.9mmX20.8mm)</td></tr>
-                <tr><td>32</td><td>400 mils (10.16mmX21mm)</td></tr>
-                <tr><td>32</td><td>450 mils (11.4mmX21mm)</td></tr>
-                <tr><td>40</td><td>300 mils (7.5mmX26mm)</td></tr>
-                <tr><td>40</td><td>400 mils (10mmX26mm)</td></tr>
-                <tr><td>40</td><td>450 mils (11.4mmX26mm)</td></tr>
-                <tr><td>44</td><td>525 mils (13.3mmX28.2mm)</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>2. SOIC - J-Lead Specifications (50 mils/1.27mm Pitch)</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead</th>
-                  <th>Body Width</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>18</td><td>300 mils (7.5mm)</td></tr>
-                <tr><td>20</td><td>300 mils (7.5mm)</td></tr>
-                <tr><td>20 / 26</td><td>300 mils (7.5mm)</td></tr>
-                <tr><td>24</td><td>300 mils (7.5mm)</td></tr>
-                <tr><td>24 / 26</td><td>300 mils (7.5mm)</td></tr>
-                <tr><td>24 / 28</td><td>400 mils (10mm)</td></tr>
-                <tr><td>28</td><td>300 mils (7.5mm)</td></tr>
-                <tr><td>28</td><td>400 mils (10mm)</td></tr>
-                <tr><td>32</td><td>300 mils (7.5mm)</td></tr>
-                <tr><td>32</td><td>400 mils (10mm)</td></tr>
-                <tr><td>36</td><td>400 mils (10mm)</td></tr>
-                <tr><td>40</td><td>400 mils (10mm)</td></tr>
-                <tr><td>42</td><td>400 mils (10mm)</td></tr>
-                <tr><td>44</td><td>400 mils (10mm)</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 9: QSOP & QVSOP -->
-    <div id="id09" class="w3-modal">
-      <button class="mid" onclick="closePackage('id09')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">QSOP &amp; QVSOP Package Series</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="35" y="20" width="70" height="50" fill="#1e293b" rx="2" />
-                <line x1="20" y1="30" x2="35" y2="30" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="20" y1="40" x2="35" y2="40" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="20" y1="50" x2="35" y2="50" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="20" y1="60" x2="35" y2="60" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="105" y1="30" x2="120" y2="30" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="105" y1="40" x2="120" y2="40" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="105" y1="50" x2="120" y2="50" stroke="#cbd5e1" stroke-width="2.5" />
-                <line x1="105" y1="60" x2="120" y2="60" stroke="#cbd5e1" stroke-width="2.5" />
-              </svg>
-              <div class="vector-label">Standard QSOP Layout</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: QSOP DETAIL (CLICK TO ENLARGE)</div>
-
-          <h3>1. QSOP - 25 mil (0.635mm) Pitch Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead</th>
-                  <th>Body Width</th>
-                  <th>Body Length</th>
-                  <th>Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>16</td><td>150 mils (3.9mmX4.9mm)</td><td>4.9mm</td><td>0.635mm</td></tr>
-                <tr><td>20</td><td>150 mils (3.9mmX8.7mm)</td><td>8.7mm</td><td>0.635mm</td></tr>
-                <tr><td>24</td><td>150 mils (3.9mmX8.7mm)</td><td>8.7mm</td><td>0.635mm</td></tr>
-                <tr><td>28</td><td>150 mils (3.9mmX9.9mm)</td><td>9.9mm</td><td>0.635mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>2. QVSOP - 19.7 mil (0.5mm) Pitch Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead</th>
-                  <th>Body Width</th>
-                  <th>Body Length</th>
-                  <th>Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>40</td><td>150 mils (3.9mmX9.9mm)</td><td>9.9mm</td><td>0.5mm</td></tr>
-                <tr><td>80</td><td>150 mils (3.9mmX20.5mm)</td><td>20.5mm</td><td>0.5mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>3. QVSOP - 15.7 mil (0.4mm) Pitch Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead</th>
-                  <th>Body Width</th>
-                  <th>Body Length</th>
-                  <th>Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>48</td><td>150 mils (3.9mmX9.9mm)</td><td>9.9mm</td><td>0.4mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- Interactive Lead Pitch & Footprint Grid Calculator -->
@@ -974,33 +433,111 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
-  <!-- Educational & SEO Sections -->
+  <!-- Input Parameters Specification -->
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Lead Count Array</strong>
+        Number of active pins arranged on dual-sided boundaries, indicating component logic pathways.
+      </div>
+      <div class="paramItem">
+        <strong>Pin Pitch Spacing</strong>
+        The physical center-to-center lead gap, measuring down to 0.4mm for ultra-fine-pitch matrices.
+      </div>
+      <div class="paramItem">
+        <strong>Terminal Lead Outlines</strong>
+        Gull-wing exits, side/bottom-brazes, or J-leads to allow thermal flexing on the board.
+      </div>
+      <div class="paramItem">
+        <strong>Body Width Limits</strong>
+        Package dimensions across the plastic body core, ensuring proper trace breakout limits.
+      </div>
+    </div>
+  </section>
+
+  <!-- Practical Operational Examples -->
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>TSSOP Stencil Alignments</strong></p>
+        <p>Adopt laser-cut solder stencils with narrow apertures on 0.5mm pitch TSOP pads to avoid adjacent solder bridging.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>PLCC J-Lead Inspection</strong></p>
+        <p>Leverage automated optical inspection (AOI) to examine tucked J-lead joints situated beneath PLCC carrier boundaries.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Hermetic LCC Attachment</strong></p>
+        <p>Verify leadless carrier coplanarity constraints on ceramic LCC sockets to ensure balanced surface wetting.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>SOIC trace breakouts</strong></p>
+        <p>Utilize 50mil standard SOIC packages to route connections comfortably without requiring fine-line high-density trace structures.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
     <h2>Semiconductor Packaging &amp; Substrate Theory</h2>
     <p>Semiconductor packaging acts as the bridge connecting delicate integrated circuit (IC) silicon dies to the printable circuit boards (PCBs) of larger electronic systems. Traditional packaging used wire bonding to link the peripheral die pads to leadframes (DIP, QFP, SOIC). Modern grid array packaging bypasses wire connections entirely, placing contacts under the chip body as ball grid arrays (BGA).</p>
     <div class="aboutNote">Tip: Fan-In wafer level packaging (WLP) is restricted by die size limits, while Fan-Out (EWLP) expands the contact array area past the silicon die boundary.</div>
   </section>
 
+  <!-- Formulas & Thermal Calculations -->
   <section class="infoBox">
     <h2>Formulas &amp; Thermal Calculations</h2>
     <div class="formula">Thermal Resistance (Junction-to-Ambient): RθJA = (TJ - TA) / PD (expressed in °C/W)</div>
     <div class="formula">BGA Array Ball Count Calculation: N = ((Package_Size / Pitch) + 1)² (for a full matrix)</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target surface-mount IC package standard using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the package's primary classification.</div>
+      <div class="aboutStep">Study the structural 2D and 3D vector layouts demonstrating the pin exit profile.</div>
+      <div class="aboutStep">Consult the dimensional mapping table below the graphic to check pitch and body size details.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
+  <section class="infoBox">
+    <h2>About This Reference Guide</h2>
+    <div class="aboutLead">
+      <strong>Your direct engineering lookup for standard surface-mount IC packages.</strong>
+      <p>This reference guide organizes standard dimensions, pin counts, pitches, and body widths for TSSOP, SSOP, TSOP, SOIC, PLCC, MSOP, LCC, and QSOP families.</p>
+    </div>
+    <p>Finding accurate pin layouts and dimensional limits is essential for aerospace hardware engineers, high-temperature system designers, and component engineers. Using standardized package configurations ensures footprint compatibility and optimal thermal management.</p>
+    <p>Always verify actual manufacturer footprint specifications prior to board routing. Correct mechanical layouts prevent structural misalignments during reflow.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Gull-Wing Classes</span>Dimensions mapped for VSSOP, TSSOP, SSOP, MSOP, and standard SOIC structures.</div>
+      <div class="aboutMiniCard"><span>J-Lead Outlines</span>Robust layouts for PLCC and J-leaded SOIC configurations.</div>
+      <div class="aboutMiniCard"><span>Hermetic Sockets</span>Leadless chip carrier (LCC) arrays for critical ceramic devices.</div>
+      <div class="aboutMiniCard"><span>Active Geometry</span>Real-time package length estimates based on pin count variables.</div>
+    </div>
+  </section>
+
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. What is the main difference between BGA and WLP packaging?</strong></h3>
+    
+    <h3>1. <strong>What is the main difference between BGA and WLP packaging?</strong></h3>
     <p>BGA packages use an intermediate organic or ceramic substrate/interposer to route signals from the die to the solder balls. WLP (Wafer Level Package) places solder balls directly onto the passivated surface of the silicon die, eliminating the substrate completely for the smallest possible footprint.</p>
 
-    <h3><strong>2. Why are Fan-Out packages (EWLP) growing in popularity?</strong></h3>
+    <h3>2. <strong>Why are Fan-Out packages (EWLP) growing in popularity?</strong></h3>
     <p>As silicon chips shrink, their physical die size decreases. However, high-performance chips still require a large number of pins. EWLP embeds the die in a mold compound wafer, providing extra perimeter area to route signals out ("Fan-Out"), avoiding physical pin-count limitations of tiny silicon surfaces.</p>
 
-    <h3><strong>3. How does ball pitch affect PCB design?</strong></h3>
+    <h3>3. <strong>How does ball pitch affect PCB design?</strong></h3>
     <p>Fine-pitch arrays (under 0.50mm) require advanced PCB fabrication technologies, such as high-density interconnect (HDI) microvias, laser drilling, and narrow track routing. Larger pitch arrays (0.80mm - 1.0mm) can be routed using standard, lower-cost multilayers.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
       <div class="linkCard"><strong>VGA Pinout Reference Guide</strong>Configure classic analog computer display pinouts.</div>
       <div class="linkCard"><strong>HDMI Type-A/B Reference Guide</strong>Analyze modern high-definition digital video matrices.</div>
@@ -1011,48 +548,579 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function openPackage(pkgId) {
-  // Hide card list and search bar completely
-  document.getElementById('selectionWorkspace').style.display = 'none';
-
-  // Hide all panels first, then show the active selection
-  var panels = document.getElementsByClassName('w3-modal');
-  for (var i = 0; i < panels.length; i++) {
-    panels[i].style.display = 'none';
+// Master Semiconductor Packages Database
+const packageDetails = [
+  {
+    name: "VSSOP Gull Wing Packages",
+    tag: "Gull Wing Fine-Pitch",
+    subtitle: "VSSOP Pack Specifications",
+    svgs: [
+      {
+        label: "VSSOP Standard Gull Wing",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="35" y="20" width="70" height="50" fill="#1e293b" rx="2" />
+            <line x1="20" y1="30" x2="35" y2="30" stroke="#cbd5e1" stroke-width="4" />
+            <line x1="20" y1="45" x2="35" y2="45" stroke="#cbd5e1" stroke-width="4" />
+            <line x1="20" y1="60" x2="35" y2="60" stroke="#cbd5e1" stroke-width="4" />
+            <line x1="105" y1="30" x2="120" y2="30" stroke="#cbd5e1" stroke-width="4" />
+            <line x1="105" y1="45" x2="120" y2="45" stroke="#cbd5e1" stroke-width="4" />
+            <line x1="105" y1="60" x2="120" y2="60" stroke="#cbd5e1" stroke-width="4" />
+            <circle cx="45" cy="30" r="3" fill="#cbd5e1" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "VSSOP Pack Specifications",
+        columns: ["Lead Count", "Body Width (mils / mm)", "Lead Pitch"],
+        rows: [
+          ["8", "2.0 x 2.3mm", "0.5mm"],
+          ["8", "2.0 x 2.3mm", "0.5mm"],
+          ["10", "3.0 x 3.0mm", "0.5mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "TSSOP Gull Wing Packages",
+    tag: "Gull Wing Fine-Pitch",
+    subtitle: "TSSOP - Gull Wing Fine-Pitch Specifications",
+    svgs: [
+      {
+        label: "TSSOP Layout Profile",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="30" y="20" width="80" height="50" fill="#1e293b" rx="2" />
+            <line x1="15" y1="30" x2="30" y2="30" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="15" y1="40" x2="30" y2="40" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="15" y1="50" x2="30" y2="50" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="15" y1="60" x2="30" y2="60" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="110" y1="30" x2="125" y2="30" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="110" y1="40" x2="125" y2="40" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="110" y1="50" x2="125" y2="50" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="110" y1="60" x2="125" y2="60" stroke="#cbd5e1" stroke-width="3" />
+            <circle cx="40" cy="30" r="2.5" fill="#cbd5e1" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "TSSOP - Gull Wing Fine-Pitch Specifications",
+        columns: ["Lead Count", "Body Width (mils / mm)", "Lead Pitch"],
+        rows: [
+          ["8", "173 mils (4.4mmX3.0mm)", "0.65mm"],
+          ["14", "173 mils (4.4mmX5.0mm)", "0.65mm"],
+          ["16", "173 mils (4.4mmX5.0mm)", "0.65mm"],
+          ["20", "173 mils (4.4mmX6.5mm)", "0.65mm"],
+          ["24", "173 mils (4.4mmX7.8mm)", "0.65mm"],
+          ["28", "173 mils (4.4mmX9.7mm)", "0.65mm"],
+          ["28", "240 mils (6.1mmX9.7mm)", "0.65mm"],
+          ["30", "173 mils (4.4mmX7.8mm)", "0.5mm"],
+          ["32", "240 mils (6.1mmX11mm)", "0.65mm"],
+          ["38", "173 mils (4.4mmX9.7mm)", "0.5mm"],
+          ["38", "240 mils (6.1mmX12.5mm)", "0.65mm"],
+          ["44", "173 mils (4.4mmX11.3mm)", "0.5mm"],
+          ["48", "173 mils (4.4mmX9.7mm)", "0.4mm"],
+          ["48", "240 mils (6.1mmX12.5mm)", "0.5mm"],
+          ["56", "173 mils (4.4mmX11.3mm)", "0.4mm"],
+          ["56", "240 mils (6.1mmX14mm)", "0.5mm"],
+          ["64", "240 mils (6.1mmX17mm)", "0.5mm"],
+          ["80", "240 mils (6.1mmX17mm)", "0.4mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "TSOP Type 1 & Type 2 Packages",
+    tag: "Thin Small Outline",
+    subtitle: "TSOP Type 1 & Type 2 Outline Specifications",
+    svgs: [
+      {
+        label: "TSOP Type 1 (End Leads)",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="40" y="20" width="60" height="50" fill="#1e293b" rx="2" />
+            <line x1="40" y1="10" x2="40" y2="20" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="50" y1="10" x2="50" y2="20" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="60" y1="10" x2="60" y2="20" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="70" y1="10" x2="70" y2="20" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="80" y1="10" x2="80" y2="20" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="90" y1="10" x2="90" y2="20" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="40" y1="70" x2="40" y2="80" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="50" y1="70" x2="50" y2="80" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="60" y1="70" x2="60" y2="80" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="70" y1="70" x2="70" y2="80" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="80" y1="70" x2="80" y2="80" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="90" y1="70" x2="90" y2="80" stroke="#cbd5e1" stroke-width="2" />
+          </svg>
+        `
+      },
+      {
+        label: "TSOP Type 2 (Side Leads)",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="25" width="90" height="40" fill="#1e293b" rx="2" />
+            <line x1="15" y1="35" x2="25" y2="35" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="15" y1="45" x2="25" y2="45" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="15" y1="55" x2="25" y2="55" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="115" y1="35" x2="125" y2="35" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="115" y1="45" x2="125" y2="45" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="115" y1="55" x2="125" y2="55" stroke="#cbd5e1" stroke-width="2.5" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "TSOP Type 1 Outline Specifications",
+        columns: ["Leads", "Size", "Lead Pitch"],
+        rows: [
+          ["28", "8 x 13.4mm", "0.55mm"],
+          ["28 / 32", "8 x 20mm", "0.5mm"],
+          ["32", "8 x 14mm", "0.5mm"],
+          ["32", "8 x 20mm", "0.5mm"],
+          ["40", "10 x 14mm", "0.5mm"],
+          ["40", "10 x 20mm", "0.5mm"],
+          ["48", "12 x 20mm", "0.5mm"],
+          ["56", "14 x 20mm", "0.5mm"]
+        ]
+      },
+      {
+        header: "TSOP Type 2 Outline Specifications",
+        columns: ["Leads", "Size", "Lead Pitch"],
+        rows: [
+          ["32", "10 x 21mm", "1.27mm"],
+          ["40 / 44", "10 x 18.4mm", "0.8mm"],
+          ["44", "10 x 18.4mm", "0.8mm"],
+          ["44 / 50", "10 x 21mm", "0.8mm"],
+          ["50", "10 x 21mm", "0.8mm"],
+          ["54", "10 x 22.2mm", "0.8mm"],
+          ["66", "10 x 22.2mm", "0.65mm"],
+          ["86", "10 x 22.6mm", "0.5mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "SSOP Gull Wing Packages",
+    tag: "Shrink Small Outline",
+    subtitle: "SSOP Gull Wing Outline Specifications",
+    svgs: [
+      {
+        label: "Standard SSOP",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="20" width="90" height="50" fill="#1e293b" rx="2" />
+            <line x1="10" y1="30" x2="25" y2="30" stroke="#cbd5e1" stroke-width="3.5" />
+            <line x1="10" y1="45" x2="25" y2="45" stroke="#cbd5e1" stroke-width="3.5" />
+            <line x1="10" y1="60" x2="25" y2="60" stroke="#cbd5e1" stroke-width="3.5" />
+            <line x1="115" y1="30" x2="130" y2="30" stroke="#cbd5e1" stroke-width="3.5" />
+            <line x1="115" y1="45" x2="130" y2="45" stroke="#cbd5e1" stroke-width="3.5" />
+            <line x1="115" y1="60" x2="130" y2="60" stroke="#cbd5e1" stroke-width="3.5" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "SSOP Gull Wing Outline Specifications",
+        columns: ["Lead", "Body Width (mils / mm)", "Pitch"],
+        rows: [
+          ["8", "208 mils (5.3mmX3.0mm)", "0.65mm"],
+          ["14", "208 mils (5.3mmX6.2mm)", "0.65mm"],
+          ["16", "208 mils (5.3mmX6.2mm)", "0.65mm"],
+          ["20", "208 mils (5.3mmX7.2mm)", "0.65mm"],
+          ["24", "208 mils (5.3mmX8.2mm)", "0.65mm"],
+          ["28", "208 mils (5.3mmX10.2mm)", "0.65mm"],
+          ["36", "300 mils (7.5mmX15.4mm)", "0.8mm"],
+          ["48", "300 mils (7.5mmX15.9mm)", "0.635mm"],
+          ["56", "300 mils (7.5mmX18.4mm)", "0.635mm"],
+          ["8", "2.0 x 2.3mm", "0.65mm"],
+          ["10", "3.0 x 3.0mm", "0.5mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "PLCC Packages (J-Lead Array)",
+    tag: "Plastic Leaded Chip Carrier",
+    subtitle: "PLCC Size & Pitch Specifications",
+    svgs: [
+      {
+        label: "PLCC package (J-Lead)",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="30" y="15" width="80" height="80" fill="#1e293b" rx="6" />
+            <path d="M 40,15 L 40,5 M 60,15 L 60,5 M 80,15 L 80,5 M 100,15 L 100,5" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
+            <path d="M 40,95 L 40,105 M 60,95 L 60,105 M 80,95 L 80,105 M 100,95 L 100,105" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
+            <path d="M 30,30 L 20,30 M 30,50 L 20,50 M 30,70 L 20,70" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
+            <path d="M 110,30 L 120,30 M 110,50 L 120,50 M 110,70 L 120,70" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "PLCC Size & Pitch Specifications",
+        columns: ["Number Leads", "Body Size", "Pitch"],
+        rows: [
+          ["18", "7.4MM X 12.5MM", "1.27MM"],
+          ["20", "8.9MM X 8.9MM", "1.27MM"],
+          ["28", "11.5MM X 11.5MM", "1.27MM"],
+          ["32", "11.5MM X 14MM", "1.7MM"],
+          ["44", "16.6MM X 16.6MM", "1.7MM"],
+          ["52", "19.1MM X 19.1MM", "1.27MM"],
+          ["68", "24.2MM X 24.2MM", "1.27MM"],
+          ["84", "29.3MM X 29.3MM", "1.27MM"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "MSOP Gull Wing Packages",
+    tag: "Mini Small Outline",
+    subtitle: "MSOP Specifications",
+    svgs: [
+      {
+        label: "Standard MSOP Micro Profile",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="40" y="25" width="60" height="40" fill="#1e293b" rx="2" />
+            <line x1="25" y1="35" x2="40" y2="35" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="25" y1="45" x2="40" y2="45" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="25" y1="55" x2="40" y2="55" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="100" y1="35" x2="115" y2="35" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="100" y1="45" x2="115" y2="45" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="100" y1="55" x2="115" y2="55" stroke="#cbd5e1" stroke-width="3" />
+            <circle cx="48" cy="35" r="2.5" fill="#cbd5e1" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "MSOP Specifications",
+        columns: ["Lead", "Body Width (mils / mm)", "Pitch"],
+        rows: [
+          ["8", "118 mils (3.0mmX3.0mm)", "0.65mm"],
+          ["10", "118 mils (3.0mmX3.0mm)", "0.5mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "LCC Chip Carrier Packages",
+    tag: "Leadless Chip Carrier",
+    subtitle: "LCC - Chip Carrier Specifications",
+    svgs: [
+      {
+        label: "LCC Hermetic Topography",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="30" y="15" width="80" height="80" fill="#2d3748" rx="4" />
+            <rect x="40" y="15" width="6" height="12" fill="#d69e2e" />
+            <rect x="55" y="15" width="6" height="12" fill="#d69e2e" />
+            <rect x="70" y="15" width="6" height="12" fill="#d69e2e" />
+            <rect x="85" y="15" width="6" height="12" fill="#d69e2e" />
+            <rect x="40" y="83" width="6" height="12" fill="#d69e2e" />
+            <rect x="55" y="83" width="6" height="12" fill="#d69e2e" />
+            <rect x="70" y="83" width="6" height="12" fill="#d69e2e" />
+            <rect x="85" y="83" width="6" height="12" fill="#d69e2e" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "LCC - Chip Carrier Specifications",
+        columns: ["Number Leads", "Body Size Inch", "Body Size Metric", "Lead Pitch Inch", "Lead Pitch Metric"],
+        rows: [
+          ["3", "0.12\" x 0.10\" CERSOT23", "3.05mm x 2.54mm UB Type", "0.075\"", "1.90mm"],
+          ["3", "0.12\" x 0.10\" CERSOT23", "3.05mm x 2.54mm UB Type", "0.075\"", "1.90mm"],
+          ["4", "0.15\" x 0.22\" UA Type", "3.8mm x 5.6mm UA Type", "0.050\"", "1.27mm"],
+          ["6", "0.17\" x 0.245\" U Type", "4.32mm x 6.22mm U Type", "0.050\"", "1.27mm"],
+          ["16", "0.28\" x 0.35\"", "7.1mm x 8.9mm", "0.050\"", "1.27mm"],
+          ["18", "0.28\" x 0.35\"", "7.1mm x 8.9mm", "0.050\"", "1.27mm"],
+          ["20", "0.35\" SQ.", "8.9mm SQ.", "0.050\"", "1.27mm"],
+          ["28", "0.45\" SQ.", "11.4mm SQ.", "0.050\"", "1.27mm"],
+          ["32", "0.45\" x 0.55\"", "12.4 x 14mm", "0.050\"", "1.27mm"],
+          ["40", "0.48\" SQ.", "12.2mm SQ.", "0.040\"", "1.016mm"],
+          ["44", "0.65\" SQ.", "16.5mm SQ.", "0.050\"", "1.27mm"],
+          ["48", "0.56\" SQ.", "14.2mm SQ.", "0.040\"", "1.016mm"],
+          ["52", "0.75\" SQ.", "19.1mm SQ.", "0.050\"", "1.27mm"],
+          ["68", "0.95\" SQ.", "24.1mm SQ.", "0.050\"", "1.27mm"],
+          ["84", "1.15\" SQ.", "29.2mm SQ.", "0.050\"", "1.27mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "SOIC Gull Wing & J-Lead Packages",
+    tag: "Small Outline Integrated Circuit",
+    subtitle: "SOIC Gull Wing & J-Lead Dimension Sets",
+    svgs: [
+      {
+        label: "SOIC Gull Wing (Standard)",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="20" width="90" height="50" fill="#1e293b" rx="2" />
+            <path d="M 10,35 Q 20,35 25,35 M 10,55 Q 20,55 25,55" stroke="#cbd5e1" stroke-width="4.5" fill="none" />
+            <path d="M 130,35 Q 120,35 115,35 M 130,55 Q 120,55 115,55" stroke="#cbd5e1" stroke-width="4.5" fill="none" />
+          </svg>
+        `
+      },
+      {
+        label: "SOIC J-Lead Profile",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="20" width="90" height="50" fill="#1e293b" rx="2" />
+            <path d="M 25,35 L 20,35 L 20,50 L 25,50" stroke="#cbd5e1" stroke-width="4" fill="none" />
+            <path d="M 115,35 L 120,35 L 120,50 L 115,50" stroke="#cbd5e1" stroke-width="4" fill="none" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "SOIC - Gull Wing Specifications (50 mils/1.27mm Pitch)",
+        columns: ["Lead", "Body Width"],
+        rows: [
+          ["8", "150 mils (3.9mmX4.9mm)"],
+          ["8", "208 mils (5.28mmX5.28mm)"],
+          ["14", "150 mils (3.9mmX8.7mm)"],
+          ["14", "208 mils (5.3mmX10.2mm)"],
+          ["14", "220 mils (5.6mmX9.9mm)"],
+          ["16", "150 mils (3.9mmX9.9mm)"],
+          ["16", "208 mils (5.3mmX10.2mm)"],
+          ["16", "220 mils (5.6mmX11.2mm)"],
+          ["16", "300 mils (7.5mmX10.3mm)"],
+          ["18", "300 mils (7.5mmX11.6mm)"],
+          ["20", "300 mils (7.5mmX12.8mm)"],
+          ["24", "300 mils (7.5mmX15.4mm)"],
+          ["24", "330 mils (8.4mmX15.8mm)"],
+          ["28", "300 mils (7.5mmX17.9mm)"],
+          ["28", "330~350 mils (8.4~8.9mmX18.1mm)"],
+          ["32", "300 mils (7.5mmX20.8mm)"],
+          ["32", "330~350 mils (8.4~8.9mmX20.8mm)"],
+          ["32", "400 mils (10.16mmX21mm)"],
+          ["32", "450 mils (11.4mmX21mm)"],
+          ["40", "300 mils (7.5mmX26mm)"],
+          ["40", "400 mils (10mmX26mm)"],
+          ["40", "450 mils (11.4mmX26mm)"],
+          ["44", "525 mils (13.3mmX28.2mm)"]
+        ]
+      },
+      {
+        header: "SOIC - J-Lead Specifications (50 mils/1.27mm Pitch)",
+        columns: ["Lead", "Body Width"],
+        rows: [
+          ["18", "300 mils (7.5mm)"],
+          ["20", "300 mils (7.5mm)"],
+          ["20 / 26", "300 mils (7.5mm)"],
+          ["24", "300 mils (7.5mm)"],
+          ["24 / 26", "300 mils (7.5mm)"],
+          ["24 / 28", "400 mils (10mm)"],
+          ["28", "300 mils (7.5mm)"],
+          ["28", "400 mils (10mm)"],
+          ["32", "300 mils (7.5mm)"],
+          ["32", "400 mils (10mm)"],
+          ["36", "400 mils (10mm)"],
+          ["40", "400 mils (10mm)"],
+          ["42", "400 mils (10mm)"],
+          ["44", "400 mils (10mm)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "QSOP & QVSOP Package Series",
+    tag: "Quarter-Size Small Outline",
+    subtitle: "QSOP & QVSOP Layout Configurations",
+    svgs: [
+      {
+        label: "Standard QSOP Layout",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="35" y="20" width="70" height="50" fill="#1e293b" rx="2" />
+            <line x1="20" y1="30" x2="35" y2="30" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="20" y1="40" x2="35" y2="40" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="20" y1="50" x2="35" y2="50" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="20" y1="60" x2="35" y2="60" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="105" y1="30" x2="120" y2="30" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="105" y1="40" x2="120" y2="40" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="105" y1="50" x2="120" y2="50" stroke="#cbd5e1" stroke-width="2.5" />
+            <line x1="105" y1="60" x2="120" y2="60" stroke="#cbd5e1" stroke-width="2.5" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "QSOP - 25 mil (0.635mm) Pitch Specifications",
+        columns: ["Lead", "Body Width", "Body Length", "Pitch"],
+        rows: [
+          ["16", "150 mils (3.9mmX4.9mm)", "4.9mm", "0.635mm"],
+          ["20", "150 mils (3.9mmX8.7mm)", "8.7mm", "0.635mm"],
+          ["24", "150 mils (3.9mmX8.7mm)", "8.7mm", "0.635mm"],
+          ["28", "150 mils (3.9mmX9.9mm)", "9.9mm", "0.635mm"]
+        ]
+      },
+      {
+        header: "QVSOP - 19.7 mil (0.5mm) Pitch Specifications",
+        columns: ["Lead", "Body Width", "Body Length", "Pitch"],
+        rows: [
+          ["40", "150 mils (3.9mmX9.9mm)", "9.9mm", "0.5mm"],
+          ["80", "150 mils (3.9mmX20.5mm)", "20.5mm", "0.5mm"]
+        ]
+      },
+      {
+        header: "QVSOP - 15.7 mil (0.4mm) Pitch Specifications",
+        columns: ["Lead", "Body Width", "Body Length", "Pitch"],
+        rows: [
+          ["48", "150 mils (3.9mmX9.9mm)", "9.9mm", "0.4mm"]
+        ]
+      }
+    ]
   }
-  document.getElementById(pkgId).style.display = 'block';
+];
 
-  // Display details workspace
-  document.getElementById('detailsWorkspace').style.display = 'block';
-}
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
 
-function closePackage(pkgId) {
-  // Hide active details panel and workspace
-  document.getElementById(pkgId).style.display = 'none';
-  document.getElementById('detailsWorkspace').style.display = 'none';
-
-  // Restore cards selection list and search bar
-  document.getElementById('selectionWorkspace').style.display = 'block';
-}
-
-function myFunction() {
-  var input = document.getElementById("myInput");
-  var filter = input.value.toUpperCase();
-  var ul = document.getElementById("myUL");
-  var li = ul.getElementsByTagName("li");
+// Update display with selected package parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
   
-  for (var i = 0; i < li.length; i++) {
-    var card = li[i].getElementsByClassName("pinout-item-card")[0];
-    var txtValue = card.textContent || card.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
+}
+
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
     }
-  }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
 }
 
 // Geometry Calculations for SMT Package Leads
@@ -1075,70 +1143,24 @@ function calculateICParams() {
     "• Minimum PCB Keep-out Span: " + (estimatedBodyLength + (pitch * 1.5)).toFixed(3) + " mm";
 }
 
-// Lightbox modal enlarger for SVG diagrams
-function zoomSvg(svgContent) {
-  var overlay = document.createElement('div');
-  overlay.id = 'svg-zoom-overlay';
-  overlay.style.position = 'fixed';
-  overlay.style.top = '0';
-  overlay.style.left = '0';
-  overlay.style.width = '100%';
-  overlay.style.height = '100%';
-  overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.98)'; // Solid high-contrast white background
-  overlay.style.zIndex = '20000';
-  overlay.style.display = 'flex';
-  overlay.style.alignItems = 'center';
-  overlay.style.justifyContent = 'center';
-  overlay.style.cursor = 'zoom-out';
-  overlay.style.boxShadow = 'inset 0 0 100px rgba(15,23,42,0.15)';
-  
-  // Close cross inside lightbox
-  var closeIndicator = document.createElement('div');
-  closeIndicator.innerHTML = '&times;';
-  closePowerStyle(closeIndicator);
-  overlay.appendChild(closeIndicator);
-
-  // Scale up the vector art safely with direct container scaling
-  var container = document.createElement('div');
-  container.style.width = '90%';
-  container.style.maxWidth = '500px';
-  container.style.maxHeight = '85vh';
-  container.style.display = 'flex';
-  container.style.alignItems = 'center';
-  container.style.justifyContent = 'center';
-  container.innerHTML = svgContent.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
-  overlay.appendChild(container);
-  
-  overlay.onclick = function() {
-    overlay.remove();
-  };
-  document.body.appendChild(overlay);
-}
-
-function closePowerStyle(el) {
-  el.style.position = 'fixed';
-  el.style.top = '40px';
-  el.style.right = '40px';
-  el.style.fontSize = '40px';
-  el.style.fontWeight = 'bold';
-  el.style.color = '#1e293b';
-  el.style.cursor = 'pointer';
-}
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first package entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+  calculateICParams();
+};
 </script>
 
+<!-- SEO Structured JSON-LD Schemas -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "publisher": {
-    "@type": "Organization",
-    "name": "CalcBoy",
-    "url": "https://calcboy.com"
-  },
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "1. What is the main difference between BGA and WLP packaging?",
+      "name": "What is the main difference between BGA and WLP packaging?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "BGA packages use an intermediate organic or ceramic substrate/interposer to route signals from the die to the solder balls. WLP (Wafer Level Package) places solder balls directly onto the passivated surface of the silicon die, eliminating the substrate completely for the smallest possible footprint."
@@ -1146,18 +1168,10 @@ function closePowerStyle(el) {
     },
     {
       "@type": "Question",
-      "name": "2. Why are Fan-Out packages (EWLP) growing in popularity?",
+      "name": "Why are Fan-Out packages (EWLP) growing in popularity?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "As silicon chips shrink, their physical die size decreases. However, high-performance chips still require a large number of pins. EWLP embeds the die in a mold compound wafer, providing extra perimeter area to route signals out ('Fan-Out'), avoiding physical pin-count limitations of tiny silicon surfaces."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "3. How does ball pitch affect PCB design?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Fine-pitch arrays (under 0.50mm) require advanced PCB fabrication technologies, such as high-density interconnect (HDI) microvias, laser drilling, and narrow track routing. Larger pitch arrays (0.80mm - 1.0mm) can be routed using standard, lower-cost multilayers."
       }
     }
   ]
@@ -1169,24 +1183,9 @@ function closePowerStyle(el) {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "CalcBoy",
-      "item": "https://calcboy.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Electronics Reference",
-      "item": "https://calcboy.com/category/electronics-calculators/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "Semiconductor Package Guide",
-      "item": "https://calcboy.com/tool/semiconductor-package-guide"
-    }
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Semiconductor Package Guide", "item": "https://calcboy.com/tool/semiconductor-package-guide" }
   ]
 }
 </script>
