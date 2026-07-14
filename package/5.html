@@ -6,136 +6,155 @@
 <title>Flat Pack Daisy Chain Reference Guide &amp; Calculator | CalcBoy</title>
 <meta name="description" content="Complete engineering reference guide for Ceramic Flat Pack (CFP) packages. Includes exhaustive dimensions, braze joints, pitch data, and an interactive loop resistance calculator.">
 <meta name="keywords" content="Flat Pack package, CFP pinout, Daisy Chain IC, 50mil pitch flatpack, 25mil pitch, solder joint reliability, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/flatpack-daisy-chain-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Flat Pack Daisy Chain Reference Guide &amp; Calculator | CalcBoy">
+<meta property="og:description" content="Access complete engineering specifications for Ceramic Flat Pack (CFP) packages and configure series resistance loops with the integrated daisy chain calculator.">
+<meta property="og:url" content="https://calcboy.com/tool/flatpack-daisy-chain-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flat Pack Daisy Chain Reference Guide &amp; Calculator | CalcBoy">
+<meta name="twitter:description" content="Complete engineering index of Ceramic Flat Pack (CFP) configurations and interactive wire loop calculator.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#semiconductor-pkg-calc,#semiconductor-pkg-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#semiconductor-pkg-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#semiconductor-pkg-tool, #semiconductor-pkg-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#009688;
-  box-shadow:0 0 0 3px rgba(0,150,136,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#semiconductor-pkg-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+}
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
   cursor: pointer;
 }
-.pinout-item-card:hover {
-  border-color:#009688;
-  box-shadow:0 4px 12px rgba(0,150,136,.08);
+select:focus {
+  border-color: #009688;
+  box-shadow: 0 0 0 3px rgba(0,150,136,.12);
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#009688;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
-}
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
-}
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Modal Overlay Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:hidden;
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:10px;
-}
-.w3-modal-content {
-  background:#fff;
-  margin:80px auto 20px;
-  width:100%;
-  max-width:580px;
-  max-height:85vh;
-  overflow-y:auto;
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-
-/* Close Button: Viewport-Locked */
-.mid {
-  position: fixed !important;
-  top: 100px !important;  
-  right: 25px !important;
-  z-index: 10010 !important;
-  width: 50px !important;
-  height: 40px !important;
-  background-color: red !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-size: 25px !important;
-  font-weight: bold !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  text-decoration: none;
-}
-.mid:hover {
-  background-color: #cc0000 !important;
-  transform: scale(1.05);
-}
-
-/* Inline Diagram Styling */
-.diagram-container {
-  width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
   border-radius: 12px;
   padding: 16px;
-  margin: 12px auto 6px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.connector-header-card .badge {
+  background: #e0f2f1;
+  color: #009688;
+  border: 1px solid #b2dfdb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #009688;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e0f2f1;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
   display: flex;
   gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
 }
-.vector-view {
+.vector-box {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -143,16 +162,17 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   background: #fff;
   border: 1px solid #edf2f7;
   border-radius: 8px;
-  padding: 8px;
+  padding: 12px;
   min-height: 140px;
   justify-content: center;
-  cursor: zoom-in;
-  transition: transform 0.2s;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
 }
-.vector-view:hover {
+.vector-box:hover {
   transform: scale(1.02);
+  border-color: #009688;
 }
-.vector-view svg {
+.vector-box svg {
   max-width: 100%;
   height: auto;
 }
@@ -161,80 +181,185 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   font-weight: 800;
   color: #64748b;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+.img-caption {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
+}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #374151 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.table1 {width:100%;text-align:left;clear:both}
-
-.img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:6px;
-  margin-bottom:16px;
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-
-/* Standardized Tables & Scroll wrappers */
-.table-responsive {
-  width: 100%;
-  max-height: 380px;
-  overflow-y: auto;
-  overflow-x: auto;
-  margin: 15px 0 0;
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutLead {
+  background: linear-gradient(135deg,#eef5ff,#fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #e0f2f1;
+  border: 1px solid #b2dfdb;
+  border-left: 5px solid #009688;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00796b;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  -webkit-overflow-scrolling: touch;
-  position: relative;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
 }
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background: #fff;
-  overflow: hidden;
-  table-layout: auto;
-}
-th {
-  background: #f1f5f9 !important;
-  color: #1e293b;
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #009688;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   font-weight: 900;
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 2px solid #e2e8f0;
-  box-shadow: inset 0 -2px 0 #e2e8f0;
-  position: -webkit-sticky !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 20 !important;
-  white-space: nowrap;
 }
-td {
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #475467;
-  border-bottom: 1px solid #edf2f7;
-  white-space: nowrap;
-}
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
-
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
 
 /* Interactive Calculator Container inside InfoBox */
 .calc-container {
@@ -288,7 +413,9 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 }
 
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
   .calc-input-group {flex-direction: column; align-items: flex-start;}
   .calc-input-group input, .calc-input-group select {width: 100%;}
 }
@@ -296,320 +423,41 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 </head>
 <body>
 
-<div id="semiconductor-pkg-calc">
+<div id="semiconductor-pkg-tool">
 
-  <!-- SELECTION HUB: Search and Card List -->
-  <div id="selectionWorkspace">
-    <div class="search-container">
-      <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Flat Pack Leads, Size, or Braze..." title="Type to search">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">SMT Flat Pack Selection</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Flat Pack Configuration</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
     </div>
-
-    <ul id="myUL">
-      
-      <li>
-        <a href="#" onclick="openPackage('id01'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Pitch = 50mil (1.27mm)</span>
-              <span class="card-title">50mil Flat Pack Configurations</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id02'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Pitch = 25mil (0.635mm)</span>
-              <span class="card-title">25mil Flat Pack Configurations</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id03'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Evaluation Loops</span>
-              <span class="card-title">Daisy Chain Routing &amp; Pin Pairs</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id04'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Design Guidelines</span>
-              <span class="card-title">Joint Styles: Bottom, Side, Top, Gull-Wing</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-    </ul>
   </div>
 
-  <!-- DETAILS HUB: Modal Popups -->
-  <div id="detailsWorkspace">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">Pitch = 50mil (1.27mm)</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Wire Mapping</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <!-- CARD 1: 50MIL PITCH FLAT PACKS -->
-    <div id="id01" class="w3-modal">
-      <button class="mid" onclick="closePackage('id01')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">50mil (1.27mm) Pitch Flat Packs</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="150" height="110" viewBox="0 0 150 110">
-                <rect x="35" y="30" width="80" height="50" rx="3" fill="#2d3748" stroke="#4a5568" stroke-width="2" />
-                <!-- Leads Left -->
-                <line x1="5" y1="40" x2="35" y2="40" stroke="#a0aec0" stroke-width="2.5" />
-                <line x1="5" y1="50" x2="35" y2="50" stroke="#a0aec0" stroke-width="2.5" />
-                <line x1="5" y1="60" x2="35" y2="60" stroke="#a0aec0" stroke-width="2.5" />
-                <line x1="5" y1="70" x2="35" y2="70" stroke="#a0aec0" stroke-width="2.5" />
-                <!-- Leads Right -->
-                <line x1="115" y1="40" x2="145" y2="40" stroke="#a0aec0" stroke-width="2.5" />
-                <line x1="115" y1="50" x2="145" y2="50" stroke="#a0aec0" stroke-width="2.5" />
-                <line x1="115" y1="60" x2="145" y2="60" stroke="#a0aec0" stroke-width="2.5" />
-                <line x1="115" y1="70" x2="145" y2="70" stroke="#a0aec0" stroke-width="2.5" />
-                <!-- Identification Mark -->
-                <circle cx="45" cy="40" r="3" fill="#cbd5e0" />
-              </svg>
-              <div class="vector-label">50mil Flat Pack Outline</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: STANDARD 50MIL PITCH FLAT PACK (CLICK TO ZOOM)</div>
-
-          <h3>Mechanical Configurations (Pitch = 50mil)</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Leads</th>
-                  <th>Body Size (in.)</th>
-                  <th>Braze Location</th>
-                  <th>Dimensions (mm)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>8</td><td>0.25" x 0.25"</td><td>Bottom</td><td>6.35 x 6.35 mm</td></tr>
-                <tr><td>10</td><td>0.25" x 0.25"</td><td>Bottom</td><td>6.35 x 6.35 mm</td></tr>
-                <tr><td>10</td><td>0.25" x 0.25"</td><td>Side</td><td>6.35 x 6.35 mm</td></tr>
-                <tr><td>10</td><td>0.25" x 0.25"</td><td>Bottom</td><td>6.35 x 6.35 mm</td></tr>
-                <tr><td>14</td><td>0.26" x 0.34"</td><td>Side</td><td>6.60 x 8.64 mm</td></tr>
-                <tr><td>14</td><td>0.26" x 0.34"</td><td>Side</td><td>6.60 x 8.64 mm</td></tr>
-                <tr><td>14</td><td>0.26" x 0.34"</td><td>Bottom</td><td>6.60 x 8.64 mm</td></tr>
-                <tr><td>14</td><td>0.26" SQ</td><td>Gull-Wing</td><td>6.60 x 6.60 mm</td></tr>
-                <tr><td>16</td><td>0.25" x 0.38"</td><td>Side</td><td>6.35 x 9.65 mm</td></tr>
-                <tr><td>16</td><td>0.25" x 0.38"</td><td>Side</td><td>6.35 x 9.65 mm</td></tr>
-                <tr><td>16</td><td>0.25" x .38"</td><td>Gull-Wing</td><td>6.35 x 9.65 mm</td></tr>
-                <tr><td>16</td><td>0.29" x 0.41"</td><td>Gull-Wing</td><td>7.37 x 10.41 mm</td></tr>
-                <tr><td>20</td><td>0.27" x 0.50"</td><td>Side</td><td>6.86 x 12.70 mm</td></tr>
-                <tr><td>20</td><td>0.30" x 0.50"</td><td>Bottom</td><td>7.62 x 12.70 mm</td></tr>
-                <tr><td>20</td><td>0.40" x 0.40"</td><td>Bottom</td><td>10.16 x 10.16 mm</td></tr>
-                <tr><td>20</td><td>0.62" x 0.62"</td><td>Side</td><td>15.75 x 15.75 mm</td></tr>
-                <tr><td>24</td><td>0.30" x 0.50"</td><td>Side</td><td>7.62 x 12.70 mm</td></tr>
-                <tr><td>24</td><td>0.40" x 0.60"</td><td>Side</td><td>10.16 x 15.24 mm</td></tr>
-                <tr><td>24</td><td>0.40" x 0.60"</td><td>Bottom</td><td>10.16 x 15.24 mm</td></tr>
-                <tr><td>24</td><td>0.60" x 0.82"</td><td>Bottom</td><td>15.24 x 20.83 mm</td></tr>
-                <tr><td>24</td><td>0.60" x 0.81"</td><td>Top</td><td>15.24 x 20.57 mm</td></tr>
-                <tr><td>28</td><td>0.40" x 0.72"</td><td>Side</td><td>10.16 x 18.29 mm</td></tr>
-                <tr><td>28</td><td>0.40" x 0.72"</td><td>Side</td><td>10.16 x 18.29 mm</td></tr>
-                <tr><td>28</td><td>0.40" x 0.72"</td><td>Bottom</td><td>10.16 x 18.29 mm</td></tr>
-                <tr><td>28</td><td>0.50" x 0.72"</td><td>Bottom</td><td>12.70 x 18.29 mm</td></tr>
-                <tr><td>28</td><td>0.64" x 0.72"</td><td>Side</td><td>16.26 x 18.29 mm</td></tr>
-                <tr><td>32</td><td>0.40" x 0.82"</td><td>Bottom</td><td>10.16 x 20.83 mm</td></tr>
-                <tr><td>32</td><td>0.50" x 0.82"</td><td>Bottom</td><td>12.70 x 20.83 mm</td></tr>
-                <tr><td>32</td><td>0.60" x 0.82"</td><td>Bottom</td><td>15.24 x 20.83 mm</td></tr>
-                <tr><td>32</td><td>0.60" x 0.82"</td><td>Top</td><td>15.24 x 20.83 mm</td></tr>
-                <tr><td>36</td><td>0.50" x 0.93"</td><td>Bottom</td><td>12.70 x 23.62 mm</td></tr>
-                <tr><td>40</td><td>0.80" x 1.22"</td><td>Top</td><td>20.32 x 30.99 mm</td></tr>
-                <tr><td>42</td><td>0.64" x 1.06"</td><td>Top</td><td>16.26 x 26.92 mm</td></tr>
-                <tr><td>48</td><td>0.64" x 1.21"</td><td>Top</td><td>16.26 x 30.73 mm</td></tr>
-                <tr><td>48</td><td>0.64" x 1.31"</td><td>Top</td><td>16.26 x 33.27 mm</td></tr>
-                <tr><td>52</td><td>0.64" x 1.31"</td><td>Top</td><td>16.26 x 33.27 mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
     </div>
-
-    <!-- CARD 2: 25MIL PITCH FLAT PACKS -->
-    <div id="id02" class="w3-modal">
-      <button class="mid" onclick="closePackage('id02')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">25mil (0.635mm) Pitch Flat Packs</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="150" height="110" viewBox="0 0 150 110">
-                <rect x="35" y="30" width="80" height="50" rx="3" fill="#2d3748" stroke="#4a5568" stroke-width="2" />
-                <!-- High Density Leads Left -->
-                <line x1="5" y1="36" x2="35" y2="36" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="5" y1="41" x2="35" y2="41" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="5" y1="46" x2="35" y2="46" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="5" y1="51" x2="35" y2="51" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="5" y1="56" x2="35" y2="56" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="5" y1="61" x2="35" y2="61" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="5" y1="66" x2="35" y2="66" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="5" y1="71" x2="35" y2="71" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="5" y1="76" x2="35" y2="76" stroke="#cbd5e0" stroke-width="1.2" />
-                <!-- High Density Leads Right -->
-                <line x1="115" y1="36" x2="145" y2="36" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="115" y1="41" x2="145" y2="41" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="115" y1="46" x2="145" y2="46" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="115" y1="51" x2="145" y2="51" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="115" y1="56" x2="145" y2="56" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="115" y1="61" x2="145" y2="61" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="115" y1="66" x2="145" y2="66" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="115" y1="71" x2="145" y2="71" stroke="#cbd5e0" stroke-width="1.2" />
-                <line x1="115" y1="76" x2="145" y2="76" stroke="#cbd5e0" stroke-width="1.2" />
-              </svg>
-              <div class="vector-label">25mil Fine Pitch Outline</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: FINE 25MIL PITCH FLAT PACK (CLICK TO ZOOM)</div>
-
-          <h3>Mechanical Configurations (Pitch = 25mil)</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Leads</th>
-                  <th>Body Size (in.)</th>
-                  <th>Braze Location</th>
-                  <th>Dimensions (mm)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>48</td><td>0.40" x 0.72"</td><td>Bottom</td><td>10.16 x 18.29 mm</td></tr>
-                <tr><td>56</td><td>0.40" x 0.72"</td><td>Bottom</td><td>10.16 x 18.29 mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 3: DAISY CHAIN ROUTING -->
-    <div id="id03" class="w3-modal">
-      <button class="mid" onclick="closePackage('id03')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">Daisy Chain Test Routing</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="160" height="110" viewBox="0 0 160 110">
-                <!-- Silicon Die Internal Links -->
-                <rect x="40" y="25" width="80" height="60" rx="4" fill="#1e293b" stroke="#cbd5e1" stroke-width="1.5" />
-                <text x="80" y="60" fill="#a0aec0" font-size="8" font-weight="bold" text-anchor="middle">SILICON DIE</text>
-                <!-- Wirebonds / Alternating internal connections -->
-                <path d="M 15,35 L 45,35 M 45,35 Q 55,45 45,55 M 15,55" fill="none" stroke="#f6ad55" stroke-width="2" />
-                <path d="M 145,35 L 115,35 M 115,35 Q 105,45 115,55 M 145,55" fill="none" stroke="#f6ad55" stroke-width="2" />
-                <!-- Trace connections -->
-                <line x1="15" y1="35" x2="30" y2="35" stroke="#fc8181" stroke-width="2" />
-                <line x1="15" y1="55" x2="30" y2="55" stroke="#fc8181" stroke-width="2" />
-                <line x1="145" y1="35" x2="130" y2="35" stroke="#fc8181" stroke-width="2" />
-                <line x1="145" y1="55" x2="130" y2="55" stroke="#fc8181" stroke-width="2" />
-              </svg>
-              <div class="vector-label">Alternate Pin Loop Connection</div>
-            </div>
-          </div>
-          <div class="img-caption">SCHEMATIC: COMPONENT VS SUBSTRATE ROUTING (CLICK TO ZOOM)</div>
-
-          <h3>Daisy Chain Assembly &amp; Pin Configurations</h3>
-          <p>A daisy chain package is used during board-level reliability testing (such as thermal shock or mechanical drop testing) to verify the continuous electrical integrity of the solder joints. The pins are internally connected in pairs.</p>
-          
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Daisy Chain Element</th>
-                  <th>Implementation Method</th>
-                  <th>Measurement Function</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Internal Connection</td><td>Die Metallization or Wire Bond Loop</td><td>Links odd-to-even pins internally (e.g. 1-2, 3-4)</td></tr>
-                <tr><td>PCB Board Linkage</td><td>Printed Circuit Substrate Traces</td><td>Links adjacent alternate pins externally (e.g. 2-3, 4-5)</td></tr>
-                <tr><td>Complete Loop</td><td>Continuous Series Circuit</td><td>Enables real-time resistance monitoring of all solder joints</td></tr>
-                <tr><td>Test Nodes</td><td>Vias or Test Pads</td><td>Measures trace continuity shifts under environmental stress</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 4: BRAZE DESIGNATIONS -->
-    <div id="id04" class="w3-modal">
-      <button class="mid" onclick="closePackage('id04')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">Braze Designations &amp; Joint Styles</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="150" height="90" viewBox="0 0 150 90">
-                <!-- Package Base -->
-                <rect x="30" y="25" width="90" height="25" fill="#4a5568" />
-                <!-- Side Braze Leads -->
-                <line x1="5" y1="37" x2="30" y2="37" stroke="#cbd5e0" stroke-width="3.5" />
-                <line x1="120" y1="37" x2="145" y2="37" stroke="#cbd5e0" stroke-width="3.5" />
-                <text x="75" y="42" fill="#fff" font-size="8" text-anchor="middle">SIDE BRAZE</text>
-              </svg>
-              <div class="vector-label">Side Braze Lead exit</div>
-            </div>
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="150" height="90" viewBox="0 0 150 90">
-                <!-- Package Base -->
-                <rect x="30" y="25" width="90" height="25" fill="#4a5568" />
-                <!-- Bottom Braze Leads -->
-                <path d="M 35,50 L 35,60 L 5,60" fill="none" stroke="#cbd5e0" stroke-width="3.5" />
-                <path d="M 115,50 L 115,60 L 145,60" fill="none" stroke="#cbd5e0" stroke-width="3.5" />
-                <text x="75" y="42" fill="#fff" font-size="8" text-anchor="middle">BOTTOM BRAZE</text>
-              </svg>
-              <div class="vector-label">Bottom Braze exit</div>
-            </div>
-          </div>
-          <div class="img-caption">SCHEMATIC: LEAD BRAZE EXIT PLANES (CLICK TO ZOOM)</div>
-
-          <h3>Mechanical Joint Comparison</h3>
-          <p>The lead-attach location (braze joint plane) affects coplanarity, board clearances, and overall thermal cycling strain distribution on the solder joints.</p>
-          
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Braze Style</th>
-                  <th>Mounting Plane Clearance</th>
-                  <th>Key Engineering Tradeoff</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Bottom Braze</td><td>Low standoff distance</td><td>High mechanical package rigidity; sensitive to PCB warpage</td></tr>
-                <tr><td>Side Braze</td><td>Medium standoff clearance</td><td>Relieves solder shear strain, but increases package profile width</td></tr>
-                <tr><td>Top Braze</td><td>Maximizes board space under body</td><td>Allows placement of tiny passives beneath the ceramic package</td></tr>
-                <tr><td>Gull-Wing</td><td>Compliant flexible leads</td><td>Optimal joint compliance; absorbs thermo-mechanical mismatch</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- Interactive Daisy Chain Resistance Calculator -->
@@ -655,133 +503,445 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
-  <!-- Educational & Theoretical Sections -->
+  <!-- Input Parameters Specification -->
   <section class="infoBox">
-    <h2>Flat Pack Packaging Principles</h2>
-    <p>Ceramic Flat Pack (CFP) packages are hermetic components commonly used in military, aerospace, and high-reliability industrial systems. Featuring metal leadframes co-fired with alumina ceramic bodies, they provide reliable hermetic seals. Their low profile and compliant flat leads survive extreme thermal stress cycles where traditional packages might fail.</p>
-    <div class="aboutNote">Tip: Standard pitch on microcircuit flatpacks is historically 50mil (1.27mm), but newer high-density systems leverage 25mil (0.635mm) spacing for space optimization.</div>
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Pin Matrix Geometry</strong>
+        Tracks spacing layouts based on standard 50mil (1.27mm) or fine 25mil (0.635mm) pitches.
+      </div>
+      <div class="paramItem">
+        <strong>Braze Exit Planes</strong>
+        Evaluates mechanical mounting standoffs such as top, bottom, or side-brazed lead profiles.
+      </div>
+      <div class="paramItem">
+        <strong>Test Vehicle Continuity</strong>
+        Series daisy chain wire configurations designed to monitor joint resistance under operational stress.
+      </div>
+      <div class="paramItem">
+        <strong>Terminal Compliance</strong>
+        Flexible gull-wing designs integrated to absorb thermo-mechanical mismatches on the substrate.
+      </div>
+    </div>
   </section>
 
+  <!-- Practical Operational Examples -->
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Series Test Vehicles</strong></p>
+        <p>Short consecutive pin pairs to construct continuous electrical paths, allowing real-time thermal cycling fatigue assessments.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Solder Joint Reliability</strong></p>
+        <p>Configure daisy chains on standard FR-4 substrates to trace cracks or voids using event detectors.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Hermetic Envelope Seals</strong></p>
+        <p>Utilize co-fired ceramic flat packs to house safety-critical aerospace microcircuits against moisture ingress.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Lead-Attach Profiling</strong></p>
+        <p>Adjust stand-off clearances on side-brazed flat packs to optimize flux removal during post-solder cleaning.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagrams & Theory -->
+  <section class="infoBox">
+    <h2>Semiconductor Packaging &amp; Substrate Theory</h2>
+    <p>Semiconductor packaging acts as the bridge connecting delicate integrated circuit (IC) silicon dies to the printable circuit boards (PCBs) of larger electronic systems. Traditional packaging used wire bonding to link the peripheral die pads to leadframes (DIP, QFP, SOIC). Modern grid array packaging bypasses wire connections entirely, placing contacts under the chip body as ball grid arrays (BGA).</p>
+    <div class="aboutNote">Tip: Fan-In wafer level packaging (WLP) is restricted by die size limits, while Fan-Out (EWLP) expands the contact array area past the silicon die boundary.</div>
+  </section>
+
+  <!-- Formulas & Thermal Fatigue Calculations -->
   <section class="infoBox">
     <h2>Formulas &amp; Thermal Fatigue Calculations</h2>
     <div class="formula">Daisy Chain Total Resistance Formula:<br><strong>R_total = N_links × (R_pcb_trace + 2 × R_joint + 2 × R_wire_bond)</strong></div>
     <div class="formula">Solder Strain Coeff (Coffin-Manson Model):<br><strong>N_f = C × (Δε_p)^(-m) × f^k × exp(Q / R·T_max)</strong></div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target SMT Flat Pack or routing scheme using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the package's primary classification.</div>
+      <div class="aboutStep">Study the structural 2D and 3D vector layouts demonstrating the lead profile or path routing.</div>
+      <div class="aboutStep">Consult the dimensional mapping table below the graphic to check pitch and body size details.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
+  <section class="infoBox">
+    <h2>About This Reference Guide</h2>
+    <div class="aboutLead">
+      <strong>Your direct engineering lookup for Ceramic Flat Pack (CFP) configurations.</strong>
+      <p>This reference guide organizes standard dimensions, lead counts, pitches, and braze joint styles for high-reliability flat packs.</p>
+    </div>
+    <p>Finding accurate pin layouts and dimensional limits is essential for aerospace hardware engineers, high-temperature system designers, and component engineers. Using standardized package configurations ensures footprint compatibility and optimal thermal management.</p>
+    <p>Always verify actual manufacturer footprint specifications prior to board routing. Correct mechanical layouts prevent structural misalignments during reflow.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Lead Formats</span>Standard 50mil and high-density 25mil ceramic flat packs.</div>
+      <div class="aboutMiniCard"><span>Braze Styles</span>Detailed joint outlines for top, bottom, side, and gull-wing entries.</div>
+      <div class="aboutMiniCard"><span>Test Frameworks</span>Daisy-chained wirebond logic structures to assess joint compliance.</div>
+      <div class="aboutMiniCard"><span>Active Calculations</span>Continuous loop resistance evaluations based on trace-link variables.</div>
+    </div>
+  </section>
+
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. What is the primary purpose of a Daisy Chain package?</strong></h3>
+    
+    <h3>1. <strong>What is the primary purpose of a Daisy Chain package?</strong></h3>
     <p>It acts as a mechanical dummy component during testing. Because all pins are shorted in a series loop, a failure at any single solder joint breaks the connection, allowing simple continuous monitoring of solder fatigue during thermal chamber cycling.</p>
 
-    <h3><strong>2. How does the braze exit position affect mounting?</strong></h3>
+    <h3>2. <strong>How does the braze exit position affect mounting?</strong></h3>
     <p>Bottom-brazed packages sit flat on top of PCB pads, making coplanarity critical. Side-brazed or gull-wing models offer compliant lead structures that can bend to absorb structural PCB warpage and shear forces during thermal cycling.</p>
 
-    <h3><strong>3. How is failure defined during daisy chain test loop runs?</strong></h3>
+    <h3>3. <strong>How is failure defined during daisy chain test loop runs?</strong></h3>
     <p>Under IPC-9701 standards, a failure is typically registered when the loop resistance exceeds a designated limit (such as 1000 ohms) for multiple consecutive measurement intervals.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Reference Guides</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
-      <div class="linkCard"><strong>SOT &amp; SC Transistors</strong>Compare small-scale 3-pin and 5-pin transistor geometries.</div>
-      <div class="linkCard"><strong>SOD Axial Diode Guide</strong>Review cylindrical glass MELF package dimension sets.</div>
-      <div class="linkCard"><strong>BGA Pitch &amp; Routing</strong>Review high-density routing guidelines.</div>
-      <div class="linkCard"><strong>DPAK / TO-252 Standard</strong>Analyze footprints for high-power devices.</div>
+      <div class="linkCard"><strong>VGA Pinout Reference Guide</strong>Configure classic analog computer display pinouts.</div>
+      <div class="linkCard"><strong>HDMI Type-A/B Reference Guide</strong>Analyze modern high-definition digital video matrices.</div>
+      <div class="linkCard"><strong>RJ45 Ethernet Pinout Standard</strong>Assess network structured cabling configurations.</div>
+      <div class="linkCard"><strong>ATtiny85 Pinout Reference</strong>Develop ultra-compact microcontroller hardware.</div>
     </div>
   </section>
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function openPackage(pkgId) {
-  // Hide main card list and search bar
-  document.getElementById('selectionWorkspace').style.display = 'none';
-
-  // Hide all panels, then show the active selection
-  var panels = document.getElementsByClassName('w3-modal');
-  for (var i = 0; i < panels.length; i++) {
-    panels[i].style.display = 'none';
+// Master SMT Flat Pack Packages Database
+const packageDetails = [
+  {
+    name: "50mil (1.27mm) Pitch Flat Packs",
+    tag: "Pitch = 50mil (1.27mm)",
+    subtitle: "Standard 50mil Pitch Flat Pack Configurations",
+    svgs: [
+      {
+        label: "50mil Flat Pack Outline",
+        html: `
+          <svg width="150" height="110" viewBox="0 0 150 110">
+            <rect x="35" y="30" width="80" height="50" rx="3" fill="#2d3748" stroke="#4a5568" stroke-width="2" />
+            <line x1="5" y1="40" x2="35" y2="40" stroke="#a0aec0" stroke-width="2.5" />
+            <line x1="5" y1="50" x2="35" y2="50" stroke="#a0aec0" stroke-width="2.5" />
+            <line x1="5" y1="60" x2="35" y2="60" stroke="#a0aec0" stroke-width="2.5" />
+            <line x1="5" y1="70" x2="35" y2="70" stroke="#a0aec0" stroke-width="2.5" />
+            <line x1="115" y1="40" x2="145" y2="40" stroke="#a0aec0" stroke-width="2.5" />
+            <line x1="115" y1="50" x2="145" y2="50" stroke="#a0aec0" stroke-width="2.5" />
+            <line x1="115" y1="60" x2="145" y2="60" stroke="#a0aec0" stroke-width="2.5" />
+            <line x1="115" y1="70" x2="145" y2="70" stroke="#a0aec0" stroke-width="2.5" />
+            <circle cx="45" cy="40" r="3" fill="#cbd5e0" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Mechanical Configurations (Pitch = 50mil)",
+        columns: ["Leads", "Body Size (in.)", "Braze Location", "Dimensions (mm)"],
+        rows: [
+          ["8", "0.25\" x 0.25\"", "Bottom", "6.35 x 6.35 mm"],
+          ["10", "0.25\" x 0.25\"", "Bottom", "6.35 x 6.35 mm"],
+          ["10", "0.25\" x 0.25\"", "Side", "6.35 x 6.35 mm"],
+          ["10", "0.25\" x 0.25\"", "Bottom", "6.35 x 6.35 mm"],
+          ["14", "0.26\" x 0.34\"", "Side", "6.60 x 8.64 mm"],
+          ["14", "0.26\" x 0.34\"", "Side", "6.60 x 8.64 mm"],
+          ["14", "0.26\" x 0.34\"", "Bottom", "6.60 x 8.64 mm"],
+          ["14", "0.26\" SQ", "Gull-Wing", "6.60 x 6.60 mm"],
+          ["16", "0.25\" x 0.38\"", "Side", "6.35 x 9.65 mm"],
+          ["16", "0.25\" x 0.38\"", "Side", "6.35 x 9.65 mm"],
+          ["16", "0.25\" x .38\"", "Gull-Wing", "6.35 x 9.65 mm"],
+          ["16", "0.29\" x 0.41\"", "Gull-Wing", "7.37 x 10.41 mm"],
+          ["20", "0.27\" x 0.50\"", "Side", "6.86 x 12.70 mm"],
+          ["20", "0.30\" x 0.50\"", "Bottom", "7.62 x 12.70 mm"],
+          ["20", "0.40\" x 0.40\"", "Bottom", "10.16 x 10.16 mm"],
+          ["20", "0.62\" x 0.62\"", "Side", "15.75 x 15.75 mm"],
+          ["24", "0.30\" x 0.50\"", "Side", "7.62 x 12.70 mm"],
+          ["24", "0.40\" x 0.60\"", "Side", "10.16 x 15.24 mm"],
+          ["24", "0.40\" x 0.60\"", "Bottom", "10.16 x 15.24 mm"],
+          ["24", "0.60\" x 0.82\"", "Bottom", "15.24 x 20.83 mm"],
+          ["24", "0.60\" x 0.81\"", "Top", "15.24 x 20.57 mm"],
+          ["28", "0.40\" x 0.72\"", "Side", "10.16 x 18.29 mm"],
+          ["28", "0.40\" x 0.72\"", "Side", "10.16 x 18.29 mm"],
+          ["28", "0.40\" x 0.72\"", "Bottom", "10.16 x 18.29 mm"],
+          ["28", "0.50\" x 0.72\"", "Bottom", "12.70 x 18.29 mm"],
+          ["28", "0.64\" x 0.72\"", "Side", "16.26 x 18.29 mm"],
+          ["32", "0.40\" x 0.82\"", "Bottom", "10.16 x 20.83 mm"],
+          ["32", "0.50\" x 0.82\"", "Bottom", "12.70 x 20.83 mm"],
+          ["32", "0.60\" x 0.82\"", "Bottom", "15.24 x 20.83 mm"],
+          ["32", "0.60\" x 0.82\"", "Top", "15.24 x 20.83 mm"],
+          ["36", "0.50\" x 0.93\"", "Bottom", "12.70 x 23.62 mm"],
+          ["40", "0.80\" x 1.22\"", "Top", "20.32 x 30.99 mm"],
+          ["42", "0.64\" x 1.06\"", "Top", "16.26 x 26.92 mm"],
+          ["48", "0.64\" x 1.21\"", "Top", "16.26 x 30.73 mm"],
+          ["48", "0.64\" x 1.31\"", "Top", "16.26 x 33.27 mm"],
+          ["52", "0.64\" x 1.31\"", "Top", "16.26 x 33.27 mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "25mil (0.635mm) Pitch Flat Packs",
+    tag: "Pitch = 25mil (0.635mm)",
+    subtitle: "Fine Pitch 25mil Flat Pack Configurations",
+    svgs: [
+      {
+        label: "25mil Fine Pitch Outline",
+        html: `
+          <svg width="150" height="110" viewBox="0 0 150 110">
+            <rect x="35" y="30" width="80" height="50" rx="3" fill="#2d3748" stroke="#4a5568" stroke-width="2" />
+            <line x1="5" y1="36" x2="35" y2="36" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="5" y1="41" x2="35" y2="41" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="5" y1="46" x2="35" y2="46" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="5" y1="51" x2="35" y2="51" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="5" y1="56" x2="35" y2="56" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="5" y1="61" x2="35" y2="61" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="5" y1="66" x2="35" y2="66" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="5" y1="71" x2="35" y2="71" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="5" y1="76" x2="35" y2="76" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="115" y1="36" x2="145" y2="36" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="115" y1="41" x2="145" y2="41" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="115" y1="46" x2="145" y2="46" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="115" y1="51" x2="145" y2="51" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="115" y1="56" x2="145" y2="56" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="115" y1="61" x2="145" y2="61" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="115" y1="66" x2="145" y2="66" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="115" y1="71" x2="145" y2="71" stroke="#cbd5e0" stroke-width="1.2" />
+            <line x1="115" y1="76" x2="145" y2="76" stroke="#cbd5e0" stroke-width="1.2" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Mechanical Configurations (Pitch = 25mil)",
+        columns: ["Leads", "Body Size (in.)", "Braze Location", "Dimensions (mm)"],
+        rows: [
+          ["48", "0.40\" x 0.72\"", "Bottom", "10.16 x 18.29 mm"],
+          ["56", "0.40\" x 0.72\"", "Bottom", "10.16 x 18.29 mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Daisy Chain Routing & Pin Pairs",
+    tag: "Evaluation Loops",
+    subtitle: "Daisy Chain Solder Assembly Test Routing",
+    svgs: [
+      {
+        label: "Alternate Pin Loop Connection",
+        html: `
+          <svg width="160" height="110" viewBox="0 0 160 110">
+            <rect x="40" y="25" width="80" height="60" rx="4" fill="#1e293b" stroke="#cbd5e1" stroke-width="1.5" />
+            <text x="80" y="60" fill="#a0aec0" font-size="8" font-weight="bold" text-anchor="middle">SILICON DIE</text>
+            <path d="M 15,35 L 45,35 M 45,35 Q 55,45 45,55 M 15,55" fill="none" stroke="#f6ad55" stroke-width="2" />
+            <path d="M 145,35 L 115,35 M 115,35 Q 105,45 115,55 M 145,55" fill="none" stroke="#f6ad55" stroke-width="2" />
+            <line x1="15" y1="35" x2="30" y2="35" stroke="#fc8181" stroke-width="2" />
+            <line x1="15" y1="55" x2="30" y2="55" stroke="#fc8181" stroke-width="2" />
+            <line x1="145" y1="35" x2="130" y2="35" stroke="#fc8181" stroke-width="2" />
+            <line x1="145" y1="55" x2="130" y2="55" stroke="#fc8181" stroke-width="2" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Daisy Chain Assembly & Pin Configurations",
+        columns: ["Daisy Chain Element", "Implementation Method", "Measurement Function"],
+        rows: [
+          ["Internal Connection", "Die Metallization or Wire Bond Loop", "Links odd-to-even pins internally (e.g. 1-2, 3-4)"],
+          ["PCB Board Linkage", "Printed Circuit Substrate Traces", "Links adjacent alternate pins externally (e.g. 2-3, 4-5)"],
+          ["Complete Loop", "Continuous Series Circuit", "Enables real-time resistance monitoring of all solder joints"],
+          ["Test Nodes", "Vias or Test Pads", "Measures trace continuity shifts under environmental stress"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Joint Styles: Bottom, Side, Top, Gull-Wing",
+    tag: "Design Guidelines",
+    subtitle: "Flat Pack Braze Designations & Joint Styles",
+    svgs: [
+      {
+        label: "Side Braze Lead exit",
+        html: `
+          <svg width="150" height="90" viewBox="0 0 150 90">
+            <rect x="30" y="25" width="90" height="25" fill="#4a5568" />
+            <line x1="5" y1="37" x2="30" y2="37" stroke="#cbd5e0" stroke-width="3.5" />
+            <line x1="120" y1="37" x2="145" y2="37" stroke="#cbd5e0" stroke-width="3.5" />
+            <text x="75" y="42" fill="#fff" font-size="8" text-anchor="middle">SIDE BRAZE</text>
+          </svg>
+        `
+      },
+      {
+        label: "Bottom Braze exit",
+        html: `
+          <svg width="150" height="90" viewBox="0 0 150 90">
+            <rect x="30" y="25" width="90" height="25" fill="#4a5568" />
+            <path d="M 35,50 L 35,60 L 5,60" fill="none" stroke="#cbd5e0" stroke-width="3.5" />
+            <path d="M 115,50 L 115,60 L 145,60" fill="none" stroke="#cbd5e0" stroke-width="3.5" />
+            <text x="75" y="42" fill="#fff" font-size="8" text-anchor="middle">BOTTOM BRAZE</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Mechanical Joint Comparison",
+        columns: ["Braze Style", "Mounting Plane Clearance", "Key Engineering Tradeoff"],
+        rows: [
+          ["Bottom Braze", "Low standoff distance", "High mechanical package rigidity; sensitive to PCB warpage"],
+          ["Side Braze", "Medium standoff clearance", "Relieves solder shear strain, but increases package profile width"],
+          ["Top Braze", "Maximizes board space under body", "Allows placement of tiny passives beneath the ceramic package"],
+          ["Gull-Wing", "Compliant flexible leads", "Optimal joint compliance; absorbs thermo-mechanical mismatch"]
+        ]
+      }
+    ]
   }
-  document.getElementById(pkgId).style.display = 'block';
+];
 
-  // Display details container
-  document.getElementById('detailsWorkspace').style.display = 'block';
-}
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
 
-function closePackage(pkgId) {
-  // Hide details panel and main wrapper
-  document.getElementById(pkgId).style.display = 'none';
-  document.getElementById('detailsWorkspace').style.display = 'none';
-
-  // Restore main selection workspace
-  document.getElementById('selectionWorkspace').style.display = 'block';
-}
-
-function myFunction() {
-  var input = document.getElementById("myInput");
-  var filter = input.value.toUpperCase();
-  var ul = document.getElementById("myUL");
-  var li = ul.getElementsByTagName("li");
+// Update display with selected package parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
   
-  for (var i = 0; i < li.length; i++) {
-    var card = li[i].getElementsByClassName("pinout-item-card")[0];
-    var txtValue = card.textContent || card.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
-    }
-  }
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
 }
 
-// Lightbox modal enlarger for SVGs
+// Lightbox modal enlarger for dynamic SVG diagrams
 function zoomSvg(svgContent) {
-  var overlay = document.createElement('div');
+  const overlay = document.createElement('div');
   overlay.id = 'svg-zoom-overlay';
   overlay.style.position = 'fixed';
   overlay.style.top = '0';
   overlay.style.left = '0';
   overlay.style.width = '100%';
   overlay.style.height = '100%';
-  overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
   overlay.style.zIndex = '20000';
   overlay.style.display = 'flex';
   overlay.style.alignItems = 'center';
   overlay.style.justifyContent = 'center';
   overlay.style.cursor = 'zoom-out';
-  overlay.style.boxShadow = 'inset 0 0 100px rgba(15,23,42,0.15)';
   
-  var closeIndicator = document.createElement('div');
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
   closeIndicator.innerHTML = '&times;';
-  closePowerStyle(closeIndicator);
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
   overlay.appendChild(closeIndicator);
 
-  var container = document.createElement('div');
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
   container.style.width = '90%';
   container.style.maxWidth = '500px';
-  container.style.maxHeight = '85vh';
+  container.style.maxHeight = '80vh';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
   container.style.justifyContent = 'center';
-  container.innerHTML = svgContent.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
   overlay.appendChild(container);
   
-  overlay.onclick = function() {
+  const closeOverlay = function() {
     overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
   };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
   document.body.appendChild(overlay);
-}
-
-function closePowerStyle(el) {
-  el.style.position = 'fixed';
-  el.style.top = '40px';
-  el.style.right = '40px';
-  el.style.fontSize = '40px';
-  el.style.fontWeight = 'bold';
-  el.style.color = '#1e293b';
-  el.style.cursor = 'pointer';
 }
 
 // Interactive resistance calculations
@@ -800,17 +960,21 @@ function calculateLoopRes() {
 
   document.getElementById('calcOutput').innerHTML = "Calculated Loop Resistance: " + totalRes.toFixed(3) + " Ω";
 }
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first package entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+  calculateLoopRes();
+};
 </script>
 
+<!-- SEO Structured JSON-LD Schemas -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "publisher": {
-    "@type": "Organization",
-    "name": "CalcBoy",
-    "url": "https://calcboy.com"
-  },
   "mainEntity": [
     {
       "@type": "Question",
@@ -827,14 +991,6 @@ function calculateLoopRes() {
         "@type": "Answer",
         "text": "Bottom-brazed packages sit flat on top of PCB pads, making coplanarity critical. Side-brazed or gull-wing models offer compliant lead structures that can bend to absorb structural PCB warpage and shear forces during thermal cycling."
       }
-    },
-    {
-      "@type": "Question",
-      "name": "How is failure defined during daisy chain test loop runs?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Under IPC-9701 standards, a failure is typically registered when the loop resistance exceeds a designated limit (such as 1000 ohms) for multiple consecutive measurement intervals."
-      }
     }
   ]
 }
@@ -845,24 +1001,9 @@ function calculateLoopRes() {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "CalcBoy",
-      "item": "https://calcboy.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Electronics Reference",
-      "item": "https://calcboy.com/category/electronics-calculators/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "Flat Pack Daisy Chain Guide",
-      "item": "https://calcboy.com/tool/flatpack-daisy-chain-guide"
-    }
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Flat Pack Daisy Chain Guide", "item": "https://calcboy.com/tool/flatpack-daisy-chain-guide" }
   ]
 }
 </script>
