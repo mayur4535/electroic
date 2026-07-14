@@ -6,136 +6,155 @@
 <title>Leadless &amp; Axial Package Engineering Reference Guide | CalcBoy</title>
 <meta name="description" content="Exhaustive design reference guide for QFN, DFN and Axial Lead packages. Detailed dimensions, plating options, and landing pad clearance tables.">
 <meta name="keywords" content="QFN package, DFN footprint, Axial Lead diode, DO-41 size, DO-35 glass package, semiconductor, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/semiconductor-package-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leadless &amp; Axial Package Engineering Reference Guide | CalcBoy">
+<meta property="og:description" content="Access complete JEDEC engineering specifications for QFN, DFN, and through-hole axial packages. Calculate edge-to-edge copper clearance rules with our interactive tool.">
+<meta property="og:url" content="https://calcboy.com/tool/semiconductor-package-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leadless &amp; Axial Package Engineering Reference Guide | CalcBoy">
+<meta name="twitter:description" content="Standardized design directory for QFN, DFN, and Axial packages, featuring an interactive solder-mask clearance calculator.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#semiconductor-pkg-calc,#semiconductor-pkg-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#semiconductor-pkg-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#semiconductor-pkg-tool, #semiconductor-pkg-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#009688;
-  box-shadow:0 0 0 3px rgba(0,150,136,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#semiconductor-pkg-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+}
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
   cursor: pointer;
 }
-.pinout-item-card:hover {
-  border-color:#009688;
-  box-shadow:0 4px 12px rgba(0,150,136,.08);
+select:focus {
+  border-color: #009688;
+  box-shadow: 0 0 0 3px rgba(0,150,136,.12);
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#009688;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
-}
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
-}
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Modal Overlay Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:hidden; /* Lock viewport scroll completely */
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:10px;
-}
-.w3-modal-content {
-  background:#fff;
-  margin:80px auto 20px; /* Pushed down to clear header bar completely */
-  width:100%;
-  max-width:580px;
-  max-height:85vh; /* Restored comfortable height */
-  overflow-y:auto;  /* Enable vertical scroll inside the content box */
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-
-/* Red Close Button: Viewport-Locked */
-.mid {
-  position: fixed !important;
-  top: 100px !important;  
-  right: 25px !important;
-  z-index: 10010 !important;
-  width: 50px !important;
-  height: 40px !important;
-  background-color: red !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-size: 25px !important;
-  font-weight: bold !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  text-decoration: none;
-}
-.mid:hover {
-  background-color: #cc0000 !important;
-  transform: scale(1.05);
-}
-
-/* Inline Diagram Styling */
-.diagram-container {
-  width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
   border-radius: 12px;
   padding: 16px;
-  margin: 12px auto 6px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.connector-header-card .badge {
+  background: #e0f2f1;
+  color: #009688;
+  border: 1px solid #b2dfdb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #009688;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e0f2f1;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
   display: flex;
   gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
 }
-.vector-view {
+.vector-box {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -143,16 +162,17 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   background: #fff;
   border: 1px solid #edf2f7;
   border-radius: 8px;
-  padding: 8px;
+  padding: 12px;
   min-height: 140px;
   justify-content: center;
-  cursor: zoom-in; /* Indicate clickable zoom action */
-  transition: transform 0.2s;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
 }
-.vector-view:hover {
+.vector-box:hover {
   transform: scale(1.02);
+  border-color: #009688;
 }
-.vector-view svg {
+.vector-box svg {
   max-width: 100%;
   height: auto;
 }
@@ -161,80 +181,185 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   font-weight: 800;
   color: #64748b;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+.img-caption {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
+}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #374151 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.table1 {width:100%;text-align:left;clear:both}
-
-.img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:6px;
-  margin-bottom:16px;
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-
-/* Standardized Tables & Scroll wrappers */
-.table-responsive {
-  width: 100%;
-  max-height: 380px; /* Lock height of scroll container inside the modal */
-  overflow-y: auto;  /* Enable vertical scroll inside the container */
-  overflow-x: auto;  /* Enable horizontal scroll for wide tables */
-  margin: 15px 0 0;
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutLead {
+  background: linear-gradient(135deg,#eef5ff,#fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #e0f2f1;
+  border: 1px solid #b2dfdb;
+  border-left: 5px solid #009688;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00796b;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  -webkit-overflow-scrolling: touch;
-  position: relative; /* Establish scroll context for sticky TH elements */
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
 }
-table {
-  width: 100%;
-  border-collapse: separate; /* Essential: separate allows sticky TH positioning to work */
-  border-spacing: 0;
-  background: #fff;
-  overflow: hidden;
-  table-layout: auto; /* Columns scale dynamically based on text length */
-}
-th {
-  background: #f1f5f9 !important; /* Solid background so scrolling text is hidden behind */
-  color: #1e293b;
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #009688;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   font-weight: 900;
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 2px solid #e2e8f0;
-  box-shadow: inset 0 -2px 0 #e2e8f0; /* Crisp bottom border that doesn't scroll away */
-  position: -webkit-sticky !important; /* Support iOS Safari */
-  position: sticky !important;
-  top: 0 !important; /* Lock to the top of the scroll container */
-  z-index: 20 !important; /* Stay on top of TD elements */
-  white-space: nowrap; /* Prevent headers from wrapping awkwardly */
 }
-td {
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #475467;
-  border-bottom: 1px solid #edf2f7;
-  white-space: nowrap; /* Keep values on a single line for smooth horizontal scrolling */
-}
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
-
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
 
 /* Simple working calculator inputs styling */
 .calc-field-group {display:flex; flex-direction:column; gap:8px; margin-bottom:12px;}
@@ -245,274 +370,49 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 .calc-result-display {margin-top:12px; padding:12px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; font-size:13px; font-weight:700; color:#166534;}
 
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="semiconductor-pkg-calc">
+<div id="semiconductor-pkg-tool">
 
-  <!-- SELECTION HUB: Search and Card List -->
-  <div id="selectionWorkspace">
-    <div class="search-container">
-      <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search QFN, DFN, or Axial Lead..." title="Type to search">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Leadless Package Selection</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Package Family</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
     </div>
-
-    <ul id="myUL">
-      
-      <li>
-        <div onclick="openPackage('id01')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Quad Flat No-Lead</span>
-              <span class="card-title">QFN Packages &amp; Exposed Pads</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id02')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Dual Flat No-Lead</span>
-              <span class="card-title">DFN Dual-Sided Packages</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id03')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Through-Hole Axial</span>
-              <span class="card-title">Axial Lead Diodes (Plastic &amp; Glass)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-    </ul>
   </div>
 
-  <!-- DETAILS HUB: Modal Popups -->
-  <div id="detailsWorkspace">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">Quad Flat No-Lead</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Wire Mapping</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <!-- CARD 1: QFN -->
-    <div id="id01" class="w3-modal">
-      <button class="mid" onclick="closePackage('id01')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">QFN (Quad Flat No-Lead)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="25" y="10" width="90" height="90" fill="#1e293b" rx="4" />
-                <rect x="45" y="30" width="50" height="50" fill="#cbd5e1" rx="2" />
-                <rect x="25" y="25" width="8" height="4" fill="#fbbf24" />
-                <rect x="25" y="45" width="8" height="4" fill="#fbbf24" />
-                <rect x="25" y="65" width="8" height="4" fill="#fbbf24" />
-                <rect x="107" y="25" width="8" height="4" fill="#fbbf24" />
-                <rect x="107" y="45" width="8" height="4" fill="#fbbf24" />
-                <rect x="107" y="65" width="8" height="4" fill="#fbbf24" />
-                <rect x="45" y="10" width="4" height="8" fill="#fbbf24" />
-                <rect x="65" y="10" width="4" height="8" fill="#fbbf24" />
-                <rect x="85" y="10" width="4" height="8" fill="#fbbf24" />
-                <rect x="45" y="92" width="4" height="8" fill="#fbbf24" />
-                <rect x="65" y="92" width="4" height="8" fill="#fbbf24" />
-                <rect x="85" y="92" width="4" height="8" fill="#fbbf24" />
-              </svg>
-              <div class="vector-label">QFN Bottom exposed Pad</div>
-            </div>
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <!-- Daisy Chain visual mounting diagram from user image -->
-                <rect x="35" y="20" width="70" height="70" fill="none" stroke="#009688" stroke-width="2" />
-                <rect x="45" y="30" width="50" height="50" fill="#1e293b" />
-                <line x1="35" y1="20" x2="105" y2="90" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3" />
-                <line x1="105" y1="20" x2="35" y2="90" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3" />
-              </svg>
-              <div class="vector-label">Daisy Chain After PCB Mount</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: QFN GEOMETRY &amp; DAISY CHAIN PATHWAY (CLICK TO ENLARGE)</div>
-
-          <h3>QFN Standard Outline Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Leads</th>
-                  <th>Pitch</th>
-                  <th>Body Size</th>
-                  <th>Lead Free Plating Options</th>
-                  <th>Ground Pad Size</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>8</td><td>0.65mm</td><td>3mm SQ</td><td>NiPdAu Sn</td><td>1.5mm</td></tr>
-                <tr><td>12</td><td>0.5mm</td><td>3mm SQ</td><td>Sn100</td><td>1.2mm</td></tr>
-                <tr><td>12</td><td>0.65mm</td><td>4mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>12</td><td>0.8mm</td><td>4mm SQ</td><td>NiPdAu</td><td>Tray</td></tr>
-                <tr><td>16</td><td>0.5mm</td><td>3mm SQ</td><td>Sn100 Ni Pd Au</td><td>Tube Tray</td></tr>
-                <tr><td>16</td><td>0.65mm</td><td>4mm SQ</td><td>Sn100 Ni Pd Au</td><td>Tube Tray</td></tr>
-                <tr><td>16</td><td>0.8mm</td><td>5mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>20</td><td>0.5mm</td><td>4mm SQ</td><td>NiPdAu</td><td>Tray</td></tr>
-                <tr><td>20</td><td>0.65mm</td><td>5mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>20</td><td>0.65mm</td><td>5mm SQ</td><td>NiPdAu</td><td>Tray</td></tr>
-                <tr><td>24</td><td>0.5mm</td><td>4mm SQ</td><td>Sn100 NiPdAu</td><td>Tube Tray</td></tr>
-                <tr><td>24</td><td>0.65mm</td><td>5mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>24</td><td>0.8mm</td><td>6mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>28</td><td>0.5mm</td><td>5mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>28</td><td>0.65mm</td><td>6mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>32</td><td>0.5mm</td><td>5mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>32</td><td>0.5mm</td><td>5mm SQ</td><td>NiPdAu</td><td>Tube Tray</td></tr>
-                <tr><td>32</td><td>0.5mm</td><td>5mm SQ</td><td>Ni-Au SnPb</td><td>Tray</td></tr>
-                <tr><td>32</td><td>0.65mm</td><td>7mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>36</td><td>0.5mm</td><td>6mm SQ</td><td>Sn100</td><td>Tube Tray</td></tr>
-                <tr><td>40</td><td>0.4mm</td><td>5mm SQ</td><td>NiPdAu</td><td>3.4mm</td></tr>
-                <tr><td>40</td><td>0.5mm</td><td>6mm SQ</td><td>Sn100</td><td>4.2mm</td></tr>
-                <tr><td>44</td><td>0.5mm</td><td>7mm SQ</td><td>Sn100</td><td>5.5mm</td></tr>
-                <tr><td>44</td><td>0.65mm</td><td>8mm SQ</td><td>NiPdAu</td><td>Tray</td></tr>
-                <tr><td>48</td><td>0.4mm</td><td>6mm SQ</td><td>NiPdAu</td><td>4.4mm</td></tr>
-                <tr><td>48</td><td>0.5mm</td><td>7mm SQ</td><td>NiPdAu</td><td>5.6mm</td></tr>
-                <tr><td>48</td><td>0.5mm</td><td>7mm SQ</td><td>NiPdAu</td><td>5.6mm</td></tr>
-                <tr><td>52</td><td>0.5mm</td><td>8mm SQ</td><td>Sn100</td><td>6.2mm</td></tr>
-                <tr><td>56</td><td>0.4mm</td><td>7mm SQ</td><td>Sn100</td><td>5.2mm</td></tr>
-                <tr><td>56</td><td>0.4mm</td><td>7mm SQ</td><td>NiPdAu</td><td>5.6mm</td></tr>
-                <tr><td>56</td><td>0.5mm</td><td>8mm SQ</td><td>Sn100</td><td>6.0mm</td></tr>
-                <tr><td>56</td><td>0.5mm</td><td>8mm SQ</td><td>NiPdAu</td><td>6.6mm</td></tr>
-                <tr><td>56</td><td>0.5mm</td><td>8mm SQ</td><td>NiPdAu</td><td>6.6mm</td></tr>
-                <tr><td>64</td><td>0.5mm</td><td>9mm SQ</td><td>Sn100</td><td>6.2mm</td></tr>
-                <tr><td>64</td><td>0.5mm</td><td>9mm SQ</td><td>NiPdAu</td><td>7.5mm</td></tr>
-                <tr><td>68</td><td>0.4mm</td><td>8mm SQ</td><td>NiPdAu</td><td>6.1mm</td></tr>
-                <tr><td>68</td><td>0.5mm</td><td>10mm SQ</td><td>Sn100</td><td>6.0mm</td></tr>
-                <tr><td>72</td><td>0.5mm</td><td>10mm SQ</td><td>NiPdAu</td><td>8.7mm</td></tr>
-                <tr><td>80</td><td>0.5mm</td><td>12mm SQ</td><td>Sn100</td><td>9.1mm</td></tr>
-                <tr><td>100</td><td>0.4mm</td><td>12mm SQ</td><td>NiPdAu</td><td>10mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
     </div>
-
-    <!-- CARD 2: DFN -->
-    <div id="id02" class="w3-modal">
-      <button class="mid" onclick="closePackage('id02')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">DFN - Dual Sided</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="30" y="20" width="80" height="50" fill="#1e293b" rx="2" />
-                <rect x="40" y="30" width="60" height="30" fill="#cbd5e1" rx="1" />
-                <!-- Dual Sided Pins -->
-                <rect x="30" y="25" width="6" height="3" fill="#fbbf24" />
-                <rect x="30" y="35" width="6" height="3" fill="#fbbf24" />
-                <rect x="30" y="45" width="6" height="3" fill="#fbbf24" />
-                <rect x="30" y="55" width="6" height="3" fill="#fbbf24" />
-                <rect x="104" y="25" width="6" height="3" fill="#fbbf24" />
-                <rect x="104" y="35" width="6" height="3" fill="#fbbf24" />
-                <rect x="104" y="45" width="6" height="3" fill="#fbbf24" />
-                <rect x="104" y="55" width="6" height="3" fill="#fbbf24" />
-              </svg>
-              <div class="vector-label">DFN Exposed Pad configuration</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: DFN OUTLINE DETAILS (CLICK TO ENLARGE)</div>
-
-          <h3>DFN - Dual Sided Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Leads</th>
-                  <th>Pitch</th>
-                  <th>Body Size</th>
-                  <th>Plating Options</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>2</td><td>-</td><td>0.6 x 0.3mm</td><td>Ni-Au (Gold)</td></tr>
-                <tr><td>6</td><td>0.65mm</td><td>2mm SQ</td><td>SnPb Sn NiPdAu</td></tr>
-                <tr><td>8</td><td>0.5mm</td><td>2mm SQ</td><td>Sn100</td></tr>
-                <tr><td>8</td><td>0.5mm</td><td>2mm SQ</td><td>NiPdAu</td></tr>
-                <tr><td>8</td><td>0.65mm</td><td>3mm SQ</td><td>Sn NiPdAu</td></tr>
-                <tr><td>10</td><td>0.5mm</td><td>3mm SQ</td><td>Sn NiPdAu</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 3: AXIAL LEAD -->
-    <div id="id03" class="w3-modal">
-      <button class="mid" onclick="closePackage('id03')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">Axial Lead (Plastic &amp; Glass Package)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="40" y="35" width="60" height="20" rx="4" fill="#1e293b" />
-                <line x1="15" y1="45" x2="40" y2="45" stroke="#cbd5e1" stroke-width="4" />
-                <line x1="100" y1="45" x2="125" y2="45" stroke="#cbd5e1" stroke-width="4" />
-                <rect x="48" y="35" width="6" height="20" fill="#cbd5e1" />
-              </svg>
-              <div class="vector-label">Axial Plastic Diode</div>
-            </div>
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="45" y="35" width="50" height="20" rx="10" fill="#f59e0b" stroke="#d97706" />
-                <line x1="15" y1="45" x2="45" y2="45" stroke="#cbd5e1" stroke-width="3" />
-                <line x1="95" y1="45" x2="125" y2="45" stroke="#cbd5e1" stroke-width="3" />
-                <rect x="52" y="35" width="6" height="20" fill="#ef4444" />
-              </svg>
-              <div class="vector-label">Axial Glass Diode</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: DIODE MOUNT STYLES (CLICK TO ENLARGE)</div>
-
-          <h3>Axial Lead Packages Outline Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>JEDEC Device</th>
-                  <th>Case Mat'l</th>
-                  <th>Leads</th>
-                  <th>Size Dia x Length</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>DO-7 Ref DO-204AA</td><td>Glass</td><td>Axial 0.020" Ø</td><td>0.10" Ø x 0.30" L Max</td></tr>
-                <tr><td>DO-15 Ref DO-204AC</td><td>Plastic</td><td>Axial 0.031" Ø</td><td>0.125" Ø x 0.25" L</td></tr>
-                <tr><td>DO-29 Ref DO-204AF</td><td>Glass</td><td>Axial 0.029" Ø</td><td>0.15" Ø x 0.360" L</td></tr>
-                <tr><td>DO-34 Ref DO-204AG Ref SOD68</td><td>Glass</td><td>Axial 0.017" Ø</td><td>0.070" Ø x 0.115" L</td></tr>
-                <tr><td>DO-35 Ref DO-204AH Ref SOD27</td><td>Glass</td><td>Axial 0.020" Ø</td><td>0.070" Ø x 0.154" L</td></tr>
-                <tr><td>DO-41G Ref DO-204AL Ref SOD66</td><td>Glass</td><td>Axial 0.031" Ø</td><td>0.107" Ø x 0.205" L</td></tr>
-                <tr><td>DO-41 Ref DO-204AL</td><td>Plastic</td><td>Axial 0.031" Ø</td><td>0.107" Ø x 0.205" L</td></tr>
-                <tr><td>DO-201AD</td><td>Plastic</td><td>Axial 0.050" Ø</td><td>0.200" Ø x 0.35" L</td></tr>
-                <tr><td>DO-201AE</td><td>Plastic</td><td>Axial 0.040" Ø</td><td>0.200" Ø x 0.35" L</td></tr>
-                <tr><td>DO-204AC Ref DO-15</td><td>Plastic</td><td>Axial 0.031" Ø</td><td>0.125" Ø x 0.25" L</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- Interactive Footprint Area Calculator -->
@@ -533,33 +433,111 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
-  <!-- Educational & SEO Sections -->
+  <!-- Input Parameters Specification -->
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Pin/Contact Pitch</strong>
+        Determines the center-to-center pad spacing to secure trace escape breakout limits.
+      </div>
+      <div class="paramItem">
+        <strong>Exposed Thermal Pads</strong>
+        Tracks grounding and copper-plane integration constraints under the body core of QFN/DFN packages.
+      </div>
+      <div class="paramItem">
+        <strong>Plating Material Finishes</strong>
+        Evaluates surface finishes (NiPdAu, Sn, or Au) to optimize wetting compliance on solder joints.
+      </div>
+      <div class="paramItem">
+        <strong>Package Envelope Dimensions</strong>
+        Total SQ boundary parameters designed to save real estate on standard Multilayer FR-4 boards.
+      </div>
+    </div>
+  </section>
+
+  <!-- Practical Operational Examples -->
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>Solder Paste Stencils</strong></p>
+        <p>Optimize stencil thickness configurations on 0.4mm pitch QFN designs to restrict volume thickness and prevent solder bridges.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Central Pad Thermal Vias</strong></p>
+        <p>Integrate a 3x3 array of 0.3mm plated through-hole (PTH) vias inside central QFN footprints to conduct heat down to ground planes.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Polarized Axial Mounts</strong></p>
+        <p>Align the cathode-stripe marking of glass DO-35 diodes with PCB footprint silk outlines to prevent reverse-voltage errors.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>DFN Lead breakout escapes</strong></p>
+        <p>Route footprint trace tracks vertically under dual-sided DFN bodies to maximize routing efficiency on compact PCBs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
     <h2>Semiconductor Packaging &amp; Substrate Theory</h2>
     <p>Semiconductor packaging acts as the bridge connecting delicate integrated circuit (IC) silicon dies to the printable circuit boards (PCBs) of larger electronic systems. Traditional packaging used wire bonding to link the peripheral die pads to leadframes (DIP, QFP, SOIC). Modern grid array packaging bypasses wire connections entirely, placing contacts under the chip body as ball grid arrays (BGA).</p>
     <div class="aboutNote">Tip: Fan-In wafer level packaging (WLP) is restricted by die size limits, while Fan-Out (EWLP) expands the contact array area past the silicon die boundary.</div>
   </section>
 
+  <!-- Formulas & Thermal Calculations -->
   <section class="infoBox">
     <h2>Formulas &amp; Thermal Calculations</h2>
     <div class="formula">Thermal Resistance (Junction-to-Ambient): RθJA = (TJ - TA) / PD (expressed in °C/W)</div>
     <div class="formula">BGA Array Ball Count Calculation: N = ((Package_Size / Pitch) + 1)² (for a full matrix)</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target leadless or axial package family using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the package's primary classification.</div>
+      <div class="aboutStep">Study the structural 2D and 3D vector layouts demonstrating the contact land profiles.</div>
+      <div class="aboutStep">Consult the dimensional mapping table below the graphic to check pitch and body size details.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
+  <section class="infoBox">
+    <h2>About This Reference Guide</h2>
+    <div class="aboutLead">
+      <strong>Your direct engineering lookup for leadless QFN/DFN and classic axial packages.</strong>
+      <p>This reference guide organizes footprint dimensions, central thermal pad standards, pitch measurements, and JEDEC case parameters.</p>
+    </div>
+    <p>Finding accurate pin layouts and dimensional limits is essential for aerospace hardware engineers, high-temperature system designers, and component engineers. Using standardized package configurations ensures footprint compatibility and optimal thermal management.</p>
+    <p>Always verify actual manufacturer footprint specifications prior to board routing. Correct mechanical layouts prevent structural misalignments during reflow.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Quad Leadless</span>Footprints and configurations for standard QFN structures.</div>
+      <div class="aboutMiniCard"><span>Dual Leadless</span>Tighter terminal specifications for dual-sided DFN formats.</div>
+      <div class="aboutMiniCard"><span>Axial Components</span>Cylindrical plastic and glass cases matching DO-35 and DO-41 outlines.</div>
+      <div class="aboutMiniCard"><span>Active Clearance</span>Real-time solder mask web calculations based on trace-pitch variables.</div>
+    </div>
+  </section>
+
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. What is the main difference between BGA and WLP packaging?</strong></h3>
+    
+    <h3>1. <strong>What is the main difference between BGA and WLP packaging?</strong></h3>
     <p>BGA packages use an intermediate organic or ceramic substrate/interposer to route signals from the die to the solder balls. WLP (Wafer Level Package) places solder balls directly onto the passivated surface of the silicon die, eliminating the substrate completely for the smallest possible footprint.</p>
 
-    <h3><strong>2. Why are Fan-Out packages (EWLP) growing in popularity?</strong></h3>
+    <h3>2. <strong>Why are Fan-Out packages (EWLP) growing in popularity?</strong></h3>
     <p>As silicon chips shrink, their physical die size decreases. However, high-performance chips still require a large number of pins. EWLP embeds the die in a mold compound wafer, providing extra perimeter area to route signals out ("Fan-Out"), avoiding physical pin-count limitations of tiny silicon surfaces.</p>
 
-    <h3><strong>3. How does ball pitch affect PCB design?</strong></h3>
+    <h3>3. <strong>How does ball pitch affect PCB design?</strong></h3>
     <p>Fine-pitch arrays (under 0.50mm) require advanced PCB fabrication technologies, such as high-density interconnect (HDI) microvias, laser drilling, and narrow track routing. Larger pitch arrays (0.80mm - 1.0mm) can be routed using standard, lower-cost multilayers.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
       <div class="linkCard"><strong>VGA Pinout Reference Guide</strong>Configure classic analog computer display pinouts.</div>
       <div class="linkCard"><strong>HDMI Type-A/B Reference Guide</strong>Analyze modern high-definition digital video matrices.</div>
@@ -570,48 +548,316 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function openPackage(pkgId) {
-  // Hide card list and search bar completely
-  document.getElementById('selectionWorkspace').style.display = 'none';
-
-  // Hide all panels first, then show the active selection
-  var panels = document.getElementsByClassName('w3-modal');
-  for (var i = 0; i < panels.length; i++) {
-    panels[i].style.display = 'none';
+// Master Semiconductor Packages Database
+const packageDetails = [
+  {
+    name: "QFN Packages & Exposed Pads",
+    tag: "Quad Flat No-Lead",
+    subtitle: "QFN Standard Outline Specifications",
+    svgs: [
+      {
+        label: "QFN Bottom exposed Pad",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="25" y="10" width="90" height="90" fill="#1e293b" rx="4" />
+            <rect x="45" y="30" width="50" height="50" fill="#cbd5e1" rx="2" />
+            <rect x="25" y="25" width="8" height="4" fill="#fbbf24" />
+            <rect x="25" y="45" width="8" height="4" fill="#fbbf24" />
+            <rect x="25" y="65" width="8" height="4" fill="#fbbf24" />
+            <rect x="107" y="25" width="8" height="4" fill="#fbbf24" />
+            <rect x="107" y="45" width="8" height="4" fill="#fbbf24" />
+            <rect x="107" y="65" width="8" height="4" fill="#fbbf24" />
+            <rect x="45" y="10" width="4" height="8" fill="#fbbf24" />
+            <rect x="65" y="10" width="4" height="8" fill="#fbbf24" />
+            <rect x="85" y="10" width="4" height="8" fill="#fbbf24" />
+            <rect x="45" y="92" width="4" height="8" fill="#fbbf24" />
+            <rect x="65" y="92" width="4" height="8" fill="#fbbf24" />
+            <rect x="85" y="92" width="4" height="8" fill="#fbbf24" />
+          </svg>
+        `
+      },
+      {
+        label: "Daisy Chain After PCB Mount",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="35" y="20" width="70" height="70" fill="none" stroke="#009688" stroke-width="2" />
+            <rect x="45" y="30" width="50" height="50" fill="#1e293b" />
+            <line x1="35" y1="20" x2="105" y2="90" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3" />
+            <line x1="105" y1="20" x2="35" y2="90" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "QFN Standard Outline Specifications",
+        columns: ["Leads", "Pitch", "Body Size", "Lead Free Plating Options", "Ground Pad Size"],
+        rows: [
+          ["8", "0.65mm", "3mm SQ", "NiPdAu Sn", "1.5mm"],
+          ["12", "0.5mm", "3mm SQ", "Sn100", "1.2mm"],
+          ["12", "0.65mm", "4mm SQ", "Sn100", "Tube Tray"],
+          ["12", "0.8mm", "4mm SQ", "NiPdAu", "Tray"],
+          ["16", "0.5mm", "3mm SQ", "Sn100 Ni Pb Au", "Tube Tray"],
+          ["16", "0.65mm", "4mm SQ", "Sn100 Ni Pb Au", "Tube Tray"],
+          ["16", "0.8mm", "5mm SQ", "Sn100", "Tube Tray"],
+          ["20", "0.5mm", "4mm SQ", "NiPdAu", "Tray"],
+          ["20", "0.65mm", "5mm SQ", "Sn100", "Tube Tray"],
+          ["20", "0.65mm", "5mm SQ", "NiPdAu", "Tray"],
+          ["24", "0.5mm", "4mm SQ", "Sn100 NiPdAu", "Tube Tray"],
+          ["24", "0.65mm", "5mm SQ", "Sn100", "Tube Tray"],
+          ["24", "0.8mm", "6mm SQ", "Sn100", "Tube Tray"],
+          ["28", "0.5mm", "5mm SQ", "Sn100", "Tube Tray"],
+          ["28", "0.65mm", "6mm SQ", "Sn100", "Tube Tray"],
+          ["32", "0.5mm", "5mm SQ", "Sn100", "Tube Tray"],
+          ["32", "0.5mm", "5mm SQ", "NiPdAu", "Tube Tray"],
+          ["32", "0.5mm", "5mm SQ", "Ni-Au SnPb", "Tray"],
+          ["32", "0.65mm", "7mm SQ", "Sn100", "Tube Tray"],
+          ["36", "0.5mm", "6mm SQ", "Sn100", "Tube Tray"],
+          ["40", "0.4mm", "5mm SQ", "NiPdAu", "3.4mm"],
+          ["40", "0.5mm", "6mm SQ", "Sn100", "4.2mm"],
+          ["44", "0.5mm", "7mm SQ", "Sn100", "5.5mm"],
+          ["44", "0.65mm", "8mm SQ", "NiPdAu", "Tray"],
+          ["48", "0.4mm", "6mm SQ", "NiPdAu", "4.4mm"],
+          ["48", "0.5mm", "7mm SQ", "NiPdAu", "5.6mm"],
+          ["48", "0.5mm", "7mm SQ", "NiPdAu", "5.6mm"],
+          ["52", "0.5mm", "8mm SQ", "Sn100", "6.2mm"],
+          ["56", "0.4mm", "7mm SQ", "Sn100", "5.2mm"],
+          ["56", "0.4mm", "7mm SQ", "NiPdAu", "5.6mm"],
+          ["56", "0.5mm", "8mm SQ", "Sn100", "6.0mm"],
+          ["56", "0.5mm", "8mm SQ", "NiPdAu", "6.6mm"],
+          ["56", "0.5mm", "8mm SQ", "NiPdAu", "6.6mm"],
+          ["64", "0.5mm", "9mm SQ", "Sn100", "6.2mm"],
+          ["64", "0.5mm", "9mm SQ", "NiPdAu", "7.5mm"],
+          ["68", "0.4mm", "8mm SQ", "NiPdAu", "6.1mm"],
+          ["68", "0.5mm", "10mm SQ", "Sn100", "6.0mm"],
+          ["72", "0.5mm", "10mm SQ", "NiPdAu", "8.7mm"],
+          ["80", "0.5mm", "12mm SQ", "Sn100", "9.1mm"],
+          ["100", "0.4mm", "12mm SQ", "NiPdAu", "10mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "DFN Dual-Sided Packages",
+    tag: "Dual Flat No-Lead",
+    subtitle: "DFN - Dual Sided Specifications",
+    svgs: [
+      {
+        label: "DFN Exposed Pad configuration",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="30" y="20" width="80" height="50" fill="#1e293b" rx="2" />
+            <rect x="40" y="30" width="60" height="30" fill="#cbd5e1" rx="1" />
+            <rect x="30" y="25" width="6" height="3" fill="#fbbf24" />
+            <rect x="30" y="35" width="6" height="3" fill="#fbbf24" />
+            <rect x="30" y="45" width="6" height="3" fill="#fbbf24" />
+            <rect x="30" y="55" width="6" height="3" fill="#fbbf24" />
+            <rect x="104" y="25" width="6" height="3" fill="#fbbf24" />
+            <rect x="104" y="35" width="6" height="3" fill="#fbbf24" />
+            <rect x="104" y="45" width="6" height="3" fill="#fbbf24" />
+            <rect x="104" y="55" width="6" height="3" fill="#fbbf24" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "DFN - Dual Sided Specifications",
+        columns: ["Leads", "Pitch", "Body Size", "Plating Options"],
+        rows: [
+          ["2", "-", "0.6 x 0.3mm", "Ni-Au (Gold)"],
+          ["6", "0.65mm", "2mm SQ", "SnPb Sn NiPdAu"],
+          ["8", "0.5mm", "2mm SQ", "Sn100"],
+          ["8", "0.5mm", "2mm SQ", "NiPdAu"],
+          ["8", "0.65mm", "3mm SQ", "Sn NiPdAu"],
+          ["10", "0.5mm", "3mm SQ", "Sn NiPdAu"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Axial Lead Diodes (Plastic & Glass)",
+    tag: "Through-Hole Axial",
+    subtitle: "Axial Lead Packages Outline Specifications",
+    svgs: [
+      {
+        label: "Axial Plastic Diode",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="40" y="35" width="60" height="20" rx="4" fill="#1e293b" />
+            <line x1="15" y1="45" x2="40" y2="45" stroke="#cbd5e1" stroke-width="4" />
+            <line x1="100" y1="45" x2="125" y2="45" stroke="#cbd5e1" stroke-width="4" />
+            <rect x="48" y="35" width="6" height="20" fill="#cbd5e1" />
+          </svg>
+        `
+      },
+      {
+        label: "Axial Glass Diode",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="45" y="35" width="50" height="20" rx="10" fill="#f59e0b" stroke="#d97706" />
+            <line x1="15" y1="45" x2="45" y2="45" stroke="#cbd5e1" stroke-width="3" />
+            <line x1="95" y1="45" x2="125" y2="45" stroke="#cbd5e1" stroke-width="3" />
+            <rect x="52" y="35" width="6" height="20" fill="#ef4444" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Axial Lead Packages Outline Specifications",
+        columns: ["JEDEC Device", "Case Mat'l", "Leads", "Size Dia x Length"],
+        rows: [
+          ["DO-7 Ref DO-204AA", "Glass", "Axial 0.020\" Ø", "0.10\" Ø x 0.30\" L Max"],
+          ["DO-15 Ref DO-204AC", "Plastic", "Axial 0.031\" Ø", "0.125\" Ø x 0.25\" L"],
+          ["DO-29 Ref DO-204AF", "Glass", "Axial 0.029\" Ø", "0.15\" Ø x 0.360\" L"],
+          ["DO-34 Ref DO-204AG Ref SOD68", "Glass", "Axial 0.017\" Ø", "0.070\" Ø x 0.115\" L"],
+          ["DO-35 Ref DO-204AH Ref SOD27", "Glass", "Axial 0.020\" Ø", "0.070\" Ø x 0.154\" L"],
+          ["DO-41G Ref DO-204AL Ref SOD66", "Glass", "Axial 0.031\" Ø", "0.107\" Ø x 0.205\" L"],
+          ["DO-41 Ref DO-204AL", "Plastic", "Axial 0.031\" Ø", "0.107\" Ø x 0.205\" L"],
+          ["DO-201AD", "Plastic", "Axial 0.050\" Ø", "0.200\" Ø x 0.35\" L"],
+          ["DO-201AE", "Plastic", "Axial 0.040\" Ø", "0.200\" Ø x 0.35\" L"],
+          ["DO-204AC Ref DO-15", "Plastic", "Axial 0.031\" Ø", "0.125\" Ø x 0.25\" L"]
+        ]
+      }
+    ]
   }
-  document.getElementById(pkgId).style.display = 'block';
+];
 
-  // Display details workspace
-  document.getElementById('detailsWorkspace').style.display = 'block';
-}
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
 
-function closePackage(pkgId) {
-  // Hide active details panel and workspace
-  document.getElementById(pkgId).style.display = 'none';
-  document.getElementById('detailsWorkspace').style.display = 'none';
-
-  // Restore cards selection list and search bar
-  document.getElementById('selectionWorkspace').style.display = 'block';
-}
-
-function myFunction() {
-  var input = document.getElementById("myInput");
-  var filter = input.value.toUpperCase();
-  var ul = document.getElementById("myUL");
-  var li = ul.getElementsByTagName("li");
+// Update display with selected package parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
   
-  for (var i = 0; i < li.length; i++) {
-    var card = li[i].getElementsByClassName("pinout-item-card")[0];
-    var txtValue = card.textContent || card.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
+}
+
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
     }
-  }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
 }
 
 // IPC standard terminal-to-terminal clearance calculation
@@ -639,70 +885,24 @@ function calculateClearance() {
     "• Remaining Solder Mask Clearance: " + (airGap - minSolderMaskDam).toFixed(3) + " mm (Exp)";
 }
 
-// Lightbox modal enlarger for SVG diagrams
-function zoomSvg(svgContent) {
-  var overlay = document.createElement('div');
-  overlay.id = 'svg-zoom-overlay';
-  overlay.style.position = 'fixed';
-  overlay.style.top = '0';
-  overlay.style.left = '0';
-  overlay.style.width = '100%';
-  overlay.style.height = '100%';
-  overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.98)'; // Solid high-contrast white background
-  overlay.style.zIndex = '20000';
-  overlay.style.display = 'flex';
-  overlay.style.alignItems = 'center';
-  overlay.style.justifyContent = 'center';
-  overlay.style.cursor = 'zoom-out';
-  overlay.style.boxShadow = 'inset 0 0 100px rgba(15,23,42,0.15)';
-  
-  // Close cross inside lightbox
-  var closeIndicator = document.createElement('div');
-  closeIndicator.innerHTML = '&times;';
-  closePowerStyle(closeIndicator);
-  overlay.appendChild(closeIndicator);
-
-  // Scale up the vector art safely with direct container scaling
-  var container = document.createElement('div');
-  container.style.width = '90%';
-  container.style.maxWidth = '500px';
-  container.style.maxHeight = '85vh';
-  container.style.display = 'flex';
-  container.style.alignItems = 'center';
-  container.style.justifyContent = 'center';
-  container.innerHTML = svgContent.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
-  overlay.appendChild(container);
-  
-  overlay.onclick = function() {
-    overlay.remove();
-  };
-  document.body.appendChild(overlay);
-}
-
-function closePowerStyle(el) {
-  el.style.position = 'fixed';
-  el.style.top = '40px';
-  el.style.right = '40px';
-  el.style.fontSize = '40px';
-  el.style.fontWeight = 'bold';
-  el.style.color = '#1e293b';
-  el.style.cursor = 'pointer';
-}
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first package entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+  calculateClearance();
+};
 </script>
 
+<!-- SEO Structured JSON-LD Schemas -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "publisher": {
-    "@type": "Organization",
-    "name": "CalcBoy",
-    "url": "https://calcboy.com"
-  },
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "1. What is the main difference between BGA and WLP packaging?",
+      "name": "What is the main difference between BGA and WLP packaging?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "BGA packages use an intermediate organic or ceramic substrate/interposer to route signals from the die to the solder balls. WLP (Wafer Level Package) places solder balls directly onto the passivated surface of the silicon die, eliminating the substrate completely for the smallest possible footprint."
@@ -710,18 +910,10 @@ function closePowerStyle(el) {
     },
     {
       "@type": "Question",
-      "name": "2. Why are Fan-Out packages (EWLP) growing in popularity?",
+      "name": "Why are Fan-Out packages (EWLP) growing in popularity?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "As silicon chips shrink, their physical die size decreases. However, high-performance chips still require a large number of pins. EWLP embeds the die in a mold compound wafer, providing extra perimeter area to route signals out ('Fan-Out'), avoiding physical pin-count limitations of tiny silicon surfaces."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "3. How does ball pitch affect PCB design?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Fine-pitch arrays (under 0.50mm) require advanced PCB fabrication technologies, such as high-density interconnect (HDI) microvias, laser drilling, and narrow track routing. Larger pitch arrays (0.80mm - 1.0mm) can be routed using standard, lower-cost multilayers."
       }
     }
   ]
@@ -733,24 +925,9 @@ function closePowerStyle(el) {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "CalcBoy",
-      "item": "https://calcboy.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Electronics Reference",
-      "item": "https://calcboy.com/category/electronics-calculators/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "Semiconductor Package Guide",
-      "item": "https://calcboy.com/tool/semiconductor-package-guide"
-    }
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Semiconductor Package Guide", "item": "https://calcboy.com/tool/semiconductor-package-guide" }
   ]
 }
 </script>
