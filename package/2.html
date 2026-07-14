@@ -4,138 +4,157 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Exhaustive SMT/SMD Passive Component Package Guide | CalcBoy</title>
-<meta name="description" content="Exhaustive design reference guide for SMT/SMD passive components. Separate cards with precise dimensions, JEDEC standards, and footprint tables.">
+<meta name="description" content="Exhaustive design reference guide for SMT/SMD passive components. Clean interactive directory with precise dimensions, JEDEC standards, and footprint tables.">
 <meta name="keywords" content="SMD chip size, SMT package dimensions, MLCC size, chip resistor size chart, tantalum capacitor EIA, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/smd-passive-component-package-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Exhaustive SMT/SMD Passive Component Package Guide | CalcBoy">
+<meta property="og:description" content="Access the unified engineering index of SMD chip resistor, capacitor, tantalum, and oscillator package sizes. View 2D / 3D dimensions and trace parameters.">
+<meta property="og:url" content="https://calcboy.com/tool/smd-passive-component-package-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Exhaustive SMT/SMD Passive Component Package Guide | CalcBoy">
+<meta name="twitter:description" content="Complete structural index of standard SMT/SMD passive component envelope sizes and EIA footprint codes.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#semiconductor-pkg-calc,#semiconductor-pkg-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#semiconductor-pkg-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#semiconductor-pkg-tool, #semiconductor-pkg-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#009688;
-  box-shadow:0 0 0 3px rgba(0,150,136,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#semiconductor-pkg-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+}
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
   cursor: pointer;
 }
-.pinout-item-card:hover {
-  border-color:#009688;
-  box-shadow:0 4px 12px rgba(0,150,136,.08);
+select:focus {
+  border-color: #009688;
+  box-shadow: 0 0 0 3px rgba(0,150,136,.12);
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#009688;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
-}
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
-}
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Modal Overlay Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:hidden; /* Lock viewport scroll completely */
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:10px;
-}
-.w3-modal-content {
-  background:#fff;
-  margin:80px auto 20px; /* Pushed down to clear header bar completely */
-  width:100%;
-  max-width:580px;
-  max-height:85vh; /* Restored comfortable height */
-  overflow-y:auto;  /* Enable vertical scroll inside the content box */
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-
-/* Red Close Button: Viewport-Locked */
-.mid {
-  position: fixed !important;
-  top: 100px !important;  
-  right: 25px !important;
-  z-index: 10010 !important;
-  width: 50px !important;
-  height: 40px !important;
-  background-color: red !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-size: 25px !important;
-  font-weight: bold !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  text-decoration: none;
-}
-.mid:hover {
-  background-color: #cc0000 !important;
-  transform: scale(1.05);
-}
-
-/* Inline Diagram Styling */
-.diagram-container {
-  width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
   border-radius: 12px;
   padding: 16px;
-  margin: 12px auto 6px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.connector-header-card .badge {
+  background: #e0f2f1;
+  color: #009688;
+  border: 1px solid #b2dfdb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #009688;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e0f2f1;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
   display: flex;
   gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
 }
-.vector-view {
+.vector-box {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -143,16 +162,17 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   background: #fff;
   border: 1px solid #edf2f7;
   border-radius: 8px;
-  padding: 8px;
+  padding: 12px;
   min-height: 140px;
   justify-content: center;
-  cursor: zoom-in;
-  transition: transform 0.2s;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
 }
-.vector-view:hover {
+.vector-box:hover {
   transform: scale(1.02);
+  border-color: #009688;
 }
-.vector-view svg {
+.vector-box svg {
   max-width: 100%;
   height: auto;
 }
@@ -161,907 +181,336 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   font-weight: 800;
   color: #64748b;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+.img-caption {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
+}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #374151 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.table1 {width:100%;text-align:left;clear:both}
-
-.img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:6px;
-  margin-bottom:16px;
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-
-/* Standardized Tables & Scroll wrappers */
-.table-responsive {
-  width: 100%;
-  max-height: 380px; /* Lock height of scroll container inside the modal */
-  overflow-y: auto;  /* Enable vertical scroll inside the container */
-  overflow-x: auto;  /* Enable horizontal scroll for wide tables */
-  margin: 15px 0 0;
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutLead {
+  background: linear-gradient(135deg,#eef5ff,#fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #e0f2f1;
+  border: 1px solid #b2dfdb;
+  border-left: 5px solid #009688;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00796b;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  -webkit-overflow-scrolling: touch;
-  position: relative; /* Establish scroll context for sticky TH elements */
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
 }
-table {
-  width: 100%;
-  border-collapse: separate; /* Essential: separate allows sticky TH positioning to work */
-  border-spacing: 0;
-  background: #fff;
-  overflow: hidden;
-  table-layout: auto; /* Columns scale dynamically based on text length */
-}
-th {
-  background: #f1f5f9 !important; /* Solid background so scrolling text is hidden behind */
-  color: #1e293b;
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #009688;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   font-weight: 900;
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 2px solid #e2e8f0;
-  box-shadow: inset 0 -2px 0 #e2e8f0; /* Crisp bottom border that doesn't scroll away */
-  position: -webkit-sticky !important; /* Support iOS Safari */
-  position: sticky !important;
-  top: 0 !important; /* Lock to the top of the scroll container */
-  z-index: 20 !important; /* Stay on top of TD elements */
-  white-space: nowrap; /* Prevent headers from wrapping awkwardly */
 }
-td {
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #475467;
-  border-bottom: 1px solid #edf2f7;
-  white-space: nowrap; /* Keep values on a single line for smooth horizontal scrolling */
-}
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
-
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
-
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="semiconductor-pkg-calc">
+<div id="semiconductor-pkg-tool">
 
-  <!-- SELECTION HUB: Search and Card List -->
-  <div id="selectionWorkspace">
-    <div class="search-container">
-      <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search SMT Package..." title="Type in a package name">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">SMT Component Selection</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Passive Component Family</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
     </div>
-
-    <ul id="myUL">
-      
-      <li>
-        <div onclick="openPackage('id01')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">SMD Standard Resistors</span>
-              <span class="card-title">SMD Chip Resistors (Standard &amp; Lead-Free)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id02')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">SMD Resistor Networks</span>
-              <span class="card-title">SMD Resistor Networks &amp; Arrays</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id03')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">SMD Cylindrical Components</span>
-              <span class="card-title">MELF Resistors (Metal Electrode Leadless Face)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id04')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Wide Terminal Components</span>
-              <span class="card-title">Wide Terminal Resistors &amp; Capacitors</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id05')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Multi-Layer Ceramic Capacitors</span>
-              <span class="card-title">MLCC Materials &amp; Sizes (Standard, Lead Free, Low Inductance)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id06')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">MLCC Styling Configurations</span>
-              <span class="card-title">MLCC Color Class Specifications (White vs Black)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id07')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">SMD Tantalum Capacitors</span>
-              <span class="card-title">Tantalum Chip Capacitors (EIA &amp; COTS CWR)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id08')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">SMD Aluminum Capacitors</span>
-              <span class="card-title">Aluminum Electrolytic Chip Capacitors</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id09')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">SMD Inductor Chips</span>
-              <span class="card-title">SMD Inductor Chips (Multilayer, Molded)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-      <li>
-        <div onclick="openPackage('id10')" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">SMT Resonators &amp; Crystals</span>
-              <span class="card-title">SMT Crystals, Oscillators &amp; Throughhole Cans</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </div>
-      </li>
-
-    </ul>
   </div>
 
-  <!-- DETAILS HUB: Modal Popups -->
-  <div id="detailsWorkspace">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">SMD Standard Resistors</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Wire Mapping</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <!-- CARD 1: SMD CHIP RESISTORS -->
-    <div id="id01" class="w3-modal">
-      <button class="mid" onclick="closePackage('id01')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">SMD Chip Resistors</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="20" y="20" width="100" height="50" fill="#1e293b" rx="4" />
-                <rect x="15" y="20" width="15" height="50" fill="#cbd5e1" rx="2" />
-                <rect x="110" y="20" width="15" height="50" fill="#cbd5e1" rx="2" />
-                <text x="70" y="50" fill="#fff" font-size="14" text-anchor="middle" font-weight="bold">103</text>
-              </svg>
-              <div class="vector-label">Standard Flat Chip</div>
-            </div>
-          </div>
-          <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+  </div>
 
-          <h3>Standard, Lead-Free &amp; Zero-Ohm SMT Chip Resistor Dimensions</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size (inch)</th>
-                  <th>Size (metric)</th>
-                  <th>Dimensions (mm)</th>
-                  <th>Tape Specifications</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>008004</td><td>0201 mm</td><td>0.25 x 0.125 mm (Z = 0.11mm)</td><td>W = 8mm, P = 2mm</td></tr>
-                <tr><td>-</td><td>03015 mm</td><td>0.30 x 0.15 mm (Z = 0.11mm)</td><td>W = 8mm, P = 2mm</td></tr>
-                <tr><td>01005</td><td>0402 mm</td><td>0.40 x 0.20 mm (Z = 0.13mm)</td><td>W = 8mm, P = 2mm</td></tr>
-                <tr><td>0201</td><td>0603 mm</td><td>0.60 x 0.30 mm</td><td>W = 8mm, P = 2mm</td></tr>
-                <tr><td>0402</td><td>1005 mm</td><td>1.00 x 0.50 mm</td><td>W = 8mm, P = 2mm</td></tr>
-                <tr><td>0603</td><td>1608 mm</td><td>1.60 x 0.80 mm</td><td>W = 8mm, P = 4mm</td></tr>
-                <tr><td>0805</td><td>2012 mm</td><td>2.00 x 1.20 mm</td><td>W = 8mm, P = 4mm</td></tr>
-                <tr><td>1206</td><td>3216 mm</td><td>3.20 x 1.60 mm</td><td>W = 8mm, P = 4mm</td></tr>
-                <tr><td>1210</td><td>3225 mm</td><td>3.20 x 2.50 mm</td><td>W = 8mm, P = 4mm</td></tr>
-                <tr><td>1812</td><td>4532 mm</td><td>4.50 x 3.20 mm</td><td>W = 12mm, P = 8mm</td></tr>
-                <tr><td>2010</td><td>5025 mm</td><td>5.00 x 2.50 mm</td><td>W = 12mm, P = 8mm</td></tr>
-                <tr><td>2512</td><td>6332 mm</td><td>6.30 x 3.20 mm</td><td>W = 12mm, P = 8mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+  <!-- Input Parameters Specification -->
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Footprint Sizing (EIA vs Imperial)</strong>
+        Details tracking standard passive sizes, matching imperial names (like 0603) to metric naming standards.
+      </div>
+      <div class="paramItem">
+        <strong>Conductor Width & Pitch</strong>
+        Determines the structural lead layout on both chip capacitors, cylindrical MELFs, and resistor networks.
+      </div>
+      <div class="paramItem">
+        <strong>Wide-Terminal Geometry</strong>
+        Reversed aspect-ratio packaging designs to ensure lower parasitics and improve power handling.
+      </div>
+      <div class="paramItem">
+        <strong>Tape & Reel Carrier Width</strong>
+        Standard packaging delivery parameters to ensure compatible automated component pickup and placement.
       </div>
     </div>
+  </section>
 
-    <!-- CARD 2: SMD RESISTOR NETWORKS -->
-    <div id="id02" class="w3-modal">
-      <button class="mid" onclick="closePackage('id02')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">SMD Resistor Networks &amp; Arrays</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="20" width="90" height="50" fill="#1e293b" rx="6" />
-                <rect x="20" y="30" width="8" height="10" fill="#cbd5e1" rx="1" />
-                <rect x="20" y="50" width="8" height="10" fill="#cbd5e1" rx="1" />
-                <rect x="112" y="30" width="8" height="10" fill="#cbd5e1" rx="1" />
-                <rect x="112" y="50" width="8" height="10" fill="#cbd5e1" rx="1" />
-                <line x1="50" y1="20" x2="50" y2="70" stroke="#cbd5e1" stroke-width="4" />
-                <line x1="90" y1="20" x2="90" y2="70" stroke="#cbd5e1" stroke-width="4" />
-              </svg>
-              <div class="vector-label">Convex Resistor Array</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: SMT RESISTOR ARRAY NETWORK</div>
-
-          <h3>Resistor Network Array Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Element Size (inch)</th>
-                  <th>Element Size (Metric)</th>
-                  <th>Total Length Metric</th>
-                  <th>Total Width Metric</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>0201 x2</td><td>0603 x2</td><td>0.8mm</td><td>0.6mm</td></tr>
-                <tr><td>0201 x4</td><td>0603 x4</td><td>1.4mm</td><td>0.6mm</td></tr>
-                <tr><td>0402 x2</td><td>1005 x2</td><td>1.0mm</td><td>1.0mm</td></tr>
-                <tr><td>0402 x4</td><td>1005 x4</td><td>2.0mm</td><td>1.0mm</td></tr>
-                <tr><td>0603 x2</td><td>1608 x2</td><td>1.6mm</td><td>1.6mm</td></tr>
-                <tr><td>0603 x4</td><td>1608 x4</td><td>3.2mm</td><td>1.6mm</td></tr>
-                <tr><td>0603 x8</td><td>1608 x8</td><td>6.4mm</td><td>1.6mm</td></tr>
-                <tr><td>0805 x4</td><td>2012 x4</td><td>4.8mm</td><td>2.0mm</td></tr>
-                <tr><td>0805 x8</td><td>2012 x8</td><td>9.6mm</td><td>2.0mm</td></tr>
-                <tr><td>1206 x4</td><td>3216 x4</td><td>6.4mm</td><td>3.2mm</td></tr>
-                <tr><td>1206 x8</td><td>3216 x8</td><td>3.8mm</td><td>1.6mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+  <!-- Practical Operational Examples -->
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>EIA 0603 Layout Swaps</strong></p>
+        <p>Verify whether your design specifies metric 0603 (0.6 x 0.3 mm) or imperial 0603 (1.6 x 0.8 mm) footprints to prevent alignment errors during PCB fabrication.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>MELF Wave Solder Attachment</strong></p>
+        <p>Ensure your reflow process contains circular epoxy dots below the body core of mini-MELF packages to secure placement on the substrate.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Tantalum Polar Marking</strong></p>
+        <p>Observe the dark color-stripe indicator marking the positive terminal (Anode) on molded tantalum chips, unlike aluminum cans which indicate negative.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Low Inductance MLCC Swaps</strong></p>
+        <p>Substitute standard 0612 wide-terminal ceramics for standard 1206 capacitors to reduce high frequency loop impedance.</p>
       </div>
     </div>
+  </section>
 
-    <!-- MELF RESISTORS -->
-    <div id="id03" class="w3-modal">
-      <button class="mid" onclick="closePackage('id03')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">MELF Resistor Specifications</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="30" y="30" width="80" height="30" rx="15" fill="#3b4f63" />
-                <rect x="25" y="30" width="15" height="30" fill="#cbd5e1" />
-                <rect x="100" y="30" width="15" height="30" fill="#cbd5e1" />
-                <rect x="50" y="30" width="6" height="30" fill="#fbbf24" />
-                <rect x="65" y="30" width="6" height="30" fill="#a855f7" />
-                <rect x="80" y="30" width="6" height="30" fill="#ef4444" />
-              </svg>
-              <div class="vector-label">MELF Cylinder</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: CYLINDRICAL MELF RESISTORS</div>
-
-          <h3>MELF Resistors (Standard, Lead Free, Zero Ohm)</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Type Group</th>
-                  <th>Size (inch)</th>
-                  <th>Size (mm)</th>
-                  <th>Standard Name</th>
-                  <th>Tape Width</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Standard / LF / Zero</td><td>0604</td><td>1.6 x 1.0 mm</td><td>micro-MELF</td><td>8mm</td></tr>
-                <tr><td>Standard / LF / Zero</td><td>0805</td><td>2.0 x 1.25 mm</td><td>micro-MELF</td><td>8mm</td></tr>
-                <tr><td>Standard / LF / Zero</td><td>1206</td><td>3.2 x 1.6 mm</td><td>mini-MELF</td><td>8mm</td></tr>
-                <tr><td>Standard / LF / Zero</td><td>1406</td><td>3.5 x 1.45 mm</td><td>mini-MELF</td><td>8mm</td></tr>
-                <tr><td>Standard / LF / Zero</td><td>2308</td><td>5.9 x 2.2 mm</td><td>MELF</td><td>12mm</td></tr>
-                <tr><td>Lead Free / Zero</td><td>3512</td><td>8.5 x 3.0 mm</td><td>Maxi-MELF</td><td>16mm</td></tr>
-                <tr><td>Lead Free / Zero</td><td>4216 / 4616</td><td>10.5 x 4.0 mm</td><td>Maxi-MELF</td><td>16mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- WIDE TERMINAL COMPONENTS -->
-    <div id="id04" class="w3-modal">
-      <button class="mid" onclick="closePackage('id04')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">Wide Terminal Components</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="35" y="15" width="70" height="60" fill="#1e293b" rx="3" />
-                <rect x="35" y="10" width="70" height="10" fill="#cbd5e1" rx="1" />
-                <rect x="35" y="70" width="70" height="10" fill="#cbd5e1" rx="1" />
-              </svg>
-              <div class="vector-label">Wide Terminal Resistor</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: WIDE TERMINAL CHIP</div>
-
-          <h3>1. Wide Terminal Resistors</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size (inch)</th>
-                  <th>Size (Metric)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>0306</td><td>0816 (0.8 x 1.6 mm)</td></tr>
-                <tr><td>0508</td><td>1220 (1.2 x 2.0 mm)</td></tr>
-                <tr><td>0612</td><td>1632 (1.6 x 3.2 mm)</td></tr>
-                <tr><td>0815</td><td>2037 (2.0 x 3.75 mm)</td></tr>
-                <tr><td>0830</td><td>2075 (2.0 x 7.5 mm)</td></tr>
-                <tr><td>1020</td><td>2550 (2.5 x 5.0 mm)</td></tr>
-                <tr><td>1218</td><td>3245 (3.2 x 4.5 mm)</td></tr>
-                <tr><td>1225</td><td>3264 (3.2 x 6.4 mm)</td></tr>
-                <tr><td>2030</td><td>5176 (5.1 x 7.6 mm)</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>2. Wide Terminal Capacitors</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size (inch)</th>
-                  <th>Size (Metric)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>0204 (0.020" x 0.040")</td><td>0510 (0.5 x 1.0 mm)</td></tr>
-                <tr><td>0306 (0.032" x 0.063")</td><td>0816 (0.8 x 1.6 mm)</td></tr>
-                <tr><td>0508 (0.05" x 0.08")</td><td>1220 (1.2 x 2.0 mm)</td></tr>
-                <tr><td>0612 (0.063" x 0.126")</td><td>1632 (1.6 x 3.2 mm)</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MLCC MATERIALS & SIZES -->
-    <div id="id05" class="w3-modal">
-      <button class="mid" onclick="closePackage('id05')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">MLCC Materials &amp; Sizes</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="25" width="90" height="40" fill="#94a3b8" rx="4" />
-                <rect x="20" y="25" width="12" height="40" fill="#e2e8f0" rx="1" />
-                <rect x="108" y="25" width="12" height="40" fill="#e2e8f0" rx="1" />
-              </svg>
-              <div class="vector-label">Standard MLCC Chip</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: MLCC PACKAGE</div>
-
-          <h3>1. Lead Free Ceramic Chip Sizes</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size (inch)</th>
-                  <th>Size (Metric)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>008004 (0.008"x0.005")</td><td>0201mm (0.25x0.125mm)</td></tr>
-                <tr><td>- (0.012"x0.006")</td><td>03015mm (0.30x0.15mm)</td></tr>
-                <tr><td>01005 (0.016"x0.008")</td><td>0402mm (0.4x0.2mm)</td></tr>
-                <tr><td>0201 (0.024"x0.012")</td><td>0603mm (0.6x0.3mm)</td></tr>
-                <tr><td>0402 (0.040"x0.020")</td><td>1005 (1.0x0.5mm)</td></tr>
-                <tr><td>0603 (0.063"x0.032")</td><td>1608 (1.6x0.8mm)</td></tr>
-                <tr><td>0805 (0.08"x0.05")</td><td>2012 (2.0x1.2mm)</td></tr>
-                <tr><td>1206 (0.126"x0.063")</td><td>3216 (3.2x1.6mm)</td></tr>
-                <tr><td>1210 (0.126"x0.10")</td><td>3225 (3.2x2.5mm)</td></tr>
-                <tr><td>1812 (0.18"x0.12")</td><td>4532 (4.5x3.2mm)</td></tr>
-                <tr><td>1825 (0.18"x0.25")</td><td>4563 (4.5x6.3mm)</td></tr>
-                <tr><td>2225 (0.22"x0.25")</td><td>5664 (5.6x6.4mm)</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>2. Low Inductance Chip Sizes</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size (inch)</th>
-                  <th>Size (Metric)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>0204 (0.020"x0.040")</td><td>0510 (0.5x1.0mm)</td></tr>
-                <tr><td>0306 (0.032"x0.063")</td><td>0816 (0.8x1.6mm)</td></tr>
-                <tr><td>0508 (0.05"x0.08")</td><td>1220 (1.2x2.0mm)</td></tr>
-                <tr><td>0612 (0.063"x0.126")</td><td>1632 (1.6x3.2mm)</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>3. Large Size Chip Sizes</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size (inch)</th>
-                  <th>Size (Metric)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>3035 (0.30"x0.35")</td><td>7689 (7.62x8.89mm)</td></tr>
-                <tr><td>3333 (0.33"x0.33")</td><td>8484 (8.38x8.88mm)</td></tr>
-                <tr><td>3530 (0.35"x0.30")</td><td>8976 (8.89x7.62mm)</td></tr>
-                <tr><td>3640 (0.36"x0.40")</td><td>- (9.14x10.16mm)</td></tr>
-                <tr><td>3940 (0.39"x0.40")</td><td>- (9.91x10.16mm)</td></tr>
-                <tr><td>4045 (0.40"x0.45")</td><td>- (10.16x11.43mm)</td></tr>
-                <tr><td>4252 (0.42"x0.52")</td><td>- (10.67x13.2mm)</td></tr>
-                <tr><td>4540 (0.45"x0.40")</td><td>- (11.43x10.16mm)</td></tr>
-                <tr><td>5550 (0.55"x0.50")</td><td>- (14.00x12.70mm)</td></tr>
-                <tr><td>5780 (0.57"x0.80")</td><td>- (14.50x20.32mm)</td></tr>
-                <tr><td>5868 (0.58"x0.68")</td><td>- (14.73x17.27mm)</td></tr>
-                <tr><td>6560 (0.65"x0.60")</td><td>- (16.50x15.24mm)</td></tr>
-                <tr><td>7680 (0.76"x0.80")</td><td>- (19.30x20.32mm)</td></tr>
-                <tr><td>7775 (0.78"x0.75")</td><td>- (19.81x19.05mm)</td></tr>
-                <tr><td>8840 (0.88"x0.40")</td><td>- (22.35x10.16mm)</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MLCC COLOR CLASS -->
-    <div id="id06" class="w3-modal">
-      <button class="mid" onclick="closePackage('id06')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">MLCC Color &amp; Class Options</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="25" width="90" height="40" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" rx="4" />
-                <rect x="20" y="25" width="12" height="40" fill="#94a3b8" rx="1" />
-                <rect x="108" y="25" width="12" height="40" fill="#94a3b8" rx="1" />
-              </svg>
-              <div class="vector-label">White Ceramic</div>
-            </div>
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="25" width="90" height="40" fill="#0f172a" rx="4" />
-                <rect x="20" y="25" width="12" height="40" fill="#64748b" rx="1" />
-                <rect x="108" y="25" width="12" height="40" fill="#64748b" rx="1" />
-              </svg>
-              <div class="vector-label">Black Ceramic</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: MLCC COLOR STYLING OPTIONS</div>
-
-          <h3>1. White Ceramic Chip Profiles</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size (inch)</th>
-                  <th>Size (Metric)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>01005</td><td>0402 (0.4 x 0.2 mm)</td></tr>
-                <tr><td>0201</td><td>0603 (0.6 x 0.3 mm)</td></tr>
-                <tr><td>0402</td><td>1005 (1.0 x 0.5 mm)</td></tr>
-                <tr><td>0603</td><td>1608 (1.6 x 0.8 mm)</td></tr>
-                <tr><td>0805</td><td>2012 (2.0 x 1.2 mm)</td></tr>
-                <tr><td>1206</td><td>3216 (3.2 x 1.6 mm, Low Profile 0.8mm)</td></tr>
-                <tr><td>1206</td><td>3216 (3.2 x 1.6 mm, High Profile 1.2mm)</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>2. Black Ceramic Chip Profiles</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size (inch)</th>
-                  <th>Size (Metric)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>0201</td><td>0603 (0.6 x 0.3 mm)</td></tr>
-                <tr><td>0402</td><td>1005 (1.0 x 0.5 mm)</td></tr>
-                <tr><td>0603</td><td>1608 (1.6 x 0.8 mm)</td></tr>
-                <tr><td>0805</td><td>2012 (2.0 x 1.2 mm)</td></tr>
-                <tr><td>1206</td><td>3216 (3.2 x 1.6 mm, Low Profile 0.8mm)</td></tr>
-                <tr><td>1206</td><td>3216 (3.2 x 1.6 mm, High Profile 1.2mm)</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SMD TANTALUM CAPACITORS -->
-    <div id="id07" class="w3-modal">
-      <button class="mid" onclick="closePackage('id07')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">Tantalum Chip Capacitors</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="25" width="90" height="40" fill="#b45309" rx="2" />
-                <rect x="20" y="25" width="10" height="40" fill="#cbd5e1" />
-                <rect x="110" y="25" width="10" height="40" fill="#cbd5e1" />
-                <rect x="40" y="25" width="12" height="40" fill="#78350f" />
-              </svg>
-              <div class="vector-label">Molded Tantalum Chip</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: SMT TANTALUM CASES</div>
-
-          <h3>1. Standard Tantalum Chip Capacitors (EIA Size)</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size Code</th>
-                  <th>EIA Size (Metric)</th>
-                  <th>Height Z (mm)</th>
-                  <th>Terminal Width</th>
-                  <th>Tape Width / Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>A</td><td>3216 (3.2 x 1.6 mm)</td><td>1.6 mm</td><td>1.2 mm</td><td>W=8mm, P=4mm</td></tr>
-                <tr><td>B</td><td>3528 (3.5 x 2.8 mm)</td><td>1.9 mm</td><td>2.2 mm</td><td>W=8mm, P=4mm</td></tr>
-                <tr><td>C</td><td>6032 (6.0 x 3.2 mm)</td><td>2.5 mm</td><td>2.2 mm</td><td>W=12mm, P=8mm</td></tr>
-                <tr><td>D</td><td>7343 (7.3 x 4.3 mm)</td><td>2.8 mm</td><td>2.4 mm</td><td>W=12mm, P=8mm</td></tr>
-                <tr><td>P/R</td><td>2012 (2.0 x 1.3 mm)</td><td>1.2 mm</td><td>1.0 mm</td><td>W=8mm, P=4mm</td></tr>
-                <tr><td>J</td><td>1608 (1.6 x 0.8 mm)</td><td>0.85 mm</td><td>0.85 mm</td><td>W=8mm, P=4mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>2. COTS Tantalum Chip Capacitors (CWR09/19/29 Equivalent)</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size Code</th>
-                  <th>EIA Size X/Y (Metric)</th>
-                  <th>Height Z (mm)</th>
-                  <th>Terminal Width</th>
-                  <th>Tape Width / Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>A</td><td>2512 (2.54 x 1.27 mm)</td><td>1.27 mm</td><td>1.27 mm</td><td>W=8mm, P=4mm</td></tr>
-                <tr><td>B</td><td>3812 (3.81 x 1.27 mm)</td><td>1.27 mm</td><td>1.27 mm</td><td>W=12mm, P=4mm</td></tr>
-                <tr><td>C</td><td>5012 (5.08 x 1.27 mm)</td><td>1.27 mm</td><td>1.27 mm</td><td>W=12mm, P=4mm</td></tr>
-                <tr><td>D</td><td>3825 (3.81 x 2.54 mm)</td><td>1.27 mm</td><td>2.41 mm</td><td>W=12mm, P=4mm</td></tr>
-                <tr><td>E</td><td>5025 (5.08 x 2.54 mm)</td><td>1.27 mm</td><td>2.41 mm</td><td>W=12mm, P=4mm</td></tr>
-                <tr><td>F</td><td>5634 (5.59 x 3.43 mm)</td><td>1.78 mm</td><td>3.30 mm</td><td>W=12mm, P=8mm</td></tr>
-                <tr><td>G</td><td>6728 (6.73 x 2.79 mm)</td><td>2.79 mm</td><td>2.67 mm</td><td>W=12mm, P=8mm</td></tr>
-                <tr><td>H</td><td>7338 (7.24 x 3.81 mm)</td><td>2.79 mm</td><td>3.68 mm</td><td>W=12mm, P=8mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ALUMINUM CHIP CAPACITORS -->
-    <div id="id08" class="w3-modal">
-      <button class="mid" onclick="closePackage('id08')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">Aluminum Electrolytic Chip Capacitors</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="35" y="20" width="50" height="50" fill="#475569" rx="2" />
-                <rect x="85" y="20" width="10" height="50" fill="#334155" />
-                <rect x="95" y="15" width="15" height="60" fill="#cbd5e1" rx="3" />
-                <rect x="25" y="25" width="10" height="40" fill="#1e293b" />
-              </svg>
-              <div class="vector-label">Aluminum Electrolytic Can</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: ALUMINUM SMT CANS</div>
-
-          <h3>Aluminum Chip Capacitors (Standard Dimensions)</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size Diameter x Height</th>
-                  <th>Tape Width</th>
-                  <th>Tape Pitch</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>3mm x 5.5mm</td><td>12mm</td><td>8mm</td></tr>
-                <tr><td>4mm x 5.5mm</td><td>12mm</td><td>8mm</td></tr>
-                <tr><td>5mm x 5.5mm</td><td>12mm</td><td>12mm</td></tr>
-                <tr><td>6.3mm x 5.5mm</td><td>16mm</td><td>12mm</td></tr>
-                <tr><td>8mm x 6mm</td><td>16mm</td><td>12mm</td></tr>
-                <tr><td>8mm x 10mm</td><td>24mm</td><td>16mm</td></tr>
-                <tr><td>10mm x 10mm</td><td>24mm</td><td>16mm</td></tr>
-                <tr><td>10mm x 17mm</td><td>32mm</td><td>20mm</td></tr>
-                <tr><td>12.5mm x 14mm</td><td>32mm</td><td>24mm</td></tr>
-                <tr><td>12.5mm x 17mm</td><td>32mm</td><td>24mm</td></tr>
-                <tr><td>16mm x 17mm</td><td>44mm</td><td>28mm</td></tr>
-                <tr><td>16mm x 22mm</td><td>44mm</td><td>28mm</td></tr>
-                <tr><td>18mm x 17mm</td><td>44mm</td><td>32mm</td></tr>
-                <tr><td>18mm x 22mm</td><td>44mm</td><td>32mm</td></tr>
-                <tr><td>20mm x 17mm</td><td>44mm</td><td>36mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SMD INDUCTOR CHIPS -->
-    <div id="id09" class="w3-modal">
-      <button class="mid" onclick="closePackage('id09')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">SMD Inductor Chips</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="25" width="90" height="40" fill="#334155" rx="3" />
-                <rect x="20" y="25" width="12" height="40" fill="#cbd5e1" rx="1" />
-                <rect x="108" y="25" width="12" height="40" fill="#cbd5e1" rx="1" />
-                <line x1="45" y1="35" x2="95" y2="35" stroke="#94a3b8" stroke-width="4" />
-                <line x1="45" y1="45" x2="95" y2="45" stroke="#94a3b8" stroke-width="4" />
-                <line x1="45" y1="55" x2="95" y2="55" stroke="#94a3b8" stroke-width="4" />
-              </svg>
-              <div class="vector-label">Molded / Multilayer Inductor</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: CHIP INDUCTOR SIZES</div>
-
-          <h3>Standard SMT Inductor Chip Dimensions</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Size (inch)</th>
-                  <th>Size (Metric)</th>
-                  <th>Body Style</th>
-                  <th>Tape Width</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>0402</td><td>1005 (1.0 x 0.5 mm)</td><td>multilayer</td><td>8mm</td></tr>
-                <tr><td>0603</td><td>1608 (1.6 x 0.8 mm)</td><td>multilayer</td><td>8mm</td></tr>
-                <tr><td>0805</td><td>2012 (2.0 x 1.2 mm)</td><td>multilayer</td><td>8mm</td></tr>
-                <tr><td>1008</td><td>2520 (2.5 x 2.0 mm)</td><td>molded</td><td>8mm</td></tr>
-                <tr><td>1206</td><td>3216 (3.2 x 1.6 mm)</td><td>multilayer</td><td>8mm</td></tr>
-                <tr><td>1210</td><td>3225 (3.2 x 2.5 mm)</td><td>molded</td><td>8mm</td></tr>
-                <tr><td>1812</td><td>4532 (4.5 x 3.2 mm)</td><td>molded</td><td>12mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SMT CRYSTALS & OSCILLATORS -->
-    <div id="id10" class="w3-modal">
-      <button class="mid" onclick="closePackage('id10')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">SMT Crystals, Oscillators &amp; Cans</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="30" y="25" width="80" height="40" fill="#f1f5f9" rx="6" stroke="#94a3b8" stroke-width="2" />
-                <line x1="20" y1="45" x2="30" y2="45" stroke="#cbd5e1" stroke-width="6" />
-                <line x1="110" y1="45" x2="120" y2="45" stroke="#cbd5e1" stroke-width="6" />
-                <text x="70" y="50" fill="#475569" font-size="10" text-anchor="middle" font-weight="bold">16.000</text>
-              </svg>
-              <div class="vector-label">Metal HC-49 Can</div>
-            </div>
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="90" viewBox="0 0 140 90">
-                <rect x="25" y="20" width="90" height="50" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5" rx="3" />
-                <rect x="40" y="32" width="60" height="26" fill="#1e293b" />
-                <!-- Terminals -->
-                <circle cx="35" cy="30" r="4" fill="#fbbf24" />
-                <circle cx="105" cy="30" r="4" fill="#fbbf24" />
-                <circle cx="35" cy="60" r="4" fill="#fbbf24" />
-                <circle cx="105" cy="60" r="4" fill="#fbbf24" />
-              </svg>
-              <div class="vector-label">Ceramic Resonator</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: CRYSTAL &amp; OSCILLATOR PACKAGES</div>
-
-          <h3>1. Surface-Mount (SMD) Resonators &amp; Cans</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Case Style</th>
-                  <th>Physical Size</th>
-                  <th>Tape Specifications</th>
-                  <th>Part Series Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Metal 1/2 Can Gull Wing</td><td>12.5mm x 12.5mm</td><td>W=24mm, P=24mm</td><td>LX1/2SMD-E13A</td></tr>
-                <tr><td>Metal Full Can Gull Wing</td><td>20.8mm x 13.2mm</td><td>W=32mm, P=24mm</td><td>LX0SMD-E13A</td></tr>
-                <tr><td>Metal Low Profile</td><td>11.1mm x 4.6mm (H=3.3mm)</td><td>W=24mm, P=12mm</td><td>SM49SE13A</td></tr>
-                <tr><td>Metal Standard</td><td>11.1mm x 4.6mm (H=5.08mm)</td><td>W=24mm, P=12mm</td><td>SM49E13A</td></tr>
-                <tr><td>Plastic Case</td><td>8.7mm x 3.7mm</td><td>W=16mm, P=8mm</td><td>SX3512E13A</td></tr>
-                <tr><td>Plastic Case</td><td>10.4mm x 4.2mm</td><td>W=16mm, P=8mm</td><td>SXE4016E13A</td></tr>
-                <tr><td>Plastic Case</td><td>11.6mm x 4.2mm</td><td>W=24mm, P=8mm</td><td>SX4516E13A</td></tr>
-                <tr><td>Plastic Case</td><td>13.2mm x 5.0mm</td><td>W=24mm, P=8mm</td><td>SX5020E13A</td></tr>
-                <tr><td>Plastic Case</td><td>14.0mm x 9.8mm</td><td>W=24mm, P=12mm</td><td>SG615E13A</td></tr>
-                <tr><td>Ceramic Resonator</td><td>5.0mm x 3.2mm</td><td>W=12mm, P=8mm</td><td>LCN2-5.0x3.2E27A</td></tr>
-                <tr><td>Oscillator Cavity</td><td>5.0mm x 3.2mm</td><td>W=12mm, P=8mm</td><td>LCC4-5x3.2E7A</td></tr>
-                <tr><td>Oscillator Cavity</td><td>5.0mm x 3.2mm</td><td>W=16mm, P=8mm</td><td>LCC6-5x3.2-DC1346</td></tr>
-                <tr><td>Ceramic Resonator</td><td>6.0mm x 3.5mm</td><td>W=16mm, P=8mm</td><td>LCN2-6.0x3.5E7A</td></tr>
-                <tr><td>Ceramic Resonator</td><td>6.0mm x 3.5mm</td><td>W=16mm, P=8mm</td><td>LCC4-6.0x3.5E7A</td></tr>
-                <tr><td>Ceramic Resonator</td><td>7.0mm x 5.0mm</td><td>W=16mm, P=8mm</td><td>LCN2-7.0x5.0E13A</td></tr>
-                <tr><td>Ceramic Resonator</td><td>7.0mm x 5.0mm</td><td>W=16mm, P=8mm</td><td>LCC4-7.0x5.0-DC1234</td></tr>
-                <tr><td>Ceramic J-Lead</td><td>7.0mm x 5.0mm</td><td>-</td><td>LCC4-7.0x5.0-DC1234-J</td></tr>
-                <tr><td>Ceramic Gull-Wing</td><td>7.0mm x 5.0mm</td><td>-</td><td>LCC4-7.0x5.0-DC1234-GULL</td></tr>
-                <tr><td>Ceramic DIL Dual-Inline</td><td>7.0mm x 5.0mm</td><td>-</td><td>LCC4-7.0x5.0-DC1234-DIL</td></tr>
-                <tr><td>Ceramic Resonator</td><td>7.0mm x 5.0mm</td><td>W=16mm, P=8mm</td><td>LCN4-7.0x5.0E13A</td></tr>
-                <tr><td>Ceramic Resonator</td><td>7.0mm x 5.0mm</td><td>W=16mm, P=8mm</td><td>LCC6-7.0x5.0E13A</td></tr>
-                <tr><td>Ceramic Resonator</td><td>7.5mm x 5.0mm</td><td>W=16mm, P=8mm</td><td>LCC4-7.5x5.0E13A</td></tr>
-                <tr><td>Ceramic Resonator</td><td>8.0mm x 4.5mm</td><td>W=16mm, P=8mm</td><td>LCC2-8.0x4.5E13A</td></tr>
-                <tr><td>Ceramic Sealed Lid</td><td>8.9mm x 7.4mm</td><td>-</td><td>Sealed Top/Bottom</td></tr>
-                <tr><td>Ceramic Resonator</td><td>11.0mm x 5.0mm</td><td>W=24mm, P=12mm</td><td>LCC2-11.0x5.0E13A</td></tr>
-                <tr><td>Ceramic Resonator</td><td>11.0mm x 6.5mm</td><td>W=24mm, P=12mm</td><td>LCN4-11x6.5E13A</td></tr>
-                <tr><td>Ceramic Resonator</td><td>11.5mm x 5.5mm</td><td>W=24mm, P=12mm</td><td>LCC4-11x5.5E13A</td></tr>
-                <tr><td>Metal Seal (SMTO-8)</td><td>11.4mm x 11.4mm</td><td>-</td><td>SMTO-8 Top/Bottom</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>2. Throughhole Cans (Quartz Crystals)</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Case Style</th>
-                  <th>Body Dimensions</th>
-                  <th>TopLine Part Series</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Metal 1/2 Can</td><td>12.5mm x 12.5mm</td><td>LX1/2M</td></tr>
-                <tr><td>Metal Full Can</td><td>20.7mm x 13.0mm</td><td>LX0M</td></tr>
-                <tr><td>Low Profile Metal Can</td><td>11.5mm x 5.0mm (H=2.5mm)</td><td>AT49</td></tr>
-                <tr><td>Standard Metal Can</td><td>11.5mm x 5.0mm (H=13.5mm)</td><td>HC49</td></tr>
-                <tr><td>Cylindrical Tuning Fork</td><td>6.3mm x 2.1mm</td><td>DT26 (32.768 kHz)</td></tr>
-                <tr><td>Cylindrical Tuning Fork</td><td>8.28mm x 3.1mm</td><td>DT38</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </ul>
-
-  <!-- Educational & SEO Sections -->
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
     <h2>Semiconductor Packaging &amp; Substrate Theory</h2>
     <p>Semiconductor packaging acts as the bridge connecting delicate integrated circuit (IC) silicon dies to the printable circuit boards (PCBs) of larger electronic systems. Traditional packaging used wire bonding to link the peripheral die pads to leadframes (DIP, QFP, SOIC). Modern grid array packaging bypasses wire connections entirely, placing contacts under the chip body as ball grid arrays (BGA).</p>
     <div class="aboutNote">Tip: Fan-In wafer level packaging (WLP) is restricted by die size limits, while Fan-Out (EWLP) expands the contact array area past the silicon die boundary.</div>
   </section>
 
+  <!-- Formulas & Thermal Calculations -->
   <section class="infoBox">
     <h2>Formulas &amp; Thermal Calculations</h2>
     <div class="formula">Thermal Resistance (Junction-to-Ambient): RθJA = (TJ - TA) / PD (expressed in °C/W)</div>
     <div class="formula">BGA Array Ball Count Calculation: N = ((Package_Size / Pitch) + 1)² (for a full matrix)</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target passive component family using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the package's primary classification.</div>
+      <div class="aboutStep">Study the structural 2D and 3D vector layouts demonstrating the terminal arrangement.</div>
+      <div class="aboutStep">Consult the dimensional mapping table below the graphic to check pitch and body size details.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
+  <section class="infoBox">
+    <h2>About This Reference Guide</h2>
+    <div class="aboutLead">
+      <strong>Your direct engineering lookup for SMT passive component footprints and dimensions.</strong>
+      <p>This reference guide organizes standard dimensions, tape specifications, and case classifications for chip resistors, MLCC capacitors, tantali, and SMD crystals.</p>
+    </div>
+    <p>Finding accurate pin layouts and dimensional limits is essential for aerospace hardware engineers, high-temperature system designers, and component engineers. Using standardized package configurations ensures footprint compatibility and optimal thermal management.</p>
+    <p>Always verify actual manufacturer footprint specifications prior to board routing. Correct mechanical layouts prevent structural misalignments during reflow.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Resistive Chips</span>Standard resistors, array networks, and MELF cylinders.</div>
+      <div class="aboutMiniCard"><span>Capacitive Profiles</span>MLCC ceramics, molded tantali, and aluminum SMT cans.</div>
+      <div class="aboutMiniCard"><span>Frequency Controls</span>SMD crystals, active ceramic oscillators, and low-profile can parameters.</div>
+      <div class="aboutMiniCard"><span>Footprint Guardrails</span>Standard size matching comparisons to reduce fabrication errors.</div>
+    </div>
+  </section>
+
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. What is the main difference between BGA and WLP packaging?</strong></h3>
+    
+    <h3>1. <strong>What is the main difference between BGA and WLP packaging?</strong></h3>
     <p>BGA packages use an intermediate organic or ceramic substrate/interposer to route signals from the die to the solder balls. WLP (Wafer Level Package) places solder balls directly onto the passivated surface of the silicon die, eliminating the substrate completely for the smallest possible footprint.</p>
 
-    <h3><strong>2. Why are Fan-Out packages (EWLP) growing in popularity?</strong></h3>
+    <h3>2. <strong>Why are Fan-Out packages (EWLP) growing in popularity?</strong></h3>
     <p>As silicon chips shrink, their physical die size decreases. However, high-performance chips still require a large number of pins. EWLP embeds the die in a mold compound wafer, providing extra perimeter area to route signals out ("Fan-Out"), avoiding physical pin-count limitations of tiny silicon surfaces.</p>
 
-    <h3><strong>3. How does ball pitch affect PCB design?</strong></h3>
+    <h3>3. <strong>How does ball pitch affect PCB design?</strong></h3>
     <p>Fine-pitch arrays (under 0.50mm) require advanced PCB fabrication technologies, such as high-density interconnect (HDI) microvias, laser drilling, and narrow track routing. Larger pitch arrays (0.80mm - 1.0mm) can be routed using standard, lower-cost multilayers.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
       <div class="linkCard"><strong>VGA Pinout Reference Guide</strong>Configure classic analog computer display pinouts.</div>
       <div class="linkCard"><strong>HDMI Type-A/B Reference Guide</strong>Analyze modern high-definition digital video matrices.</div>
@@ -1072,114 +521,643 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function openPackage(pkgId) {
-  // Hide card list and search bar completely
-  document.getElementById('selectionWorkspace').style.display = 'none';
-
-  // Hide all panels first, then show the active selection
-  var panels = document.getElementsByClassName('w3-modal');
-  for (var i = 0; i < panels.length; i++) {
-    panels[i].style.display = 'none';
+// Master Semiconductor Packages Database
+const packageDetails = [
+  {
+    name: "SMD Chip Resistors (Standard & Lead-Free)",
+    tag: "SMD Standard Resistors",
+    subtitle: "Standard, Lead-Free & Zero-Ohm SMT Chip Resistor Dimensions",
+    svgs: [
+      {
+        label: "Standard Flat Chip",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="20" y="20" width="100" height="50" fill="#1e293b" rx="4" />
+            <rect x="15" y="20" width="15" height="50" fill="#cbd5e1" rx="2" />
+            <rect x="110" y="20" width="15" height="50" fill="#cbd5e1" rx="2" />
+            <text x="70" y="50" fill="#fff" font-size="14" text-anchor="middle" font-weight="bold">103</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "SMD Chip Resistor Specifications",
+        columns: ["Size (inch)", "Size (metric)", "Dimensions (mm)", "Tape Specifications"],
+        rows: [
+          ["008004", "0201 mm", "0.25 x 0.125 mm (Z = 0.11mm)", "W = 8mm, P = 2mm"],
+          ["-", "03015 mm", "0.30 x 0.15 mm (Z = 0.11mm)", "W = 8mm, P = 2mm"],
+          ["01005", "0402 mm", "0.40 x 0.20 mm (Z = 0.13mm)", "W = 8mm, P = 2mm"],
+          ["0201", "0603 mm", "0.60 x 0.30 mm", "W = 8mm, P = 2mm"],
+          ["0402", "1005 mm", "1.00 x 0.50 mm", "W = 8mm, P = 2mm"],
+          ["0603", "1608 mm", "1.60 x 0.80 mm", "W = 8mm, P = 4mm"],
+          ["0805", "2012 mm", "2.00 x 1.20 mm", "W = 8mm, P = 4mm"],
+          ["1206", "3216 mm", "3.20 x 1.60 mm", "W = 8mm, P = 4mm"],
+          ["1210", "3225 mm", "3.20 x 2.50 mm", "W = 8mm, P = 4mm"],
+          ["1812", "4532 mm", "4.50 x 3.20 mm", "W = 12mm, P = 8mm"],
+          ["2010", "5025 mm", "5.00 x 2.50 mm", "W = 12mm, P = 8mm"],
+          ["2512", "6332 mm", "6.30 x 3.20 mm", "W = 12mm, P = 8mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "SMD Resistor Networks & Arrays",
+    tag: "SMD Resistor Networks",
+    subtitle: "Resistor Network Array Specifications",
+    svgs: [
+      {
+        label: "Convex Resistor Array",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="20" width="90" height="50" fill="#1e293b" rx="6" />
+            <rect x="20" y="30" width="8" height="10" fill="#cbd5e1" rx="1" />
+            <rect x="20" y="50" width="8" height="10" fill="#cbd5e1" rx="1" />
+            <rect x="112" y="30" width="8" height="10" fill="#cbd5e1" rx="1" />
+            <rect x="112" y="50" width="8" height="10" fill="#cbd5e1" rx="1" />
+            <line x1="50" y1="20" x2="50" y2="70" stroke="#cbd5e1" stroke-width="4" />
+            <line x1="90" y1="20" x2="90" y2="70" stroke="#cbd5e1" stroke-width="4" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Resistor Network Array Specifications",
+        columns: ["Element Size (inch)", "Element Size (Metric)", "Total Length Metric", "Total Width Metric"],
+        rows: [
+          ["0201 x2", "0603 x2", "0.8mm", "0.6mm"],
+          ["0201 x4", "0603 x4", "1.4mm", "0.6mm"],
+          ["0402 x2", "1005 x2", "1.0mm", "1.0mm"],
+          ["0402 x4", "1005 x4", "2.0mm", "1.0mm"],
+          ["0603 x2", "1608 x2", "1.6mm", "1.6mm"],
+          ["0603 x4", "1608 x4", "3.2mm", "1.6mm"],
+          ["0603 x8", "1608 x8", "6.4mm", "1.6mm"],
+          ["0805 x4", "2012 x4", "4.8mm", "2.0mm"],
+          ["0805 x8", "2012 x8", "9.6mm", "2.0mm"],
+          ["1206 x4", "3216 x4", "6.4mm", "3.2mm"],
+          ["1206 x8", "3216 x8", "3.8mm", "1.6mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "MELF Resistors (Metal Electrode Leadless Face)",
+    tag: "SMD Cylindrical Components",
+    subtitle: "Cylindrical MELF Resistor Specifications",
+    svgs: [
+      {
+        label: "MELF Cylinder",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="30" y="30" width="80" height="30" rx="15" fill="#3b4f63" />
+            <rect x="25" y="30" width="15" height="30" fill="#cbd5e1" />
+            <rect x="100" y="30" width="15" height="30" fill="#cbd5e1" />
+            <rect x="50" y="30" width="6" height="30" fill="#fbbf24" />
+            <rect x="65" y="30" width="6" height="30" fill="#a855f7" />
+            <rect x="80" y="30" width="6" height="30" fill="#ef4444" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "MELF Resistors (Standard, Lead Free, Zero Ohm)",
+        columns: ["Type Group", "Size (inch)", "Size (mm)", "Standard Name", "Tape Width"],
+        rows: [
+          ["Standard / LF / Zero", "0604", "1.6 x 1.0 mm", "micro-MELF", "8mm"],
+          ["Standard / LF / Zero", "0805", "2.0 x 1.25 mm", "micro-MELF", "8mm"],
+          ["Standard / LF / Zero", "1206", "3.2 x 1.6 mm", "mini-MELF", "8mm"],
+          ["Standard / LF / Zero", "1406", "3.5 x 1.45 mm", "mini-MELF", "8mm"],
+          ["Standard / LF / Zero", "2308", "5.9 x 2.2 mm", "MELF", "12mm"],
+          ["Lead Free / Zero", "3512", "8.5 x 3.0 mm", "Maxi-MELF", "16mm"],
+          ["Lead Free / Zero", "4216 / 4616", "10.5 x 4.0 mm", "Maxi-MELF", "16mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Wide Terminal Resistors & Capacitors",
+    tag: "Wide Terminal Components",
+    subtitle: "Wide Terminal Resistor & Capacitor Dimensions",
+    svgs: [
+      {
+        label: "Wide Terminal Chip",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="35" y="15" width="70" height="60" fill="#1e293b" rx="3" />
+            <rect x="35" y="10" width="70" height="10" fill="#cbd5e1" rx="1" />
+            <rect x="35" y="70" width="70" height="10" fill="#cbd5e1" rx="1" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Wide Terminal Resistors",
+        columns: ["Size (inch)", "Size (Metric)"],
+        rows: [
+          ["0306", "0816 (0.8 x 1.6 mm)"],
+          ["0508", "1220 (1.2 x 2.0 mm)"],
+          ["0612", "1632 (1.6 x 3.2 mm)"],
+          ["0815", "2037 (2.0 x 3.75 mm)"],
+          ["0830", "2075 (2.0 x 7.5 mm)"],
+          ["1020", "2550 (2.5 x 5.0 mm)"],
+          ["1218", "3245 (3.2 x 4.5 mm)"],
+          ["1225", "3264 (3.2 x 6.4 mm)"],
+          ["2030", "5176 (5.1 x 7.6 mm)"]
+        ]
+      },
+      {
+        header: "Wide Terminal Capacitors",
+        columns: ["Size (inch)", "Size (Metric)"],
+        rows: [
+          ["0204 (0.020\" x 0.040\")", "0510 (0.5 x 1.0 mm)"],
+          ["0306 (0.032\" x 0.063\")", "0816 (0.8 x 1.6 mm)"],
+          ["0508 (0.05\" x 0.08\")", "1220 (1.2 x 2.0 mm)"],
+          ["0612 (0.063\" x 0.126\")", "1632 (1.6 x 3.2 mm)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "MLCC Materials & Sizes (Standard, Lead Free, Low Inductance)",
+    tag: "Multi-Layer Ceramic Capacitors",
+    subtitle: "MLCC Physical Dimensions & Styles",
+    svgs: [
+      {
+        label: "Standard MLCC Chip",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="25" width="90" height="40" fill="#94a3b8" rx="4" />
+            <rect x="20" y="25" width="12" height="40" fill="#e2e8f0" rx="1" />
+            <rect x="108" y="25" width="12" height="40" fill="#e2e8f0" rx="1" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Lead Free Ceramic Chip Sizes",
+        columns: ["Size (inch)", "Size (Metric)"],
+        rows: [
+          ["008004 (0.008\"x0.005\")", "0201mm (0.25x0.125mm)"],
+          ["- (0.012\"x0.006\")", "03015mm (0.30x0.15mm)"],
+          ["01005 (0.016\"x0.008\")", "0402mm (0.4x0.2mm)"],
+          ["0201 (0.024\"x0.012\")", "0603mm (0.6x0.3mm)"],
+          ["0402 (0.040\"x0.020\")", "1005 (1.0x0.5mm)"],
+          ["0603 (0.063\"x0.032\")", "1608 (1.6x0.8mm)"],
+          ["0805 (0.08\"x0.05\")", "2012 (2.0x1.2mm)"],
+          ["1206 (0.126\"x0.063\")", "3216 (3.2x1.6mm)"],
+          ["1210 (0.126\"x0.10\")", "3225 (3.2x2.5mm)"],
+          ["1812 (0.18\"x0.12\")", "4532 (4.5x3.2mm)"],
+          ["1825 (0.18\"x0.25\")", "4563 (4.5x6.3mm)"],
+          ["2225 (0.22\"x0.25\")", "5664 (5.6x6.4mm)"]
+        ]
+      },
+      {
+        header: "Low Inductance Chip Sizes",
+        columns: ["Size (inch)", "Size (Metric)"],
+        rows: [
+          ["0204 (0.020\"x0.040\")", "0510 (0.5x1.0mm)"],
+          ["0306 (0.032\"x0.063\")", "0816 (0.8x1.6mm)"],
+          ["0508 (0.05\"x0.08\")", "1220 (1.2x2.0mm)"],
+          ["0612 (0.063\"x0.126\")", "1632 (1.6x3.2mm)"]
+        ]
+      },
+      {
+        header: "Large Size Chip Sizes",
+        columns: ["Size (inch)", "Size (Metric)"],
+        rows: [
+          ["3035 (0.30\"x0.35\")", "7689 (7.62x8.89mm)"],
+          ["3333 (0.33\"x0.33\")", "8484 (8.38x8.88mm)"],
+          ["3530 (0.35\"x0.30\")", "8976 (8.89x7.62mm)"],
+          ["3640 (0.36\"x0.40\")", "- (9.14x10.16mm)"],
+          ["3940 (0.39\"x0.40\")", "- (9.91x10.16mm)"],
+          ["4045 (0.40\"x0.45\")", "- (10.16x11.43mm)"],
+          ["4252 (0.42\"x0.52\")", "- (10.67x13.2mm)"],
+          ["4540 (0.45\"x0.40\")", "- (11.43x10.16mm)"],
+          ["5550 (0.55\"x0.50\")", "- (14.00x12.70mm)"],
+          ["5780 (0.57\"x0.80\")", "- (14.50x20.32mm)"],
+          ["5868 (0.58\"x0.68\")", "- (14.73x17.27mm)"],
+          ["6560 (0.65\"x0.60\")", "- (16.50x15.24mm)"],
+          ["7680 (0.76\"x0.80\")", "- (19.30x20.32mm)"],
+          ["7775 (0.78\"x0.75\")", "- (19.81x19.05mm)"],
+          ["8840 (0.88\"x0.40\")", "- (22.35x10.16mm)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "MLCC Color Class Specifications (White vs Black)",
+    tag: "MLCC Styling Configurations",
+    subtitle: "Color-Specific Ceramic Carrier Profiles",
+    svgs: [
+      {
+        label: "White Ceramic",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="25" width="90" height="40" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" rx="4" />
+            <rect x="20" y="25" width="12" height="40" fill="#94a3b8" rx="1" />
+            <rect x="108" y="25" width="12" height="40" fill="#94a3b8" rx="1" />
+          </svg>
+        `
+      },
+      {
+        label: "Black Ceramic",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="25" width="90" height="40" fill="#0f172a" rx="4" />
+            <rect x="20" y="25" width="12" height="40" fill="#64748b" rx="1" />
+            <rect x="108" y="25" width="12" height="40" fill="#64748b" rx="1" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "White Ceramic Chip Profiles",
+        columns: ["Size (inch)", "Size (Metric)"],
+        rows: [
+          ["01005", "0402 (0.4 x 0.2 mm)"],
+          ["0201", "0603 (0.6 x 0.3 mm)"],
+          ["0402", "1005 (1.0 x 0.5 mm)"],
+          ["0603", "1608 (1.6 x 0.8 mm)"],
+          ["0805", "2012 (2.0 x 1.2 mm)"],
+          ["1206", "3216 (3.2 x 1.6 mm, Low Profile 0.8mm)"],
+          ["1206", "3216 (3.2 x 1.6 mm, High Profile 1.2mm)"]
+        ]
+      },
+      {
+        header: "Black Ceramic Chip Profiles",
+        columns: ["Size (inch)", "Size (Metric)"],
+        rows: [
+          ["0201", "0603 (0.6 x 0.3 mm)"],
+          ["0402", "1005 (1.0 x 0.5 mm)"],
+          ["0603", "1608 (1.6 x 0.8 mm)"],
+          ["0805", "2012 (2.0 x 1.2 mm)"],
+          ["1206", "3216 (3.2 x 1.6 mm, Low Profile 0.8mm)"],
+          ["1206", "3216 (3.2 x 1.6 mm, High Profile 1.2mm)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Tantalum Chip Capacitors (EIA & COTS CWR)",
+    tag: "SMD Tantalum Capacitors",
+    subtitle: "Molded Tantalum Component Packaging Codes",
+    svgs: [
+      {
+        label: "Molded Tantalum Chip",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="25" width="90" height="40" fill="#b45309" rx="2" />
+            <rect x="20" y="25" width="10" height="40" fill="#cbd5e1" />
+            <rect x="110" y="25" width="10" height="40" fill="#cbd5e1" />
+            <rect x="40" y="25" width="12" height="40" fill="#78350f" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Standard Tantalum Chip Capacitors (EIA Size)",
+        columns: ["Size Code", "EIA Size (Metric)", "Height Z (mm)", "Terminal Width", "Tape Width / Pitch"],
+        rows: [
+          ["A", "3216 (3.2 x 1.6 mm)", "1.6 mm", "1.2 mm", "W=8mm, P=4mm"],
+          ["B", "3528 (3.5 x 2.8 mm)", "1.9 mm", "2.2 mm", "W=8mm, P=4mm"],
+          ["C", "6032 (6.0 x 3.2 mm)", "2.5 mm", "2.2 mm", "W=12mm, P=8mm"],
+          ["D", "7343 (7.3 x 4.3 mm)", "2.8 mm", "2.4 mm", "W=12mm, P=8mm"],
+          ["P/R", "2012 (2.0 x 1.3 mm)", "1.2 mm", "1.0 mm", "W=8mm, P=4mm"],
+          ["J", "1608 (1.6 x 0.8 mm)", "0.85 mm", "0.85 mm", "W=8mm, P=4mm"]
+        ]
+      },
+      {
+        header: "COTS Tantalum Chip Capacitors (CWR Equivalent)",
+        columns: ["Size Code", "EIA Size X/Y (Metric)", "Height Z (mm)", "Terminal Width", "Tape Width / Pitch"],
+        rows: [
+          ["A", "2512 (2.54 x 1.27 mm)", "1.27 mm", "1.27 mm", "W=8mm, P=4mm"],
+          ["B", "3812 (3.81 x 1.27 mm)", "1.27 mm", "1.27 mm", "W=12mm, P=4mm"],
+          ["C", "5012 (5.08 x 1.27 mm)", "1.27 mm", "1.27 mm", "W=12mm, P=4mm"],
+          ["D", "3825 (3.81 x 2.54 mm)", "1.27 mm", "2.41 mm", "W=12mm, P=4mm"],
+          ["E", "5025 (5.08 x 2.54 mm)", "1.27 mm", "2.41 mm", "W=12mm, P=4mm"],
+          ["F", "5634 (5.59 x 3.43 mm)", "1.78 mm", "3.30 mm", "W=12mm, P=8mm"],
+          ["G", "6728 (6.73 x 2.79 mm)", "2.79 mm", "2.67 mm", "W=12mm, P=8mm"],
+          ["H", "7338 (7.24 x 3.81 mm)", "2.79 mm", "3.68 mm", "W=12mm, P=8mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Aluminum Electrolytic Chip Capacitors",
+    tag: "SMD Aluminum Capacitors",
+    subtitle: "Electrolytic Aluminum SMT Can Cases",
+    svgs: [
+      {
+        label: "Aluminum Electrolytic Can",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="35" y="20" width="50" height="50" fill="#475569" rx="2" />
+            <rect x="85" y="20" width="10" height="50" fill="#334155" />
+            <rect x="95" y="15" width="15" height="60" fill="#cbd5e1" rx="3" />
+            <rect x="25" y="25" width="10" height="40" fill="#1e293b" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Aluminum Chip Capacitors (Standard Dimensions)",
+        columns: ["Size Diameter x Height", "Tape Width", "Tape Pitch"],
+        rows: [
+          ["3mm x 5.5mm", "12mm", "8mm"],
+          ["4mm x 5.5mm", "12mm", "8mm"],
+          ["5mm x 5.5mm", "12mm", "12mm"],
+          ["6.3mm x 5.5mm", "16mm", "12mm"],
+          ["8mm x 6mm", "16mm", "12mm"],
+          ["8mm x 10mm", "24mm", "16mm"],
+          ["10mm x 10mm", "24mm", "16mm"],
+          ["10mm x 17mm", "32mm", "20mm"],
+          ["12.5mm x 14mm", "32mm", "24mm"],
+          ["12.5mm x 17mm", "32mm", "24mm"],
+          ["16mm x 17mm", "44mm", "28mm"],
+          ["16mm x 22mm", "44mm", "28mm"],
+          ["18mm x 17mm", "44mm", "32mm"],
+          ["18mm x 22mm", "44mm", "32mm"],
+          ["20mm x 17mm", "44mm", "36mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "SMD Inductor Chips (Multilayer, Molded)",
+    tag: "SMD Inductor Chips",
+    subtitle: "Molded & Multilayer SMD Inductor Chip Cases",
+    svgs: [
+      {
+        label: "Molded / Multilayer Inductor",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="25" width="90" height="40" fill="#334155" rx="3" />
+            <rect x="20" y="25" width="12" height="40" fill="#cbd5e1" rx="1" />
+            <rect x="108" y="25" width="12" height="40" fill="#cbd5e1" rx="1" />
+            <line x1="45" y1="35" x2="95" y2="35" stroke="#94a3b8" stroke-width="4" />
+            <line x1="45" y1="45" x2="95" y2="45" stroke="#94a3b8" stroke-width="4" />
+            <line x1="45" y1="55" x2="95" y2="55" stroke="#94a3b8" stroke-width="4" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Standard SMT Inductor Chip Dimensions",
+        columns: ["Size (inch)", "Size (Metric)", "Body Style", "Tape Width"],
+        rows: [
+          ["0402", "1005 (1.0 x 0.5 mm)", "multilayer", "8mm"],
+          ["0603", "1608 (1.6 x 0.8 mm)", "multilayer", "8mm"],
+          ["0805", "2012 (2.0 x 1.2 mm)", "multilayer", "8mm"],
+          ["1008", "2520 (2.5 x 2.0 mm)", "molded", "8mm"],
+          ["1206", "3216 (3.2 x 1.6 mm)", "multilayer", "8mm"],
+          ["1210", "3225 (3.2 x 2.5 mm)", "molded", "8mm"],
+          ["1812", "4532 (4.5 x 3.2 mm)", "molded", "12mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "SMT Crystals, Oscillators & Throughhole Cans",
+    tag: "SMT Resonators & Crystals",
+    subtitle: "SMT Resonance Core & Oscillator Package Specifications",
+    svgs: [
+      {
+        label: "Metal HC-49 Can",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="30" y="25" width="80" height="40" fill="#f1f5f9" rx="6" stroke="#94a3b8" stroke-width="2" />
+            <line x1="20" y1="45" x2="30" y2="45" stroke="#cbd5e1" stroke-width="6" />
+            <line x1="110" y1="45" x2="120" y2="45" stroke="#cbd5e1" stroke-width="6" />
+            <text x="70" y="50" fill="#475569" font-size="10" text-anchor="middle" font-weight="bold">16.000</text>
+          </svg>
+        `
+      },
+      {
+        label: "Ceramic Resonator",
+        html: `
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect x="25" y="20" width="90" height="50" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5" rx="3" />
+            <rect x="40" y="32" width="60" height="26" fill="#1e293b" />
+            <circle cx="35" cy="30" r="4" fill="#fbbf24" />
+            <circle cx="105" cy="30" r="4" fill="#fbbf24" />
+            <circle cx="35" cy="60" r="4" fill="#fbbf24" />
+            <circle cx="105" cy="60" r="4" fill="#fbbf24" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Surface-Mount (SMD) Resonators & Cans",
+        columns: ["Case Style", "Physical Size", "Tape Specifications", "Part Series Name"],
+        rows: [
+          ["Metal 1/2 Can Gull Wing", "12.5mm x 12.5mm", "W=24mm, P=24mm", "LX1/2SMD-E13A"],
+          ["Metal Full Can Gull Wing", "20.8mm x 13.2mm", "W=32mm, P=24mm", "LX0SMD-E13A"],
+          ["Metal Low Profile", "11.1mm x 4.6mm (H=3.3mm)", "W=24mm, P=12mm", "SM49SE13A"],
+          ["Metal Standard", "11.1mm x 4.6mm (H=5.08mm)", "W=24mm, P=12mm", "SM49E13A"],
+          ["Plastic Case", "8.7mm x 3.7mm", "W=16mm, P=8mm", "SX3512E13A"],
+          ["Plastic Case", "10.4mm x 4.2mm", "W=16mm, P=8mm", "SXE4016E13A"],
+          ["Plastic Case", "11.6mm x 4.2mm", "W=24mm, P=8mm", "SX4516E13A"],
+          ["Plastic Case", "13.2mm x 5.0mm", "W=24mm, P=8mm", "SX5020E13A"],
+          ["Plastic Case", "14.0mm x 9.8mm", "W=24mm, P=12mm", "SG615E13A"],
+          ["Ceramic Resonator", "5.0mm x 3.2mm", "W=12mm, P=8mm", "LCN2-5.0x3.2E27A"],
+          ["Oscillator Cavity", "5.0mm x 3.2mm", "W=12mm, P=8mm", "LCC4-5x3.2E7A"],
+          ["Oscillator Cavity", "5.0mm x 3.2mm", "W=16mm, P=8mm", "LCC6-5x3.2-DC1346"],
+          ["Ceramic Resonator", "6.0mm x 3.5mm", "W=16mm, P=8mm", "LCN2-6.0x3.5E7A"],
+          ["Ceramic Resonator", "6.0mm x 3.5mm", "W=16mm, P=8mm", "LCC4-6.0x3.5E7A"],
+          ["Ceramic Resonator", "7.0mm x 5.0mm", "W=16mm, P=8mm", "LCN2-7.0x5.0E13A"],
+          ["Ceramic Resonator", "7.0mm x 5.0mm", "W=16mm, P=8mm", "LCC4-7.0x5.0-DC1234"],
+          ["Ceramic J-Lead", "7.0mm x 5.0mm", "-", "LCC4-7.0x5.0-DC1234-J"],
+          ["Ceramic Gull-Wing", "7.0mm x 5.0mm", "-", "LCC4-7.0x5.0-DC1234-GULL"],
+          ["Ceramic DIL Dual-Inline", "7.0mm x 5.0mm", "-", "LCC4-7.0x5.0-DC1234-DIL"],
+          ["Ceramic Resonator", "7.0mm x 5.0mm", "W=16mm, P=8mm", "LCN4-7.0x5.0E13A"],
+          ["Ceramic Resonator", "7.0mm x 5.0mm", "W=16mm, P=8mm", "LCC6-7.0x5.0E13A"],
+          ["Ceramic Resonator", "7.5mm x 5.0mm", "W=16mm, P=8mm", "LCC4-7.5x5.0E13A"],
+          ["Ceramic Resonator", "8.0mm x 4.5mm", "W=16mm, P=8mm", "LCC2-8.0x4.5E13A"],
+          ["Ceramic Sealed Lid", "8.9mm x 7.4mm", "-", "Sealed Top/Bottom"],
+          ["Ceramic Resonator", "11.0mm x 5.0mm", "W=24mm, P=12mm", "LCC2-11.0x5.0E13A"],
+          ["Ceramic Resonator", "11.0mm x 6.5mm", "W=24mm, P=12mm", "LCN4-11x6.5E13A"],
+          ["Ceramic Resonator", "11.5mm x 5.5mm", "W=24mm, P=12mm", "LCC4-11x5.5E13A"],
+          ["Metal Seal (SMTO-8)", "11.4mm x 11.4mm", "-", "SMTO-8 Top/Bottom"]
+        ]
+      },
+      {
+        header: "Throughhole Cans (Quartz Crystals)",
+        columns: ["Case Style", "Body Dimensions", "TopLine Part Series"],
+        rows: [
+          ["Metal 1/2 Can", "12.5mm x 12.5mm", "LX1/2M"],
+          ["Metal Full Can", "20.7mm x 13.0mm", "LX0M"],
+          ["Low Profile Metal Can", "11.5mm x 5.0mm (H=2.5mm)", "AT49"],
+          ["Standard Metal Can", "11.5mm x 5.0mm (H=13.5mm)", "HC49"],
+          ["Cylindrical Tuning Fork", "6.3mm x 2.1mm", "DT26 (32.768 kHz)"],
+          ["Cylindrical Tuning Fork", "8.28mm x 3.1mm", "DT38"]
+        ]
+      }
+    ]
   }
-  document.getElementById(pkgId).style.display = 'block';
+];
 
-  // Display details workspace
-  document.getElementById('detailsWorkspace').style.display = 'block';
-}
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
 
-function closePackage(pkgId) {
-  // Hide active details panel and workspace
-  document.getElementById(pkgId).style.display = 'none';
-  document.getElementById('detailsWorkspace').style.display = 'none';
-
-  // Restore cards selection list and search bar
-  document.getElementById('selectionWorkspace').style.display = 'block';
-}
-
-function myFunction() {
-  var input = document.getElementById("myInput");
-  var filter = input.value.toUpperCase();
-  var ul = document.getElementById("myUL");
-  var li = ul.getElementsByTagName("li");
+// Update display with selected package parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
   
-  for (var i = 0; i < li.length; i++) {
-    var card = li[i].getElementsByClassName("pinout-item-card")[0];
-    var txtValue = card.textContent || card.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
-    }
-  }
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
 }
 
-// Lightbox modal enlarger for SVG diagrams
+// Lightbox modal enlarger for dynamic SVG diagrams
 function zoomSvg(svgContent) {
-  var overlay = document.createElement('div');
+  const overlay = document.createElement('div');
   overlay.id = 'svg-zoom-overlay';
   overlay.style.position = 'fixed';
   overlay.style.top = '0';
   overlay.style.left = '0';
   overlay.style.width = '100%';
   overlay.style.height = '100%';
-  overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.98)'; // Solid high-contrast white background
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
   overlay.style.zIndex = '20000';
   overlay.style.display = 'flex';
   overlay.style.alignItems = 'center';
   overlay.style.justifyContent = 'center';
   overlay.style.cursor = 'zoom-out';
-  overlay.style.boxShadow = 'inset 0 0 100px rgba(15,23,42,0.15)';
   
-  // Close cross inside lightbox
-  var closeIndicator = document.createElement('div');
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
   closeIndicator.innerHTML = '&times;';
-  closePowerStyle(closeIndicator);
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
   overlay.appendChild(closeIndicator);
 
-  // Scale up the vector art safely with direct container scaling (eliminates clipping & vertical offset)
-  var container = document.createElement('div');
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
   container.style.width = '90%';
   container.style.maxWidth = '500px';
-  container.style.maxHeight = '85vh';
+  container.style.maxHeight = '80vh';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
   container.style.justifyContent = 'center';
-  container.innerHTML = svgContent.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
   overlay.appendChild(container);
   
-  overlay.onclick = function() {
+  const closeOverlay = function() {
     overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
   };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
   document.body.appendChild(overlay);
 }
 
-function closePowerStyle(el) {
-  el.style.position = 'fixed';
-  el.style.top = '40px';
-  el.style.right = '40px';
-  el.style.fontSize = '40px';
-  el.style.fontWeight = 'bold';
-  el.style.color = '#1e293b';
-  el.style.cursor = 'pointer';
-}
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first package entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+};
 </script>
 
+<!-- SEO Structured JSON-LD Schemas -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "publisher": {
-    "@type": "Organization",
-    "name": "CalcBoy",
-    "url": "https://calcboy.com"
-  },
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "1. What is the main difference between BGA and WLP packaging?",
+      "name": "What is the main difference between BGA and WLP packaging?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "BGA packages use an intermediate organic or ceramic substrate/interposer to route signals from the die to the solder balls. WLP (Wafer Level Package) places solder balls directly onto the passivated surface of the silicon die, eliminating the substrate completely for the smallest possible footprint."
@@ -1187,18 +1165,10 @@ function closePowerStyle(el) {
     },
     {
       "@type": "Question",
-      "name": "2. Why are Fan-Out packages (EWLP) growing in popularity?",
+      "name": "Why are Fan-Out packages (EWLP) growing in popularity?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "As silicon chips shrink, their physical die size decreases. However, high-performance chips still require a large number of pins. EWLP embeds the die in a mold compound wafer, providing extra perimeter area to route signals out ('Fan-Out'), avoiding physical pin-count limitations of tiny silicon surfaces."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "3. How does ball pitch affect PCB design?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Fine-pitch arrays (under 0.50mm) require advanced PCB fabrication technologies, such as high-density interconnect (HDI) microvias, laser drilling, and narrow track routing. Larger pitch arrays (0.80mm - 1.0mm) can be routed using standard, lower-cost multilayers."
       }
     }
   ]
@@ -1210,24 +1180,9 @@ function closePowerStyle(el) {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "CalcBoy",
-      "item": "https://calcboy.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Electronics Reference",
-      "item": "https://calcboy.com/category/electronics-calculators/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "Semiconductor Package Guide",
-      "item": "https://calcboy.com/tool/semiconductor-package-guide"
-    }
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "SMD Passive Component Package Guide", "item": "https://calcboy.com/tool/smd-passive-component-package-guide" }
   ]
 }
 </script>
