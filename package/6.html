@@ -6,136 +6,155 @@
 <title>Flip Chip Daisy Chain Reference Guide &amp; CTE Stress Calculator | CalcBoy</title>
 <meta name="description" content="Technical engineering guide and database for Flip Chip packages with Eutectic and SAC bumps. Includes a real-time CTE shear strain stress calculator.">
 <meta name="keywords" content="Flip Chip daisy chain, Eutectic solder bumps, SAC305 bumps, UBM diameter, solder bump pitch, organic substrate, thermal mismatch, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/flip-chip-daisy-chain-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Flip Chip Daisy Chain Reference Guide &amp; CTE Stress Calculator | CalcBoy">
+<meta property="og:description" content="Access complete engineering specifications for Flip Chip packages and calculate cyclic solder shear strains with our integrated CTE mismatch calculator.">
+<meta property="og:url" content="https://calcboy.com/tool/flip-chip-daisy-chain-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flip Chip Daisy Chain Reference Guide &amp; CTE Stress Calculator | CalcBoy">
+<meta name="twitter:description" content="Complete reference database of Flip Chip configurations and interactive thermo-mechanical strain calculator.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#semiconductor-pkg-calc,#semiconductor-pkg-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#semiconductor-pkg-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#semiconductor-pkg-tool, #semiconductor-pkg-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#009688;
-  box-shadow:0 0 0 3px rgba(0,150,136,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#semiconductor-pkg-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+}
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
   cursor: pointer;
 }
-.pinout-item-card:hover {
-  border-color:#009688;
-  box-shadow:0 4px 12px rgba(0,150,136,.08);
+select:focus {
+  border-color: #009688;
+  box-shadow: 0 0 0 3px rgba(0,150,136,.12);
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#009688;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
-}
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
-}
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Modal Overlay Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:hidden;
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:10px;
-}
-.w3-modal-content {
-  background:#fff;
-  margin:80px auto 20px;
-  width:100%;
-  max-width:580px;
-  max-height:85vh;
-  overflow-y:auto;
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-
-/* Close Button: Viewport-Locked */
-.mid {
-  position: fixed !important;
-  top: 100px !important;  
-  right: 25px !important;
-  z-index: 10010 !important;
-  width: 50px !important;
-  height: 40px !important;
-  background-color: red !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-size: 25px !important;
-  font-weight: bold !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  text-decoration: none;
-}
-.mid:hover {
-  background-color: #cc0000 !important;
-  transform: scale(1.05);
-}
-
-/* Inline Diagram Styling */
-.diagram-container {
-  width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
   border-radius: 12px;
   padding: 16px;
-  margin: 12px auto 6px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.connector-header-card .badge {
+  background: #e0f2f1;
+  color: #009688;
+  border: 1px solid #b2dfdb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #009688;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e0f2f1;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
   display: flex;
   gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
 }
-.vector-view {
+.vector-box {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -143,16 +162,17 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   background: #fff;
   border: 1px solid #edf2f7;
   border-radius: 8px;
-  padding: 8px;
+  padding: 12px;
   min-height: 140px;
   justify-content: center;
-  cursor: zoom-in;
-  transition: transform 0.2s;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
 }
-.vector-view:hover {
+.vector-box:hover {
   transform: scale(1.02);
+  border-color: #009688;
 }
-.vector-view svg {
+.vector-box svg {
   max-width: 100%;
   height: auto;
 }
@@ -161,80 +181,185 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   font-weight: 800;
   color: #64748b;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+.img-caption {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
+}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #374151 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.table1 {width:100%;text-align:left;clear:both}
-
-.img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:6px;
-  margin-bottom:16px;
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-
-/* Standardized Tables & Scroll wrappers */
-.table-responsive {
-  width: 100%;
-  max-height: 380px;
-  overflow-y: auto;
-  overflow-x: auto;
-  margin: 15px 0 0;
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutLead {
+  background: linear-gradient(135deg,#eef5ff,#fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #e0f2f1;
+  border: 1px solid #b2dfdb;
+  border-left: 5px solid #009688;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00796b;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  -webkit-overflow-scrolling: touch;
-  position: relative;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
 }
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background: #fff;
-  overflow: hidden;
-  table-layout: auto;
-}
-th {
-  background: #f1f5f9 !important;
-  color: #1e293b;
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #009688;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   font-weight: 900;
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 2px solid #e2e8f0;
-  box-shadow: inset 0 -2px 0 #e2e8f0;
-  position: -webkit-sticky !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 20 !important;
-  white-space: nowrap;
 }
-td {
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #475467;
-  border-bottom: 1px solid #edf2f7;
-  white-space: nowrap;
-}
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
-
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
 
 /* Active Calculator Container */
 .calc-container {
@@ -294,7 +419,9 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 }
 
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
   .calc-input-group {flex-direction: column; align-items: flex-start;}
   .calc-input-group input, .calc-input-group select {width: 100%;}
 }
@@ -302,266 +429,41 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 </head>
 <body>
 
-<div id="semiconductor-pkg-calc">
+<div id="semiconductor-pkg-tool">
 
-  <!-- SELECTION HUB: Search and Card List -->
-  <div id="selectionWorkspace">
-    <div class="search-container">
-      <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Flip Chip Pin Counts, Matrix, Size..." title="Type to search">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Flip Chip Selection</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Flip Chip Configuration</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
     </div>
-
-    <ul id="myUL">
-      
-      <li>
-        <a href="#" onclick="openPackage('id01'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Perimeter Arrays</span>
-              <span class="card-title">Perimeter Matrix Flip Chips (48 to 220 Bumps)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id02'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Full Area Arrays</span>
-              <span class="card-title">Full Grid Array Flip Chips (317 to 9104 Bumps)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id03'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Material Properties</span>
-              <span class="card-title">Under Bump Metallization (UBM) &amp; Alloys</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id04'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Failure Mechanics</span>
-              <span class="card-title">Thermal Cycling &amp; Solder Shear Stress</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-    </ul>
   </div>
 
-  <!-- DETAILS HUB: Modal Popups -->
-  <div id="detailsWorkspace">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">Perimeter Arrays</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Wire Mapping</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <!-- CARD 1: PERIMETER ARRAYS -->
-    <div id="id01" class="w3-modal">
-      <button class="mid" onclick="closePackage('id01')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">Perimeter Array Configurations</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="25" y="10" width="90" height="90" fill="#1e293b" rx="6" stroke="#475569" stroke-width="2" />
-                <!-- Peripheral Bump Rings -->
-                <!-- Top Row -->
-                <circle cx="35" cy="20" r="3" fill="#cbd5e0" /><circle cx="50" cy="20" r="3" fill="#cbd5e0" /><circle cx="65" cy="20" r="3" fill="#cbd5e0" /><circle cx="80" cy="20" r="3" fill="#cbd5e0" /><circle cx="95" cy="20" r="3" fill="#cbd5e0" /><circle cx="105" cy="20" r="3" fill="#cbd5e0" />
-                <!-- Bottom Row -->
-                <circle cx="35" cy="90" r="3" fill="#cbd5e0" /><circle cx="50" cy="90" r="3" fill="#cbd5e0" /><circle cx="65" cy="90" r="3" fill="#cbd5e0" /><circle cx="80" cy="90" r="3" fill="#cbd5e0" /><circle cx="95" cy="90" r="3" fill="#cbd5e0" /><circle cx="105" cy="90" r="3" fill="#cbd5e0" />
-                <!-- Left Row -->
-                <circle cx="35" cy="35" r="3" fill="#cbd5e0" /><circle cx="35" cy="50" r="3" fill="#cbd5e0" /><circle cx="35" cy="65" r="3" fill="#cbd5e0" /><circle cx="35" cy="80" r="3" fill="#cbd5e0" />
-                <!-- Right Row -->
-                <circle cx="105" cy="35" r="3" fill="#cbd5e0" /><circle cx="105" cy="50" r="3" fill="#cbd5e0" /><circle cx="105" cy="65" r="3" fill="#cbd5e0" /><circle cx="105" cy="80" r="3" fill="#cbd5e0" />
-                <!-- Empty Center -->
-                <rect x="50" y="35" width="40" height="40" fill="none" stroke="#475569" stroke-dasharray="3,3" />
-              </svg>
-              <div class="vector-label">Perimeter Array Outline</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: PERIMETER BUMP PATTERN (CLICK TO ZOOM)</div>
-
-          <h3>Perimeter Spec Reference Table</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Bumps</th>
-                  <th>Bump Matrix</th>
-                  <th>Pitch (µm)</th>
-                  <th>Die Size (mm)</th>
-                  <th>Bump Ht (µm)</th>
-                  <th>UBM øDia (µm)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>48</td><td>12x12 Perimeter</td><td>457</td><td>6.3</td><td>140</td><td>178</td></tr>
-                <tr><td>88</td><td>22x22 Perimeter</td><td>204</td><td>5.08</td><td>107</td><td>102</td></tr>
-                <tr><td>112</td><td>28x28 Perimeter</td><td>152.5</td><td>5.08</td><td>85</td><td>88</td></tr>
-                <tr><td>176</td><td>44x44 Perimeter</td><td>204</td><td>10.2</td><td>107</td><td>102</td></tr>
-                <tr><td>220</td><td>44x66 Perimeter</td><td>204</td><td>10.0 x 15.0</td><td>107</td><td>102</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
     </div>
-
-    <!-- CARD 2: FULL ARRAYS -->
-    <div id="id02" class="w3-modal">
-      <button class="mid" onclick="closePackage('id02')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">Full Area Grid Arrays</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="25" y="10" width="90" height="90" fill="#1e293b" rx="6" stroke="#475569" stroke-width="2" />
-                <!-- Full Uniform Bump Array Grid -->
-                <circle cx="35" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="20" r="2.5" fill="#e2e8f0" />
-                <circle cx="35" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="34" r="2.5" fill="#e2e8f0" />
-                <circle cx="35" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="48" r="2.5" fill="#e2e8f0" />
-                <circle cx="35" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="62" r="2.5" fill="#e2e8f0" />
-                <circle cx="35" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="76" r="2.5" fill="#e2e8f0" />
-                <circle cx="35" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="90" r="2.5" fill="#e2e8f0" />
-              </svg>
-              <div class="vector-label">Full Array Grid Pattern</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: FULL GRID BUMP PATTERN (CLICK TO ZOOM)</div>
-
-          <h3>Full Grid Spec Reference Table</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Bumps</th>
-                  <th>Bump Matrix</th>
-                  <th>Pitch (µm)</th>
-                  <th>Die Size (mm)</th>
-                  <th>Bump Ht (µm)</th>
-                  <th>UBM øDia (µm)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>317</td><td>18x18 Full Array</td><td>254</td><td>5.08</td><td>125</td><td>102</td></tr>
-                <tr><td>484</td><td>22x22 Full Array</td><td>200</td><td>5.0</td><td>74</td><td>102</td></tr>
-                <tr><td>569</td><td>24x24 Full Array</td><td>204</td><td>5.08</td><td>89</td><td>102</td></tr>
-                <tr><td>1268</td><td>36x36 Full Array</td><td>254</td><td>10.2</td><td>125</td><td>102</td></tr>
-                <tr><td>1936</td><td>44x44 Full Array</td><td>200</td><td>10.0</td><td>74</td><td>102</td></tr>
-                <tr><td>2276</td><td>48x48 Full Array</td><td>204</td><td>10.0</td><td>89</td><td>102</td></tr>
-                <tr><td>2853</td><td>54x54 Full Array</td><td>254</td><td>15.0</td><td>125</td><td>102</td></tr>
-                <tr><td>4356</td><td>66x66 Full Array</td><td>200</td><td>15.0</td><td>74</td><td>102</td></tr>
-                <tr><td>5072</td><td>72x72 Full Array</td><td>254</td><td>20.0</td><td>125</td><td>102</td></tr>
-                <tr><td>5121</td><td>72x72 Full Array</td><td>204</td><td>15.0</td><td>89</td><td>102</td></tr>
-                <tr><td>7744</td><td>88x88 Full Array</td><td>200</td><td>20.0</td><td>74</td><td>102</td></tr>
-                <tr><td>9104</td><td>96x96 Full Array</td><td>204</td><td>20.0</td><td>89</td><td>102</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 3: MATERIAL PROPERTIES -->
-    <div id="id03" class="w3-modal">
-      <button class="mid" onclick="closePackage('id03')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">UBM &amp; Metallurgy</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="150" height="110" viewBox="0 0 150 110">
-                <!-- Silicon Die -->
-                <rect x="10" y="10" width="130" height="20" fill="#4a5568" />
-                <text x="75" y="22" fill="#fff" font-size="8" text-anchor="middle">Silicon Die Pad</text>
-                <!-- Under Bump Metal Stack layers -->
-                <rect x="40" y="30" width="70" height="4" fill="#dd6b20" />
-                <rect x="42" y="34" width="66" height="4" fill="#319795" />
-                <rect x="45" y="38" width="60" height="4" fill="#d69e2e" />
-                <!-- Solder ball -->
-                <circle cx="75" cy="70" r="24" fill="#cbd5e0" stroke="#718096" stroke-width="1.5" />
-                <!-- Substrate Pad -->
-                <rect x="35" y="94" width="80" height="10" fill="#2b6cb0" />
-              </svg>
-              <div class="vector-label">Standoff Cross Section</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: UNDER BUMP METALLIZATION (UBM) LAYER INTERFACES (CLICK TO ZOOM)</div>
-
-          <h3>Solder Bump Alloys &amp; Properties</h3>
-          <p>Flip Chips utilize structural micro-bumps to bridge electrical connections. Standard alloy types vary based on thermal budgets and lead-free regulatory guidelines.</p>
-          
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Alloy Family</th>
-                  <th>Composition</th>
-                  <th>Liquidus Temp</th>
-                  <th>Common Application</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Eutectic SnPb</td><td>63% Sn / 37% Pb</td><td>183°C</td><td>Aerospace, Military (Legacy High-Reliability)</td></tr>
-                <tr><td>SAC305</td><td>96.5% Sn / 3.0% Ag / 0.5% Cu</td><td>217°C</td><td>Consumer Electronics (RoHS Lead-Free Standard)</td></tr>
-                <tr><td>High Lead</td><td>95% Pb / 5% Sn</td><td>312°C</td><td>High melting point primary bumps inside ceramic carriers</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 4: FAILURE MECHANICS -->
-    <div id="id04" class="w3-modal">
-      <button class="mid" onclick="closePackage('id04')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">CTE Fatigue &amp; Failure Mechanics</h2>
-          
-          <p>Solder joint shear fatigue is a primary wear-out failure mechanism in flip chip architectures. Because the silicon die has a low thermal expansion coefficient (CTE ~2.6 ppm/°C) while the organic packaging substrate expands significantly faster (CTE ~15 ppm/°C), temperature fluctuations induce cyclic mechanical shear strains.</p>
-          
-          <div class="aboutNote">
-            <strong>The DNP Rule:</strong> Structural shear strain peaks at the package corners, where the Distance from Neutral Point (DNP) is greatest. Adding polymer underfill compounds helps distribute this stress away from the critical corner micro-bumps.
-          </div>
-
-          <h3>Underfill Stress Absorption Performance</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Underfill Parameter</th>
-                  <th>Target Range</th>
-                  <th>Impact on Solder Lifetime</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Glass Transition (Tg)</td><td>110°C to 150°C</td><td>Prevents rapid strain amplification below high operating boundaries</td></tr>
-                <tr><td>CTE Match (α1)</td><td>22 to 32 ppm/°C</td><td>Balances structural load transfer between die and board materials</td></tr>
-                <tr><td>Elastic Modulus (E)</td><td>6 to 10 GPa</td><td>Controls overall stress redistribution across solder bump grids</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- Thermal Stress & Solder Shear Strain Calculator -->
@@ -597,13 +499,60 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
-  <!-- Educational Background -->
+  <!-- Input Parameters Specification -->
   <section class="infoBox">
-    <h2>Flip Chip Packaging Architecture</h2>
-    <p>Flip chip technology (also called Controlled Collapse Chip Connection, or C4) eliminates perimeter wire bonds by inverting the silicon chip so the active face points directly at the circuit board substrate. This direct face-down landing system allows ultra-dense, full-grid contact arrays to maximize I/O count, minimize signal inductance, and enhance package electrical speeds.</p>
-    <div class="aboutNote">Tip: Standard pitch on standard C4 solder bumps historically hovered near 150µm to 250µm, while high-density micro-bump pitches scale below 50µm.</div>
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Array Grid Pitch (µm)</strong>
+        Pitch intervals tracking differences between perimeter rows and high-density full grid array placements.
+      </div>
+      <div class="paramItem">
+        <strong>Solder Bump Standoff (µm)</strong>
+        Vertical gap height separating the silicon die from the organic carrier, dictating cyclic strain relief.
+      </div>
+      <div class="paramItem">
+        <strong>Under Bump Metallurgy (UBM)</strong>
+        Thin-film metallic stack layer parameters designed to guarantee bump wetting and block atomic metal migration.
+      </div>
+      <div class="paramItem">
+        <strong>Expansion Coefficient Delta (Δα)</strong>
+        The thermo-mechanical mismatch boundary between the silicon chip and organic board material.
+      </div>
+    </div>
   </section>
 
+  <!-- Practical Operational Examples -->
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>C4 Bump Reflow Profile</strong></p>
+        <p>Verify whether your assembly profile utilizes leaded SnPb bumps (reflow peak ~220°C) or lead-free SAC305 micro-bumps (reflow peak ~245°C).</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Underfill Void Prevention</strong></p>
+        <p>Preheat organic substrate boards to 80°C to assist capillary flow action, avoiding pocket voids under the silicon die.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>DNP Strain Checks</strong></p>
+        <p>Observe cyclic shear stresses peaking along outer perimeter corners on larger 20x20mm die layouts during design validation.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Gold Pad Nickel Barriers</strong></p>
+        <p>Incorporate chemical nickel-gold (ENIG) surface finishes to inhibit intermetallic compound fatigue on micro-bump boundaries.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagrams & Theory -->
+  <section class="infoBox">
+    <h2>Semiconductor Packaging &amp; Substrate Theory</h2>
+    <p>Semiconductor packaging acts as the bridge connecting delicate integrated circuit (IC) silicon dies to the printable circuit boards (PCBs) of larger electronic systems. Traditional packaging used wire bonding to link the peripheral die pads to leadframes (DIP, QFP, SOIC). Modern grid array packaging bypasses wire connections entirely, placing contacts under the chip body as ball grid arrays (BGA).</p>
+    <div class="aboutNote">Tip: Fan-In wafer level packaging (WLP) is restricted by die size limits, while Fan-Out (EWLP) expands the contact array area past the silicon die boundary.</div>
+  </section>
+
+  <!-- Formulas & Thermal Calculations -->
   <section class="infoBox">
     <h2>Engineering Stress Formulas</h2>
     <div class="formula">Distance from Neutral Point (DNP):<br><strong>DNP = 0.5 × √(X² + Y²)</strong> (where X and Y represent the physical die side lengths)</div>
@@ -611,120 +560,337 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     *(using average Silicon vs Organic board CTE delta Δα ≈ 12.4 ppm/°C)</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target Flip Chip array or metallurgy standard using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the package's primary classification.</div>
+      <div class="aboutStep">Study the structural 2D and 3D vector layouts demonstrating the solder bump matrix.</div>
+      <div class="aboutStep">Consult the dimensional mapping table below the graphic to check pitch and pad details.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
+  <section class="infoBox">
+    <h2>About This Reference Guide</h2>
+    <div class="aboutLead">
+      <strong>Your direct engineering lookup for Flip Chip (C4) interfaces and metallurgy.</strong>
+      <p>This reference guide organizes standard dimensions, bump counts, pitches, and UBM parameters for high-density flip chip configurations.</p>
+    </div>
+    <p>Finding accurate pin layouts and dimensional limits is essential for packaging engineers, hardware designers, and component reliability technicians. Using standardized package configurations ensures footprint compatibility and optimal thermal management.</p>
+    <p>Always verify actual manufacturer footprint specifications prior to board routing. Correct mechanical layouts prevent structural misalignments during reflow.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>Perimeter Spacing</span>Bump counts and pitch standards for peripheral layout grids.</div>
+      <div class="aboutMiniCard"><span>Full Area Arrays</span>Complete uniform grid arrays spanning up to 9000 bumps.</div>
+      <div class="aboutMiniCard"><span>UBM metallurgy</span>Layer materials and alloys including SAC305 and Eutectic SnPb.</div>
+      <div class="aboutMiniCard"><span>Active Stress Tool</span>Cyclic solder shear strain calculations based on thermal delta variables.</div>
+    </div>
+  </section>
+
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. What is Under Bump Metallization (UBM)?</strong></h3>
+    
+    <h3>1. <strong>What is Under Bump Metallization (UBM)?</strong></h3>
     <p>UBM is a thin series of deposited metal layer stacks (adhesion, barrier, and solderable wetting layers) located directly beneath the solder ball. It prevents environmental corrosion and stops the solder alloys from migrating directly into the active silicon chip circuitry.</p>
 
-    <h3><strong>2. Why is full-array pitch tighter than perimeter pitch?</strong></h3>
+    <h3>2. <strong>Why is full-array pitch tighter than perimeter pitch?</strong></h3>
     <p>Perimeter configurations route trace exits horizontally along the package periphery, limiting pitch due to line/space resolution. Full array geometries route connections vertically down through multilayer substrate vias, which permits denser packing of bump contacts.</p>
 
-    <h3><strong>3. How does underfill prevent thermal solder fatigue failures?</strong></h3>
+    <h3>3. <strong>How does underfill prevent thermal solder fatigue failures?</strong></h3>
     <p>Underfill fills the gap beneath the silicon die, locking the chip and substrate together mechanically. This distributes the thermal shear strain uniformly across the entire die interface instead of focusing it directly onto the tiny solder bump joints.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Reference Guides</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
-      <div class="linkCard"><strong>Flat Pack Daisy Chain</strong>Review compliant ribbon-lead packaging databases.</div>
-      <div class="linkCard"><strong>BGA Ball Pitch Routing</strong>Evaluate ball grid arrays and PCB density rules.</div>
-      <div class="linkCard"><strong>SOT-23 / SOT-89 Spec</strong>Review low-density surface mount transistor footprints.</div>
-      <div class="linkCard"><strong>D2PAK Pin Pitch Guide</strong>Compare mechanical details for power-handling packages.</div>
+      <div class="linkCard"><strong>VGA Pinout Reference Guide</strong>Configure classic analog computer display pinouts.</div>
+      <div class="linkCard"><strong>HDMI Type-A/B Reference Guide</strong>Analyze modern high-definition digital video matrices.</div>
+      <div class="linkCard"><strong>RJ45 Ethernet Pinout Standard</strong>Assess network structured cabling configurations.</div>
+      <div class="linkCard"><strong>ATtiny85 Pinout Reference</strong>Develop ultra-compact microcontroller hardware.</div>
     </div>
   </section>
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function openPackage(pkgId) {
-  // Hide master selection card view and search bar
-  document.getElementById('selectionWorkspace').style.display = 'none';
-
-  // Clear modal view status
-  var panels = document.getElementsByClassName('w3-modal');
-  for (var i = 0; i < panels.length; i++) {
-    panels[i].style.display = 'none';
+// Master SMT Flat Pack Packages Database
+const packageDetails = [
+  {
+    name: "Perimeter Matrix Flip Chips (48 to 220 Bumps)",
+    tag: "Perimeter Arrays",
+    subtitle: "Perimeter Array Configurations",
+    svgs: [
+      {
+        label: "Perimeter Array Outline",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="25" y="10" width="90" height="90" fill="#1e293b" rx="6" stroke="#475569" stroke-width="2" />
+            <circle cx="35" cy="20" r="3" fill="#cbd5e0" /><circle cx="50" cy="20" r="3" fill="#cbd5e0" /><circle cx="65" cy="20" r="3" fill="#cbd5e0" /><circle cx="80" cy="20" r="3" fill="#cbd5e0" /><circle cx="95" cy="20" r="3" fill="#cbd5e0" /><circle cx="105" cy="20" r="3" fill="#cbd5e0" />
+            <circle cx="35" cy="90" r="3" fill="#cbd5e0" /><circle cx="50" cy="90" r="3" fill="#cbd5e0" /><circle cx="65" cy="90" r="3" fill="#cbd5e0" /><circle cx="80" cy="90" r="3" fill="#cbd5e0" /><circle cx="95" cy="90" r="3" fill="#cbd5e0" /><circle cx="105" cy="90" r="3" fill="#cbd5e0" />
+            <circle cx="35" cy="35" r="3" fill="#cbd5e0" /><circle cx="35" cy="50" r="3" fill="#cbd5e0" /><circle cx="35" cy="65" r="3" fill="#cbd5e0" /><circle cx="35" cy="80" r="3" fill="#cbd5e0" />
+            <circle cx="105" cy="35" r="3" fill="#cbd5e0" /><circle cx="105" cy="50" r="3" fill="#cbd5e0" /><circle cx="105" cy="65" r="3" fill="#cbd5e0" /><circle cx="105" cy="80" r="3" fill="#cbd5e0" />
+            <rect x="50" y="35" width="40" height="40" fill="none" stroke="#475569" stroke-dasharray="3,3" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Perimeter Spec Reference Table",
+        columns: ["Bumps", "Bump Matrix", "Pitch (µm)", "Die Size (mm)", "Bump Ht (µm)", "UBM øDia (µm)"],
+        rows: [
+          ["48", "12x12 Perimeter", "457", "6.3", "140", "178"],
+          ["88", "22x22 Perimeter", "204", "5.08", "107", "102"],
+          ["112", "28x28 Perimeter", "152.5", "5.08", "85", "88"],
+          ["176", "44x44 Perimeter", "204", "10.2", "107", "102"],
+          ["220", "44x66 Perimeter", "204", "10.0 x 15.0", "107", "102"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Full Area Grid Arrays (317 to 9104 Bumps)",
+    tag: "Full Area Arrays",
+    subtitle: "Full Area Grid Arrays",
+    svgs: [
+      {
+        label: "Full Array Grid Pattern",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="25" y="10" width="90" height="90" fill="#1e293b" rx="6" stroke="#475569" stroke-width="2" />
+            <circle cx="35" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="20" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="20" r="2.5" fill="#e2e8f0" />
+            <circle cx="35" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="34" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="34" r="2.5" fill="#e2e8f0" />
+            <circle cx="35" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="48" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="48" r="2.5" fill="#e2e8f0" />
+            <circle cx="35" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="62" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="62" r="2.5" fill="#e2e8f0" />
+            <circle cx="35" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="76" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="76" r="2.5" fill="#e2e8f0" />
+            <circle cx="35" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="50" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="65" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="80" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="95" cy="90" r="2.5" fill="#e2e8f0" /><circle cx="105" cy="90" r="2.5" fill="#e2e8f0" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Full Grid Spec Reference Table",
+        columns: ["Bumps", "Bump Matrix", "Pitch (µm)", "Die Size (mm)", "Bump Ht (µm)", "UBM øDia (µm)"],
+        rows: [
+          ["317", "18x18 Full Array", "254", "5.08", "125", "102"],
+          ["484", "22x22 Full Array", "200", "5.0", "74", "102"],
+          ["569", "24x24 Full Array", "204", "5.08", "89", "102"],
+          ["1268", "36x36 Full Array", "254", "10.2", "125", "102"],
+          ["1936", "44x44 Full Array", "200", "10.0", "74", "102"],
+          ["2276", "48x48 Full Array", "204", "10.0", "89", "102"],
+          ["2853", "54x54 Full Array", "254", "15.0", "125", "102"],
+          ["4356", "66x66 Full Array", "200", "15.0", "74", "102"],
+          ["5072", "72x72 Full Array", "254", "20.0", "125", "102"],
+          ["5121", "72x72 Full Array", "204", "15.0", "89", "102"],
+          ["7744", "88x88 Full Array", "200", "20.0", "74", "102"],
+          ["9104", "96x96 Full Array", "204", "20.0", "89", "102"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Under Bump Metallization (UBM) & Alloys",
+    tag: "Material Properties",
+    subtitle: "UBM & Metallurgy",
+    svgs: [
+      {
+        label: "Standoff Cross Section",
+        html: `
+          <svg width="150" height="110" viewBox="0 0 150 110">
+            <rect x="10" y="10" width="130" height="20" fill="#4a5568" />
+            <text x="75" y="22" fill="#fff" font-size="8" text-anchor="middle">Silicon Die Pad</text>
+            <rect x="40" y="30" width="70" height="4" fill="#dd6b20" />
+            <rect x="42" y="34" width="66" height="4" fill="#319795" />
+            <rect x="45" y="38" width="60" height="4" fill="#d69e2e" />
+            <circle cx="75" cy="70" r="24" fill="#cbd5e0" stroke="#718096" stroke-width="1.5" />
+            <rect x="35" y="94" width="80" height="10" fill="#2b6cb0" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Solder Bump Alloys & Properties",
+        columns: ["Alloy Family", "Composition", "Liquidus Temp", "Common Application"],
+        rows: [
+          ["Eutectic SnPb", "63% Sn / 37% Pb", "183°C", "Aerospace, Military (Legacy High-Reliability)"],
+          ["SAC305", "96.5% Sn / 3.0% Ag / 0.5% Cu", "217°C", "Consumer Electronics (RoHS Lead-Free Standard)"],
+          ["High Lead", "95% Pb / 5% Sn", "312°C", "High melting point primary bumps inside ceramic carriers"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Thermal Cycling & Solder Shear Stress",
+    tag: "Failure Mechanics",
+    subtitle: "CTE Fatigue & Failure Mechanics",
+    svgs: [
+      {
+        label: "Standoff Cross Section",
+        html: `
+          <svg width="150" height="110" viewBox="0 0 150 110">
+            <rect x="10" y="10" width="130" height="20" fill="#4a5568" />
+            <text x="75" y="22" fill="#fff" font-size="8" text-anchor="middle">Silicon Die Pad</text>
+            <rect x="40" y="30" width="70" height="4" fill="#dd6b20" />
+            <rect x="42" y="34" width="66" height="4" fill="#319795" />
+            <rect x="45" y="38" width="60" height="4" fill="#d69e2e" />
+            <circle cx="75" cy="70" r="24" fill="#cbd5e0" stroke="#718096" stroke-width="1.5" />
+            <rect x="35" y="94" width="80" height="10" fill="#2b6cb0" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Underfill Stress Absorption Performance",
+        columns: ["Underfill Parameter", "Target Range", "Impact on Solder Lifetime"],
+        rows: [
+          ["Glass Transition (Tg)", "110°C to 150°C", "Prevents rapid strain amplification below high operating boundaries"],
+          ["CTE Match (α1)", "22 to 32 ppm/°C", "Balances structural load transfer between die and board materials"],
+          ["Elastic Modulus (E)", "6 to 10 GPa", "Controls overall stress redistribution across solder bump grids"]
+        ]
+      }
+    ]
   }
-  document.getElementById(pkgId).style.display = 'block';
+];
 
-  // Expose detail stage
-  document.getElementById('detailsWorkspace').style.display = 'block';
-}
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
 
-function closePackage(pkgId) {
-  // Hide modal viewport and standard panels
-  document.getElementById(pkgId).style.display = 'none';
-  document.getElementById('detailsWorkspace').style.display = 'none';
-
-  // Show master list cards search directory
-  document.getElementById('selectionWorkspace').style.display = 'block';
-}
-
-function myFunction() {
-  var input = document.getElementById("myInput");
-  var filter = input.value.toUpperCase();
-  var ul = document.getElementById("myUL");
-  var li = ul.getElementsByTagName("li");
+// Update display with selected package parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
   
-  for (var i = 0; i < li.length; i++) {
-    var card = li[i].getElementsByClassName("pinout-item-card")[0];
-    var txtValue = card.textContent || card.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
-    }
-  }
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
 }
 
-// Lightbox modal enlarger for SVG outlines
+// Lightbox modal enlarger for dynamic SVG diagrams
 function zoomSvg(svgContent) {
-  var overlay = document.createElement('div');
+  const overlay = document.createElement('div');
   overlay.id = 'svg-zoom-overlay';
   overlay.style.position = 'fixed';
   overlay.style.top = '0';
   overlay.style.left = '0';
   overlay.style.width = '100%';
   overlay.style.height = '100%';
-  overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
   overlay.style.zIndex = '20000';
   overlay.style.display = 'flex';
   overlay.style.alignItems = 'center';
   overlay.style.justifyContent = 'center';
   overlay.style.cursor = 'zoom-out';
-  overlay.style.boxShadow = 'inset 0 0 100px rgba(15,23,42,0.15)';
   
-  var closeIndicator = document.createElement('div');
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
   closeIndicator.innerHTML = '&times;';
-  closePowerStyle(closeIndicator);
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
   overlay.appendChild(closeIndicator);
 
-  var container = document.createElement('div');
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
   container.style.width = '90%';
   container.style.maxWidth = '500px';
-  container.style.maxHeight = '85vh';
+  container.style.maxHeight = '80vh';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
   container.style.justifyContent = 'center';
-  container.innerHTML = svgContent.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
   overlay.appendChild(container);
   
-  overlay.onclick = function() {
+  const closeOverlay = function() {
     overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
   };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
   document.body.appendChild(overlay);
-}
-
-function closePowerStyle(el) {
-  el.style.position = 'fixed';
-  el.style.top = '40px';
-  el.style.right = '40px';
-  el.style.fontSize = '40px';
-  el.style.fontWeight = 'bold';
-  el.style.color = '#1e293b';
-  el.style.cursor = 'pointer';
 }
 
 // Calculation for Distance from Neutral Point (DNP) and Solder Shear Strain
@@ -738,7 +904,6 @@ function calculateCTEStress() {
   var dnp = 0.5 * Math.sqrt((x * x) + (y * y));
 
   // Δα: CTE difference between Silicon (2.6 ppm/°C) and Organic FR-4 (15 ppm/°C)
-  // Δα = 12.4 x 10^-6 /°C
   var cteMismatchDelta = 12.4e-6; 
 
   // Convert DNP from mm to µm (DNP * 1000)
@@ -752,17 +917,21 @@ function calculateCTEStress() {
     "<strong>Distance from Neutral Point (DNP):</strong> " + dnp.toFixed(3) + " mm<br>" +
     "<strong>Estimated Cyclic Shear Strain (&gamma;):</strong> " + shearStrain.toFixed(3) + " (" + shearStrainPercent.toFixed(2) + "%)";
 }
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first package entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+  calculateCTEStress();
+};
 </script>
 
+<!-- SEO Structured JSON-LD Schemas -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "publisher": {
-    "@type": "Organization",
-    "name": "CalcBoy",
-    "url": "https://calcboy.com"
-  },
   "mainEntity": [
     {
       "@type": "Question",
@@ -797,24 +966,9 @@ function calculateCTEStress() {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "CalcBoy",
-      "item": "https://calcboy.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Electronics Reference",
-      "item": "https://calcboy.com/category/electronics-calculators/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "Flip Chip Daisy Chain Reference",
-      "item": "https://calcboy.com/tool/flip-chip-daisy-chain-guide"
-    }
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Flip Chip Daisy Chain Reference", "item": "https://calcboy.com/tool/flip-chip-daisy-chain-guide" }
   ]
 }
 </script>
