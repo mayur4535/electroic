@@ -6,136 +6,155 @@
 <title>WLP &amp; eWLP Wafer Level Package Reference Guide | CalcBoy</title>
 <meta name="description" content="Complete engineering reference guide for WLP and eWLP grid array packages. Separate cards with precise ball count, pitch, matrix, and footprint tables.">
 <meta name="keywords" content="WLP package, eWLP pinout, copper pillar, grid array, semiconductor, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/wlp-package-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="WLP &amp; eWLP Wafer Level Package Reference Guide | CalcBoy">
+<meta property="og:description" content="Access complete engineering specifications for Wafer Level Packages (WLP) and Embedded WLPs (eWLP). Calculate overall chip footprints and bump densities.">
+<meta property="og:url" content="https://calcboy.com/tool/wlp-package-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="WLP &amp; eWLP Wafer Level Package Reference Guide | CalcBoy">
+<meta name="twitter:description" content="Complete engineering index of Wafer Level Package (WLP) dimensions and interactive array density calculator.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#semiconductor-pkg-calc,#semiconductor-pkg-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#semiconductor-pkg-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#semiconductor-pkg-tool, #semiconductor-pkg-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#009688;
-  box-shadow:0 0 0 3px rgba(0,150,136,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#semiconductor-pkg-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
+}
+.calc-grid {
+  display: grid;
+  gap: 15px;
+}
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+}
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
   cursor: pointer;
 }
-.pinout-item-card:hover {
-  border-color:#009688;
-  box-shadow:0 4px 12px rgba(0,150,136,.08);
+select:focus {
+  border-color: #009688;
+  box-shadow: 0 0 0 3px rgba(0,150,136,.12);
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#009688;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
-}
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
-}
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Modal Overlay Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:hidden; /* Lock viewport scroll completely */
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:10px;
-}
-.w3-modal-content {
-  background:#fff;
-  margin:80px auto 20px; /* Pushed down to clear header bar completely */
-  width:100%;
-  max-width:580px;
-  max-height:85vh; /* Restored comfortable height */
-  overflow-y:auto;  /* Enable vertical scroll inside the content box */
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-
-/* Red Close Button: Viewport-Locked */
-.mid {
-  position: fixed !important;
-  top: 100px !important;  
-  right: 25px !important;
-  z-index: 10010 !important;
-  width: 50px !important;
-  height: 40px !important;
-  background-color: red !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-size: 25px !important;
-  font-weight: bold !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  text-decoration: none;
-}
-.mid:hover {
-  background-color: #cc0000 !important;
-  transform: scale(1.05);
-}
-
-/* Inline Diagram Styling */
-.diagram-container {
-  width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
   border-radius: 12px;
   padding: 16px;
-  margin: 12px auto 6px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.connector-header-card .badge {
+  background: #e0f2f1;
+  color: #009688;
+  border: 1px solid #b2dfdb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #009688;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e0f2f1;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
   display: flex;
   gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
 }
-.vector-view {
+.vector-box {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -143,16 +162,17 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   background: #fff;
   border: 1px solid #edf2f7;
   border-radius: 8px;
-  padding: 8px;
+  padding: 12px;
   min-height: 140px;
   justify-content: center;
-  cursor: zoom-in; /* Indicate clickable zoom action */
-  transition: transform 0.2s;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
 }
-.vector-view:hover {
+.vector-box:hover {
   transform: scale(1.02);
+  border-color: #009688;
 }
-.vector-view svg {
+.vector-box svg {
   max-width: 100%;
   height: auto;
 }
@@ -161,80 +181,185 @@ body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
   font-weight: 800;
   color: #64748b;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+.img-caption {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
+}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #374151 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.table1 {width:100%;text-align:left;clear:both}
-
-.img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:6px;
-  margin-bottom:16px;
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-
-/* Standardized Tables & Scroll wrappers */
-.table-responsive {
-  width: 100%;
-  max-height: 380px; /* Lock height of scroll container inside the modal */
-  overflow-y: auto;  /* Enable vertical scroll inside the container */
-  overflow-x: auto;  /* Enable horizontal scroll for wide tables */
-  margin: 15px 0 0;
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutLead {
+  background: linear-gradient(135deg,#eef5ff,#fff7ed);
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aboutLead strong {
+  display: block;
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 7px;
+}
+.aboutNote {
+  background: #e0f2f1;
+  border: 1px solid #b2dfdb;
+  border-left: 5px solid #009688;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00796b;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  -webkit-overflow-scrolling: touch;
-  position: relative; /* Establish scroll context for sticky TH elements */
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
 }
-table {
-  width: 100%;
-  border-collapse: separate; /* Essential: separate allows sticky TH positioning to work */
-  border-spacing: 0;
-  background: #fff;
-  overflow: hidden;
-  table-layout: auto; /* Columns scale dynamically based on text length */
-}
-th {
-  background: #f1f5f9 !important; /* Solid background so scrolling text is hidden behind */
-  color: #1e293b;
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #009688;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   font-weight: 900;
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 2px solid #e2e8f0;
-  box-shadow: inset 0 -2px 0 #e2e8f0; /* Crisp bottom border that doesn't scroll away */
-  position: -webkit-sticky !important; /* Support iOS Safari */
-  position: sticky !important;
-  top: 0 !important; /* Lock to the top of the scroll container */
-  z-index: 20 !important; /* Stay on top of TD elements */
-  white-space: nowrap; /* Prevent headers from wrapping awkwardly */
 }
-td {
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #475467;
-  border-bottom: 1px solid #edf2f7;
-  white-space: nowrap; /* Keep values on a single line for smooth horizontal scrolling */
-}
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
-
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
 
 /* Simple working calculator inputs styling */
 .calc-field-group {display:flex; flex-direction:column; gap:8px; margin-bottom:12px;}
@@ -245,409 +370,49 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 .calc-result-display {margin-top:12px; padding:12px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; font-size:13px; font-weight:700; color:#166534;}
 
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="semiconductor-pkg-calc">
+<div id="semiconductor-pkg-tool">
 
-  <!-- SELECTION HUB: Search and Card List -->
-  <div id="selectionWorkspace">
-    <div class="search-container">
-      <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Wafer Level Package..." title="Type in a package size or pin count">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Wafer Level Selection</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select WLP Standard</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
     </div>
-
-    <ul id="myUL">
-      
-      <li>
-        <a href="#" onclick="openPackage('id01'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Copper Pillar Design</span>
-              <span class="card-title">0.3mm Pitch WLP (Wafer Level Package)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id02'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Copper Pillar Design</span>
-              <span class="card-title">0.4mm Pitch WLP (Wafer Level Package)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id03'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Copper Pillar Design</span>
-              <span class="card-title">0.5mm Pitch WLP (Wafer Level Package)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id04'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Embedded Wafer Level</span>
-              <span class="card-title">0.3mm Pitch eWLP (Embedded WLP)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id05'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Embedded Wafer Level</span>
-              <span class="card-title">0.4mm Pitch eWLP (Embedded WLP)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="openPackage('id06'); return false;" class="pinout-item-card">
-          <div class="card-inner">
-            <div style="display:flex; flex-direction:column;">
-              <span class="card-tag">Embedded Wafer Level</span>
-              <span class="card-title">0.5mm Pitch eWLP (Embedded WLP)</span>
-            </div>
-            <span class="card-arrow">&#x2192;</span>
-          </div>
-        </a>
-      </li>
-
-    </ul>
   </div>
 
-  <!-- DETAILS HUB: Modal Popups -->
-  <div id="detailsWorkspace">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">Copper Pillar Design</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Wire Mapping</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <!-- CARD 1: 0.3mm Pitch WLP -->
-    <div id="id01" class="w3-modal">
-      <button class="mid" onclick="closePackage('id01')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">0.3mm Pitch WLP (Copper Pillar)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="20" y="20" width="100" height="50" fill="#334155" rx="3" />
-                <circle cx="35" cy="85" r="8" fill="#94a3b8" />
-                <circle cx="70" cy="85" r="8" fill="#94a3b8" />
-                <circle cx="105" cy="85" r="8" fill="#94a3b8" />
-                <rect x="31" y="70" width="8" height="10" fill="#d97706" />
-                <rect x="66" y="70" width="8" height="10" fill="#d97706" />
-                <rect x="101" y="70" width="8" height="10" fill="#d97706" />
-              </svg>
-              <div class="vector-label">WLP Copper Pillar Profile</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: 0.3mm WLP STRUCTURE (CLICK TO ENLARGE)</div>
-
-          <h3>0.3mm pitch WLP Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Balls I/O</th>
-                  <th>Ball Matrix</th>
-                  <th>Pitch</th>
-                  <th>Size</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>4</td><td>2x2</td><td>0.3mm</td><td>0.6mm</td></tr>
-                <tr><td>16</td><td>4x4</td><td>0.3mm</td><td>1.2mm</td></tr>
-                <tr><td>36</td><td>6x6</td><td>0.3mm</td><td>1.8mm</td></tr>
-                <tr><td>64</td><td>8x8</td><td>0.3mm</td><td>2.4mm</td></tr>
-                <tr><td>100</td><td>10x10</td><td>0.3mm</td><td>3.0mm</td></tr>
-                <tr><td>144</td><td>12x12</td><td>0.3mm</td><td>3.6mm</td></tr>
-                <tr><td>196</td><td>14x14</td><td>0.3mm</td><td>4.2mm</td></tr>
-                <tr><td>256</td><td>16x16</td><td>0.3mm</td><td>4.8mm</td></tr>
-                <tr><td>264</td><td>17x17 6-row</td><td>0.3mm</td><td>6mm</td></tr>
-                <tr><td>400</td><td>20x20</td><td>0.3mm</td><td>6mm</td></tr>
-                <tr><td>676</td><td>26x26</td><td>0.3mm</td><td>7.8mm</td></tr>
-                <tr><td>900</td><td>30x30</td><td>0.3mm</td><td>9.0mm</td></tr>
-                <tr><td>1600</td><td>40x40</td><td>0.3mm</td><td>12.0mm</td></tr>
-                <tr><td>2500</td><td>50x50</td><td>0.3mm</td><td>15.0mm</td></tr>
-                <tr><td>6400</td><td>80x80</td><td>0.3mm</td><td>24.0mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
     </div>
-
-    <!-- CARD 2: 0.4mm Pitch WLP -->
-    <div id="id02" class="w3-modal">
-      <button class="mid" onclick="closePackage('id02')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">0.4mm Pitch WLP (Copper Pillar)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="20" y="20" width="100" height="50" fill="#334155" rx="3" />
-                <circle cx="45" cy="85" r="9" fill="#94a3b8" />
-                <circle cx="95" cy="85" r="9" fill="#94a3b8" />
-                <rect x="40" y="70" width="10" height="10" fill="#d97706" />
-                <rect x="90" y="70" width="10" height="10" fill="#d97706" />
-              </svg>
-              <div class="vector-label">0.4mm WLP Cross Section</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: 0.4mm WLP STRUCTURE (CLICK TO ENLARGE)</div>
-
-          <h3>0.4mm pitch WLP Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Balls I/O</th>
-                  <th>Ball Matrix</th>
-                  <th>Pitch</th>
-                  <th>Size</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>4</td><td>2x2</td><td>0.4mm</td><td>0.8mm</td></tr>
-                <tr><td>16</td><td>4x4</td><td>0.4mm</td><td>1.6mm</td></tr>
-                <tr><td>36</td><td>6x6</td><td>0.4mm</td><td>2.4mm</td></tr>
-                <tr><td>64</td><td>8x8</td><td>0.4mm</td><td>3.2mm</td></tr>
-                <tr><td>100</td><td>10x10</td><td>0.4mm</td><td>4mm</td></tr>
-                <tr><td>144</td><td>12x12</td><td>0.4mm</td><td>4.8mm</td></tr>
-                <tr><td>144</td><td>13x13 4-Row</td><td>0.4mm</td><td>6mm</td></tr>
-                <tr><td>196</td><td>14x14</td><td>0.4mm</td><td>5.6mm</td></tr>
-                <tr><td>256</td><td>16x16</td><td>0.4mm</td><td>6.4mm</td></tr>
-                <tr><td>400</td><td>20x20</td><td>0.4mm</td><td>8mm</td></tr>
-                <tr><td>676</td><td>26x26</td><td>0.4mm</td><td>10.4mm</td></tr>
-                <tr><td>900</td><td>30x30</td><td>0.4mm</td><td>12mm</td></tr>
-                <tr><td>1600</td><td>40x40</td><td>0.4mm</td><td>16mm</td></tr>
-                <tr><td>1936</td><td>44x44</td><td>0.4mm</td><td>17.6mm</td></tr>
-                <tr><td>2116</td><td>46x46</td><td>0.4mm</td><td>18.4mm</td></tr>
-                <tr><td>2500</td><td>50x50</td><td>0.4mm</td><td>20mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 3: 0.5mm Pitch WLP -->
-    <div id="id03" class="w3-modal">
-      <button class="mid" onclick="closePackage('id03')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">0.5mm Pitch WLP (Copper Pillar)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="20" y="20" width="100" height="50" fill="#334155" rx="3" />
-                <circle cx="45" cy="85" r="10" fill="#94a3b8" />
-                <circle cx="95" cy="85" r="10" fill="#94a3b8" />
-                <rect x="39" y="70" width="12" height="10" fill="#d97706" />
-                <rect x="89" y="70" width="12" height="10" fill="#d97706" />
-              </svg>
-              <div class="vector-label">0.5mm WLP Profile</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: 0.5mm WLP STRUCTURE (CLICK TO ENLARGE)</div>
-
-          <h3>0.5mm pitch WLP Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Balls I/O</th>
-                  <th>Ball Matrix</th>
-                  <th>Pitch</th>
-                  <th>Size</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>4</td><td>2x2</td><td>0.5mm</td><td>1.0mm</td></tr>
-                <tr><td>6</td><td>2x3</td><td>0.5mm</td><td>1.0x1.5mm</td></tr>
-                <tr><td>8</td><td>2x4</td><td>0.5mm</td><td>1.0x2.0mm</td></tr>
-                <tr><td>16</td><td>4x4</td><td>0.5mm</td><td>2.0mm</td></tr>
-                <tr><td>36</td><td>6x6</td><td>0.5mm</td><td>3.0mm</td></tr>
-                <tr><td>64</td><td>8x8</td><td>0.5mm</td><td>4.0mm</td></tr>
-                <tr><td>100</td><td>10x10</td><td>0.5mm</td><td>5.0mm</td></tr>
-                <tr><td>112</td><td>11x11 4-Row</td><td>0.5mm</td><td>6.0mm</td></tr>
-                <tr><td>144</td><td>12x12</td><td>0.5mm</td><td>6.0mm</td></tr>
-                <tr><td>196</td><td>14x14</td><td>0.5mm</td><td>7.0mm</td></tr>
-                <tr><td>256</td><td>16x16</td><td>0.5mm</td><td>8.0mm</td></tr>
-                <tr><td>400</td><td>20x20</td><td>0.5mm</td><td>10mm</td></tr>
-                <tr><td>484</td><td>22x22</td><td>0.5mm</td><td>11mm</td></tr>
-                <tr><td>676</td><td>26x26</td><td>0.5mm</td><td>13mm</td></tr>
-                <tr><td>900</td><td>30x30</td><td>0.5mm</td><td>15mm</td></tr>
-                <tr><td>1600</td><td>40x40</td><td>0.5mm</td><td>20mm</td></tr>
-                <tr><td>2500</td><td>50x50</td><td>0.5mm</td><td>25mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 4: 0.3mm Pitch eWLP -->
-    <div id="id04" class="w3-modal">
-      <button class="mid" onclick="closePackage('id04')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">0.3mm Pitch eWLP (Embedded WLP)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="15" y="20" width="110" height="50" fill="#1e293b" rx="4" />
-                <rect x="40" y="25" width="60" height="40" fill="#009688" rx="2" />
-                <text x="70" y="48" fill="#fff" font-size="8" text-anchor="middle">Silicon Die</text>
-                <circle cx="30" cy="85" r="6" fill="#cbd5e1" />
-                <circle cx="70" cy="85" r="6" fill="#cbd5e1" />
-                <circle cx="110" cy="85" r="6" fill="#cbd5e1" />
-              </svg>
-              <div class="vector-label">Fan-Out Reconstruction</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: 0.3mm eWLP STRUCTURE (CLICK TO ENLARGE)</div>
-
-          <h3>0.3mm pitch eWLP Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Pads I/O</th>
-                  <th>Pad Matrix</th>
-                  <th>Pitch</th>
-                  <th>Size</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>4</td><td>2x2</td><td>0.3mm</td><td>0.56mm</td></tr>
-                <tr><td>16</td><td>4x4</td><td>0.3mm</td><td>1.16mm</td></tr>
-                <tr><td>36</td><td>6x6</td><td>0.3mm</td><td>1.76mm</td></tr>
-                <tr><td>64</td><td>8x8</td><td>0.3mm</td><td>2.36mm</td></tr>
-                <tr><td>100</td><td>10x10</td><td>0.3mm</td><td>2.96mm</td></tr>
-                <tr><td>144</td><td>12x12</td><td>0.3mm</td><td>3.56mm</td></tr>
-                <tr><td>196</td><td>14x14</td><td>0.3mm</td><td>4.16mm</td></tr>
-                <tr><td>2500</td><td>50x50</td><td>0.3mm</td><td>15mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 5: 0.4mm Pitch eWLP -->
-    <div id="id05" class="w3-modal">
-      <button class="mid" onclick="closePackage('id05')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">0.4mm Pitch eWLP (Embedded WLP)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="15" y="20" width="110" height="50" fill="#1e293b" rx="4" />
-                <rect x="40" y="25" width="60" height="40" fill="#009688" rx="2" />
-                <circle cx="35" cy="85" r="7" fill="#cbd5e1" />
-                <circle cx="105" cy="85" r="7" fill="#cbd5e1" />
-              </svg>
-              <div class="vector-label">0.4mm Fan-Out profile</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: 0.4mm eWLP STRUCTURE (CLICK TO ENLARGE)</div>
-
-          <h3>0.4mm pitch eWLP Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Balls I/O</th>
-                  <th>Ball Matrix</th>
-                  <th>Pitch</th>
-                  <th>Size</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>4</td><td>2x2</td><td>0.4mm</td><td>0.76mm</td></tr>
-                <tr><td>16</td><td>4x4</td><td>0.4mm</td><td>1.56mm</td></tr>
-                <tr><td>36</td><td>6x6</td><td>0.4mm</td><td>2.36mm</td></tr>
-                <tr><td>64</td><td>8x8</td><td>0.4mm</td><td>3.16mm</td></tr>
-                <tr><td>100</td><td>10x10</td><td>0.4mm</td><td>3.96mm</td></tr>
-                <tr><td>144</td><td>12x12</td><td>0.4mm</td><td>4.76mm</td></tr>
-                <tr><td>196</td><td>14x14</td><td>0.4mm</td><td>5.56mm</td></tr>
-                <tr><td>256</td><td>16x16</td><td>0.4mm</td><td>6.36mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 6: 0.5mm Pitch eWLP -->
-    <div id="id06" class="w3-modal">
-      <button class="mid" onclick="closePackage('id06')">&times;</button>
-      <div class="w3-modal-content">
-        <div class="table1">
-          <h2 style="margin:0 0 12px; color:#1e293b; font-weight:800; text-align:center;">0.5mm Pitch eWLP (Embedded WLP)</h2>
-          
-          <div class="diagram-container">
-            <div class="vector-view" onclick="zoomSvg(this.innerHTML)">
-              <svg width="140" height="110" viewBox="0 0 140 110">
-                <rect x="15" y="20" width="110" height="50" fill="#1e293b" rx="4" />
-                <rect x="40" y="25" width="60" height="40" fill="#009688" rx="2" />
-                <circle cx="40" cy="85" r="8" fill="#cbd5e1" />
-                <circle cx="100" cy="85" r="8" fill="#cbd5e1" />
-              </svg>
-              <div class="vector-label">0.5mm Fan-Out profile</div>
-            </div>
-          </div>
-          <div class="img-caption">DIAGRAM: 0.5mm eWLP STRUCTURE (CLICK TO ENLARGE)</div>
-
-          <h3>0.5mm pitch eWLP Specifications</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Balls I/O</th>
-                  <th>Ball Matrix</th>
-                  <th>Pitch</th>
-                  <th>Size</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>100</td><td>10x10</td><td>0.5mm</td><td>5.0mm</td></tr>
-                <tr><td>144</td><td>12x12</td><td>0.5mm</td><td>6.0mm</td></tr>
-                <tr><td>196</td><td>14x14</td><td>0.5mm</td><td>7.0mm</td></tr>
-                <tr><td>256</td><td>16x16</td><td>0.5mm</td><td>8.0mm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- Interactive Utility Area Calculator -->
@@ -657,7 +422,7 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
       <label for="calcPitch">Select Package Solder Pitch (mm):</label>
       <select id="calcPitch">
         <option value="0.3">0.3 mm (Ultra-fine Pitch)</option>
-        <option value="0.4">0.4 mm (Fine Pitch)</option>
+        <option value="0.4" selected>0.4 mm (Fine Pitch)</option>
         <option value="0.5">0.5 mm (Standard Pitch)</option>
       </select>
     </div>
@@ -672,33 +437,111 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
-  <!-- Educational & SEO Sections -->
+  <!-- Input Parameters Specification -->
+  <section class="infoBox">
+    <h2>Input Parameters Specification</h2>
+    <div class="paramGrid">
+      <div class="paramItem">
+        <strong>Array Grid Pitch (mm)</strong>
+        Standardized ball pitch spacing spanning 0.3mm (ultra-fine) up to 0.5mm layouts.
+      </div>
+      <div class="paramItem">
+        <strong>Bump Material Integration</strong>
+        Copper-pillar structures with SAC micro-balls designed to resist thermal joint collapse.
+      </div>
+      <div class="paramItem">
+        <strong>Fan-Out Realignment</strong>
+        Embedded mold packaging (eWLP) configured to re-distribute routing grids past the silicon die face.
+      </div>
+      <div class="paramItem">
+        <strong>Substrate Package Sizing</strong>
+        Overall structural envelope boundaries defined to accommodate the reconstructed wafer matrix.
+      </div>
+    </div>
+  </section>
+
+  <!-- Practical Operational Examples -->
+  <section class="infoBox">
+    <h2>Practical Operational Examples</h2>
+    <div class="exampleGrid">
+      <div class="exampleCard">
+        <p><strong>0.3mm Capillary Reflow</strong></p>
+        <p>Utilize tight thermal-gradient profiles to avoid adjacent solder bridging on ultra-fine 0.3mm pitch copper pillars.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>eWLP Fan-Out Placement</strong></p>
+        <p>Incorporate eWLP fan-out technology to route 144 ball connections on active dies measuring only 3.5mm SQ.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Micro-Via HDI Routing</strong></p>
+        <p>Deploy high-density interconnect (HDI) microvias to escape-route dense 0.4mm pitch ball grid matrices.</p>
+      </div>
+      <div class="exampleCard">
+        <p><strong>Joint Underfill Reinforcement</strong></p>
+        <p>Inject epoxy underfill below high-stress 0.5mm pitch WLP margins to distribute shear strain during thermal cycles.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
     <h2>Semiconductor Packaging &amp; Substrate Theory</h2>
     <p>Semiconductor packaging acts as the bridge connecting delicate integrated circuit (IC) silicon dies to the printable circuit boards (PCBs) of larger electronic systems. Traditional packaging used wire bonding to link the peripheral die pads to leadframes (DIP, QFP, SOIC). Modern grid array packaging bypasses wire connections entirely, placing contacts under the chip body as ball grid arrays (BGA).</p>
     <div class="aboutNote">Tip: Fan-In wafer level packaging (WLP) is restricted by die size limits, while Fan-Out (EWLP) expands the contact array area past the silicon die boundary.</div>
   </section>
 
+  <!-- Formulas & Thermal Calculations -->
   <section class="infoBox">
     <h2>Formulas &amp; Thermal Calculations</h2>
     <div class="formula">Thermal Resistance (Junction-to-Ambient): RθJA = (TJ - TA) / PD (expressed in °C/W)</div>
     <div class="formula">BGA Array Ball Count Calculation: N = ((Package_Size / Pitch) + 1)² (for a full matrix)</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target Wafer Level Package or eWLP standard using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the package's primary classification.</div>
+      <div class="aboutStep">Study the structural 2D and 3D vector layouts demonstrating the copper pillars or fan-out profiles.</div>
+      <div class="aboutStep">Consult the dimensional mapping table below the graphic to check pitch and body size details.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
+  <section class="infoBox">
+    <h2>About This Reference Guide</h2>
+    <div class="aboutLead">
+      <strong>Your direct engineering lookup for SMT Wafer Level Package (WLP) standards.</strong>
+      <p>This reference guide organizes standard dimensions, ball counts, pitches, and rebuilding matrices for WLP and eWLP configurations.</p>
+    </div>
+    <p>Finding accurate pin layouts and dimensional limits is essential for packaging designers, layout engineers, and manufacturing technicians. Using standardized package configurations ensures footprint compatibility and optimal thermal management.</p>
+    <p>Always verify actual manufacturer footprint specifications prior to board routing. Correct mechanical layouts prevent structural misalignments during reflow.</p>
+    <div class="aboutMiniGrid">
+      <div class="aboutMiniCard"><span>WLP Pitch Classes</span>Dimensions mapped for 0.3mm, 0.4mm, and 0.5mm packaging grids.</div>
+      <div class="aboutMiniCard"><span>Fan-Out Platforms</span>Detailed reconstructions of embedded wafer-level (eWLP) formats.</div>
+      <div class="aboutMiniCard"><span>Copper Pillars</span>Thermal profile designs containing solid-pillar terminals.</div>
+      <div class="aboutMiniCard"><span>Dynamic Estimates</span>Real-time ball count calculations based on active matrix grids.</div>
+    </div>
+  </section>
+
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. What is the main difference between BGA and WLP packaging?</strong></h3>
+    
+    <h3>1. <strong>What is the main difference between BGA and WLP packaging?</strong></h3>
     <p>BGA packages use an intermediate organic or ceramic substrate/interposer to route signals from the die to the solder balls. WLP (Wafer Level Package) places solder balls directly onto the passivated surface of the silicon die, eliminating the substrate completely for the smallest possible footprint.</p>
 
-    <h3><strong>2. Why are Fan-Out packages (EWLP) growing in popularity?</strong></h3>
+    <h3>2. <strong>Why are Fan-Out packages (EWLP) growing in popularity?</strong></h3>
     <p>As silicon chips shrink, their physical die size decreases. However, high-performance chips still require a large number of pins. EWLP embeds the die in a mold compound wafer, providing extra perimeter area to route signals out ("Fan-Out"), avoiding physical pin-count limitations of tiny silicon surfaces.</p>
 
-    <h3><strong>3. How does ball pitch affect PCB design?</strong></h3>
+    <h3>3. <strong>How does ball pitch affect PCB design?</strong></h3>
     <p>Fine-pitch arrays (under 0.50mm) require advanced PCB fabrication technologies, such as high-density interconnect (HDI) microvias, laser drilling, and narrow track routing. Larger pitch arrays (0.80mm - 1.0mm) can be routed using standard, lower-cost multilayers.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
       <div class="linkCard"><strong>VGA Pinout Reference Guide</strong>Configure classic analog computer display pinouts.</div>
       <div class="linkCard"><strong>HDMI Type-A/B Reference Guide</strong>Analyze modern high-definition digital video matrices.</div>
@@ -709,48 +552,375 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function openPackage(pkgId) {
-  // Hide card list and search bar completely
-  document.getElementById('selectionWorkspace').style.display = 'none';
-
-  // Hide all panels first, then show the active selection
-  var panels = document.getElementsByClassName('w3-modal');
-  for (var i = 0; i < panels.length; i++) {
-    panels[i].style.display = 'none';
+// Master Semiconductor Packages Database
+const packageDetails = [
+  {
+    name: "0.3mm Pitch WLP (Wafer Level Package)",
+    tag: "Copper Pillar Design",
+    subtitle: "0.3mm Pitch WLP (Copper Pillar)",
+    svgs: [
+      {
+        label: "WLP Copper Pillar Profile",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="20" y="20" width="100" height="50" fill="#334155" rx="3" />
+            <circle cx="35" cy="85" r="8" fill="#94a3b8" />
+            <circle cx="70" cy="85" r="8" fill="#94a3b8" />
+            <circle cx="105" cy="85" r="8" fill="#94a3b8" />
+            <rect x="31" y="70" width="8" height="10" fill="#d97706" />
+            <rect x="66" y="70" width="8" height="10" fill="#d97706" />
+            <rect x="101" y="70" width="8" height="10" fill="#d97706" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "0.3mm pitch WLP Specifications",
+        columns: ["Balls I/O", "Ball Matrix", "Pitch", "Size"],
+        rows: [
+          ["4", "2x2", "0.3mm", "0.6mm"],
+          ["16", "4x4", "0.3mm", "1.2mm"],
+          ["36", "6x6", "0.3mm", "1.8mm"],
+          ["64", "8x8", "0.3mm", "2.4mm"],
+          ["100", "10x10", "0.3mm", "3.0mm"],
+          ["144", "12x12", "0.3mm", "3.6mm"],
+          ["196", "14x14", "0.3mm", "4.2mm"],
+          ["256", "16x16", "0.3mm", "4.8mm"],
+          ["264", "17x17 6-row", "0.3mm", "6mm"],
+          ["400", "20x20", "0.3mm", "6mm"],
+          ["676", "26x26", "0.3mm", "7.8mm"],
+          ["900", "30x30", "0.3mm", "9.0mm"],
+          ["1600", "40x40", "0.3mm", "12.0mm"],
+          ["2500", "50x50", "0.3mm", "15.0mm"],
+          ["6400", "80x80", "0.3mm", "24.0mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "0.4mm Pitch WLP (Wafer Level Package)",
+    tag: "Copper Pillar Design",
+    subtitle: "0.4mm Pitch WLP (Copper Pillar)",
+    svgs: [
+      {
+        label: "0.4mm WLP Cross Section",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="20" y="20" width="100" height="50" fill="#334155" rx="3" />
+            <circle cx="45" cy="85" r="9" fill="#94a3b8" />
+            <circle cx="95" cy="85" r="9" fill="#94a3b8" />
+            <rect x="40" y="70" width="10" height="10" fill="#d97706" />
+            <rect x="90" y="70" width="10" height="10" fill="#d97706" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "0.4mm pitch WLP Specifications",
+        columns: ["Balls I/O", "Ball Matrix", "Pitch", "Size"],
+        rows: [
+          ["4", "2x2", "0.4mm", "0.8mm"],
+          ["16", "4x4", "0.4mm", "1.6mm"],
+          ["36", "6x6", "0.4mm", "2.4mm"],
+          ["64", "8x8", "0.4mm", "3.2mm"],
+          ["100", "10x10", "0.4mm", "4mm"],
+          ["144", "12x12", "0.4mm", "4.8mm"],
+          ["144", "13x13 4-Row", "0.4mm", "6mm"],
+          ["196", "14x14", "0.4mm", "5.6mm"],
+          ["256", "16x16", "0.4mm", "6.4mm"],
+          ["400", "20x20", "0.4mm", "8mm"],
+          ["676", "26x26", "0.4mm", "10.4mm"],
+          ["900", "30x30", "0.4mm", "12mm"],
+          ["1600", "40x40", "0.4mm", "16mm"],
+          ["1936", "44x44", "0.4mm", "17.6mm"],
+          ["2116", "46x46", "0.4mm", "18.4mm"],
+          ["2500", "50x50", "0.4mm", "20mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "0.5mm Pitch WLP (Wafer Level Package)",
+    tag: "Copper Pillar Design",
+    subtitle: "0.5mm Pitch WLP (Copper Pillar)",
+    svgs: [
+      {
+        label: "0.5mm WLP Profile",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="20" y="20" width="100" height="50" fill="#334155" rx="3" />
+            <circle cx="45" cy="85" r="10" fill="#94a3b8" />
+            <circle cx="95" cy="85" r="10" fill="#94a3b8" />
+            <rect x="39" y="70" width="12" height="10" fill="#d97706" />
+            <rect x="89" y="70" width="12" height="10" fill="#d97706" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "0.5mm pitch WLP Specifications",
+        columns: ["Balls I/O", "Ball Matrix", "Pitch", "Size"],
+        rows: [
+          ["4", "2x2", "0.5mm", "1.0mm"],
+          ["6", "2x3", "0.5mm", "1.0x1.5mm"],
+          ["8", "2x4", "0.5mm", "1.0x2.0mm"],
+          ["16", "4x4", "0.5mm", "2.0mm"],
+          ["36", "6x6", "0.5mm", "3.0mm"],
+          ["64", "8x8", "0.5mm", "4.0mm"],
+          ["100", "10x10", "0.5mm", "5.0mm"],
+          ["112", "11x11 4-Row", "0.5mm", "6.0mm"],
+          ["144", "12x12", "0.5mm", "6.0mm"],
+          ["196", "14x14", "0.5mm", "7.0mm"],
+          ["256", "16x16", "0.5mm", "8.0mm"],
+          ["400", "20x20", "0.5mm", "10mm"],
+          ["484", "22x22", "0.5mm", "11mm"],
+          ["676", "26x26", "0.5mm", "13mm"],
+          ["900", "30x30", "0.5mm", "15mm"],
+          ["1600", "40x40", "0.5mm", "20mm"],
+          ["2500", "50x50", "0.5mm", "25mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "0.3mm Pitch eWLP (Embedded Wafer Level Package)",
+    tag: "Embedded Wafer Level",
+    subtitle: "0.3mm Pitch eWLP (Embedded WLP)",
+    svgs: [
+      {
+        label: "Fan-Out Reconstruction",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="15" y="20" width="110" height="50" fill="#1e293b" rx="4" />
+            <rect x="40" y="25" width="60" height="40" fill="#009688" rx="2" />
+            <text x="70" y="48" fill="#fff" font-size="8" text-anchor="middle">Silicon Die</text>
+            <circle cx="30" cy="85" r="6" fill="#cbd5e1" />
+            <circle cx="70" cy="85" r="6" fill="#cbd5e1" />
+            <circle cx="110" cy="85" r="6" fill="#cbd5e1" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "0.3mm pitch eWLP Specifications",
+        columns: ["Pads I/O", "Pad Matrix", "Pitch", "Size"],
+        rows: [
+          ["4", "2x2", "0.3mm", "0.56mm"],
+          ["16", "4x4", "0.3mm", "1.16mm"],
+          ["36", "6x6", "0.3mm", "1.76mm"],
+          ["64", "8x8", "0.3mm", "2.36mm"],
+          ["100", "10x10", "0.3mm", "2.96mm"],
+          ["144", "12x12", "0.3mm", "3.56mm"],
+          ["196", "14x14", "0.3mm", "4.16mm"],
+          ["2500", "50x50", "0.3mm", "15mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "0.4mm Pitch eWLP (Embedded Wafer Level Package)",
+    tag: "Embedded Wafer Level",
+    subtitle: "0.4mm Pitch eWLP (Embedded WLP)",
+    svgs: [
+      {
+        label: "0.4mm Fan-Out profile",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="15" y="20" width="110" height="50" fill="#1e293b" rx="4" />
+            <rect x="40" y="25" width="60" height="40" fill="#009688" rx="2" />
+            <circle cx="35" cy="85" r="7" fill="#cbd5e1" />
+            <circle cx="105" cy="85" r="7" fill="#cbd5e1" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "0.4mm pitch eWLP Specifications",
+        columns: ["Balls I/O", "Ball Matrix", "Pitch", "Size"],
+        rows: [
+          ["4", "2x2", "0.4mm", "0.76mm"],
+          ["16", "4x4", "0.4mm", "1.56mm"],
+          ["36", "6x6", "0.4mm", "2.36mm"],
+          ["64", "8x8", "0.4mm", "3.16mm"],
+          ["100", "10x10", "0.4mm", "3.96mm"],
+          ["144", "12x12", "0.4mm", "4.76mm"],
+          ["196", "14x14", "0.4mm", "5.56mm"],
+          ["256", "16x16", "0.4mm", "6.36mm"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "0.5mm Pitch eWLP (Embedded Wafer Level Package)",
+    tag: "Embedded Wafer Level",
+    subtitle: "0.5mm Pitch eWLP (Embedded WLP)",
+    svgs: [
+      {
+        label: "0.5mm Fan-Out profile",
+        html: `
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect x="15" y="20" width="110" height="50" fill="#1e293b" rx="4" />
+            <rect x="40" y="25" width="60" height="40" fill="#009688" rx="2" />
+            <circle cx="40" cy="85" r="8" fill="#cbd5e1" />
+            <circle cx="100" cy="85" r="8" fill="#cbd5e1" />
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "0.5mm pitch eWLP Specifications",
+        columns: ["Balls I/O", "Ball Matrix", "Pitch", "Size"],
+        rows: [
+          ["100", "10x10", "0.5mm", "5.0mm"],
+          ["144", "12x12", "0.5mm", "6.0mm"],
+          ["196", "14x14", "0.5mm", "7.0mm"],
+          ["256", "16x16", "0.5mm", "8.0mm"]
+        ]
+      }
+    ]
   }
-  document.getElementById(pkgId).style.display = 'block';
+];
 
-  // Display details workspace
-  document.getElementById('detailsWorkspace').style.display = 'block';
-}
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
 
-function closePackage(pkgId) {
-  // Hide active details panel and workspace
-  document.getElementById(pkgId).style.display = 'none';
-  document.getElementById('detailsWorkspace').style.display = 'none';
-
-  // Restore cards selection list and search bar
-  document.getElementById('selectionWorkspace').style.display = 'block';
-}
-
-function myFunction() {
-  var input = document.getElementById("myInput");
-  var filter = input.value.toUpperCase();
-  var ul = document.getElementById("myUL");
-  var li = ul.getElementsByTagName("li");
+// Update display with selected package parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
   
-  for (var i = 0; i < li.length; i++) {
-    var card = li[i].getElementsByClassName("pinout-item-card")[0];
-    var txtValue = card.textContent || card.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
+}
+
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
     }
-  }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
 }
 
 // Interactive Footprint Area & Ball Count Calculator Logic
@@ -775,70 +945,24 @@ function calculateWlpPkg() {
     "• Footprint Area Coverage: " + (pkgSize * pkgSize).toFixed(2) + " mm²";
 }
 
-// Lightbox modal enlarger for SVG diagrams
-function zoomSvg(svgContent) {
-  var overlay = document.createElement('div');
-  overlay.id = 'svg-zoom-overlay';
-  overlay.style.position = 'fixed';
-  overlay.style.top = '0';
-  overlay.style.left = '0';
-  overlay.style.width = '100%';
-  overlay.style.height = '100%';
-  overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.98)'; // Solid high-contrast white background
-  overlay.style.zIndex = '20000';
-  overlay.style.display = 'flex';
-  overlay.style.alignItems = 'center';
-  overlay.style.justifyContent = 'center';
-  overlay.style.cursor = 'zoom-out';
-  overlay.style.boxShadow = 'inset 0 0 100px rgba(15,23,42,0.15)';
-  
-  // Close cross inside lightbox
-  var closeIndicator = document.createElement('div');
-  closeIndicator.innerHTML = '&times;';
-  closePowerStyle(closeIndicator);
-  overlay.appendChild(closeIndicator);
-
-  // Scale up the vector art safely with direct container scaling
-  var container = document.createElement('div');
-  container.style.width = '90%';
-  container.style.maxWidth = '500px';
-  container.style.maxHeight = '85vh';
-  container.style.display = 'flex';
-  container.style.alignItems = 'center';
-  container.style.justifyContent = 'center';
-  container.innerHTML = svgContent.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
-  overlay.appendChild(container);
-  
-  overlay.onclick = function() {
-    overlay.remove();
-  };
-  document.body.appendChild(overlay);
-}
-
-function closePowerStyle(el) {
-  el.style.position = 'fixed';
-  el.style.top = '40px';
-  el.style.right = '40px';
-  el.style.fontSize = '40px';
-  el.style.fontWeight = 'bold';
-  el.style.color = '#1e293b';
-  el.style.cursor = 'pointer';
-}
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first package entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+  calculateWlpPkg();
+};
 </script>
 
+<!-- SEO Structured JSON-LD Schemas -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "publisher": {
-    "@type": "Organization",
-    "name": "CalcBoy",
-    "url": "https://calcboy.com"
-  },
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "1. What is the main difference between BGA and WLP packaging?",
+      "name": "What is the main difference between BGA and WLP packaging?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "BGA packages use an intermediate organic or ceramic substrate/interposer to route signals from the die to the solder balls. WLP (Wafer Level Package) places solder balls directly onto the passivated surface of the silicon die, eliminating the substrate completely for the smallest possible footprint."
@@ -846,18 +970,10 @@ function closePowerStyle(el) {
     },
     {
       "@type": "Question",
-      "name": "2. Why are Fan-Out packages (EWLP) growing in popularity?",
+      "name": "Why are Fan-Out packages (EWLP) growing in popularity?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "As silicon chips shrink, their physical die size decreases. However, high-performance chips still require a large number of pins. EWLP embeds the die in a mold compound wafer, providing extra perimeter area to route signals out ('Fan-Out'), avoiding physical pin-count limitations of tiny silicon surfaces."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "3. How does ball pitch affect PCB design?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Fine-pitch arrays (under 0.50mm) require advanced PCB fabrication technologies, such as high-density interconnect (HDI) microvias, laser drilling, and narrow track routing. Larger pitch arrays (0.80mm - 1.0mm) can be routed using standard, lower-cost multilayers."
       }
     }
   ]
@@ -869,24 +985,9 @@ function closePowerStyle(el) {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "CalcBoy",
-      "item": "https://calcboy.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Electronics Reference",
-      "item": "https://calcboy.com/category/electronics-calculators/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "WLP Package Guide",
-      "item": "https://calcboy.com/tool/wlp-package-guide"
-    }
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "WLP Wafer Level Package Reference Guide", "item": "https://calcboy.com/tool/wlp-package-guide" }
   ]
 }
 </script>
