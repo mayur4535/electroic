@@ -3,244 +3,420 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>BeagleBoard & BeagleBone IoT Boards Pinouts Guide | CalcBoy</title>
+<title>BeagleBoard &amp; BeagleBone IoT Boards Pinouts Guide | CalcBoy</title>
 <meta name="description" content="Complete, exhaustive pin-by-pin specifications and custom vector layouts for BeagleBoard, BeagleBoard-xM, BeagleBone, BeagleBone Black, BeagleBone Blue, and PocketBeagle.">
 <meta name="keywords" content="BeagleBoard pinout, BeagleBone Black GPIO, BeagleBone Blue wiring, BeagleBone Green pin layout, PocketBeagle pinout, LogiBone pinout, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/beagleboard-beaglebone-pinouts-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="BeagleBoard &amp; BeagleBone IoT Boards Pinouts Guide | CalcBoy">
+<meta property="og:description" content="Access complete, exhaustive pin-by-pin specifications and vector schematics for BeagleBoard and BeagleBone single-board computers (SBC) and capes.">
+<meta property="og:url" content="https://calcboy.com/tool/beagleboard-beaglebone-pinouts-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BeagleBoard &amp; BeagleBone IoT Boards Pinouts Guide | CalcBoy">
+<meta name="twitter:description" content="Complete engineering reference directory for BeagleBoard processor architectures, pin multiplexing, and expansion pinouts.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#beagle-pinouts-calc,#beagle-pinouts-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#beagle-pinouts-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#beagle-pinouts-tool, #beagle-pinouts-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#beagle-pinouts-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
 }
-.pinout-item-card:hover {
-  border-color:#ff6a00;
-  box-shadow:0 4px 12px rgba(255,106,0,.08);
+.calc-grid {
+  display: grid;
+  gap: 15px;
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#ff6a00;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
 }
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
 }
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
 }
-
-/* Modal Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:auto;
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:20px 10px;
+select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
 }
-.w3-modal-content {
-  background:#fff;
-  margin:20px auto;
-  width:100%;
-  max-width:580px;
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-.mid {
-  position:sticky !important;
-  top:10% !important;
-  right:16px !important;
-  float:right !important;
-  z-index:1010 !important;
-  width:36px;
-  height:36px;
-  background-color:red !important;
-  border:none !important;
-  border-radius:50% !important;
-  color:white !important;
-  font-size:16px !important;
-  font-weight:900 !important;
-  cursor:pointer !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-shadow:0 4px 6px rgba(0,0,0,0.15);
-  transition:background-color 0.2s, transform 0.1s;
-  margin-top:-8px;
-  margin-right:-8px;
-}
-.mid:hover {
-  background-color:#cc0000 !important;
-  transform:scale(1.05);
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Inner Modal Elements */
-.table1 {width:100%;text-align:left;clear:both}
-.diagramBox {
-  background:#f8fafc;
-  padding:16px;
-  text-align:center;
-  margin:12px auto;
-  border:1px solid #e2e8f0;
-  border-radius:12px;
-  overflow-x:auto;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-.diagramBox svg {
-  width:100%;
-  max-width:480px;
-  height:auto;
-  display:block;
-  margin:auto;
+.connector-header-card .badge {
+  background: #ffedd5;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
 }
 
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ea580c;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ffedd5;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
+  display: flex;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
+}
+.vector-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 140px;
+  justify-content: center;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
+}
+.vector-box:hover {
+  transform: scale(1.02);
+  border-color: #ff6a00;
+}
+.vector-box svg {
+  max-width: 100%;
+  height: auto;
+}
+.vector-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
 .img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:8px;
-  margin-bottom:16px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
 }
 
-/* Standardized Tables */
-table {
-  width:100%;
-  border-collapse:collapse;
-  margin:15px 0 20px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  overflow:hidden;
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
 }
-th {
-  background:#f1f5f9;
-  color:#1e293b;
-  font-size:13px;
-  font-weight:900;
-  padding:12px 14px;
-  text-align:left;
-  border-bottom:2px solid #e2e8f0;
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
 }
-td {
-  padding:10px 14px;
-  font-size:13px;
-  color:#475467;
-  border-bottom:1px solid #edf2f7;
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
 }
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #475467 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
-
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutNote {
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-left: 5px solid #ff6a00;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9a3412;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff6a00;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="beagle-pinouts-calc">
+<div id="beagle-pinouts-tool">
 
-  <div class="search-container">
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Beagle Board Pinouts..." title="Type in a name">
-  </div>
-
-  <ul id="myUL">
-    <!-- Comprehensive 10-card configuration mapped to high-fidelity dynamic modals -->
-    <li><a href="#" onclick="openModal('id01'); return false;" class="pinout-item-card"><span class="card-tag">Single Board Computer</span><div class="card-inner"><span class="card-title">Beagle Board</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id02'); return false;" class="pinout-item-card"><span class="card-tag">Single Board Computer</span><div class="card-inner"><span class="card-title">Beagle Board - XM</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id03'); return false;" class="pinout-item-card"><span class="card-tag">Linux Prototyping</span><div class="card-inner"><span class="card-title">Beagle Bone</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id04'); return false;" class="pinout-item-card"><span class="card-tag">Linux Prototyping</span><div class="card-inner"><span class="card-title">Beagle Bone Black</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id05'); return false;" class="pinout-item-card"><span class="card-tag">Robotics & Control</span><div class="card-inner"><span class="card-title">Beagle Bone Blue</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id06'); return false;" class="pinout-item-card"><span class="card-tag">Green IoT</span><div class="card-inner"><span class="card-title">Beagle Bone Green</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id07'); return false;" class="pinout-item-card"><span class="card-tag">Wireless IoT</span><div class="card-inner"><span class="card-title">Beagle Bone Green WIFI</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id08'); return false;" class="pinout-item-card"><span class="card-tag">High Performance SBC</span><div class="card-inner"><span class="card-title">Beagle Board-X15</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id09'); return false;" class="pinout-item-card"><span class="card-tag">Compact Board</span><div class="card-inner"><span class="card-title">Pocket Beagle</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id010'); return false;" class="pinout-item-card"><span class="card-tag">FPGA Expansion</span><div class="card-inner"><span class="card-title">Logi Bone</span><span class="card-arrow">&#x2192;</span></div></a></li>
-  </ul>
-
-  <!-- Shared Dynamic Modal -->
-  <div id="dynamicModal" class="w3-modal">
-    <div class="w3-modal-content">
-      <button class="mid" onclick="closeModal()">X</button>
-      <div id="modalTarget" class="table1">
-        <!-- Rendered dynamically -->
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Board Pinout Selector</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Beagle Board</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
       </div>
     </div>
   </div>
 
-  <!-- Educational & SEO Sections -->
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">Single Board Computer</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Pinout Map</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
+    
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+  </div>
+
+  <!-- Input Parameters Specification -->
   <section class="infoBox">
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
-      <div class="paramItem"><strong>Dynamic Content Filtering</strong>The integrated search field scans board names, processor architectures, and pin descriptions to deliver immediate matches.</div>
-      <div class="paramItem"><strong>Active Window Triggers</strong>Clicking any development board card activates a modal layer containing high-resolution layouts and pin references.</div>
-      <div class="paramItem"><strong>Sizing Specification</strong>Expansion headers (like P8 and P9 on BeagleBone) must route specific current ratings to prevent board overheating or voltage drop.</div>
-      <div class="paramItem"><strong>PRU-ICSS Pin Mapping</strong>PRU pins are mapped explicitly to allow low latency hardware control, bypassing the main Linux kernel.</div>
+      <div class="paramItem">
+        <strong>Pin Multiplexing Overlays</strong>
+        Device tree overlays (.dtbo files) designed to dynamically route the processor's GPIO pins to custom SPI, I2C, or UART channels.
+      </div>
+      <div class="paramItem">
+        <strong>Hardware real-time Subsystem</strong>
+        Dedicated PRU-ICSS core pins used to handle microsecond-level hardware control, completely bypassing the Linux kernel.
+      </div>
+      <div class="paramItem">
+        <strong>1.8V Analog ADC Thresholds</strong>
+        Extremely sensitive ADC input channels limited to a strict 1.8V maximum reference limit to prevent SoC failure.
+      </div>
+      <div class="paramItem">
+        <strong>Cape Interface Coplanarity</strong>
+        Dual-row header layouts (P8 and P9) configured to support secure vertical mounting of stacked expansion capes.
+      </div>
     </div>
   </section>
 
+  <!-- Practical Operational Examples -->
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
     <div class="exampleGrid">
@@ -249,7 +425,7 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
         <p>Wire your sensor to Pins P9_19 (SCL) and P9_20 (SDA) on the BeagleBone Black. Enable the matching I2C bus overlay in your /boot/uEnv.txt file.</p>
       </div>
       <div class="exampleCard">
-        <p><strong>Building a Robotic Controller on Blue</strong></p>
+        <p><strong>Building a Robotic Controller</strong></p>
         <p>Connect DC motors straight to the onboard H-Bridge terminals and plug a LiPo battery into the JST jack on BeagleBone Blue to configure real-time feedback loops.</p>
       </div>
       <div class="exampleCard">
@@ -263,24 +439,38 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
-    <h2>BeagleBoard Architecture & Theory</h2>
+    <h2>BeagleBoard Architecture &amp; Theory</h2>
     <p>BeagleBoard and BeagleBone single-board computers leverage high-performance TI Sitara processors (such as the AM335x) containing ARM Cortex-A8 cores paired with dual 32-bit Programmable Real-Time Units (PRUs). Unlike standard computer chips, this hybrid structure allows a full Linux operating system to manage networking and files while the independent PRUs run real-time, deterministic physical control of I/O pins, avoiding standard kernel processing latency.</p>
     <div class="aboutNote">Tip: Standard BeagleBone pins run on 3.3V logic. Connecting any digital or analog pin directly to a 5V sensor without a logic level shifter will damage the Sitara SoC.</div>
   </section>
 
+  <!-- Formulas & Hardware Calculations -->
   <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
+    <h2>Formulas &amp; Hardware Calculations</h2>
     <div class="formula">PRU Pin Transition Speed: Frequency_MHz = 200 / (Instruction_Count * 2) (Determines raw timing capabilities)</div>
     <div class="formula">Baud Rate divisor calculation: Divisor = Bus_Clock / (16 * Desired_Baud)</div>
     <div class="formula">Maximum ADC input limit: V_in = (Analog_Value * 1.8V) / 4095 (Standard BeagleBone ADC limit is 1.8V)</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target BeagleBoard or BeagleBone platform using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the board's class and primary SoC chipset.</div>
+      <div class="aboutStep">Study the customized 2D vector layout showing board structure and expansion headers.</div>
+      <div class="aboutStep">Consult the exhaustive connection tables below the diagram to locate specific peripheral pin assignments.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
   <section class="infoBox">
     <h2>About This Reference Guide</h2>
     <div class="aboutLead">
       <strong>Your direct lookup path for BeagleBoard, BeagleBone, and PocketBeagle systems.</strong>
-      <p>This reference consolidates pin configurations, expansion header maps, and line assignments for classic BeagleBoard, BeagleBone Black/Blue/Green, and pocket-sized formats.</p>
+      <p>This reference index consolidates pin configurations, expansion header maps, and line assignments for classic BeagleBoard, BeagleBone Black/Blue/Green, and pocket-sized formats.</p>
     </div>
     <p>Finding accurate pin layouts is essential for system integrators, embedded software developers, roboticists, and hardware designers. Correct pin alignments prevent bus conflicts, boot failures, and permanent damage from short-circuits.</p>
     <p>Always verify operating voltages (especially the 1.8V ADC limits) before modifying hardware setups. Correct connections ensure system stability and peripheral safety.</p>
@@ -292,29 +482,32 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. What is the difference between the P8 and P9 headers on BeagleBone?</strong></h3>
+    
+    <h3>1. <strong>What is the difference between the P8 and P9 headers on BeagleBone?</strong></h3>
     <p>The P8 and P9 headers are twin 46-pin connectors that break out different SoC buses. P8 focuses primarily on digital GPIOs and LCD lines, while P9 contains analog inputs (ADCs), TWI/I2C buses, UARTs, and system power inputs.</p>
 
-    <h3><strong>2. Why is the BeagleBone analog input limit of 1.8V critical?</strong></h3>
+    <h3>2. <strong>Why is the BeagleBone analog input limit of 1.8V critical?</strong></h3>
     <p>The Sitara AM335x ADC pins are designed strictly for a maximum of 1.8V. Exceeding 1.8V on any analog input pin will immediately destroy the internal ADC module, even if the rest of the board survives.</p>
 
-    <h3><strong>3. What are the PRUs and how are their pins used?</strong></h3>
+    <h3>3. <strong>What are the PRUs and how are their pins used?</strong></h3>
     <p>The Sensory System Subsystem PRUs are dual 32-bit RISC microcontrollers running at 200MHz inside the main SoC. They can directly toggle specific pins mapped to the P8/P9 headers with zero delay, bypassing the Linux operating system.</p>
 
-    <h3><strong>4. How do I enable a serial port or SPI on BeagleBone Black?</strong></h3>
+    <h3>4. <strong>How do I enable a serial port or SPI on BeagleBone Black?</strong></h3>
     <p>BeagleBoard systems use Device Tree Overlays (.dtbo files) to configure pin multiplexing. You must specify and enable the correct overlay in your system config file (/boot/uEnv.txt) before you can use the pins.</p>
 
-    <h3><strong>5. What makes BeagleBone Blue unique for robotics?</strong></h3>
+    <h3>5. <strong>What makes BeagleBone Blue unique for robotics?</strong></h3>
     <p>The BeagleBone Blue integrates multiple onboard motor control chips (H-Bridges), quadrature encoder counters, servo outputs, a 9-axis IMU, and a JST battery charge regulator directly onto the main board, eliminating the need for external capes.</p>
 
-    <h3><strong>6. Can I use standard capes on the BeagleBone Green?</strong></h3>
+    <h3>6. <strong>Can I use standard capes on the BeagleBone Green?</strong></h3>
     <p>Yes. The BeagleBone Green is physically and electrically compatible with BeagleBone Black cape standards. It replaces the HDMI port with dual Grove sensor ports, so capes that require HDMI output cannot be used.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
       <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Verify primary and secondary winding values.</div>
       <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure magnetic storage parameters in active units.</div>
@@ -325,369 +518,656 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-// Exhaustive Database of all 10 Beagle Boards with absolute pin representations
-const pinoutsData = {
-  "id01": {
+// Master BeagleBoard & BeagleBone Boards Pinouts Database
+const packageDetails = [
+  {
     name: "BeagleBoard Classic",
-    color: "#0284c7",
-    processor: "OMAP3530 ARM Cortex-A8",
-    headers: ["J4 (Auxiliary)", "J5 (LCD Header)", "J6 (Expansion Header)"],
-    pins: [
-      { pin: "J4_1", label: "Ground", desc: "Common system ground path" },
-      { pin: "J4_2", label: "VCC_1V8", desc: "Regulated 1.8V Output power rail" },
-      { pin: "J4_3", label: "I2C2_SDA", desc: "I2C Bus 2 serial data line" },
-      { pin: "J4_4", label: "I2C2_SCL", desc: "I2C Bus 2 serial clock line" },
-      { pin: "J4_5", label: "McBSP3_DX", desc: "Multi-channel Buffered Serial Port Transmit" },
-      { pin: "J4_6", label: "McBSP3_DR", desc: "Multi-channel Buffered Serial Port Receive" },
-      { pin: "J4_7", label: "McBSP3_CLK", desc: "Multi-channel Buffered Serial Port Clock" },
-      { pin: "J4_8", label: "McBSP3_FS", desc: "Multi-channel Buffered Serial Port Frame Sync" },
-      { pin: "J4_9", label: "Ground", desc: "Common ground reference" },
-      { pin: "J4_10", label: "SYS_RST", desc: "Active-low system reset input" },
-      { pin: "J5_1 to J5_20", label: "LCD Interface", desc: "Provides high-frequency parallel LCD display lines" },
-      { pin: "J6_1 to J6_28", label: "Expansion Bus", desc: "Additional GPIO, MMC, and audio channel interfaces" }
+    tag: "Single Board Computer",
+    subtitle: "OMAP3530 ARM Cortex-A8 Board Pinout",
+    svgs: [
+      {
+        label: "BeagleBoard Classic Profile",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
+            <!-- OMAP3530 Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">OMAP3530</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">Cortex-A8</text>
+            <!-- Highlights -->
+            <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">BEAGLEBOARD CLASSIC PIN REFERENCE</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "J4 (Auxiliary) and Expansion Pin Assignments",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["J4_1", "Ground", "Common system ground path"],
+          ["J4_2", "VCC_1V8", "Regulated 1.8V Output power rail"],
+          ["J4_3", "I2C2_SDA", "I2C Bus 2 serial data line"],
+          ["J4_4", "I2C2_SCL", "I2C Bus 2 serial clock line"],
+          ["J4_5", "McBSP3_DX", "Multi-channel Buffered Serial Port Transmit"],
+          ["J4_6", "McBSP3_DR", "Multi-channel Buffered Serial Port Receive"],
+          ["J4_7", "McBSP3_CLK", "Multi-channel Buffered Serial Port Clock"],
+          ["J4_8", "McBSP3_FS", "Multi-channel Buffered Serial Port Frame Sync"],
+          ["J4_9", "Ground", "Common ground reference"],
+          ["J4_10", "SYS_RST", "Active-low system reset input"],
+          ["J5_1 to J5_20", "LCD Interface", "Provides high-frequency parallel LCD display lines"],
+          ["J6_1 to J6_28", "Expansion Bus", "Additional GPIO, MMC, and audio channel interfaces"]
+        ]
+      }
     ]
   },
-  "id02": {
+  {
     name: "BeagleBoard-xM",
-    color: "#0369a1",
-    processor: "DM3730 ARM Cortex-A8",
-    headers: ["J4 Expansion", "J5 LCD Interface", "J14 Camera Connector"],
-    pins: [
-      { pin: "J4_1", label: "GND", desc: "Common ground reference" },
-      { pin: "J4_2", label: "VCC_1V8", desc: "Regulated 1.8V Output power rail" },
-      { pin: "J4_3", label: "I2C2_SDA", desc: "Primary I2C system data line" },
-      { pin: "J4_4", label: "I2C2_SCL", desc: "Primary I2C system clock line" },
-      { pin: "J4_5", label: "McBSP3_DX", desc: "Buffered Serial Port Transmit" },
-      { pin: "J4_6", label: "McBSP3_DR", desc: "Buffered Serial Port Receive" },
-      { pin: "J4_7", label: "McBSP3_CLK", desc: "Buffered Serial Port Clock" },
-      { pin: "J4_8", label: "McBSP3_FS", desc: "Buffered Serial Port Frame Sync" },
-      { pin: "J5_1 to J5_20", label: "LCD", desc: "Full 20-pin parallel LCD digital lines" },
-      { pin: "J14_1 to J14_20", label: "Camera Bus", desc: "Exposes high-speed parallel camera interface channels" }
+    tag: "Single Board Computer",
+    subtitle: "DM3730 ARM Cortex-A8 Board Pinout",
+    svgs: [
+      {
+        label: "BeagleBoard-xM Profile",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0369a1" rx="6" opacity="0.85"/>
+            <!-- DM3730 Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">DM3730</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">Cortex-A8</text>
+            <!-- Highlights -->
+            <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "BeagleBoard-xM Expansion Header Map",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["J4_1", "GND", "Common ground reference"],
+          ["J4_2", "VCC_1V8", "Regulated 1.8V Output power rail"],
+          ["J4_3", "I2C2_SDA", "Primary I2C system data line"],
+          ["J4_4", "I2C2_SCL", "Primary I2C system clock line"],
+          ["J4_5", "McBSP3_DX", "Buffered Serial Port Transmit"],
+          ["J4_6", "McBSP3_DR", "Buffered Serial Port Receive"],
+          ["J4_7", "McBSP3_CLK", "Buffered Serial Port Clock"],
+          ["J4_8", "McBSP3_FS", "Buffered Serial Port Frame Sync"],
+          ["J5_1 to J5_20", "LCD", "Full 20-pin parallel LCD digital lines"],
+          ["J14_1 to J14_20", "Camera Bus", "Exposes high-speed parallel camera interface channels"]
+        ]
+      }
     ]
   },
-  "id03": {
+  {
     name: "BeagleBone Classic",
-    color: "#059669",
-    processor: "AM3358 Sitara",
-    headers: ["P8 Header", "P9 Header"],
-    pins: [
-      { pin: "P8_Pin 1", label: "GND", desc: "Common Ground return" },
-      { pin: "P8_Pin 2", label: "GND", desc: "Common Ground return" },
-      { pin: "P8_Pin 3", label: "GPIO_38", desc: "General purpose digital I/O" },
-      { pin: "P8_Pin 4", label: "GPIO_39", desc: "General purpose digital I/O" },
-      { pin: "P8_Pin 5-46", label: "GPIO", desc: "Exhaustive digital I/O layout pins" },
-      { pin: "P9_Pin 1", label: "GND", desc: "Common Ground return" },
-      { pin: "P9_Pin 2", label: "GND", desc: "Common Ground return" },
-      { pin: "P9_Pin 3", label: "VDD_3V3", desc: "+3.3V System power rails out" },
-      { pin: "P9_Pin 4", label: "VDD_3V3", desc: "+3.3V System power rails out" },
-      { pin: "P9_Pin 5-46", label: "Expansion", desc: "Analog inputs, system SPI, and UART debugging channels" }
+    tag: "Linux Prototyping",
+    subtitle: "AM3358 Sitara Processor Board Pinout",
+    svgs: [
+      {
+        label: "BeagleBone Classic Profile",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#059669" rx="6" opacity="0.85"/>
+            <!-- AM3358 Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#34d399" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#34d399" font-size="11" text-anchor="middle" font-weight="bold">AM3358 Sitara</text>
+            <text x="160" y="95" fill="#cbd5e1" font-size="8" text-anchor="middle">CPU Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "P8 and P9 Expansion Headers",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["P8_Pin 1", "GND", "Common Ground return"],
+          ["P8_Pin 2", "GND", "Common Ground return"],
+          ["P8_Pin 3", "GPIO_38", "General purpose digital I/O"],
+          ["P8_Pin 4", "GPIO_39", "General purpose digital I/O"],
+          ["P8_Pin 5-46", "GPIO", "Exhaustive digital I/O layout pins"],
+          ["P9_Pin 1", "GND", "Common Ground return"],
+          ["P9_Pin 2", "GND", "Common Ground return"],
+          ["P9_Pin 3", "VDD_3V3", "+3.3V System power rails out"],
+          ["P9_Pin 4", "VDD_3V3", "+3.3V System power rails out"],
+          ["P9_Pin 5-46", "Expansion", "Analog inputs, system SPI, and UART debugging channels"]
+        ]
+      }
     ]
   },
-  "id04": {
+  {
     name: "BeagleBone Black",
-    color: "#1e1b4b",
-    processor: "AM3358 Sitara ARM Cortex-A8",
-    headers: ["P8 Expansion Header (46 Pins)", "P9 Expansion Header (46 Pins)", "UART0 Debug Header (J1)"],
-    pins: [
-      { pin: "P8_01", label: "GND", desc: "Common Ground reference" },
-      { pin: "P8_02", label: "GND", desc: "Common Ground reference" },
-      { pin: "P8_03", label: "GPIO1_6", desc: "General Purpose GPIO" },
-      { pin: "P8_04", label: "GPIO1_7", desc: "General Purpose GPIO" },
-      { pin: "P8_05", label: "GPIO1_2", desc: "General Purpose GPIO" },
-      { pin: "P8_06", label: "GPIO1_3", desc: "General Purpose GPIO" },
-      { pin: "P8_07", label: "TIMER4 (GPIO2_2)", desc: "Hardware Timer 4 output channel" },
-      { pin: "P8_08", label: "TIMER7 (GPIO2_3)", desc: "Hardware Timer 7 output channel" },
-      { pin: "P8_09", label: "TIMER5 (GPIO2_5)", desc: "Hardware Timer 5 output channel" },
-      { pin: "P8_10", label: "TIMER6 (GPIO2_4)", desc: "Hardware Timer 6 output channel" },
-      { pin: "P8_11", label: "GPIO1_13", desc: "General Purpose GPIO" },
-      { pin: "P8_12", label: "GPIO1_12", desc: "General Purpose GPIO" },
-      { pin: "P8_13", label: "EHRPWM2B (GPIO0_23)", desc: "Hardware PWM 2B channel" },
-      { pin: "P8_14", label: "GPIO0_26", desc: "General Purpose GPIO" },
-      { pin: "P8_15", label: "GPIO1_15", desc: "General Purpose GPIO" },
-      { pin: "P8_16", label: "GPIO1_14", desc: "General Purpose GPIO" },
-      { pin: "P8_17", label: "GPIO0_27", desc: "General Purpose GPIO" },
-      { pin: "P8_18", label: "GPIO2_1", desc: "General Purpose GPIO" },
-      { pin: "P8_19", label: "EHRPWM2A (GPIO0_22)", desc: "Hardware PWM 2A channel" },
-      { pin: "P8_20", label: "GPIO1_31", desc: "General Purpose GPIO" },
-      { pin: "P8_21", label: "GPIO1_30", desc: "General Purpose GPIO" },
-      { pin: "P8_22", label: "GPIO1_5", desc: "General Purpose GPIO" },
-      { pin: "P8_23", label: "GPIO1_4", desc: "General Purpose GPIO" },
-      { pin: "P8_24", label: "GPIO1_1", desc: "General Purpose GPIO" },
-      { pin: "P8_25", label: "GPIO1_0", desc: "General Purpose GPIO" },
-      { pin: "P8_26", label: "GPIO1_29", desc: "General Purpose GPIO" },
-      { pin: "P8_27", label: "LCD_VSYNC", desc: "LCD vertical sync output line" },
-      { pin: "P8_28", label: "LCD_PCLK", desc: "LCD clock output line" },
-      { pin: "P8_29", label: "LCD_HSYNC", desc: "LCD horizontal sync output line" },
-      { pin: "P8_30", label: "LCD_AC_BIAS", desc: "LCD AC bias output control" },
-      { pin: "P8_31", label: "LCD_DATA14", desc: "LCD parallel data bit 14" },
-      { pin: "P8_32", label: "LCD_DATA15", desc: "LCD parallel data bit 15" },
-      { pin: "P8_33", label: "LCD_DATA13", desc: "LCD parallel data bit 13" },
-      { pin: "P8_34", label: "LCD_DATA11", desc: "LCD parallel data bit 11" },
-      { pin: "P8_35", label: "LCD_DATA12", desc: "LCD parallel data bit 12" },
-      { pin: "P8_36", label: "LCD_DATA10", desc: "LCD parallel data bit 10" },
-      { pin: "P8_37", label: "LCD_DATA8", desc: "LCD parallel data bit 8" },
-      { pin: "P8_38", label: "LCD_DATA9", desc: "LCD parallel data bit 9" },
-      { pin: "P8_39", label: "LCD_DATA6", desc: "LCD parallel data bit 6" },
-      { pin: "P8_40", label: "LCD_DATA7", desc: "LCD parallel data bit 7" },
-      { pin: "P8_41", label: "LCD_DATA4", desc: "LCD parallel data bit 4" },
-      { pin: "P8_42", label: "LCD_DATA5", desc: "LCD parallel data bit 5" },
-      { pin: "P8_43", label: "LCD_DATA2", desc: "LCD parallel data bit 2" },
-      { pin: "P8_44", label: "LCD_DATA3", desc: "LCD parallel data bit 3" },
-      { pin: "P8_45", label: "LCD_DATA0", desc: "LCD parallel data bit 0" },
-      { pin: "P8_46", label: "LCD_DATA1", desc: "LCD parallel data bit 1" },
-      { pin: "P9_01", label: "GND", desc: "Common Ground reference" },
-      { pin: "P9_02", label: "GND", desc: "Common Ground reference" },
-      { pin: "P9_03", label: "VDD_3V3", desc: "Regulated +3.3V output rail" },
-      { pin: "P9_04", label: "VDD_3V3", desc: "Regulated +3.3V output rail" },
-      { pin: "P9_05", label: "VDD_5V", desc: "Main 5V Power rail" },
-      { pin: "P9_06", label: "VDD_5V", desc: "Main 5V Power rail" },
-      { pin: "P9_07", label: "SYS_5V", desc: "5V System output supply" },
-      { pin: "P9_08", label: "SYS_5V", desc: "5V System output supply" },
-      { pin: "P9_09", label: "PWR_BUT", desc: "Active-low system power button input" },
-      { pin: "P9_10", label: "SYS_RESETn", desc: "System Reset input (low active)" },
-      { pin: "P9_11", label: "UART4_RXD", desc: "UART 4 Serial Receive" },
-      { pin: "P9_12", label: "GPIO1_28", desc: "General Purpose GPIO" },
-      { pin: "P9_13", label: "UART4_TXD", desc: "UART 4 Serial Transmit" },
-      { pin: "P9_14", label: "EHRPWM1A", desc: "Hardware PWM 1A channel" },
-      { pin: "P9_15", label: "GPIO1_16", desc: "General Purpose GPIO" },
-      { pin: "P9_16", label: "EHRPWM1B", desc: "Hardware PWM 1B channel" },
-      { pin: "P9_17", label: "I2C1_SCL", desc: "I2C Bus 1 Clock line" },
-      { pin: "P9_18", label: "I2C1_SDA", desc: "I2C Bus 1 Data line" },
-      { pin: "P9_19", label: "I2C2_SCL", desc: "I2C Bus 2 clock channel" },
-      { pin: "P9_20", label: "I2C2_SDA", desc: "I2C Bus 2 data channel" },
-      { pin: "P9_21", label: "UART2_TXD", desc: "UART 2 Serial Transmit" },
-      { pin: "P9_22", label: "UART2_RXD", desc: "UART 2 Serial Receive" },
-      { pin: "P9_23", label: "GPIO1_17", desc: "General Purpose GPIO" },
-      { pin: "P9_24", label: "UART1_TXD", desc: "UART 1 Serial Transmit" },
-      { pin: "P9_25", label: "GPIO3_21", desc: "General Purpose GPIO" },
-      { pin: "P9_26", label: "UART1_RXD", desc: "UART 1 Serial Receive" },
-      { pin: "P9_27", label: "GPIO3_19", desc: "General Purpose GPIO" },
-      { pin: "P9_28", label: "SPI1_CS0", desc: "SPI 1 Chip Select 0" },
-      { pin: "P9_29", label: "SPI1_MISO", desc: "SPI 1 Master In" },
-      { pin: "P9_30", label: "SPI1_MOSI", desc: "SPI 1 Master Out" },
-      { pin: "P9_31", label: "SPI1_SCLK", desc: "SPI 1 Serial Clock" },
-      { pin: "P9_32", label: "VREFN", desc: "ADC negative analog reference voltage" },
-      { pin: "P9_33", label: "AIN4", desc: "12-bit Analog input 4 (1.8V max)" },
-      { pin: "P9_34", label: "VREFP", desc: "ADC positive analog reference voltage" },
-      { pin: "P9_35", label: "AIN6", desc: "12-bit Analog input 6 (1.8V max)" },
-      { pin: "P9_36", label: "AIN5", desc: "12-bit Analog input 5 (1.8V max)" },
-      { pin: "P9_37", label: "AIN2", desc: "12-bit Analog input 2 (1.8V max)" },
-      { pin: "P9_38", label: "AIN3", desc: "12-bit Analog input 3 (1.8V max)" },
-      { pin: "P9_39", label: "AIN0", desc: "12-bit Analog input 0 (1.8V max)" },
-      { pin: "P9_40", label: "AIN1", desc: "12-bit Analog input 1 (1.8V max)" },
-      { pin: "P9_41", label: "CLKOUT2", desc: "CLKOUT2 clock output channel" },
-      { pin: "P9_42", label: "GPIO0_7", desc: "General Purpose GPIO" },
-      { pin: "P9_43", label: "GND", desc: "Common Ground reference" },
-      { pin: "P9_44", label: "GND", desc: "Common Ground reference" },
-      { pin: "P9_45", label: "GND", desc: "Common Ground reference" },
-      { pin: "P9_46", label: "GND", desc: "Common Ground reference" },
-      { pin: "J1_1", label: "GND", desc: "UART0 Console debug ground" },
-      { pin: "J1_2", label: "NC", desc: "No connection" },
-      { pin: "J1_3", label: "NC", desc: "No connection" },
-      { pin: "J1_4", label: "UART0_RX", desc: "UART0 Console debug receive (PA4)" },
-      { pin: "J1_5", label: "UART0_TX", desc: "UART0 Console debug transmit (PA5)" },
-      { pin: "J1_6", label: "NC", desc: "No connection" }
+    tag: "Linux Prototyping",
+    subtitle: "AM3358 Sitara Processor Expansion Header Map",
+    svgs: [
+      {
+        label: "BeagleBone Black Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#1e1b4b" rx="6" opacity="0.85"/>
+            <!-- AM3358 Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">AM3358 Sitara</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">Cortex-A8</text>
+            <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "P8 and P9 Expansion Interface Data",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["P8_01", "GND", "Common Ground reference"],
+          ["P8_02", "GND", "Common Ground reference"],
+          ["P8_03", "GPIO1_6", "General Purpose GPIO"],
+          ["P8_04", "GPIO1_7", "General Purpose GPIO"],
+          ["P8_05", "GPIO1_2", "General Purpose GPIO"],
+          ["P8_06", "GPIO1_3", "General Purpose GPIO"],
+          ["P8_07", "TIMER4 (GPIO2_2)", "Hardware Timer 4 output channel"],
+          ["P8_08", "TIMER7 (GPIO2_3)", "Hardware Timer 7 output channel"],
+          ["P8_09", "TIMER5 (GPIO2_5)", "Hardware Timer 5 output channel"],
+          ["P8_10", "TIMER6 (GPIO2_4)", "Hardware Timer 6 output channel"],
+          ["P8_11", "GPIO1_13", "General Purpose GPIO"],
+          ["P8_12", "GPIO1_12", "General Purpose GPIO"],
+          ["P8_13", "EHRPWM2B (GPIO0_23)", "Hardware PWM 2B channel"],
+          ["P8_14", "GPIO0_26", "General Purpose GPIO"],
+          ["P8_15", "GPIO1_15", "General Purpose GPIO"],
+          ["P8_16", "GPIO1_14", "General Purpose GPIO"],
+          ["P8_17", "GPIO0_27", "General Purpose GPIO"],
+          ["P8_18", "GPIO2_1", "General Purpose GPIO"],
+          ["P8_19", "EHRPWM2A (GPIO0_22)", "Hardware PWM 2A channel"],
+          ["P8_20", "GPIO1_31", "General Purpose GPIO"],
+          ["P8_21", "GPIO1_30", "General Purpose GPIO"],
+          ["P8_22", "GPIO1_5", "General Purpose GPIO"],
+          ["P8_23", "GPIO1_4", "General Purpose GPIO"],
+          ["P8_24", "GPIO1_1", "General Purpose GPIO"],
+          ["P8_25", "GPIO1_0", "General Purpose GPIO"],
+          ["P8_26", "GPIO1_29", "General Purpose GPIO"],
+          ["P8_27", "LCD_VSYNC", "LCD vertical sync output line"],
+          ["P8_28", "LCD_PCLK", "LCD clock output line"],
+          ["P8_29", "LCD_HSYNC", "LCD horizontal sync output line"],
+          ["P8_30", "LCD_AC_BIAS", "LCD AC bias output control"],
+          ["P8_31", "LCD_DATA14", "LCD parallel data bit 14"],
+          ["P8_32", "LCD_DATA15", "LCD parallel data bit 15"],
+          ["P8_33", "LCD_DATA13", "LCD parallel data bit 13"],
+          ["P8_34", "LCD_DATA11", "LCD parallel data bit 11"],
+          ["P8_35", "LCD_DATA12", "LCD parallel data bit 12"],
+          ["P8_36", "LCD_DATA10", "LCD parallel data bit 10"],
+          ["P8_37", "LCD_DATA8", "LCD parallel data bit 8"],
+          ["P8_38", "LCD_DATA9", "LCD parallel data bit 9"],
+          ["P8_39", "LCD_DATA6", "LCD parallel data bit 6"],
+          ["P8_40", "LCD_DATA7", "LCD parallel data bit 7"],
+          ["P8_41", "LCD_DATA4", "LCD parallel data bit 4"],
+          ["P8_42", "LCD_DATA5", "LCD parallel data bit 5"],
+          ["P8_43", "LCD_DATA2", "LCD parallel data bit 2"],
+          ["P8_44", "LCD_DATA3", "LCD parallel data bit 3"],
+          ["P8_45", "LCD_DATA0", "LCD parallel data bit 0"],
+          ["P8_46", "LCD_DATA1", "LCD parallel data bit 1"],
+          ["P9_01", "GND", "Common Ground reference"],
+          ["P9_02", "GND", "Common Ground reference"],
+          ["P9_03", "VDD_3V3", "Regulated +3.3V output rail"],
+          ["P9_04", "VDD_3V3", "Regulated +3.3V output rail"],
+          ["P9_05", "VDD_5V", "Main 5V Power rail"],
+          ["P9_06", "VDD_5V", "Main 5V Power rail"],
+          ["P9_07", "SYS_5V", "5V System output supply"],
+          ["P9_08", "SYS_5V", "5V System output supply"],
+          ["P9_09", "PWR_BUT", "Active-low system power button input"],
+          ["P9_10", "SYS_RESETn", "System Reset input (low active)"],
+          ["P9_11", "UART4_RXD", "UART 4 Serial Receive"],
+          ["P9_12", "GPIO1_28", "General Purpose GPIO"],
+          ["P9_13", "UART4_TXD", "UART 4 Serial Transmit"],
+          ["P9_14", "EHRPWM1A", "Hardware PWM 1A channel"],
+          ["P9_15", "GPIO1_16", "General Purpose GPIO"],
+          ["P9_16", "EHRPWM1B", "Hardware PWM 1B channel"],
+          ["P9_17", "I2C1_SCL", "I2C Bus 1 Clock line"],
+          ["P9_18", "I2C1_SDA", "I2C Bus 1 Data line"],
+          ["P9_19", "I2C2_SCL", "I2C Bus 2 clock channel"],
+          ["P9_20", "I2C2_SDA", "I2C Bus 2 data channel"],
+          ["P9_21", "UART2_TXD", "UART 2 Serial Transmit"],
+          ["P9_22", "UART2_RXD", "UART 2 Serial Receive"],
+          ["P9_23", "GPIO1_17", "General Purpose GPIO"],
+          ["P9_24", "UART1_TXD", "UART 1 Serial Transmit"],
+          ["P9_25", "GPIO3_21", "General Purpose GPIO"],
+          ["P9_26", "UART1_RXD", "UART 1 Serial Receive"],
+          ["P9_27", "GPIO3_19", "General Purpose GPIO"],
+          ["P9_28", "SPI1_CS0", "SPI 1 Chip Select 0"],
+          ["P9_29", "SPI1_MISO", "SPI 1 Master In"],
+          ["P9_30", "SPI1_MOSI", "SPI 1 Master Out"],
+          ["P9_31", "SPI1_SCLK", "SPI 1 Serial Clock"],
+          ["P9_32", "VREFN", "ADC negative analog reference voltage"],
+          ["P9_33", "AIN4", "12-bit Analog input 4 (1.8V max)"],
+          ["P9_34", "VREFP", "ADC positive analog reference voltage"],
+          ["P9_35", "AIN6", "12-bit Analog input 6 (1.8V max)"],
+          ["P9_36", "AIN5", "12-bit Analog input 5 (1.8V max)"],
+          ["P9_37", "AIN2", "12-bit Analog input 2 (1.8V max)"],
+          ["P9_38", "AIN3", "12-bit Analog input 3 (1.8V max)"],
+          ["P9_39", "AIN0", "12-bit Analog input 0 (1.8V max)"],
+          ["P9_40", "AIN1", "12-bit Analog input 1 (1.8V max)"],
+          ["P9_41", "CLKOUT2", "CLKOUT2 clock output channel"],
+          ["P9_42", "GPIO0_7", "General Purpose GPIO"],
+          ["P9_43", "GND", "Common Ground reference"],
+          ["P9_44", "GND", "Common Ground reference"],
+          ["P9_45", "GND", "Common Ground reference"],
+          ["P9_46", "GND", "Common Ground reference"]
+        ]
+      }
     ]
   },
-  "id05": {
+  {
     name: "BeagleBone Blue",
-    color: "#2563eb",
-    processor: "Octavo OSD3358 System-in-Package",
-    headers: ["Servos (1-8)", "DC Motors (1-4)", "Encoders (1-4)", "UART1", "I2C1", "CAN"],
-    pins: [
-      { pin: "Servo_1", label: "PWM_CH1", desc: "Servo motor PWM output channel 1" },
-      { pin: "Servo_2", label: "PWM_CH2", desc: "Servo motor PWM output channel 2" },
-      { pin: "Servo_3", label: "PWM_CH3", desc: "Servo motor PWM output channel 3" },
-      { pin: "Servo_4", label: "PWM_CH4", desc: "Servo motor PWM output channel 4" },
-      { pin: "Servo_5", label: "PWM_CH5", desc: "Servo motor PWM output channel 5" },
-      { pin: "Servo_6", label: "PWM_CH6", desc: "Servo motor PWM output channel 6" },
-      { pin: "Servo_7", label: "PWM_CH7", desc: "Servo motor PWM output channel 7" },
-      { pin: "Servo_8", label: "PWM_CH8", desc: "Servo motor PWM output channel 8" },
-      { pin: "Motor_1", label: "H-BRIDGE_1", desc: "DC Motor driver positive output" },
-      { pin: "Motor_2", label: "H-BRIDGE_2", desc: "DC Motor driver negative output" },
-      { pin: "Motor_3", label: "H-BRIDGE_3", desc: "DC Motor driver channel 3" },
-      { pin: "Motor_4", label: "H-BRIDGE_4", desc: "DC Motor driver channel 4" },
-      { pin: "Encoder_1", label: "eQEP_1", desc: "Quadrature encoder input channel 1" },
-      { pin: "Encoder_2", label: "eQEP_2", desc: "Quadrature encoder input channel 2" },
-      { pin: "Encoder_3", label: "eQEP_3", desc: "Quadrature encoder input channel 3" },
-      { pin: "Encoder_4", label: "eQEP_4", desc: "Quadrature encoder input channel 4" },
-      { pin: "UT0_Pin 1", label: "UART0_TX", desc: "Telemetry serial transmitter" },
-      { pin: "UT0_Pin 2", label: "UART0_RX", desc: "Telemetry serial receiver" }
+    tag: "Robotics & Control",
+    subtitle: "Octavo OSD3358 Robotics System Board Pinout",
+    svgs: [
+      {
+        label: "BeagleBone Blue Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#2563eb" rx="6" opacity="0.85"/>
+            <!-- OSD3358 SiP -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">OSD3358 SiP</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">Robotics Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Robotic Motor and Telemetry Pinouts",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["Servo_1", "PWM_CH1", "Servo motor PWM output channel 1"],
+          ["Servo_2", "PWM_CH2", "Servo motor PWM output channel 2"],
+          ["Servo_3", "PWM_CH3", "Servo motor PWM output channel 3"],
+          ["Servo_4", "PWM_CH4", "Servo motor PWM output channel 4"],
+          ["Servo_5", "PWM_CH5", "Servo motor PWM output channel 5"],
+          ["Servo_6", "PWM_CH6", "Servo motor PWM output channel 6"],
+          ["Servo_7", "PWM_CH7", "Servo motor PWM output channel 7"],
+          ["Servo_8", "PWM_CH8", "Servo motor PWM output channel 8"],
+          ["Motor_1", "H-BRIDGE_1", "DC Motor driver positive output"],
+          ["Motor_2", "H-BRIDGE_2", "DC Motor driver negative output"],
+          ["Motor_3", "H-BRIDGE_3", "DC Motor driver channel 3"],
+          ["Motor_4", "H-BRIDGE_4", "DC Motor driver channel 4"],
+          ["Encoder_1", "eQEP_1", "Quadrature encoder input channel 1"],
+          ["Encoder_2", "eQEP_2", "Quadrature encoder input channel 2"],
+          ["Encoder_3", "eQEP_3", "Quadrature encoder input channel 3"],
+          ["Encoder_4", "eQEP_4", "Quadrature encoder input channel 4"],
+          ["UT0_Pin 1", "UART0_TX", "Telemetry serial transmitter"],
+          ["UT0_Pin 2", "UART0_RX", "Telemetry serial receiver"]
+        ]
+      }
     ]
   },
-  "id06": {
+  {
     name: "BeagleBone Green",
-    color: "#16a34a",
-    processor: "AM3358 Sitara",
-    headers: ["P8 Header", "P9 Header", "Grove I2C", "Grove UART"],
-    pins: [
-      { pin: "P8_01 to P8_46", label: "GPIO", desc: "Matches complete P8 expansion header layouts of BeagleBone Black" },
-      { pin: "P9_01 to P9_46", label: "GPIO", desc: "Matches complete P9 expansion header layouts of BeagleBone Black" },
-      { pin: "Grove I2C SDA", label: "I2C2_SDA", desc: "Grove sensor I2C communication data" },
-      { pin: "Grove I2C SCL", label: "I2C2_SCL", desc: "Grove sensor I2C communication clock" },
-      { pin: "Grove UART RX", label: "UART1_RXD", desc: "Grove sensor UART serial receive" },
-      { pin: "Grove UART TX", label: "UART1_TXD", desc: "Grove sensor UART serial transmit" }
+    tag: "Green IoT",
+    subtitle: "AM3358 Sitara Grove Sensor Board Pinout",
+    svgs: [
+      {
+        label: "BeagleBone Green Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#16a34a" rx="6" opacity="0.85"/>
+            <!-- AM3358 Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#4ade80" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#4ade80" font-size="11" text-anchor="middle" font-weight="bold">AM3358 Sitara</text>
+            <text x="160" y="95" fill="#cbd5e1" font-size="8" text-anchor="middle">CPU Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Grove Connectors and Header References",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["P8_01 to P8_46", "GPIO", "Matches complete P8 expansion header layouts of BeagleBone Black"],
+          ["P9_01 to P9_46", "GPIO", "Matches complete P9 expansion header layouts of BeagleBone Black"],
+          ["Grove I2C SDA", "I2C2_SDA", "Grove sensor I2C communication data"],
+          ["Grove I2C SCL", "I2C2_SCL", "Grove sensor I2C communication clock"],
+          ["Grove UART RX", "UART1_RXD", "Grove sensor UART serial receive"],
+          ["Grove UART TX", "UART1_TXD", "Grove sensor UART serial transmit"]
+        ]
+      }
     ]
   },
-  "id07": {
+  {
     name: "BeagleBone Green WIFI",
-    color: "#16a34a",
-    processor: "AM3358 Sitara",
-    headers: ["P8 Header", "P9 Header", "Grove I2C", "Grove UART"],
-    pins: [
-      { pin: "P8_01 to P8_46", label: "GPIO", desc: "Matches complete P8 expansion header layouts of BeagleBone Black" },
-      { pin: "P9_01 to P9_46", label: "GPIO", desc: "Matches complete P9 expansion header layouts of BeagleBone Black" },
-      { pin: "Grove I2C SDA", label: "I2C2_SDA", desc: "Grove sensor I2C communication data" },
-      { pin: "Grove I2C SCL", label: "I2C2_SCL", desc: "Grove sensor I2C communication clock" },
-      { pin: "WiFi ANT", label: "RF_OUT", desc: "Integrated wireless antenna output connector" }
+    tag: "Wireless IoT",
+    subtitle: "AM3358 Sitara Integrated Wireless Pinout",
+    svgs: [
+      {
+        label: "BeagleBone Green WIFI Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#16a34a" rx="6" opacity="0.85"/>
+            <!-- AM3358 Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#4ade80" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#4ade80" font-size="11" text-anchor="middle" font-weight="bold">AM3358 Sitara</text>
+            <text x="160" y="95" fill="#cbd5e1" font-size="8" text-anchor="middle">Wireless IoT Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "WIFI / BLE and Grove Specifications",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["P8_01 to P8_46", "GPIO", "Matches complete P8 expansion header layouts of BeagleBone Black"],
+          ["P9_01 to P9_46", "GPIO", "Matches complete P9 expansion header layouts of BeagleBone Black"],
+          ["Grove I2C SDA", "I2C2_SDA", "Grove sensor I2C communication data"],
+          ["Grove I2C SCL", "I2C2_SCL", "Grove sensor I2C communication clock"],
+          ["WiFi ANT", "RF_OUT", "Integrated wireless antenna output connector"]
+        ]
+      }
     ]
   },
-  "id08": {
+  {
     name: "BeagleBoard-X15",
-    color: "#4f46e5",
-    processor: "AM5728 Sitara Dual ARM",
-    headers: ["P16 Header (60 Pins)", "P17 Header (60 Pins)", "P18 Header (60 Pins)", "P19 Header (60 Pins)"],
-    pins: [
-      { pin: "P16_Pin 1", label: "GND", desc: "Common Ground reference" },
-      { pin: "P16_Pin 2", label: "VDD_5V", desc: "Main 5V Output Power rail" },
-      { pin: "P16_Pin 3", label: "MCASP1_ACLKX", desc: "High-speed digital audio interface clock" },
-      { pin: "P17_Pin 1-60", label: "High-Speed Bus", desc: "Exposes PCI Express Gen 2 and SATA controllers" },
-      { pin: "P18_Pin 1-60", label: "Video I/O", desc: "Exposes high speed dual-channel LVDS LCD display channels" },
-      { pin: "P19_Pin 1-60", label: "FPGA / GPMC", desc: "Exposes parallel flash memory bus and custom real-time I/O channels" }
+    tag: "High Performance SBC",
+    subtitle: "AM5728 Sitara Dual ARM Cortex-A15 Board Pinout",
+    svgs: [
+      {
+        label: "BeagleBoard-X15 Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#4f46e5" rx="6" opacity="0.85"/>
+            <!-- AM5728 Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#818cf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#818cf8" font-size="11" text-anchor="middle" font-weight="bold">AM5728 Sitara</text>
+            <text x="160" y="95" fill="#cbd5e1" font-size="8" text-anchor="middle">Dual Cortex-A15</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "High-Speed Expansion Interface Mapping",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["P16_Pin 1", "GND", "Common Ground reference"],
+          ["P16_Pin 2", "VDD_5V", "Main 5V Output Power rail"],
+          ["P16_Pin 3", "MCASP1_ACLKX", "High-speed digital audio interface clock"],
+          ["P17_Pin 1-60", "High-Speed Bus", "Exposes PCI Express Gen 2 and SATA controllers"],
+          ["P18_Pin 1-60", "Video I/O", "Exposes high speed dual-channel LVDS LCD display channels"],
+          ["P19_Pin 1-60", "FPGA / GPMC", "Exposes parallel flash memory bus and custom real-time I/O channels"]
+        ]
+      }
     ]
   },
-  "id09": {
+  {
     name: "Pocket Beagle",
-    color: "#7c3aed",
-    processor: "Octavo OSD3358 System-in-Package",
-    headers: ["P1 Expansion Header (36 Pins)", "P2 Expansion Header (36 Pins)"],
-    pins: [
-      { pin: "P1.01", label: "VIN_USB", desc: "USB power input (5V)" },
-      { pin: "P1.02", label: "VOUT_3V3", desc: "Regulated 3.3V output power rail" },
-      { pin: "P1.03", label: "SPI0_CS0", desc: "SPI 0 Chip Select (Low Active)" },
-      { pin: "P1.04", label: "SPI0_SCLK", desc: "SPI 0 Serial clock reference" },
-      { pin: "P1.05", label: "SPI0_MISO", desc: "SPI 0 Master In" },
-      { pin: "P1.06", label: "SPI0_MOSI", desc: "SPI 0 Master Out" },
-      { pin: "P1.08", label: "UART1_TX", desc: "UART 1 Serial Transmit" },
-      { pin: "P1.10", label: "UART1_RX", desc: "UART 1 Serial Receive" },
-      { pin: "P1.12", label: "I2C2_SDA", desc: "I2C Bus 2 serial data line" },
-      { pin: "P1.20", label: "ADC_CH0", desc: "Analog input channel 0 (1.8V max)" },
-      { pin: "P2.01", label: "GND", desc: "Common Ground reference" },
-      { pin: "P2.02", label: "VOUT_5V", desc: "Regulated 5V output power rail" },
-      { pin: "P2.11", label: "PRU_GPIO0", desc: "Programmable Real-Time Unit direct GPIO 0" },
-      { pin: "P2.24", label: "PWM_CH0", desc: "Pulse Width Modulator channel 0" }
+    tag: "Compact Board",
+    subtitle: "Octavo OSD3358 Compact Board Pinout",
+    svgs: [
+      {
+        label: "Pocket Beagle Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#7c3aed" rx="6" opacity="0.85"/>
+            <!-- OSD3358 SiP -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#a78bfa" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#a78bfa" font-size="11" text-anchor="middle" font-weight="bold">OSD3358 SiP</text>
+            <text x="160" y="95" fill="#cbd5e1" font-size="8" text-anchor="middle">Pocket Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "PocketBeagle Compact Headers",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["P1.01", "VIN_USB", "USB power input (5V)"],
+          ["P1.02", "VOUT_3V3", "Regulated 3.3V output power rail"],
+          ["P1.03", "SPI0_CS0", "SPI 0 Chip Select (Low Active)"],
+          ["P1.04", "SPI0_SCLK", "SPI 0 Serial clock reference"],
+          ["P1.05", "SPI0_MISO", "SPI 0 Master In"],
+          ["P1.06", "SPI0_MOSI", "SPI 0 Master Out"],
+          ["P1.08", "UART1_TX", "UART 1 Serial Transmit"],
+          ["P1.10", "UART1_RX", "UART 1 Serial Receive"],
+          ["P1.12", "I2C2_SDA", "I2C Bus 2 serial data line"],
+          ["P1.20", "ADC_CH0", "Analog input channel 0 (1.8V max)"],
+          ["P2.01", "GND", "Common Ground reference"],
+          ["P2.02", "VOUT_5V", "Regulated 5V output power rail"],
+          ["P2.11", "PRU_GPIO0", "Programmable Real-Time Unit direct GPIO 0"],
+          ["P2.24", "PWM_CH0", "Pulse Width Modulator channel 0"]
+        ]
+      }
     ]
   },
-  "id010": {
+  {
     name: "Logi Bone",
-    color: "#0891b2",
-    processor: "Spartan 6 FPGA",
-    headers: ["FPGA expansion", "P8/P9 passthrough"],
-    pins: [
-      { pin: "FPGA_Pin 1", label: "GPMC_AD0", desc: "High speed parallel memory interface bus 0" },
-      { pin: "FPGA_Pin 2", label: "GPMC_AD1", desc: "High speed parallel memory interface bus 1" },
-      { pin: "FPGA_Pin 3", label: "GPMC_AD2", desc: "High speed parallel memory interface bus 2" },
-      { pin: "FPGA_Pin 4", label: "GPMC_AD3", desc: "High speed parallel memory interface bus 3" },
-      { pin: "P8/P9 Passthrough", label: "92 Pins", desc: "Exposes complete dual 46-pin headers compatible with BeagleBone Black" }
+    tag: "FPGA Expansion",
+    subtitle: "Spartan 6 FPGA Expansion Board Pinout",
+    svgs: [
+      {
+        label: "Logi Bone Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0891b2" rx="6" opacity="0.85"/>
+            <!-- Spartan 6 -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#22d3ee" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#22d3ee" font-size="11" text-anchor="middle" font-weight="bold">Spartan 6</text>
+            <text x="160" y="95" fill="#cbd5e1" font-size="8" text-anchor="middle">FPGA Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "GPMC Host and FPGA expansion Maps",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["FPGA_Pin 1", "GPMC_AD0", "High speed parallel memory interface bus 0"],
+          ["FPGA_Pin 2", "GPMC_AD1", "High speed parallel memory interface bus 1"],
+          ["FPGA_Pin 3", "GPMC_AD2", "High speed parallel memory interface bus 2"],
+          ["FPGA_Pin 4", "GPMC_AD3", "High speed parallel memory interface bus 3"],
+          ["P8/P9 Passthrough", "92 Pins", "Exposes complete dual 46-pin headers compatible with BeagleBone Black"]
+        ]
+      }
     ]
   }
-};
+];
 
-// Open Modal and populate it dynamically
-function openModal(id) {
-  const board = pinoutsData[id];
-  if (!board) return;
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
 
-  const target = document.getElementById('modalTarget');
+// Update display with selected board parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
   
-  // Create beautiful kalyanized SVG on-the-fly to prevent copyright issues
-  const svgTemplate = `
-    <div class="diagramBox">
-      <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
-        <rect width="320" height="160" fill="#0f172a" rx="10"/>
-        <rect x="15" y="15" width="290" height="130" fill="${board.color || '#0284c7'}" rx="6" opacity="0.85"/>
-        <!-- MCU Core -->
-        <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
-        <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">${board.processor}</text>
-        <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
-        <!-- Highlights -->
-        <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-        <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-        <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">${board.name.toUpperCase()} PIN REFERENCE</text>
-      </svg>
-    </div>
-    <div class="img-caption">Diagram: Interactive hardware mapping for ${board.name}</div>
-  `;
-
-  // Create Table dynamic rows ensuring NO pins are missing
-  let tableRows = '';
-  board.pins.forEach(p => {
-    tableRows += `
-      <tr>
-        <td><strong>${p.pin}</strong></td>
-        <td>${p.label}</td>
-        <td>${p.desc || ""}</td>
-      </tr>
-    `;
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
   });
-
-  const tableTemplate = `
-    <table>
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
       <thead>
         <tr>
-          <th>Pin / Pad</th>
-          <th>Signal Label</th>
-          <th>Description</th>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
         </tr>
       </thead>
-      <tbody>
-        ${tableRows}
-      </tbody>
-    </table>
-  `;
-
-  target.innerHTML = `
-    <h2>${board.name} Pinout Reference</h2>
-    ${svgTemplate}
-    ${tableTemplate}
-  `;
-
-  document.getElementById('dynamicModal').style.display = 'block';
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
 }
 
-function closeModal() {
-  document.getElementById('dynamicModal').style.display = 'none';
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
+}
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 3; // Load BeagleBone Black by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+};
+</script>
+
+<!-- SEO Structured JSON-LD Schemas -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between the P8 and P9 headers on BeagleBone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The P8 and P9 headers are twin 46-pin connectors that break out different SoC buses. P8 focuses primarily on digital GPIOs and LCD lines, while P9 contains analog inputs (ADCs), TWI/I2C buses, UARTs, and system power inputs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the BeagleBone analog input limit of 1.8V critical?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Sitara AM335x ADC pins are designed strictly for a maximum of 1.8V. Exceeding 1.8V on any analog input pin will immediately destroy the internal ADC module, even if the rest of the board survives."
+      }
+    }
+  ]
 }
 </script>
 
 <script type="application/ld+json">
 {
-"@context":"https://schema.org",
-"@type":"FAQPage",
-"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
-"mainEntity":[
-{"@type":"Question","name":"1. What is the difference between the P8 and P9 headers on BeagleBone?","acceptedAnswer":{"@type":"Answer","text":"The P8 and P9 headers are twin 46-pin connectors that break out different SoC buses. P8 focuses primarily on digital GPIOs and LCD lines, while P9 contains analog inputs (ADCs), TWI/I2C buses, UARTs, and system power inputs."}},
-{"@type":"Question","name":"2. Why is the BeagleBone analog input limit of 1.8V critical?","acceptedAnswer":{"@type":"Answer","text":"The Sitara AM335x ADC pins are designed strictly for a maximum of 1.8V. Exceeding 1.8V on any analog input pin will immediately destroy the internal ADC module, even if the rest of the board survives."}},
-{"@type":"Question","name":"3. What are the PRUs and how are their pins used?","acceptedAnswer":{"@type":"Answer","text":"The Sensory System Subsystem PRUs are dual 32-bit RISC microcontrollers running at 200MHz inside the main SoC. They can directly toggle specific pins mapped to the P8/P9 headers with zero delay, bypassing the Linux operating system."}},
-{"@type":"Question","name":"4. How do I enable a serial port or SPI on BeagleBone Black?","acceptedAnswer":{"@type":"Answer","text":"BeagleBoard systems use Device Tree Overlays (.dtbo files) to configure pin multiplexing. You must specify and enable the correct overlay in your system config file (/boot/uEnv.txt) before you can use the pins."}},
-{"@type":"Question","name":"5. What makes BeagleBone Blue unique for robotics?","acceptedAnswer":{"@type":"Answer","text":"The BeagleBone Blue integrates multiple onboard motor control chips (H-Bridges), quadrature encoder counters, servo outputs, a 9-axis IMU, and a JST battery charge regulator directly onto the main board, eliminating the need for external capes."}},
-{"@type":"Question","name":"6. Can I use standard capes on the BeagleBone Green?","acceptedAnswer":{"@type":"Answer","text":"Yes. The BeagleBone Green is physically and electrically compatible with BeagleBone Black cape standards. It replaces the HDMI port with dual Grove sensor ports, so capes that require HDMI output cannot be used."}}
-]
-}
-</script>
-
-<script type="application/ld+json">
-{
-"@context":"https://schema.org",
-"@type":"BreadcrumbList",
-"itemListElement":[
-{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
-{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
-{"@type":"ListItem","position":3,"name":"BeagleBoard & BeagleBone IoT Boards Pinouts Guide","item":"https://calcboy.com/tool/beagle-beaglebone-iot-boards-pinouts-guide"}
-]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "BeagleBoard & BeagleBone IoT Boards Pinouts Guide", "item": "https://calcboy.com/tool/beagleboard-beaglebone-pinouts-guide" }
+  ]
 }
 </script>
 
