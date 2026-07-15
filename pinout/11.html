@@ -6,908 +6,1099 @@
 <title>Cubieboard IoT Development Boards Pinouts Guide | CalcBoy</title>
 <meta name="description" content="Complete pinouts, specifications, and GPIO mappings for Cubieboard 1, Cubieboard 2, Cubieboard 2 Dualcard, Cubieboard 3 (CubieTruck), Cubieboard 4 (CC-A80), and Cubieboard 5.">
 <meta name="keywords" content="Cubieboard pinout, Cubieboard 1 GPIO, Cubieboard 2 pin layout, Cubieboard 3 CubieTruck wiring, Cubieboard 4 CC-A80 pins, Cubieboard 5 pinout, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/cubieboard-pinouts-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cubieboard IoT Development Boards Pinouts Guide | CalcBoy">
+<meta property="og:description" content="Access complete, exhaustive pin-by-pin specifications and vector schematics for Cubieboard series including Cubieboard 1, 2, CubieTruck, and CC-A80.">
+<meta property="og:url" content="https://calcboy.com/tool/cubieboard-pinouts-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cubieboard IoT Development Boards Pinouts Guide | CalcBoy">
+<meta name="twitter:description" content="Complete engineering reference directory for Cubieboard processor architectures, pin multiplexing, and expansion pinouts.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#cubieboard-pinouts-calc,#cubieboard-pinouts-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#cubieboard-pinouts-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#banana-pi-tool, #banana-pi-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#banana-pi-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
 }
-.pinout-item-card:hover {
-  border-color:#ff6a00;
-  box-shadow:0 4px 12px rgba(255,106,0,.08);
+.calc-grid {
+  display: grid;
+  gap: 15px;
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#ff6a00;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
 }
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
 }
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
 }
-
-/* Modal Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:auto;
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:20px 10px;
+select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
 }
-.w3-modal-content {
-  background:#fff;
-  margin:20px auto;
-  width:100%;
-  max-width:580px;
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-.mid {
-  position:sticky !important;
-  top:10% !important;
-  right:16px !important;
-  float:right !important;
-  z-index:1010 !important;
-  width:36px;
-  height:36px;
-  background-color:red !important;
-  border:none !important;
-  border-radius:50% !important;
-  color:white !important;
-  font-size:16px !important;
-  font-weight:900 !important;
-  cursor:pointer !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-shadow:0 4px 6px rgba(0,0,0,0.15);
-  transition:background-color 0.2s, transform 0.1s;
-  margin-top:-8px;
-  margin-right:-8px;
-}
-.mid:hover {
-  background-color:#cc0000 !important;
-  transform:scale(1.05);
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Inner Modal Elements */
-.table1 {width:100%;text-align:left;clear:both}
-.diagramBox {
-  background:#f8fafc;
-  padding:16px;
-  text-align:center;
-  margin:12px auto;
-  border:1px solid #e2e8f0;
-  border-radius:12px;
-  overflow-x:auto;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-.diagramBox svg {
-  width:100%;
-  max-width:480px;
-  height:auto;
-  display:block;
-  margin:auto;
+.connector-header-card .badge {
+  background: #ffedd5;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
 }
 
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ea580c;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ffedd5;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
+  display: flex;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
+}
+.vector-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 140px;
+  justify-content: center;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
+}
+.vector-box:hover {
+  transform: scale(1.02);
+  border-color: #ff6a00;
+}
+.vector-box svg {
+  max-width: 100%;
+  height: auto;
+}
+.vector-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
 .img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:8px;
-  margin-bottom:16px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
 }
 
-/* Standardized Tables */
-table {
-  width:100%;
-  border-collapse:collapse;
-  margin:15px 0 20px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  overflow:hidden;
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
 }
-th {
-  background:#f1f5f9;
-  color:#1e293b;
-  font-size:13px;
-  font-weight:900;
-  padding:12px 14px;
-  text-align:left;
-  border-bottom:2px solid #e2e8f0;
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
 }
-td {
-  padding:10px 14px;
-  font-size:13px;
-  color:#475467;
-  border-bottom:1px solid #edf2f7;
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
 }
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #475467 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
-
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutNote {
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-left: 5px solid #ff6a00;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9a3412;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff6a00;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="cubieboard-pinouts-calc">
+<div id="banana-pi-tool">
 
-  <div class="search-container">
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Cubieboard Pinouts..." title="Type in a name">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Board Pinout Selector</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Cubieboard Board</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
+    </div>
   </div>
 
-  <ul id="myUL">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">Dual-Core SBC</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Pinout Map</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <li>
-      <a href="#" onclick="document.getElementById('id01').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Single Board Computer</span>
-        <div class="card-inner">
-          <span class="card-title">Cubieboard 1</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id01" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id01').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagramBox">
-              <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
-                <rect width="320" height="160" fill="#0f172a" rx="10"/>
-                <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
-                <!-- A10 Processor -->
-                <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
-                <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A10</text>
-                <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
-                <!-- Highlights -->
-                <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-                <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-                <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">U14 & U15 HIGH DENSITY HEADERS</text>
-              </svg>
-            </div>
-            <div class="img-caption">Diagram: Interactive hardware mapping for Cubieboard 1</div>
-            
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="4">U14 (Next to SATA connector) - LCD & SPI0</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Function (Primary / Alt / GPIO)</th>
-                  <th>Pin</th>
-                  <th>Function (Primary / Alt / GPIO)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>48</td><td>PI13 (SPI0-MISO / UART6-RX / EINT25)</td><td>47</td><td>PI11 (SPI0-CLK / UART5-RX / EINT23)</td></tr>
-                <tr><td>46</td><td>PI12 (SPI0-MOSI / UART6-TX / EINT24)</td><td>45</td><td>PI10 (SPI0-CS / UART5-TX / EINT22)</td></tr>
-                <tr><td>44</td><td>3.3V (NC in early board versions)</td><td>43</td><td>VCC-5V</td></tr>
-                <tr><td>42</td><td>Ground (GND)</td><td>41</td><td>SPDIF Digital Audio Output</td></tr>
-                <tr><td>40</td><td>PB10 (LCD0-SCK / LCD-PIO1)</td><td>39</td><td>PB11 (LCD0-SDA / LCD-PIO2)</td></tr>
-                <tr><td>38</td><td>Ground (GND)</td><td>37</td><td>PH7 (LCD0-BL-EN / LCD-PIO0 / UART5-RX / EINT7)</td></tr>
-                <tr><td>36</td><td>XN_TP (Touch Screen X-)</td><td>35</td><td>YN_TP (Touch Screen Y-)</td></tr>
-                <tr><td>34</td><td>XP_TP (Touch Screen X+)</td><td>33</td><td>YP_TP (Touch Screen Y+)</td></tr>
-                <tr><td>32</td><td>PD25 (LCDDE)</td><td>31</td><td>PB2 (PWM0)</td></tr>
-                <tr><td>30</td><td>PD26 (LCDHSYNC)-VGA-HSYNC</td><td>29</td><td>PD24 (LCDCLK)</td></tr>
-                <tr><td>28</td><td>PD23 (LCDD23)</td><td>27</td><td>PD27 (LCDVSYNC)-VGA-VSYNC</td></tr>
-                <tr><td>26</td><td>PD21 (LCDD21)</td><td>25</td><td>PD22 (LCDD22)</td></tr>
-                <tr><td>24</td><td>PD19 (LCDD19/LVDS1N3)</td><td>23</td><td>PD20 (LCDD20)</td></tr>
-                <tr><td>22</td><td>PD17 (LCDD17/LVDS1NC)</td><td>21</td><td>PD18 (LCDD18/LVDS1P3)</td></tr>
-                <tr><td>20</td><td>Ground (GND)</td><td>19</td><td>PD16 (LCDD16/LVDS1PC)</td></tr>
-                <tr><td>18</td><td>PD14 (LCDD14/LVDS1P2)</td><td>17</td><td>PD15 (LCDD15/LVDS1N2)</td></tr>
-                <tr><td>16</td><td>PD12 (LCDD12/LVDS1P1)</td><td>15</td><td>PD13 (LCDD13/LVDS1N1)</td></tr>
-                <tr><td>14</td><td>PD10 (LCDD10/LVDS1P0)</td><td>13</td><td>PD11 (LCDD11/LVDS1N0)</td></tr>
-                <tr><td>12</td><td>PD8 (LCDD8/LVDS0P3)</td><td>11</td><td>PD9 (LCDD9/LVDS0N3)</td></tr>
-                <tr><td>10</td><td>PD7 (LCDD7/LVDS0NC)</td><td>9</td><td>Ground</td></tr>
-                <tr><td>8</td><td>PD5 (LCDD5/LVDS0N2)</td><td>7</td><td>PD6 (LCDD6/LVDS0PC)</td></tr>
-                <tr><td>6</td><td>PD3 (LCDD3/LVDS0N1)</td><td>5</td><td>PD4 (LCDD4/LNVS0P2)</td></tr>
-                <tr><td>4</td><td>PD1 (LCDD1/LVDS0N0)</td><td>3</td><td>PD2 (LCDD2/LVDS0P1)</td></tr>
-                <tr><td>2</td><td>Ground</td><td>1</td><td>PD0 (LCDD0/LVDSP0)</td></tr>
-              </tbody>
-            </table>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+  </div>
 
-            <hr>
-
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="4">U15 (Between Ethernet port and USB ports) - CSI1/TS</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Function (Primary / Alt / GPIO)</th>
-                  <th>Pin</th>
-                  <th>Function (Primary / Alt / GPIO)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>1</td><td>VCC-5V</td><td>2</td><td>PH15 (CSI1-PWR/EINT15)</td></tr>
-                <tr><td>3</td><td>CSI1-IO-2V8</td><td>4</td><td>PH14 (CSI1-RST#/EINT14)</td></tr>
-                <tr><td>5</td><td>PG0 (CSI1-PCLK/SDC1-CMD)</td><td>6</td><td>PB18 (TWI1-SCK)</td></tr>
-                <tr><td>7</td><td>PB19 (TWI1-SDA)</td><td>8</td><td>PG3 (CSI1-VSYNC/SDC1-D1)</td></tr>
-                <tr><td>9</td><td>PG2 (CSI1-HSYNC/SDC1-D0)</td><td>10</td><td>PG1 (CSI1-MCLK/SDC1-CLK)</td></tr>
-                <tr><td>11</td><td>PG4 (CSI1-D0/SDC1-D2)</td><td>12</td><td>PG5 (CSI1-D1/SDC1-D3)</td></tr>
-                <tr><td>13</td><td>PG6 (CSI1-D2/UART3-TX)</td><td>14</td><td>PG7 (CSI1-D3/UART3-RX)</td></tr>
-                <tr><td>15</td><td>PG8 (CSI1-D4/UART3-RTS)</td><td>16</td><td>PG9 (CSI1-D5/UART3-CTS)</td></tr>
-                <tr><td>17</td><td>PG10 (CSI1-D6/UART4-TX)</td><td>18</td><td>PG11 (CSI1-D7/UART4-RX)</td></tr>
-                <tr><td>19</td><td>Ground</td><td>20</td><td>Ground</td></tr>
-                <tr style="background:#f1f5f9; font-weight:bold;"><td colspan="2">Analog Channel Line</td><td colspan="2">SDIO3 Port</td></tr>
-                <tr><td>21</td><td>FMINL</td><td>22</td><td>PI4 (SDC3-CMD)</td></tr>
-                <tr><td>23</td><td>FMINR</td><td>24</td><td>PI5 (SDC3-CLK)</td></tr>
-                <tr><td>25</td><td>Ground</td><td>26</td><td>PI6 (SDC3-D0)</td></tr>
-                <tr><td>27</td><td>VGA-R</td><td>28</td><td>PI7 (SDC3-D1)</td></tr>
-                <tr><td>29</td><td>VGA-G</td><td>30</td><td>PI8 (SDC3-D2)</td></tr>
-                <tr><td>31</td><td>VGA-B</td><td>32</td><td>PI9 (SDC3-D3)</td></tr>
-                <tr style="background:#f1f5f9; font-weight:bold;"><td colspan="2">Analog Expansion</td><td colspan="2">CSI0/TS Bus</td></tr>
-                <tr><td>33</td><td>LCD1-VSYNC</td><td>34</td><td>PE4 (CSI0-D0)</td></tr>
-                <tr><td>35</td><td>LCD1-HSYNC</td><td>36</td><td>PE5 (CSI0-D1)</td></tr>
-                <tr><td>37</td><td>Ground</td><td>38</td><td>PE6 (CSI0-D2)</td></tr>
-                <tr><td>39</td><td>AVCC</td><td>40</td><td>PE7 (CSI0-D3)</td></tr>
-                <tr><td>41</td><td>LRADC0</td><td>42</td><td>PE8 (CSI0-D4)</td></tr>
-                <tr><td>43</td><td>CVBS</td><td>44</td><td>PE9 (CSI0-D5)</td></tr>
-                <tr><td>45</td><td>HPL</td><td>46</td><td>PE10 (CSI0-D6)</td></tr>
-                <tr><td>47</td><td>HPR</td><td>48</td><td>PE11 (CSI0-D7)</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </li>
-    
-    <li>
-      <a href="#" onclick="document.getElementById('id02').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Dual-Core SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Cubieboard 2</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id02" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id02').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagramBox">
-              <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
-                <rect width="320" height="160" fill="#0f172a" rx="10"/>
-                <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
-                <!-- A20 Processor -->
-                <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
-                <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A20</text>
-                <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
-                <!-- Highlights -->
-                <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-                <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-                <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">U14 & U15 HIGH DENSITY HEADERS</text>
-              </svg>
-            </div>
-            <div class="img-caption">Diagram: Interactive hardware mapping for Cubieboard 2</div>
-            
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="4">U14 (Next to SATA connector) - LCD & SPI0 (A20 Dual-Core)</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Function (Primary / Alt / GPIO)</th>
-                  <th>Pin</th>
-                  <th>Function (Primary / Alt / GPIO)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>48</td><td>PI13 (SPI0-MISO / UART6-RX / EINT25)</td><td>47</td><td>PI11 (SPI0-CLK / UART5-RX / EINT23)</td></tr>
-                <tr><td>46</td><td>PI12 (SPI0-MOSI / UART6-TX / EINT24)</td><td>45</td><td>PI10 (SPI0-CS / UART5-TX / EINT22)</td></tr>
-                <tr><td>44</td><td>3.3V (NC in early board versions)</td><td>43</td><td>VCC-5V</td></tr>
-                <tr><td>42</td><td>Ground (GND)</td><td>41</td><td>SPDIF Digital Audio Output</td></tr>
-                <tr><td>40</td><td>PB10 (LCD0-SCK / LCD-PIO1)</td><td>39</td><td>PB11 (LCD0-SDA / LCD-PIO2)</td></tr>
-                <tr><td>38</td><td>Ground (GND)</td><td>37</td><td>PH7 (LCD0-BL-EN / LCD-PIO0 / UART5-RX / EINT7)</td></tr>
-                <tr><td>36</td><td>XN_TP (Touch Screen X-)</td><td>35</td><td>YN_TP (Touch Screen Y-)</td></tr>
-                <tr><td>34</td><td>XP_TP (Touch Screen X+)</td><td>33</td><td>YP_TP (Touch Screen Y+)</td></tr>
-                <tr><td>32</td><td>PD25 (LCD Data Enable)</td><td>31</td><td>PB2 (Hardware PWM0)</td></tr>
-                <tr><td>30</td><td>PD26 (LCD Horizontal Sync / VGA H-Sync)</td><td>29</td><td>PD24 (LCD Clock)</td></tr>
-                <tr><td>28</td><td>PD23 (LCD Data 23)</td><td>27</td><td>PD27 (LCD Vertical Sync / VGA V-Sync)</td></tr>
-                <tr><td>26</td><td>PD21 (LCD Data 21)</td><td>25</td><td>PD22 (LCD Data 22)</td></tr>
-                <tr><td>24</td><td>PD19 (LCD Data 19 / LVDS1N3)</td><td>23</td><td>PD20 (LCD Data 20)</td></tr>
-                <tr><td>22</td><td>PD17 (LCD Data 17 / LVDS1NC)</td><td>21</td><td>PD18 (LCD Data 18 / LVDS1P3)</td></tr>
-                <tr><td>20</td><td>Ground (GND)</td><td>19</td><td>PD16 (LCD Data 16 / LVDS1PC)</td></tr>
-                <tr><td>18</td><td>PD14 (LCD Data 14 / LVDS1P2)</td><td>17</td><td>PD15 (LCD Data 15 / LVDS1N2)</td></tr>
-                <tr><td>16</td><td>PD12 (LCD Data 12 / LVDS1P1)</td><td>15</td><td>PD13 (LCD Data 13 / LVDS1N1)</td></tr>
-                <tr><td>14</td><td>PD10 (LCD Data 10 / LVDS1P0)</td><td>13</td><td>PD11 (LCD Data 11 / LVDS1N0)</td></tr>
-                <tr><td>12</td><td>PD8 (LCD Data 8 / LVDS0P3)</td><td>11</td><td>PD9 (LCD Data 9 / LVDS0N3)</td></tr>
-                <tr><td>10</td><td>PD7 (LCD Data 7 / LVDS0NC)</td><td>9</td><td>Ground (GND)</td></tr>
-                <tr><td>8</td><td>PD5 (LCD Data 5 / LVDS0N2)</td><td>7</td><td>PD6 (LCD Data 6 / LVDS0PC)</td></tr>
-                <tr><td>6</td><td>PD3 (LCDD3 / LVDS0N1)</td><td>5</td><td>PD4 (LCDD4 / LVDS0P2)</td></tr>
-                <tr><td>4</td><td>PD1 (LCDD1 / LVDS0N0)</td><td>3</td><td>PD2 (LCDD2 / LVDS0P1)</td></tr>
-                <tr><td>2</td><td>Ground (GND)</td><td>1</td><td>PD0 (LCDD0 / LVDSP0)</td></tr>
-              </tbody>
-            </table>
-
-            <hr>
-
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="4">U15 (Between Ethernet & USB Ports) - CSI1, SDIO3, Analog, CSI0 (A20 Dual-Core)</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Function (Primary / Alt / GPIO)</th>
-                  <th>Pin</th>
-                  <th>Function (Primary / Alt / GPIO)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>1</td><td>VCC-5V</td><td>2</td><td>PH15 (CSI1-PWR / EINT15)</td></tr>
-                <tr><td>3</td><td>CSI1-IO-2V8 (Camera power rail)</td><td>4</td><td>PH14 (CSI1-RST# / EINT14)</td></tr>
-                <tr><td>5</td><td>PG0 (CSI1-PCLK / SDC1-CMD)</td><td>6</td><td>PB18 (TWI1-SCK / I2C Bus 1)</td></tr>
-                <tr><td>7</td><td>PB19 (TWI1-SDA / I2C Bus 1)</td><td>8</td><td>PG3 (CSI1-VSYNC / SDC1-D1)</td></tr>
-                <tr><td>9</td><td>PG2 (CSI1-HSYNC / SDC1-D0)</td><td>10</td><td>PG1 (CSI1-MCLK / SDC1-CLK)</td></tr>
-                <tr><td>11</td><td>PG4 (CSI1-D0 / SDC1-D2)</td><td>12</td><td>PG5 (CSI1-D1 / SDC1-D3)</td></tr>
-                <tr><td>13</td><td>PG6 (CSI1-D2 / UART3-TX)</td><td>14</td><td>PG7 (CSI1-D3 / UART3-RX)</td></tr>
-                <tr><td>15</td><td>PG8 (CSI1-D4 / UART3-RTS)</td><td>16</td><td>PG9 (CSI1-D5 / UART3-CTS)</td></tr>
-                <tr><td>17</td><td>PG10 (CSI1-D6 / UART4-TX)</td><td>18</td><td>PG11 (CSI1-D7 / UART4-RX)</td></tr>
-                <tr><td>19</td><td>Ground (GND)</td><td>20</td><td>Ground (GND)</td></tr>
-                <tr style="background:#f1f5f9; font-weight:bold;"><td colspan="2">Analog Channel Line</td><td colspan="2">SDIO3 Port</td></tr>
-                <tr><td>21</td><td>FMINL (FM Radio In Left)</td><td>22</td><td>PI4 (SDC3-CMD)</td></tr>
-                <tr><td>23</td><td>FMINR (FM Radio In Right)</td><td>24</td><td>PI5 (SDC3-CLK)</td></tr>
-                <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>PI6 (SDC3-D0)</td></tr>
-                <tr><td>27</td><td>VGA-R (Analog Red Video out)</td><td>28</td><td>PI7 (SDC3-D1)</td></tr>
-                <tr><td>29</td><td>VGA-G (Analog Green Video out)</td><td>30</td><td>PI8 (SDC3-D2)</td></tr>
-                <tr><td>31</td><td>VGA-B (Analog Blue Video out)</td><td>32</td><td>PI9 (SDC3-D3)</td></tr>
-                <tr style="background:#f1f5f9; font-weight:bold;"><td colspan="2">Analog Expansion</td><td colspan="2">CSI0 camera / TS Bus</td></tr>
-                <tr><td>33</td><td>LCD1-VSYNC</td><td>34</td><td>PE4 (CSI0-D0)</td></tr>
-                <tr><td>35</td><td>LCD1-HSYNC</td><td>36</td><td>PE5 (CSI0-D1)</td></tr>
-                <tr><td>37</td><td>Ground (GND)</td><td>38</td><td>PE6 (CSI0-D2)</td></tr>
-                <tr><td>39</td><td>AVCC</td><td>40</td><td>PE7 (CSI0-D3)</td></tr>
-                <tr><td>41</td><td>LRADC0 (Low Resolution ADC)</td><td>42</td><td>PE8 (CSI0-D4)</td></tr>
-                <tr><td>43</td><td>CVBS Composite Out</td><td>44</td><td>PE9 (CSI0-D5)</td></tr>
-                <tr><td>45</td><td>HPL (Headphone Left audio)</td><td>46</td><td>PE10 (CSI0-D6)</td></tr>
-                <tr><td>47</td><td>HPR (Headphone Right audio)</td><td>48</td><td>PE11 (CSI0-D7)</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <a href="#" onclick="document.getElementById('id03').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Dual-Core Dual-Flash</span>
-        <div class="card-inner">
-          <span class="card-title">Cubieboard 2 Dualcard</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id03" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id03').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagramBox">
-              <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
-                <rect width="320" height="160" fill="#0f172a" rx="10"/>
-                <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
-                <!-- Dual SD Card Slots -->
-                <rect x="25" y="25" width="40" height="40" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" rx="3"/>
-                <rect x="25" y="85" width="40" height="40" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" rx="3"/>
-                <!-- A20 Processor -->
-                <rect x="130" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
-                <text x="180" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A20</text>
-                <text x="180" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
-              </svg>
-            </div>
-            <div class="img-caption">Diagram: Interactive hardware mapping for Cubieboard 2 Dualcard</div>
-            <p style="padding:10px 0; font-size:13px; color:#475467; line-height:1.55; font-weight:700;">Note: The dual-card edition shares the physical high-density U14 and U15 header structures with the standard Cubieboard 2. Please refer to Cubieboard 2 reference maps for standard digital LCD, SPI, and CSI camera routing schedules.</p>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <a href="#" onclick="document.getElementById('id04').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Legacy High-Interface</span>
-        <div class="card-inner">
-          <span class="card-title">Cubieboard 3 (CubieTruck)</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id04" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id04').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagramBox">
-              <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
-                <rect width="320" height="160" fill="#0f172a" rx="10"/>
-                <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
-                <!-- VGA Connector -->
-                <rect x="25" y="25" width="40" height="40" fill="#1e293b" stroke="#e2e8f0" stroke-width="1.5" rx="3"/>
-                <text x="45" y="48" fill="#fff" font-size="8" text-anchor="middle" font-weight="bold">VGA</text>
-                <!-- A20 Processor -->
-                <rect x="130" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
-                <text x="180" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A20</text>
-                <text x="180" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
-              </svg>
-            </div>
-            <div class="img-caption">Diagram: Interactive hardware mapping for Cubieboard 3</div>
-            
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="4">CN8 (Near Ethernet Connector) - 2x15 Double-Row Header</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Signal Name</th>
-                  <th>Pin</th>
-                  <th>Signal Name & Function Map</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>30</td><td>LRADC1</td><td>29</td><td>VCC-5V power supply rail</td></tr>
-                <tr><td>28</td><td>LRADC0</td><td>27</td><td>CVBS</td></tr>
-                <tr><td>26</td><td>LINEIN-R</td><td>25</td><td>PB19(TWI1-SDA)</td></tr>
-                <tr><td>24</td><td>LINEIN-L</td><td>23</td><td>PB18(TWI1-SCK)</td></tr>
-                <tr><td>22</td><td>PB4 (IR0-RX)</td><td>21</td><td>PB2 (PWM0)</td></tr>
-                <tr><td>20</td><td>PB3 (IR0-TX))</td><td>19</td><td>PI3 (PWM1)</td></tr>
-                <tr><td>18</td><td>PI15 (PS2SDA1/EINT27)</td><td>17</td><td>PI21 (FMIN-R/PS2SDA0/UART7-RX/HSDA)</td></tr>
-                <tr><td>16</td><td>PI14 (PS2SCLK1/EINT26)</td><td>15</td><td>PI20 (FMIN-L/PS2SCLK0/UART7-TX/HSCL)</td></tr>
-                <tr><td>14</td><td>GND</td><td>13</td><td>GND</td></tr>
-                <tr><td>12</td><td>PB17 (SPI2-MISO/JTAG_DI0)</td><td>11</td><td>PB15(SPI2-CLK/JTAG_CK0)</td></tr>
-                <tr><td>10</td><td>PB16 (SPI2-MOSI/JTAG_DO0)</td><td>9</td><td>PB14 (SPI2-CS0/JTAG_MS0)</td></tr>
-                <tr><td>8</td><td>PC22 (SPI2-MISO/EINT15)</td><td>7</td><td>PC20 (SPI2-CLK)</td></tr>
-                <tr><td>6</td><td>PC21 (SPI2-MOSI/EINT14)</td><td>5</td><td>PC19 (SPI2-CS0)</td></tr>
-                <tr><td>4</td><td>RESET#</td><td>3</td><td>AVCC</td></tr>
-                <tr><td>2</td><td>3.3V</td><td>1</td><td>GND</td></tr>
-              </tbody>
-            </table>
-
-            <hr>
-
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="4">CN9 (Near USB Ports) - CSI1, TS, TP, TVIN</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Primary Name / Signal</th>
-                  <th>Pin</th>
-                  <th>Primary Name / Signal</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>1</td><td>3.3V</td><td>2</td><td>3.3V</td></tr>
-                <tr><td>3</td><td>PG0 (TS1_CLK/CSI1-PCLK)</td><td>4</td><td>PG3 (TS1_ERR/CSI1-VSYNC)</td></tr>
-                <tr><td>5</td><td>PG2 (TS1_SYNC/CSI1-HSYNC)</td><td>6</td><td>PG1 (TS1_DVLD/CSI1-MCLK)</td></tr>
-                <tr><td>7</td><td>PG4 (TS1_D0/CSI1-D0)</td><td>8</td><td>PG5 (TS1_D1/CSI1-D1)</td></tr>
-                <tr><td>9</td><td>PG6 (TS1_D2/CSI1-D2/UART3-TX)</td><td>10</td><td>PG7 (TS1_D3/CSI1-D3/UART3-RX)</td></tr>
-                <tr><td>11</td><td>PG8 (TS1_D4/CSI1-D4/UART3-RTS)</td><td>12</td><td>PG9 (TS1_D5/CSI1-D5/UART3-CTS)</td></tr>
-                <tr><td>13</td><td>PG10 (TS1_D6/CSI1-D6/UART4-TX)</td><td>14</td><td>PG11 (TS1_D7/CSI1-D7/UART4-RX)</td></tr>
-                <tr><td>15</td><td>GND</td><td>16</td><td>GND</td></tr>
-                <tr style="background:#f1f5f9; font-weight:bold;"><td colspan="4" style="text-align:center;">Analog Audio & Auxiliary Channels</td></tr>
-                <tr><td>17</td><td>XP-I2SDO1</td><td>18</td><td>TVIN0-I2SMCLK</td></tr>
-                <tr><td>19</td><td>XN-I2SDO2</td><td>20</td><td>TVIN1-BTPCMCLK</td></tr>
-                <tr><td>21</td><td>YP-I2SDO3</td><td>22</td><td>TVIN2-BTPCMSYNC</td></tr>
-                <tr><td>23</td><td>XN-BTPCMIN</td><td>24</td><td>TVIN3-BTPCMOUT</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <a href="#" onclick="document.getElementById('id05').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Octa-Core Powerhouse</span>
-        <div class="card-inner">
-          <span class="card-title">Cubieboard 4 (CC-A80)</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id05" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id05').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagramBox">
-              <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
-                <rect width="320" height="160" fill="#0f172a" rx="10"/>
-                <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
-                <!-- A80 Processor -->
-                <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#fff" stroke-width="2" rx="4"/>
-                <text x="160" y="80" fill="#fff" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A80</text>
-                <text x="160" y="95" fill="#e2e8f0" font-size="8" text-anchor="middle">CPU Core</text>
-              </svg>
-            </div>
-            <div class="img-caption">Diagram: Interactive hardware mapping for Cubieboard 4</div>
-            
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="4">2x16 GPIO Header Pinout</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Signal Map</th>
-                  <th>Pin</th>
-                  <th>Signal Map</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>1</td><td>GPIO-ADC0</td><td>2</td><td>GPIO-PL0-CPUS-TX</td></tr>
-                <tr><td>3</td><td>GPIO-ADC1</td><td>4</td><td>GPIO-PL1-CPUS-RX</td></tr>
-                <tr><td>5</td><td>GND</td><td>6</td><td>GPIO-3V</td></tr>
-                <tr><td>7</td><td>GPIO-HSIC-STRB</td><td>8</td><td>GND</td></tr>
-                <tr><td>9</td><td>GND</td><td>10</td><td>GPIO-PH6-PWM0</td></tr>
-                <tr><td>11</td><td>GPIO-HSIC-DATA</td><td>12</td><td>GND</td></tr>
-                <tr><td>13</td><td>GND</td><td>14</td><td>GPIO-PH14-SPI3-CLK</td></tr>
-                <tr><td>15</td><td>GPIO-PL7-1WIRE</td><td>16</td><td>GPIO-PH15-SPI3-MOSI</td></tr>
-                <tr><td>17</td><td>GPIO-PM0</td><td>18</td><td>GPIO-PH16-SPI3-MISO</td></tr>
-                <tr><td>19</td><td>GPIO-PM1</td><td>20</td><td>GPIO-PH17-SPI3-CS0</td></tr>
-                <tr><td>21</td><td>GPIO-PM2</td><td>22</td><td>GPIO-PG10-TWI3-SCK</td></tr>
-                <tr><td>23</td><td>GPIO-PM3</td><td>24</td><td>GPIO-PG11-TWI3-SDA</td></tr>
-                <tr><td>25</td><td>GPIO-PM4</td><td>26</td><td>GPIO-PG12-UART4-TX</td></tr>
-                <tr><td>27</td><td>GPIO-PM8</td><td>28</td><td>GPIO-PG13-UART4-RX</td></tr>
-                <tr><td>29</td><td>GPIO-PM9</td><td>30</td><td>GPIO-PG14-UART4-RTS</td></tr>
-                <tr><td>31</td><td>GPIO-PH2</td><td>32</td><td>GPIO-PG15-UART4-CTS</td></tr>
-              </tbody>
-            </table>
-
-            <hr>
-
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="2">1x4 UART Header Pinout</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Signal Map</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>1</td><td>GPIO-PH12-UART0-TX</td></tr>
-                <tr><td>2</td><td>GPIO-PH13-UART0-RX</td></tr>
-                <tr><td>3</td><td>NC</td></tr>
-                <tr><td>4</td><td>GND</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <a href="#" onclick="document.getElementById('id06').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Octa-Core Premium</span>
-        <div class="card-inner">
-          <span class="card-title">Cubieboard 5</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id06" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id06').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagramBox">
-              <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
-                <rect width="320" height="160" fill="#0f172a" rx="10"/>
-                <rect x="15" y="15" width="290" height="130" fill="#ea580c" rx="6" opacity="0.85"/>
-                <!-- A80 Processor -->
-                <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#fff" stroke-width="2" rx="4"/>
-                <text x="160" y="80" fill="#fff" font-size="11" text-anchor="middle" font-weight="bold">Allwinner H8</text>
-                <text x="160" y="95" fill="#e2e8f0" font-size="8" text-anchor="middle">CPU Core</text>
-              </svg>
-            </div>
-            <div class="img-caption">Diagram: Interactive hardware mapping for Cubieboard 5</div>
-            
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="4">CN8 (Near Ethernet Connector) - 2x15 Double-Row Pinout</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Signal Name</th>
-                  <th>Pin</th>
-                  <th>Signal Name & Function Map</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>30</td><td>LRADC1</td><td>29</td><td>VCC-5V</td></tr>
-                <tr><td>28</td><td>LRADC0</td><td>27</td><td>CVBS</td></tr>
-                <tr><td>26</td><td>LINEIN-R</td><td>25</td><td>PB19(TWI1-SDA)</td></tr>
-                <tr><td>24</td><td>LINEIN-L</td><td>23</td><td>PB18(TWI1-SCK)</td></tr>
-                <tr><td>22</td><td>PB4 (IR0-RX)</td><td>21</td><td>PB2 (PWM0)</td></tr>
-                <tr><td>20</td><td>PB3 (IR0-TX))</td><td>19</td><td>PI3 (PWM1)</td></tr>
-                <tr><td>18</td><td>PI15 (PS2SDA1/EINT27)</td><td>17</td><td>PI21 (FMIN-R/PS2SDA0/UART7-RX/HSDA)</td></tr>
-                <tr><td>16</td><td>PI14 (PS2SCLK1/EINT26)</td><td>15</td><td>PI20 (FMIN-L/PS2SCLK0/UART7-TX/HSCL)</td></tr>
-                <tr><td>14</td><td>GND</td><td>13</td><td>GND</td></tr>
-                <tr><td>12</td><td>PB17 (SPI2-MISO/JTAG_DI0)</td><td>11</td><td>PB15(SPI2-CLK/JTAG_CK0)</td></tr>
-                <tr><td>10</td><td>PB16 (SPI2-MOSI/JTAG_DO0)</td><td>9</td><td>PB14 (SPI2-CS0/JTAG_MS0)</td></tr>
-                <tr><td>8</td><td>PC22 (SPI2-MISO/EINT15)</td><td>7</td><td>PC20 (SPI2-CLK)</td></tr>
-                <tr><td>6</td><td>PC21 (SPI2-MOSI/EINT14)</td><td>5</td><td>PC19 (SPI2-CS0)</td></tr>
-                <tr><td>4</td><td>RESET#</td><td>3</td><td>AVCC</td></tr>
-                <tr><td>2</td><td>3.3V</td><td>1</td><td>GND</td></tr>
-              </tbody>
-            </table>
-
-            <hr>
-
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="4">CN9 (Near USB Ports) - CSI1, TS, TP, TVIN</th>
-                </tr>
-                <tr>
-                  <th>Pin</th>
-                  <th>Primary Name / Signal</th>
-                  <th>Pin</th>
-                  <th>Primary Name / Signal</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>1</td><td>3.3V</td><td>2</td><td>3.3V</td></tr>
-                <tr><td>3</td><td>PG0 (TS1_CLK/CSI1-PCLK)</td><td>4</td><td>PG3 (TS1_ERR/CSI1-VSYNC)</td></tr>
-                <tr><td>5</td><td>PG2 (TS1_SYNC/CSI1-HSYNC)</td><td>6</td><td>PG1 (TS1_DVLD/CSI1-MCLK)</td></tr>
-                <tr><td>7</td><td>PG4 (TS1_D0/CSI1-D0)</td><td>8</td><td>PG5 (TS1_D1/CSI1-D1)</td></tr>
-                <tr><td>9</td><td>PG6 (TS1_D2/CSI1-D2/UART3-TX)</td><td>10</td><td>PG7 (TS1_D3/CSI1-D3/UART3-RX)</td></tr>
-                <tr><td>11</td><td>PG8 (TS1_D4/CSI1-D4/UART3-RTS)</td><td>12</td><td>PG9 (TS1_D5/CSI1-D5/UART3-CTS)</td></tr>
-                <tr><td>13</td><td>PG10 (TS1_D6/CSI1-D6/UART4-TX)</td><td>14</td><td>PG11 (TS1_D7/CSI1-D7/UART4-RX)</td></tr>
-                <tr><td>15</td><td>GND</td><td>16</td><td>GND</td></tr>
-                <tr style="background:#f1f5f9; font-weight:bold;"><td colspan="4" style="text-align:center;">Analog Audio & Auxiliary Channels</td></tr>
-                <tr><td>17</td><td>XP-I2SDO1</td><td>18</td><td>TVIN0-I2SMCLK</td></tr>
-                <tr><td>19</td><td>XN-I2SDO2</td><td>20</td><td>TVIN1-BTPCMCLK</td></tr>
-                <tr><td>21</td><td>YP-I2SDO3</td><td>22</td><td>TVIN2-BTPCMSYNC</td></tr>
-                <tr><td>23</td><td>XN-BTPCMIN</td><td>24</td><td>TVIN3-BTPCMOUT</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </li>
-
-  </ul>
-
-  <!-- Educational & SEO Sections -->
+  <!-- Input Parameters Specification -->
   <section class="infoBox">
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
-      <div class="paramItem"><strong>Dynamic Content Filtering</strong>The integrated search field scans target connector names, system formats, and logic definitions to render matching items instantly.</div>
-      <div class="paramItem"><strong>Active Window Triggers</strong>Clicking any telephone or ethernet interface card triggers a modal layer containing full-resolution graphics and reference tables.</div>
-      <div class="paramItem"><strong>Tip & Ring Conventions</strong>Standard analog phone circuits define Tip (positive / positive carrier) and Ring (negative / return carrier) to run stable voice loops.</div>
-      <div class="paramItem"><strong>Differential Pair Colors</strong>Ethernet standard cable wires group twisted conductor pairs using white-stripes paired with solid background color runs (orange, green, blue, brown).</div>
+      <div class="paramItem">
+        <strong>Pin Multiplexing Registers</strong>
+        Processor routing register maps designed to split standard GPIO pins dynamically into SPI, I2C, UART, or PWM outputs.
+      </div>
+      <div class="paramItem">
+        <strong>LVDS Panel Driving</strong>
+        Low-Voltage Differential Signaling pinouts routed specifically to drive flat-panel display layers with noise immunity.
+      </div>
+      <div class="paramItem">
+        <strong>MIPI Camera &amp; Display Lanes</strong>
+        High-speed differential lane configurations configured to support direct interface with external CMOS camera and display modules.
+      </div>
+      <div class="paramItem">
+        <strong>High-Load SATA Supply (5V)</strong>
+        Auxiliary power tracks capable of delivering direct 5V current limits to external mechanical hard drives.
+      </div>
     </div>
   </section>
 
+  <!-- Practical Operational Examples -->
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
     <div class="exampleGrid">
       <div class="exampleCard">
-        <p><strong>Crimping Ethernet T568B</strong></p>
-        <p>Align network conductors from left to right: White-Orange, Orange, White-Green, Blue, White-Blue, Green, White-Brown, Brown. Insert into modular plug and crimp.</p>
+        <p><strong>Debugging with Serial Console</strong></p>
+        <p>Connect a USB-to-UART serial cable to TXD0 and RXD0 (on U15 Header for Cubieboard) and open a terminal at 115200 baud to monitor bootloader outputs.</p>
       </div>
       <div class="exampleCard">
-        <p><strong>Splicing a DSL Filter</strong></p>
-        <p>Ensure active broadband digital loops connect to inner Pins 3 and 4 (blue/white) on RJ11 jacks to separate high-frequency noise from voice equipment.</p>
+        <p><strong>Configuring I2C Pull-Up Limits</strong></p>
+        <p>Solder dual 2.2kΩ pull-up resistors to the SDA and SCL lines on the high density headers to achieve stable high-speed I2C communications.</p>
       </div>
       <div class="exampleCard">
-        <p><strong>TAE legacy adaptation</strong></p>
-        <p>When adapting a German TAE line (Pins 1/2) to an international RJ11 plug, map La and Lb directly to pins 3 and 4 on the RJ11 modular head.</p>
+        <p><strong>Interfacing a Camera Module</strong></p>
+        <p>Ensure the CSI camera ribbon cable is firmly inserted into the CSI connector with contacts facing downward before initializing the board.</p>
       </div>
       <div class="exampleCard">
-        <p><strong>RJ21 Trunk Splicing</strong></p>
-        <p>Identify primary grouping color rings (White, Red, Black, Yellow, Violet) combined with sub-colors to terminate multi-pair lines safely.</p>
+        <p><strong>Managing Li-Po Battery Charging</strong></p>
+        <p>Connect a 3.7V Lithium-Polymer battery to the dedicated IPSOUT battery ports to enable direct system power backup and charging control.</p>
       </div>
     </div>
   </section>
 
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
-    <h2>Registered Jack Signaling & Theory</h2>
-    <p>Registered Jack (RJ) standards partition structured wiring pathways for digital and analog telecommunication loops. RJ11 and RJ14 modules carry single or dual analog telephone paths, utilizing central Tip and Ring wire lines. Networking environments deploy RJ45 modular configurations (8P8C) based on EIA/TIA 568A and 568B architectures to align transmitter and receiver loops, minimizing near-end crosstalk (NEXT) across high-frequency twisted-pair paths.</p>
-    
-    
+    <h2>Embedded SBC Signal &amp; System Theory</h2>
+    <p>Single-Board Computers (SBCs) rely on high-performance System-on-Chips (SoCs) that integrate processing cores with hardware-level multiplexers. Unlike low-power microcontrollers, SBC pinouts must handle fast data transfers and support complex operating systems like Android and Linux. Signal tracks on high-speed interfaces, such as MIPI CSI/DSI or LVDS, require balanced impedance routing to prevent data packet drops.</p>
+    <div class="aboutNote">Tip: Unlike standard 5V Arduino boards, Cubieboard GPIO pins run strictly on 3.3V LVCMOS logic levels. Feeding 5V into any GPIO pin can permanently damage the processor.</div>
   </section>
 
+  <!-- Formulas & Hardware Calculations -->
   <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
-    <div class="formula">Smart Card Baud Rate calculation: Baud = (Clock_freq * Di) / (Fi * 372)</div>
-    <div class="formula">SPI Clock Phase Configuration: CPOL = 0 (Clock Idle Low), CPHA = 0 (Data captured on rising edge)</div>
-    <div class="formula">Calculated Video S/N Ratio: SNR = 20 * log10(V_signal / V_noise)</div>
+    <h2>Formulas &amp; Hardware Calculations</h2>
+    <div class="formula">GPIO Output Current Limit: I_out = (V_oh - V_peripheral) / R_series (Keep output current under 8mA per pin to protect the SoC)</div>
+    <div class="formula">Differential Line Impedance Match: Z_diff = 100 ohms ± 10% (Required standard for LVDS, MIPI, and USB differential traces)</div>
+    <div class="formula">SATA Drive Power Draw Calculation: P_sata = V_5V * I_load &lt; 10W (Ensure your power supply can handle peak motor spin-up currents)</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target Cubieboard development platform using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the board's class and primary SoC chipset.</div>
+      <div class="aboutStep">Study the customized 2D vector layout showing board structure and pin headers.</div>
+      <div class="aboutStep">Consult the exhaustive connection tables below the diagram to locate specific peripheral pin assignments.</div>
+    </div>
+  </section>
+
+  <!-- About This Reference Guide -->
   <section class="infoBox">
     <h2>About This Reference Guide</h2>
     <div class="aboutLead">
-      <strong>Your direct lookup path for legacy analog and modern digital video connections.</strong>
-      <p>This reference consolidates layouts, shielding connections, and line assignments for composite, component, VGA, DVI, and HDMI standards.</p>
+      <strong>Your direct lookup path for Cubieboard IoT boards and interfaces.</strong>
+      <p>This reference index consolidates pin configurations, expansion header maps, and line assignments for Allwinner-based Cubieboard boards.</p>
     </div>
-    <p>Finding accurate pin layouts is essential for home theater installers, AV engineers, gamers configuring retro consoles, and hardware designers. This directory supports standard display pinouts to prevent interface damage, sync dropouts, and color-space mismatches.</p>
-    <p>Always check signal lines and power limits before constructing custom pin-to-pin breakout cables. Correct wiring preserves video clarity and hardware safety.</p>
+    <p>Navigating different single-board computer configurations is critical for firmware developers, IoT system integrators, and electronics builders. Proper pin alignment is essential to prevent hardware damage from system voltage lines.</p>
+    <p>Always verify operating voltages (5V vs 3.3V) before constructing custom connections. Correct connection paths preserve performance and safety.</p>
     <div class="aboutMiniGrid">
-      <div class="aboutMiniCard"><span>Main Standards</span>HDMI Type-A/B, DVI-A/D/I formats, VGA 15-Pin, SCART, and S-Video.</div>
-      <div class="aboutMiniCard"><span>Visual Verification</span>Interactive pin diagrams with line tables inside active modals.</div>
-      <div class="aboutMiniCard"><span>Application Focus</span>PC displays, retro gaming setups, digital signage, and video matrix installations.</div>
-      <div class="aboutMiniCard"><span>Digital Protection</span>Detailed listings of TMDS shield and DDC line allocations to secure digital handshakes.</div>
+      <div class="aboutMiniCard"><span>Allwinner Systems</span>Classic A10, A20, H8, and A80 board architectures.</div>
+      <div class="aboutMiniCard"><span>CubieTruck Platform</span>High-performance single board design layout datasets.</div>
+      <div class="aboutMiniCard"><span>High-Speed Ports</span>Comprehensive pin maps for MIPI CSI, DSI, and LVDS displays.</div>
+      <div class="aboutMiniCard"><span>Debug Pins</span>Dedicated UART0 console pins to facilitate system level monitoring.</div>
     </div>
   </section>
 
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. What is the difference between DVI-D, DVI-A, and DVI-I?</strong></h3>
-    <p>DVI-D carries digital video signals only. DVI-A carries analog video signals only (compatible with VGA). DVI-I is integrated and carries both analog and digital signals within the same connector.</p>
+    
+    <h3>1. <strong>Are Cubieboard GPIO pins compatible with Raspberry Pi hats?</strong></h3>
+    <p>No, older Cubieboard models use high-density dual row headers (U14/U15) that have completely different layouts and pin shapes compared to the standard Raspberry Pi 40-pin header.</p>
 
-    <h3><strong>2. Why is my HDMI-to-VGA adapter not working without USB power?</strong></h3>
-    <p>VGA is an analog standard, while HDMI is digital. The conversion requires active circuitry inside the adapter, which often draws more than the standard +5V power provided on HDMI Pin 18.</p>
+    <h3>2. <strong>Why is my SATA drive not spinning up on the Cubieboard?</strong></h3>
+    <p>SATA hard drives require a high startup current. If your main USB power supply cannot deliver at least 2.5A, or if the power cable has high resistance, the drive will fail to spin up. Use a high-quality power supply and a short, thick cable.</p>
 
-    <h3><strong>3. What are S-Video Y and C signals?</strong></h3>
-    <p>S-Video separates video information into two channels: Y (Luminance, which represents brightness/intensity) and C (Chrominance, which carries color information) to provide a sharper picture than standard single-pin composite lines.</p>
+    <h3>3. <strong>How do I connect a display using the LVDS connector?</strong></h3>
+    <p>The LVDS connector breaks out the raw differential data and clock lanes. Connecting an LVDS panel requires a compatible display firmware driver, a matching cable, and a stable 5V back-light supply.</p>
 
-    <h3><strong>4. How is the DDC line used in video cables?</strong></h3>
-    <p>The Display Data Channel (DDC) uses standard SDA (Data) and SCL (Clock) lines to let the monitor send its EDID configuration data directly to the graphics card, configuring the optimal resolution automatically.</p>
-
-    <h3><strong>5. What is the purpose of the Hot Plug Detect pin?</strong></h3>
-    <p>The Hot Plug Detect (HPD) pin monitors voltage levels on the display side. When the monitor is connected and powered, HPD change state, prompting the video card to initiate a handshake.</p>
-
-    <h3><strong>6. Why is proper shielding important for VGA lines?</strong></h3>
-    <p>Analog high-frequency signals are highly vulnerable to induction. Poorly shielded VGA cables lack individual coax screens on the Red, Green, and Blue lines, resulting in visible color ghosting or smear on screen.</p>
+    <h3>4. <strong>What is the purpose of the UART debug port?</strong></h3>
+    <p>The UART debug port provides direct serial access to the U-boot bootloader and the Linux kernel console. This is critical for troubleshooting boot failures, configuring network settings, and debugging driver issues.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
-      <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Identify primary and secondary system winding calculations.</div>
-      <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure stored energy metrics inside transformer components.</div>
-      <div class="linkCard"><strong>SMPS Duty Cycle Calculator</strong>Evaluate performance criteria on active switching regulators.</div>
-      <div class="linkCard"><strong>Wire Gauge Calculator</strong>Estimate safe wire sizes for diverse line current applications.</div>
+      <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Verify primary and secondary winding values.</div>
+      <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure magnetic storage parameters in active units.</div>
+      <div class="linkCard"><strong>SMPS Duty Cycle Calculator</strong>Evaluate voltage regulators and switching controllers.</div>
+      <div class="linkCard"><strong>Wire Gauge Calculator</strong>Estimate safe wire thickness for different current limits.</div>
     </div>
   </section>
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function myFunction() {
-    var input, filter, ul, li, a, i, txtValue;
-    input = document.getElementById("myInput");
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("myUL");
-    li = ul.getElementsByTagName("li");
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
-        }
-    }
-}
-
-// Close modals when user clicks outside of them
-window.onclick = function(event) {
-  if (event.target.classList.contains('w3-modal')) {
-    event.target.style.display = "none";
+// Master Cubieboard IoT Development Boards Pinouts Database
+const packageDetails = [
+  {
+    name: "Cubieboard 1",
+    tag: "Single Board Computer",
+    subtitle: "Allwinner A10 Single-Core Board Pinout",
+    svgs: [
+      {
+        label: "Cubieboard 1 Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
+            <!-- A10 Processor -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A10</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
+            <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">U14 & U15 HIGH DENSITY HEADERS</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "U14 Header - LCD & SPI0 (CB1)",
+        columns: ["Pin", "Function (Primary / Alt / GPIO)", "Pin", "Function (Primary / Alt / GPIO)"],
+        rows: [
+          ["48", "PI13 (SPI0-MISO / UART6-RX / EINT25)", "47", "PI11 (SPI0-CLK / UART5-RX / EINT23)"],
+          ["46", "PI12 (SPI0-MOSI / UART6-TX / EINT24)", "45", "PI10 (SPI0-CS / UART5-TX / EINT22)"],
+          ["44", "3.3V (NC in early board versions)", "43", "VCC-5V"],
+          ["42", "Ground (GND)", "41", "SPDIF Digital Audio Output"],
+          ["40", "PB10 (LCD0-SCK / LCD-PIO1)", "39", "PB11 (LCD0-SDA / LCD-PIO2)"],
+          ["38", "Ground (GND)", "37", "PH7 (LCD0-BL-EN / LCD-PIO0 / UART5-RX / EINT7)"],
+          ["36", "XN_TP (Touch Screen X-)", "35", "YN_TP (Touch Screen Y-)"],
+          ["34", "XP_TP (Touch Screen X+)", "33", "YP_TP (Touch Screen Y+)"],
+          ["32", "PD25 (LCDDE)", "31", "PB2 (PWM0)"],
+          ["30", "PD26 (LCDHSYNC)-VGA-HSYNC", "29", "PD24 (LCDCLK)"],
+          ["28", "PD23 (LCDD23)", "27", "PD27 (LCDVSYNC)-VGA-VSYNC"],
+          ["26", "PD21 (LCDD21)", "25", "PD22 (LCDD22)"],
+          ["24", "PD19 (LCDD19/LVDS1N3)", "23", "PD20 (LCDD20)"],
+          ["22", "PD17 (LCDD17/LVDS1NC)", "21", "PD18 (LCDD18/LVDS1P3)"],
+          ["20", "Ground (GND)", "19", "PD16 (LCDD16/LVDS1PC)"],
+          ["18", "PD14 (LCDD14/LVDS1P2)", "17", "PD15 (LCDD15/LVDS1N2)"],
+          ["16", "PD12 (LCDD12/LVDS1P1)", "15", "PD13 (LCDD13/LVDS1N1)"],
+          ["14", "PD10 (LCDD10/LVDS1P0)", "13", "PD11 (LCDD11/LVDS1N0)"],
+          ["12", "PD8 (LCDD8/LVDS0P3)", "11", "PD9 (LCDD9/LVDS0N3)"],
+          ["10", "PD7 (LCDD7/LVDS0NC)", "9", "Ground"],
+          ["8", "PD5 (LCDD5/LVDS0N2)", "7", "PD6 (LCDD6/LVDS0PC)"],
+          ["6", "PD3 (LCDD3/LVDS0N1)", "5", "PD4 (LCDD4/LNVS0P2)"],
+          ["4", "PD1 (LCDD1/LVDS0N0)", "3", "PD2 (LCDD2/LVDS0P1)"],
+          ["2", "Ground", "1", "PD0 (LCDD0/LVDSP0)"]
+        ]
+      },
+      {
+        header: "U15 Header - CSI1, TS, SDIO3, CSI0 (CB1)",
+        columns: ["Pin", "Function (Primary / Alt / GPIO)", "Pin", "Function (Primary / Alt / GPIO)"],
+        rows: [
+          ["1", "VCC-5V", "2", "PH15 (CSI1-PWR/EINT15)"],
+          ["3", "CSI1-IO-2V8", "4", "PH14 (CSI1-RST#/EINT14)"],
+          ["5", "PG0 (CSI1-PCLK/SDC1-CMD)", "6", "PB18 (TWI1-SCK)"],
+          ["7", "PB19 (TWI1-SDA)", "8", "PG3 (CSI1-VSYNC/SDC1-D1)"],
+          ["9", "PG2 (CSI1-HSYNC/SDC1-D0)", "10", "PG1 (CSI1-MCLK/SDC1-CLK)"],
+          ["11", "PG4 (CSI1-D0/SDC1-D2)", "12", "PG5 (CSI1-D1/SDC1-D3)"],
+          ["13", "PG6 (CSI1-D2/UART3-TX)", "14", "PG7 (CSI1-D3/UART3-RX)"],
+          ["15", "PG8 (CSI1-D4/UART3-RTS)", "16", "PG9 (CSI1-D5/UART3-CTS)"],
+          ["17", "PG10 (CSI1-D6/UART4-TX)", "18", "PG11 (CSI1-D7/UART4-RX)"],
+          ["19", "Ground", "20", "Ground"],
+          ["21", "FMINL", "22", "PI4 (SDC3-CMD)"],
+          ["23", "FMINR", "24", "PI5 (SDC3-CLK)"],
+          ["25", "Ground", "26", "PI6 (SDC3-D0)"],
+          ["27", "VGA-R", "28", "PI7 (SDC3-D1)"],
+          ["29", "VGA-G", "30", "PI8 (SDC3-D2)"],
+          ["31", "VGA-B", "32", "PI9 (SDC3-D3)"],
+          ["33", "LCD1-VSYNC", "34", "PE4 (CSI0-D0)"],
+          ["35", "LCD1-HSYNC", "36", "PE5 (CSI0-D1)"],
+          ["37", "Ground", "38", "PE6 (CSI0-D2)"],
+          ["39", "AVCC", "40", "PE7 (CSI0-D3)"],
+          ["41", "LRADC0", "42", "PE8 (CSI0-D4)"],
+          ["43", "CVBS", "44", "PE9 (CSI0-D5)"],
+          ["45", "HPL", "46", "PE10 (CSI0-D6)"],
+          ["47", "HPR", "48", "PE11 (CSI0-D7)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Cubieboard 2",
+    tag: "Dual-Core SBC",
+    subtitle: "Allwinner A20 Dual-Core Board Pinout",
+    svgs: [
+      {
+        label: "Cubieboard 2 Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
+            <!-- A20 Processor -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A20</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
+            <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">U14 & U15 HIGH DENSITY HEADERS</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "U14 Header - LCD & SPI0 (CB2)",
+        columns: ["Pin", "Function (Primary / Alt / GPIO)", "Pin", "Function (Primary / Alt / GPIO)"],
+        rows: [
+          ["48", "PI13 (SPI0-MISO / UART6-RX / EINT25)", "47", "PI11 (SPI0-CLK / UART5-RX / EINT23)"],
+          ["46", "PI12 (SPI0-MOSI / UART6-TX / EINT24)", "45", "PI10 (SPI0-CS / UART5-TX / EINT22)"],
+          ["44", "3.3V (NC in early board versions)", "43", "VCC-5V"],
+          ["42", "Ground (GND)", "41", "SPDIF Digital Audio Output"],
+          ["40", "PB10 (LCD0-SCK / LCD-PIO1)", "39", "PB11 (LCD0-SDA / LCD-PIO2)"],
+          ["38", "Ground (GND)", "37", "PH7 (LCD0-BL-EN / LCD-PIO0 / UART5-RX / EINT7)"],
+          ["36", "XN_TP (Touch Screen X-)", "35", "YN_TP (Touch Screen Y-)"],
+          ["34", "XP_TP (Touch Screen X+)", "33", "YP_TP (Touch Screen Y+)"],
+          ["32", "PD25 (LCD Data Enable)", "31", "PB2 (Hardware PWM0)"],
+          ["30", "PD26 (LCD Horizontal Sync / VGA H-Sync)", "29", "PD24 (LCD Clock)"],
+          ["28", "PD23 (LCD Data 23)", "27", "PD27 (LCD Vertical Sync / VGA V-Sync)"],
+          ["26", "PD21 (LCD Data 21)", "25", "PD22 (LCD Data 22)"],
+          ["24", "PD19 (LCD Data 19 / LVDS1N3)", "23", "PD20 (LCD Data 20)"],
+          ["22", "PD17 (LCD Data 17 / LVDS1NC)", "21", "PD18 (LCD Data 18 / LVDS1P3)"],
+          ["20", "Ground (GND)", "19", "PD16 (LCD Data 16 / LVDS1PC)"],
+          ["18", "PD14 (LCD Data 14 / LVDS1P2)", "17", "PD15 (LCD Data 15 / LVDS1N2)"],
+          ["16", "PD12 (LCD Data 12 / LVDS1P1)", "15", "PD13 (LCD Data 13 / LVDS1N1)"],
+          ["14", "PD10 (LCD Data 10 / LVDS1P0)", "13", "PD11 (LCD Data 11 / LVDS1N0)"],
+          ["12", "PD8 (LCD Data 8 / LVDS0P3)", "11", "PD9 (LCD Data 9 / LVDS0N3)"],
+          ["10", "PD7 (LCD Data 7 / LVDS0NC)", "9", "Ground (GND)"],
+          ["8", "PD5 (LCD Data 5 / LVDS0N2)", "7", "PD6 (LCD Data 6 / LVDS0PC)"],
+          ["6", "PD3 (LCDD3 / LVDS0N1)", "5", "PD4 (LCDD4 / LVDS0P2)"],
+          ["4", "PD1 (LCDD1 / LVDS0N0)", "3", "PD2 (LCDD2 / LVDS0P1)"],
+          ["2", "Ground (GND)", "1", "PD0 (LCDD0 / LVDSP0)"]
+        ]
+      },
+      {
+        header: "U15 Header - CSI1, SDIO3, Analog, CSI0 (CB2)",
+        columns: ["Pin", "Function (Primary / Alt / GPIO)", "Pin", "Function (Primary / Alt / GPIO)"],
+        rows: [
+          ["1", "VCC-5V", "2", "PH15 (CSI1-PWR / EINT15)"],
+          ["3", "CSI1-IO-2V8 (Camera power rail)", "4", "PH14 (CSI1-RST# / EINT14)"],
+          ["5", "PG0 (CSI1-PCLK / SDC1-CMD)", "6", "PB18 (TWI1-SCK / I2C Bus 1)"],
+          ["7", "PB19 (TWI1-SDA / I2C Bus 1)", "8", "PG3 (CSI1-VSYNC / SDC1-D1)"],
+          ["9", "PG2 (CSI1-HSYNC / SDC1-D0)", "10", "PG1 (CSI1-MCLK / SDC1-CLK)"],
+          ["11", "PG4 (CSI1-D0 / SDC1-D2)", "12", "PG5 (CSI1-D1 / SDC1-D3)"],
+          ["13", "PG6 (CSI1-D2 / UART3-TX)", "14", "PG7 (CSI1-D3 / UART3-RX)"],
+          ["15", "PG8 (CSI1-D4 / UART3-RTS)", "16", "PG9 (CSI1-D5 / UART3-CTS)"],
+          ["17", "PG10 (CSI1-D6 / UART4-TX)", "18", "PG11 (CSI1-D7 / UART4-RX)"],
+          ["19", "Ground (GND)", "20", "Ground (GND)"],
+          ["21", "FMINL (FM Radio In Left)", "22", "PI4 (SDC3-CMD)"],
+          ["23", "FMINR (FM Radio In Right)", "24", "PI5 (SDC3-CLK)"],
+          ["25", "Ground (GND)", "26", "PI6 (SDC3-D0)"],
+          ["27", "VGA-R (Analog Red Video out)", "28", "PI7 (SDC3-D1)"],
+          ["29", "VGA-G (Analog Green Video out)", "30", "PI8 (SDC3-D2)"],
+          ["31", "VGA-B (Analog Blue Video out)", "32", "PI9 (SDC3-D3)"],
+          ["33", "LCD1-VSYNC", "34", "PE4 (CSI0-D0)"],
+          ["35", "LCD1-HSYNC", "36", "PE5 (CSI0-D1)"],
+          ["37", "Ground (GND)", "38", "PE6 (CSI0-D2)"],
+          ["39", "AVCC", "40", "PE7 (CSI0-D3)"],
+          ["41", "LRADC0 (Low Resolution ADC)", "42", "PE8 (CSI0-D4)"],
+          ["43", "CVBS Composite Out", "44", "PE9 (CSI0-D5)"],
+          ["45", "HPL (Headphone Left audio)", "46", "PE10 (CSI0-D6)"],
+          ["47", "HPR (Headphone Right audio)", "48", "PE11 (CSI0-D7)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Cubieboard 2 Dualcard",
+    tag: "Dual-Core Dual-Flash",
+    subtitle: "Allwinner A20 Dual SD Card Slot Board Pinout",
+    svgs: [
+      {
+        label: "BPI-M1+ Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0369a1" rx="6" opacity="0.85"/>
+            <!-- Dual SD Card Slots -->
+            <rect x="25" y="25" width="40" height="40" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" rx="3"/>
+            <rect x="25" y="85" width="40" height="40" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" rx="3"/>
+            <!-- A20 Processor -->
+            <rect x="130" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="180" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A20</text>
+            <text x="180" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "U14 Header - LCD & SPI0 (Shares standard CB2 structures)",
+        columns: ["Pin", "Function (Primary / Alt / GPIO)", "Pin", "Function (Primary / Alt / GPIO)"],
+        rows: [
+          ["48", "PI13 (SPI0-MISO / UART6-RX / EINT25)", "47", "PI11 (SPI0-CLK / UART5-RX / EINT23)"],
+          ["46", "PI12 (SPI0-MOSI / UART6-TX / EINT24)", "45", "PI10 (SPI0-CS / UART5-TX / EINT22)"],
+          ["44", "3.3V (NC in early board versions)", "43", "VCC-5V"],
+          ["42", "Ground (GND)", "41", "SPDIF Digital Audio Output"],
+          ["40", "PB10 (LCD0-SCK / LCD-PIO1)", "39", "PB11 (LCD0-SDA / LCD-PIO2)"],
+          ["38", "Ground (GND)", "37", "PH7 (LCD0-BL-EN / LCD-PIO0 / UART5-RX / EINT7)"],
+          ["36", "XN_TP (Touch Screen X-)", "35", "YN_TP (Touch Screen Y-)"],
+          ["34", "XP_TP (Touch Screen X+)", "33", "YP_TP (Touch Screen Y+)"],
+          ["32", "PD25 (LCD Data Enable)", "31", "PB2 (Hardware PWM0)"],
+          ["30", "PD26 (LCD Horizontal Sync / VGA H-Sync)", "29", "PD24 (LCD Clock)"],
+          ["28", "PD23 (LCD Data 23)", "27", "PD27 (LCD Vertical Sync / VGA V-Sync)"],
+          ["26", "PD21 (LCD Data 21)", "25", "PD22 (LCD Data 22)"],
+          ["24", "PD19 (LCD Data 19 / LVDS1N3)", "23", "PD20 (LCD Data 20)"],
+          ["22", "PD17 (LCD Data 17 / LVDS1NC)", "21", "PD18 (LCD Data 18 / LVDS1P3)"],
+          ["20", "Ground (GND)", "19", "PD16 (LCD Data 16 / LVDS1PC)"],
+          ["18", "PD14 (LCD Data 14 / LVDS1P2)", "17", "PD15 (LCD Data 15 / LVDS1N2)"],
+          ["16", "PD12 (LCD Data 12 / LVDS1P1)", "15", "PD13 (LCD Data 13 / LVDS1N1)"],
+          ["14", "PD10 (LCD Data 10 / LVDS1P0)", "13", "PD11 (LCD Data 11 / LVDS1N0)"],
+          ["12", "PD8 (LCD Data 8 / LVDS0P3)", "11", "PD9 (LCD Data 9 / LVDS0N3)"],
+          ["10", "PD7 (LCD Data 7 / LVDS0NC)", "9", "Ground (GND)"],
+          ["8", "PD5 (LCD Data 5 / LVDS0N2)", "7", "PD6 (LCD Data 6 / LVDS0PC)"],
+          ["6", "PD3 (LCDD3 / LVDS0N1)", "5", "PD4 (LCDD4 / LVDS0P2)"],
+          ["4", "PD1 (LCDD1 / LVDS0N0)", "3", "PD2 (LCDD2 / LVDS0P1)"],
+          ["2", "Ground (GND)", "1", "PD0 (LCDD0 / LVDSP0)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Cubieboard 3 (CubieTruck)",
+    tag: "Legacy High-Interface",
+    subtitle: "Allwinner A20 Premium Development System Pinout",
+    svgs: [
+      {
+        label: "CubieTruck Profile Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
+            <!-- VGA Connector -->
+            <rect x="25" y="25" width="40" height="40" fill="#1e293b" stroke="#e2e8f0" stroke-width="1.5" rx="3"/>
+            <text x="45" y="48" fill="#fff" font-size="8" text-anchor="middle" font-weight="bold">VGA</text>
+            <!-- A20 Processor -->
+            <rect x="130" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="180" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A20</text>
+            <text x="180" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "CN8 (Near Ethernet Connector) - 2x15 Double-Row Header",
+        columns: ["Pin", "Signal Name", "Pin", "Signal Name & Function Map"],
+        rows: [
+          ["30", "LRADC1", "29", "VCC-5V power supply rail"],
+          ["28", "LRADC0", "27", "CVBS"],
+          ["26", "LINEIN-R", "25", "PB19(TWI1-SDA)"],
+          ["24", "LINEIN-L", "23", "PB18(TWI1-SCK)"],
+          ["22", "PB4 (IR0-RX)", "21", "PB2 (PWM0)"],
+          ["20", "PB3 (IR0-TX))", "19", "PI3 (PWM1)"],
+          ["18", "PI15 (PS2SDA1/EINT27)", "17", "PI21 (FMIN-R/PS2SDA0/UART7-RX/HSDA)"],
+          ["16", "PI14 (PS2SCLK1/EINT26)", "15", "PI20 (FMIN-L/PS2SCLK0/UART7-TX/HSCL)"],
+          ["14", "GND", "13", "GND"],
+          ["12", "PB17 (SPI2-MISO/JTAG_DI0)", "11", "PB15(SPI2-CLK/JTAG_CK0)"],
+          ["10", "PB16 (SPI2-MOSI/JTAG_DO0)", "9", "PB14 (SPI2-CS0/JTAG_MS0)"],
+          ["8", "PC22 (SPI2-MISO/EINT15)", "7", "PC20 (SPI2-CLK)"],
+          ["6", "PC21 (SPI2-MOSI/EINT14)", "5", "PC19 (SPI2-CS0)"],
+          ["4", "RESET#", "3", "AVCC"],
+          ["2", "3.3V", "1", "GND"]
+        ]
+      },
+      {
+        header: "CN9 (Near USB Ports) - CSI1, TS, TP, TVIN",
+        columns: ["Pin", "Primary Name / Signal", "Pin", "Primary Name / Signal"],
+        rows: [
+          ["1", "3.3V", "2", "3.3V"],
+          ["3", "PG0 (TS1_CLK/CSI1-PCLK)", "4", "PG3 (TS1_ERR/CSI1-VSYNC)"],
+          ["5", "PG2 (TS1_SYNC/CSI1-HSYNC)", "6", "PG1 (TS1_DVLD/CSI1-MCLK)"],
+          ["7", "PG4 (TS1_D0/CSI1-D0)", "8", "PG5 (TS1_D1/CSI1-D1)"],
+          ["9", "PG6 (TS1_D2/CSI1-D2/UART3-TX)", "10", "PG7 (TS1_D3/CSI1-D3/UART3-RX)"],
+          ["11", "PG8 (TS1_D4/CSI1-D4/UART3-RTS)", "12", "PG9 (TS1_D5/CSI1-D5/UART3-CTS)"],
+          ["13", "PG10 (TS1_D6/CSI1-D6/UART4-TX)", "14", "PG11 (TS1_D7/CSI1-D7/UART4-RX)"],
+          ["15", "GND", "16", "GND"],
+          ["17", "XP-I2SDO1", "18", "TVIN0-I2SMCLK"],
+          ["19", "XN-I2SDO2", "20", "TVIN1-BTPCMCLK"],
+          ["21", "YP-I2SDO3", "22", "TVIN2-BTPCMSYNC"],
+          ["23", "XN-BTPCMIN", "24", "TVIN3-BTPCMOUT"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Cubieboard 4 (CC-A80)",
+    tag: "Octa-Core Powerhouse",
+    subtitle: "Allwinner A80 Ultra Octa-Core Board Pinout",
+    svgs: [
+      {
+        label: "Cubieboard 4 Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
+            <!-- A80 Processor -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#fff" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#fff" font-size="11" text-anchor="middle" font-weight="bold">Allwinner A80</text>
+            <text x="160" y="95" fill="#e2e8f0" font-size="8" text-anchor="middle">CPU Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "2x16 GPIO Header Pinout (CC-A80)",
+        columns: ["Pin", "Signal Map", "Pin", "Signal Map"],
+        rows: [
+          ["1", "GPIO-ADC0", "2", "GPIO-PL0-CPUS-TX"],
+          ["3", "GPIO-ADC1", "4", "GPIO-PL1-CPUS-RX"],
+          ["5", "GND", "6", "GPIO-3V"],
+          ["7", "GPIO-HSIC-STRB", "8", "GND"],
+          ["9", "GND", "10", "GPIO-PH6-PWM0"],
+          ["11", "GPIO-HSIC-DATA", "12", "GND"],
+          ["13", "GND", "14", "GPIO-PH14-SPI3-CLK"],
+          ["15", "GPIO-PL7-1WIRE", "16", "GPIO-PH15-SPI3-MOSI"],
+          ["17", "GPIO-PM0", "18", "GPIO-PH16-SPI3-MISO"],
+          ["19", "GPIO-PM1", "20", "GPIO-PH17-SPI3-CS0"],
+          ["21", "GPIO-PM2", "22", "GPIO-PG10-TWI3-SCK"],
+          ["23", "GPIO-PM3", "24", "GPIO-PG11-TWI3-SDA"],
+          ["25", "GPIO-PM4", "26", "GPIO-PG12-UART4-TX"],
+          ["27", "GPIO-PM8", "28", "GPIO-PG13-UART4-RX"],
+          ["29", "GPIO-PM9", "30", "GPIO-PG14-UART4-RTS"],
+          ["31", "GPIO-PH2", "32", "GPIO-PG15-UART4-CTS"]
+        ]
+      },
+      {
+        header: "1x4 UART Header Pinout",
+        columns: ["Pin", "Signal Map"],
+        rows: [
+          ["1", "GPIO-PH12-UART0-TX"],
+          ["2", "GPIO-PH13-UART0-RX"],
+          ["3", "NC (No connection)"],
+          ["4", "GND"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Cubieboard 5 (CubieTruck Plus)",
+    tag: "Octa-Core Premium",
+    subtitle: "Allwinner H8 Premium Octa-Core Board Pinout",
+    svgs: [
+      {
+        label: "Cubieboard 5 Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#ea580c" rx="6" opacity="0.85"/>
+            <!-- A80 Processor -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#fff" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#fff" font-size="11" text-anchor="middle" font-weight="bold">Allwinner H8</text>
+            <text x="160" y="95" fill="#e2e8f0" font-size="8" text-anchor="middle">CPU Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "CN8 (Near Ethernet Connector) - 2x15 Double-Row Pinout",
+        columns: ["Pin", "Signal Name", "Pin", "Signal Name & Function Map"],
+        rows: [
+          ["30", "LRADC1", "29", "VCC-5V"],
+          ["28", "LRADC0", "27", "CVBS"],
+          ["26", "LINEIN-R", "25", "PB19(TWI1-SDA)"],
+          ["24", "LINEIN-L", "23", "PB18(TWI1-SCK)"],
+          ["22", "PB4 (IR0-RX)", "21", "PB2 (PWM0)"],
+          ["20", "PB3 (IR0-TX))", "19", "PI3 (PWM1)"],
+          ["18", "PI15 (PS2SDA1/EINT27)", "17", "PI21 (FMIN-R/PS2SDA0/UART7-RX/HSDA)"],
+          ["16", "PI14 (PS2SCLK1/EINT26)", "15", "PI20 (FMIN-L/PS2SCLK0/UART7-TX/HSCL)"],
+          ["14", "GND", "13", "GND"],
+          ["12", "PB17 (SPI2-MISO/JTAG_DI0)", "11", "PB15(SPI2-CLK/JTAG_CK0)"],
+          ["10", "PB16 (SPI2-MOSI/JTAG_DO0)", "9", "PB14 (SPI2-CS0/JTAG_MS0)"],
+          ["8", "PC22 (SPI2-MISO/EINT15)", "7", "PC20 (SPI2-CLK)"],
+          ["6", "PC21 (SPI2-MOSI/EINT14)", "5", "PC19 (SPI2-CS0)"],
+          ["4", "RESET#", "3", "AVCC"],
+          ["2", "3.3V", "1", "GND"]
+        ]
+      },
+      {
+        header: "CN9 (Near USB Ports) - CSI1, TS, TP, TVIN",
+        columns: ["Pin", "Primary Name / Signal", "Pin", "Primary Name / Signal"],
+        rows: [
+          ["1", "3.3V", "2", "3.3V"],
+          ["3", "PG0 (TS1_CLK/CSI1-PCLK)", "4", "PG3 (TS1_ERR/CSI1-VSYNC)"],
+          ["5", "PG2 (TS1_SYNC/CSI1-HSYNC)", "6", "PG1 (TS1_DVLD/CSI1-MCLK)"],
+          ["7", "PG4 (TS1_D0/CSI1-D0)", "8", "PG5 (TS1_D1/CSI1-D1)"],
+          ["9", "PG6 (TS1_D2/CSI1-D2/UART3-TX)", "10", "PG7 (TS1_D3/CSI1-D3/UART3-RX)"],
+          ["11", "PG8 (TS1_D4/CSI1-D4/UART3-RTS)", "12", "PG9 (TS1_D5/CSI1-D5/UART3-CTS)"],
+          ["13", "PG10 (TS1_D6/CSI1-D6/UART4-TX)", "14", "PG11 (TS1_D7/CSI1-D7/UART4-RX)"],
+          ["15", "GND", "16", "GND"],
+          ["17", "XP-I2SDO1", "18", "TVIN0-I2SMCLK"],
+          ["19", "XN-I2SDO2", "20", "TVIN1-BTPCMCLK"],
+          ["21", "YP-I2SDO3", "22", "TVIN2-BTPCMSYNC"],
+          ["23", "XN-BTPCMIN", "24", "TVIN3-BTPCMOUT"]
+        ]
+      }
+    ]
   }
-}
+];
 
-// Zoom functionality for diagram images
-$('img[data-enlargable]').addClass('img-enlargable').click(function(){
-    var src = $(this).attr('src');
-    var modal;
-    function removeModal(){ modal.remove(); $('body').off('keyup.modal-close'); }
-    modal = $('<div>').css({
-        background: 'RGBA(15,23,42,.85) url('+src+') no-repeat center',
-        backgroundSize: 'contain',
-        width:'100%', height:'100%',
-        position:'fixed',
-        zIndex:'10000',
-        top:'0', left:'0',
-        cursor: 'zoom-out'
-    }).click(function(){
-        removeModal();
-    }).appendTo('body');
-    // handling ESC
-    $('body').on('keyup.modal-close', function(e){
-      if(e.key==='Escape'){ removeModal(); } 
-    });
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
 });
+
+// Update display with selected board parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
+  
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
+}
+
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
+}
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first board entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+};
 </script>
 
+<!-- SEO Structured JSON-LD Schemas -->
 <script type="application/ld+json">
 {
-"@context":"https://schema.org",
-"@type":"FAQPage",
-"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
-"mainEntity":[
-{"@type":"Question","name":"1. What is the difference between T568A and T568B wiring?","acceptedAnswer":{"@type":"Answer","text":"The only functional difference is that pin pairs 2 (orange) and 3 (green) are swapped. T568A is commonly used in federal and legacy systems, while T568B is the standard for most commercial and residential networks."}},
-{"@type":"Question","name":"2. Can I plug an RJ11 connector into an RJ45 jack?","acceptedAnswer":{"@type":"Answer","text":"Physically yes, but it is not recommended. The smaller RJ11 connector can bend and permanently damage the outer pins (Pins 1 and 8) of the female RJ45 wall jack."}},
-{"@type":"Question","name":"3. What do the terms \"Tip\" and \"Ring\" mean in telephony?","acceptedAnswer":{"@type":"Answer","text":"These terms originate from legacy manual telephone switchboards. \"Tip\" refers to the positive side of the line connected to the plug tip, while \"Ring\" refers to the negative side connected to the metal ring behind the tip."}},
-{"@type":"Question","name":"4. What is the difference between RJ48 and RJ45?","acceptedAnswer":{"@type":"Answer","text":"Both use the same physical 8P8C modular connector, but they have different wiring configurations. RJ45 is used for local area networks, while RJ48 (such as RJ48C and RJ48X) is used for T1/E1 digital telecom lines and requires shielded wiring."}},
-{"@type":"Question","name":"5. Why German TAE wiring have multiple lettered contacts?","acceptedAnswer":{"@type":"Answer","text":"The TAE (Telekommunikations-Anschluss-Einheit) standard uses mechanical switching contacts (a2 and b2) to route signals in series through auxiliary devices (like fax machines or modems) back to the main telephone line."}},
-{"@type":"Question","name":"6. How are RJ21 connectors used in enterprise telephony?","acceptedAnswer":{"@type":"Answer","text":"Also known as Amphenol or Telco connectors, RJ21 connectors contain 50 pins to carry 25 individual analog telephone lines over a single trunk cable, simplifying wiring in office telephone closets."}}
-]
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Are Cubieboard GPIO pins compatible with Raspberry Pi hats?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, older Cubieboard models use high-density dual row headers (U14/U15) that have completely different layouts and pin shapes compared to the standard Raspberry Pi 40-pin header."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is my SATA drive not spinning up on the Cubieboard?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SATA hard drives require a high startup current. If your main USB power supply cannot deliver at least 2.5A, or if the power cable has high resistance, the drive will fail to spin up. Use a high-quality power supply and a short, thick cable."
+      }
+    }
+  ]
 }
 </script>
 
 <script type="application/ld+json">
 {
-"@context":"https://schema.org",
-"@type":"BreadcrumbList",
-"itemListElement":[
-{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
-{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
-{"@type":"ListItem","position":3,"name":"Registered Jack Pinouts Reference Guide","item":"https://calcboy.com/tool/registered-jack-pinouts-reference-guide"}
-]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Cubieboard IoT Development Boards Pinouts Guide", "item": "https://calcboy.com/tool/cubieboard-pinouts-guide" }
+  ]
 }
 </script>
 
