@@ -4,237 +4,419 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Intel IoT Development Boards Pinouts Guide | CalcBoy</title>
-<meta name="description" content="Complete, exhaustive pin-by-pin specifications and custom vector layouts for Intel IoT development boards including Intel Galileo Gen 1 & 2, Intel Edison breakouts, Intel Joule 570x, and Intel Aero.">
+<meta name="description" content="Complete, exhaustive pin-by-pin specifications and custom vector layouts for Intel IoT development boards including Intel Galileo Gen 1 &amp; 2, Intel Edison breakouts, Intel Joule 570x, and Intel Aero.">
 <meta name="keywords" content="Intel Galileo pinout, Intel Edison breakout, Intel Joule 570x GPIO, Intel Aero compute board, Intel Curie pin layout, Galileo Gen 2 wiring, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/intel-iot-development-boards-pinouts-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Intel IoT Development Boards Pinouts Guide | CalcBoy">
+<meta property="og:description" content="Access complete, exhaustive pin-by-pin specifications and vector schematics for Intel x86 IoT platforms including Galileo, Edison, and Curie.">
+<meta property="og:url" content="https://calcboy.com/tool/intel-iot-development-boards-pinouts-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Intel IoT Development Boards Pinouts Guide | CalcBoy">
+<meta name="twitter:description" content="Complete engineering reference directory for Intel x86 IoT board architectures, pin multiplexing, and expansion pinouts.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#intel-pinouts-calc,#intel-pinouts-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#intel-pinouts-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#beagle-pinouts-tool, #beagle-pinouts-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#beagle-pinouts-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
 }
-.pinout-item-card:hover {
-  border-color:#ff6a00;
-  box-shadow:0 4px 12px rgba(255,106,0,.08);
+.calc-grid {
+  display: grid;
+  gap: 15px;
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#ff6a00;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
 }
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
 }
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
+select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
 }
-
-/* Modal Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:auto;
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:20px 10px;
+select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
 }
-.w3-modal-content {
-  background:#fff;
-  margin:20px auto;
-  width:100%;
-  max-width:580px;
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-.mid {
-  position:sticky !important;
-  top:10% !important;
-  right:16px !important;
-  float:right !important;
-  z-index:1010 !important;
-  width:36px;
-  height:36px;
-  background-color:red !important;
-  border:none !important;
-  border-radius:50% !important;
-  color:white !important;
-  font-size:16px !important;
-  font-weight:900 !important;
-  cursor:pointer !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-shadow:0 4px 6px rgba(0,0,0,0.15);
-  transition:background-color 0.2s, transform 0.1s;
-  margin-top:-8px;
-  margin-right:-8px;
-}
-.mid:hover {
-  background-color:#cc0000 !important;
-  transform:scale(1.05);
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Inner Modal Elements */
-.table1 {width:100%;text-align:left;clear:both}
-.diagramBox {
-  background:#f8fafc;
-  padding:16px;
-  text-align:center;
-  margin:12px auto;
-  border:1px solid #e2e8f0;
-  border-radius:12px;
-  overflow-x:auto;
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-.diagramBox svg {
-  width:100%;
-  max-width:480px;
-  height:auto;
-  display:block;
-  margin:auto;
+.connector-header-card .badge {
+  background: #ffedd5;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
 }
 
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ea580c;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ffedd5;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
+  display: flex;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
+}
+.vector-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 140px;
+  justify-content: center;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
+}
+.vector-box:hover {
+  transform: scale(1.02);
+  border-color: #ff6a00;
+}
+.vector-box svg {
+  max-width: 100%;
+  height: auto;
+}
+.vector-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
 .img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:8px;
-  margin-bottom:16px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
 }
 
-/* Standardized Tables */
-table {
-  width:100%;
-  border-collapse:collapse;
-  margin:15px 0 20px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  overflow:hidden;
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
 }
-th {
-  background:#f1f5f9;
-  color:#1e293b;
-  font-size:13px;
-  font-weight:900;
-  padding:12px 14px;
-  text-align:left;
-  border-bottom:2px solid #e2e8f0;
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
 }
-td {
-  padding:10px 14px;
-  font-size:13px;
-  color:#475467;
-  border-bottom:1px solid #edf2f7;
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
 }
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #475467 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
-
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutNote {
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-left: 5px solid #ff6a00;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9a3412;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
+}
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff6a00;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="intel-pinouts-calc">
+<div id="beagle-pinouts-tool">
 
-  <div class="search-container">
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Intel Pinouts..." title="Type in a name">
-  </div>
-
-  <ul id="myUL">
-    <!-- Comprehensive 4-card configuration mapped to high-fidelity dynamic modals -->
-    <li><a href="#" onclick="openModal('id01'); return false;" class="pinout-item-card"><span class="card-tag">x86 Prototyping</span><div class="card-inner"><span class="card-title">Intel Galileo Gen1</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id02'); return false;" class="pinout-item-card"><span class="card-tag">x86 Prototyping</span><div class="card-inner"><span class="card-title">Intel Galileo Gen2</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id03'); return false;" class="pinout-item-card"><span class="card-tag">Wireless Computing</span><div class="card-inner"><span class="card-title">Intel Edison</span><span class="card-arrow">&#x2192;</span></div></a></li>
-    <li><a href="#" onclick="openModal('id04'); return false;" class="pinout-item-card"><span class="card-tag">Wireless Computing</span><div class="card-inner"><span class="card-title">Intel Edison Kit</span><span class="card-arrow">&#x2192;</span></div></a></li>
-  </ul>
-
-  <!-- Shared Dynamic Modal -->
-  <div id="dynamicModal" class="w3-modal">
-    <div class="w3-modal-content">
-      <button class="mid" onclick="closeModal()">X</button>
-      <div id="modalTarget" class="table1">
-        <!-- Rendered dynamically -->
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Board Pinout Selector</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Intel Board</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
       </div>
     </div>
   </div>
 
-  <!-- Educational & SEO Sections -->
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">x86 Prototyping</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Pinout Map</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
+    
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+  </div>
+
+  <!-- Input Parameters Specification -->
   <section class="infoBox">
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
-      <div class="paramItem"><strong>Dynamic Content Filtering</strong>The integrated search field scans board names, processor architectures, and pin descriptions to deliver immediate matches.</div>
-      <div class="paramItem"><strong>Active Window Triggers</strong>Clicking any development board card activates a modal layer containing high-resolution layouts and pin references.</div>
-      <div class="paramItem"><strong>Multi-Voltage Logic</strong>Intel development boards use various logic levels (1.8V, 3.3V, and 5V) requiring level shifters to transition signals safely.</div>
-      <div class="paramItem"><strong>High-Speed Serial Buses</strong>Physical headers break out PCI Express, high-frequency USB 3.0, and independent SPI/I2C channels.</div>
+      <div class="paramItem">
+        <strong>Pin Multiplexing Overlays</strong>
+        Processor routing register maps designed to dynamically assign CPU GPIO pins to standard SPI, I2C, or UART channels.
+      </div>
+      <div class="paramItem">
+        <strong>Multi-Voltage Logic Ranges</strong>
+        Voltage logic boundaries (1.8V, 3.3V, and 5V) requiring level shifters to transition high-level inputs safely.
+      </div>
+      <div class="paramItem">
+        <strong>High-Speed Serial Buses</strong>
+        Dedicated peripheral buses breaking out PCI Express, high-frequency USB 3.0, and independent SPI/I2C lanes.
+      </div>
+      <div class="paramItem">
+        <strong>Power Sourcing Schemes</strong>
+        Power routing configurations allocating load paths across USB, battery inputs, and regulated pin rails.
+      </div>
     </div>
   </section>
 
+  <!-- Practical Operational Examples -->
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
     <div class="exampleGrid">
@@ -257,19 +439,33 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
-    <h2>Intel x86 IoT Board Architecture & Theory</h2>
+    <h2>Intel x86 IoT Board Architecture &amp; Theory</h2>
     <p>Intel IoT development boards leverage advanced x86 architectures (Quark SoC on Galileo, dual-core Silvermont Atom on Edison, and Quad-Core Goldmont on Joule) to bring desktop-class computing capabilities to embedded hardware projects. These boards utilize complex I/O multiplexers and digital-to-analog converters connected via I2C and PCI buses to maintain physical Arduino header compatibility while running standard Linux distributions (Yocto, Ubuntu, or Windows IoT) in real time.</p>
     <div class="aboutNote">Tip: Always check the target logic voltage before connecting peripherals. Galileo boards allow 5V/3.3V jumper selections, but Edison and Joule I/O pins run strictly on 1.8V logic and will be destroyed if connected to 5V inputs.</div>
   </section>
 
+  <!-- Formulas & Hardware Calculations -->
   <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
+    <h2>Formulas &amp; Hardware Calculations</h2>
     <div class="formula">Analog-to-Digital Converter Resolution: V_step = V_ref / (2^Resolution_bits - 1) (Galileo Gen 2 ADC achieves 1.22 mV steps at 5V V_ref)</div>
-    <div class="formula">USB 3.0 Differential Lane Throughput: Bandwidth_Gbps = Baud_Rate * (8 / 10) (Due to 8b/10b symbol encoding overhead)</div>
+    <div class="formula">USB 3.0 Differential Lane Throughput: Bandwidth_Gbps = Band_Rate * (8 / 10) (Due to 8b/10b symbol encoding overhead)</div>
     <div class="formula">System Power Draw: P_total = V_in * I_in = P_cpu + P_wifi + sum(P_gpio_loads)</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target Intel development platform using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the board's class and primary SoC chipset.</div>
+      <div class="aboutStep">Study the customized 2D vector layout showing board structure and expansion headers.</div>
+      <div class="aboutStep">Consult the exhaustive connection tables below the diagram to locate specific peripheral pin assignments.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
   <section class="infoBox">
     <h2>About This Reference Guide</h2>
     <div class="aboutLead">
@@ -281,34 +477,31 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     <div class="aboutMiniGrid">
       <div class="aboutMiniCard"><span>Galileo Platforms</span>Quark x1000 SoC based models with selectable 3.3V and 5V logic.</div>
       <div class="aboutMiniCard"><span>Edison Series</span>High-density, modular computing modules for wearables and IoT gateways.</div>
-      <div class="aboutMiniCard"><span>Joule & Aero</span>Ultra-high-performance compute modules for edge-AI and drone telemetry.</div>
+      <div class="aboutMiniCard"><span>Joule &amp; Aero</span>Ultra-high-performance compute modules for edge-AI and drone telemetry.</div>
       <div class="aboutMiniCard"><span>Level Shifting Warnings</span>Detailed instructions regarding logic level compatibility across different modules.</div>
     </div>
   </section>
 
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. Are Intel Galileo pins 5V tolerant?</strong></h3>
+    
+    <h3>1. <strong>Are Intel Galileo pins 5V tolerant?</strong></h3>
     <p>Yes. Both Galileo Gen 1 and Gen 2 boards feature onboard level shifters and jumper configurations that allow you to toggle the IO header logic levels between 3.3V and 5V safely.</p>
 
-    <h3><strong>2. Why do Intel Edison breakout pins run on 1.8V logic?</strong></h3>
+    <h3>2. <strong>Why do Intel Edison breakout pins run on 1.8V logic?</strong></h3>
     <p>The Edison computer module uses a high-density 22nm Atom SoC designed for ultra-low power consumption. Running the internal digital I/O lines at 1.8V reduces overall power draw and heat dissipation.</p>
 
-    <h3><strong>3. How can I connect 5V Arduino shields to an Intel Edison?</strong></h3>
+    <h3>3. <strong>How can I connect 5V Arduino shields to an Intel Edison?</strong></h3>
     <p>You must use the Intel Edison Kit for Arduino. This breakout board includes active level-shifting buffers that translate standard 5V or 3.3V shield signals down to the Edison's native 1.8V operating voltage.</p>
 
-    <h3><strong>4. What is the neural network module inside the Intel Curie?</strong></h3>
-    <p>The Curie module contains a dedicated 128-neuron pattern-matching hardware engine. This allows the low-power chip to classify accelerometer and gyroscope inputs directly on-board with minimal latency.</p>
-
-    <h3><strong>5. Why does the Intel Joule require an active fan?</strong></h3>
-    <p>The Joule 570x features a quad-core Atom processor running at up to 2.4GHz with integrated HD graphics. Under heavy compute loads, the board can generate significant heat, requiring active thermal management to prevent throttling.</p>
-
-    <h3><strong>6. What is the primary purpose of the Intel Aero compute board?</strong></h3>
+    <h3>4. <strong>What is the primary purpose of the Intel Aero compute board?</strong></h3>
     <p>The Aero board was designed specifically for unmanned aerial vehicles (UAVs). It integrates an Atom processor, an Altera Max 10 FPGA, and a dedicated Flight Controller interface to handle real-time flight telemetry and computer vision simultaneously.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
       <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Verify primary and secondary winding values.</div>
       <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure magnetic storage parameters in active units.</div>
@@ -319,202 +512,377 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-// Exhaustive Database of all 4 Intel Boards with absolute pin representations
-const pinoutsData = {
-  "id01": {
-    name: "Intel Galileo Gen1",
-    color: "#0284c7",
-    processor: "Intel Quark X1000",
-    pins: [
-      { pin: "D0 / RX", label: "UART0_RXD", desc: "UART Serial Receive / GPIO (3.3V or 5V Selectable)" },
-      { pin: "D1 / TX", label: "UART0_TXD", desc: "UART Serial Transmit / GPIO (3.3V or 5V Selectable)" },
-      { pin: "D2", label: "GPIO3", desc: "General-purpose I/O / Selectable logic level" },
-      { pin: "D3", label: "GPIO4 (PWM)", desc: "Pulse-Width Modulator output / select logic" },
-      { pin: "D4", label: "GPIO5", desc: "General-purpose bidirectional I/O" },
-      { pin: "D5", label: "GPIO6 (PWM)", desc: "Hardware PWM timer output channel" },
-      { pin: "D6", label: "GPIO7 (PWM)", desc: "Hardware PWM timer output channel" },
-      { pin: "D7", label: "GPIO8", desc: "General-purpose bidirectional I/O" },
-      { pin: "D8", label: "GPIO9", desc: "General-purpose bidirectional I/O" },
-      { pin: "D9", label: "GPIO10 (PWM)", desc: "Hardware PWM timer output channel" },
-      { pin: "D10", label: "SPI_CS (PWM)", desc: "SPI Chip Select line / PWM Output" },
-      { pin: "D11", label: "SPI_MOSI", desc: "SPI Master Out Slave In / PWM Output" },
-      { pin: "D12", label: "SPI_MISO", desc: "SPI Master In Slave Out line" },
-      { pin: "D13", label: "SPI_SCK", desc: "SPI Serial Clock / Onboard LED indicator" },
-      { pin: "A0", label: "Analog 0", desc: "12-bit Analog-to-Digital Converter channel" },
-      { pin: "A1", label: "Analog 1", desc: "12-bit Analog-to-Digital Converter channel" },
-      { pin: "A2", label: "Analog 2", desc: "12-bit Analog-to-Digital Converter channel" },
-      { pin: "A3", label: "Analog 3", desc: "12-bit Analog-to-Digital Converter channel" },
-      { pin: "A4 / SDA", label: "Analog 4", desc: "12-bit ADC / I2C Serial Data" },
-      { pin: "A5 / SCL", label: "Analog 5", desc: "12-bit ADC / I2C Serial Clock" },
-      { pin: "AREF", label: "AREF", desc: "Analog reference input voltage limit" },
-      { pin: "VCC", label: "5V / 3.3V", desc: "Selectable operating voltage output rails" },
-      { pin: "GND", label: "GND", desc: "Common Ground return" }
+// Master Intel IoT Development Boards Pinouts Database
+const packageDetails = [
+  {
+    name: "Intel Galileo Gen 1",
+    tag: "x86 Prototyping",
+    subtitle: "Intel Quark X1000 SoC Board Pinout",
+    svgs: [
+      {
+        label: "Galileo Gen 1 Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0284c7" rx="6" opacity="0.85"/>
+            <!-- SoC Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Intel Quark X1000</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
+            <!-- Highlights -->
+            <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">INTEL GALILEO GEN 1 PIN REFERENCE</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Intel Galileo Gen 1 Pinout Reference",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["D0 / RX", "UART0_RXD", "UART Serial Receive / GPIO (3.3V or 5V Selectable)"],
+          ["D1 / TX", "UART0_TXD", "UART Serial Transmit / GPIO (3.3V or 5V Selectable)"],
+          ["D2", "GPIO3", "General-purpose I/O / Selectable logic level"],
+          ["D3", "GPIO4 (PWM)", "Pulse-Width Modulator output / select logic"],
+          ["D4", "GPIO5", "General-purpose bidirectional I/O"],
+          ["D5", "GPIO6 (PWM)", "Hardware PWM timer output channel"],
+          ["D6", "GPIO7 (PWM)", "Hardware PWM timer output channel"],
+          ["D7", "GPIO8", "General-purpose bidirectional I/O"],
+          ["D8", "GPIO9", "General-purpose bidirectional I/O"],
+          ["D9", "GPIO10 (PWM)", "Hardware PWM timer output channel"],
+          ["D10", "SPI_CS (PWM)", "SPI Chip Select line / PWM Output"],
+          ["D11", "SPI_MOSI", "SPI Master Out Slave In / PWM Output"],
+          ["D12", "SPI_MISO", "SPI Master In Slave Out line"],
+          ["D13", "SPI_SCK", "SPI Serial Clock / Onboard LED indicator"],
+          ["A0", "Analog 0", "12-bit Analog-to-Digital Converter channel"],
+          ["A1", "Analog 1", "12-bit Analog-to-Digital Converter channel"],
+          ["A2", "Analog 2", "12-bit Analog-to-Digital Converter channel"],
+          ["A3", "Analog 3", "12-bit Analog-to-Digital Converter channel"],
+          ["A4 / SDA", "Analog 4", "12-bit ADC / I2C Serial Data"],
+          ["A5 / SCL", "Analog 5", "12-bit ADC / I2C Serial Clock"],
+          ["AREF", "AREF", "Analog reference input voltage limit"],
+          ["VCC", "5V / 3.3V", "Selectable operating voltage output rails"],
+          ["GND", "GND", "Common Ground return"]
+        ]
+      }
     ]
   },
-  "id02": {
-    name: "Intel Galileo Gen2",
-    color: "#0369a1",
-    processor: "Intel Quark X1000",
-    pins: [
-      { pin: "D0 / RX", label: "UART0_RXD (Native)", desc: "Direct UART serial receive channel" },
-      { pin: "D1 / TX", label: "UART0_TXD (Native)", desc: "Direct UART serial transmit channel" },
-      { pin: "D2", label: "PCAL9535_Pin_0", desc: "I/O expander port pin 0" },
-      { pin: "D3", label: "PCA9685_PWM0", desc: "12-bit hardware PWM resolution controller" },
-      { pin: "D4", label: "PCAL9535_Pin_1", desc: "I/O expander port pin 1" },
-      { pin: "D5", label: "PCA9685_PWM1", desc: "12-bit hardware PWM resolution controller" },
-      { pin: "D6", label: "PCA9685_PWM2", desc: "12-bit hardware PWM resolution controller" },
-      { pin: "D7", label: "PCAL9535_Pin_2", desc: "I/O expander port pin 2" },
-      { pin: "D8", label: "PCAL9535_Pin_3", desc: "I/O expander port pin 3" },
-      { pin: "D9", label: "PCA9685_PWM3", desc: "12-bit hardware PWM resolution controller" },
-      { pin: "D10", label: "PCA9685_PWM4", desc: "12-bit hardware PWM resolution controller" },
-      { pin: "D11", label: "PCA9685_PWM5", desc: "12-bit hardware PWM resolution controller" },
-      { pin: "D12", label: "Quark_GPIO_MISO", desc: "Native SPI MISO channel line" },
-      { pin: "D13", label: "Quark_GPIO_SCK", desc: "Native SPI Serial Clock line" },
-      { pin: "A0-A5", label: "Analog Inputs", desc: "Fast-sampling 12-bit analog input lines" },
-      { pin: "FTDI Jumper", label: "Debug Console", desc: "6-pin FTDI USB serial UART diagnostic interface" }
+  {
+    name: "Intel Galileo Gen 2",
+    tag: "x86 Prototyping",
+    subtitle: "Intel Quark X1000 SoC Board Pinout",
+    svgs: [
+      {
+        label: "Galileo Gen 2 Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0369a1" rx="6" opacity="0.85"/>
+            <!-- SoC Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Intel Quark X1000</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
+            <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
+            <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">INTEL GALILEO GEN 2 PIN REFERENCE</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Intel Galileo Gen 2 Pinout Reference",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["D0 / RX", "UART0_RXD (Native)", "Direct UART serial receive channel"],
+          ["D1 / TX", "UART0_TXD (Native)", "Direct UART serial transmit channel"],
+          ["D2", "PCAL9535_Pin_0", "I/O expander port pin 0"],
+          ["D3", "PCA9685_PWM0", "12-bit hardware PWM resolution controller"],
+          ["D4", "PCAL9535_Pin_1", "I/O expander port pin 1"],
+          ["D5", "PCA9685_PWM1", "12-bit hardware PWM resolution controller"],
+          ["D6", "PCA9685_PWM2", "12-bit hardware PWM resolution controller"],
+          ["D7", "PCAL9535_Pin_2", "I/O expander port pin 2"],
+          ["D8", "PCAL9535_Pin_3", "I/O expander port pin 3"],
+          ["D9", "PCA9685_PWM3", "12-bit hardware PWM resolution controller"],
+          ["D10", "PCA9685_PWM4", "12-bit hardware PWM resolution controller"],
+          ["D11", "PCA9685_PWM5", "12-bit hardware PWM resolution controller"],
+          ["D12", "Quark_GPIO_MISO", "Native SPI MISO channel line"],
+          ["D13", "Quark_GPIO_SCK", "Native SPI Serial Clock line"],
+          ["A0-A5", "Analog Inputs", "Fast-sampling 12-bit analog input lines"],
+          ["FTDI Jumper", "Debug Console", "6-pin FTDI USB serial UART diagnostic interface"]
+        ]
+      }
     ]
   },
-  "id03": {
+  {
     name: "Intel Edison",
-    color: "#059669",
-    processor: "Intel Atom Dual-Core",
-    pins: [
-      { pin: "Pin 1 (GND)", label: "GND", desc: "Common System Ground Reference" },
-      { pin: "Pin 2 (GP182)", label: "PWM2", desc: "1.8V logic level GPIO / Hardware PWM output" },
-      { pin: "Pin 3 (GP135)", label: "GPIO", desc: "1.8V logic level general purpose bidirectional pin" },
-      { pin: "Pin 4 (GP48)", label: "GPIO", desc: "1.8V logic level general purpose bidirectional pin" },
-      { pin: "Pin 5 (I2C1_SCL)", label: "I2C1_CLK", desc: "1.8V I2C Bus 1 Clock channel" },
-      { pin: "Pin 6 (I2C1_SDA)", label: "I2C1_DAT", desc: "1.8V I2C Bus 1 Data channel" },
-      { pin: "Pin 7 (V1P8)", label: "1.8V Out", desc: "Dedicated 1.8V operational power rail out" },
-      { pin: "Pin 8 (GP110)", label: "SPI2_CLK", desc: "1.8V SPI Serial Clock timing line" },
-      { pin: "Pin 9 (GP111)", label: "SPI2_CS", desc: "1.8V SPI Chip Select line" },
-      { pin: "Pin 10 (GP114)", label: "SPI2_MISO", desc: "1.8V SPI Master In Slave Out line" },
-      { pin: "Pin 11 (GP115)", label: "SPI2_MOSI", desc: "1.8V SPI Master Out Slave In line" },
-      { pin: "Pin 12 (UART2_TX)", label: "TXD", desc: "1.8V System console transmit (GP131)" },
-      { pin: "Pin 13 (UART2_RX)", label: "RXD", desc: "1.8V System console receive (GP130)" },
-      { pin: "Pin 14 (VBATT)", label: "VBATT", desc: "Battery supply input (3.15V - 4.5V)" },
-      { pin: "Pin 15 (VSYS)", label: "VSYS", desc: "System power supply input (3.3V - 4.5V)" }
+    tag: "Wireless Computing",
+    subtitle: "Intel Atom Dual-Core Module Pinout",
+    svgs: [
+      {
+        label: "Intel Edison Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#059669" rx="6" opacity="0.85"/>
+            <!-- SoC Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#34d399" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#34d399" font-size="11" text-anchor="middle" font-weight="bold">Intel Atom Dual-Core</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">1.8V SoC Core</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Intel Edison Pinout Reference (High Density 70-pin Hirose)",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["Pin 1 (GND)", "GND", "Common System Ground Reference"],
+          ["Pin 2 (GP182)", "PWM2", "1.8V logic level GPIO / Hardware PWM output"],
+          ["Pin 3 (GP135)", "GPIO", "1.8V logic level general purpose bidirectional pin"],
+          ["Pin 4 (GP48)", "GPIO", "1.8V logic level general purpose bidirectional pin"],
+          ["Pin 5 (I2C1_SCL)", "I2C1_CLK", "1.8V I2C Bus 1 Clock channel"],
+          ["Pin 6 (I2C1_SDA)", "I2C1_DAT", "1.8V I2C Bus 1 Data channel"],
+          ["Pin 7 (V1P8)", "1.8V Out", "Dedicated 1.8V operational power rail out"],
+          ["Pin 8 (GP110)", "SPI2_CLK", "1.8V SPI Serial Clock timing line"],
+          ["Pin 9 (GP111)", "SPI2_CS", "1.8V SPI Chip Select line"],
+          ["Pin 10 (GP114)", "SPI2_MISO", "1.8V SPI Master In Slave Out line"],
+          ["Pin 11 (GP115)", "SPI2_MOSI", "1.8V SPI Master Out Slave In line"],
+          ["Pin 12 (UART2_TX)", "TXD", "1.8V System console transmit (GP131)"],
+          ["Pin 13 (UART2_RX)", "RXD", "1.8V System console receive (GP130)"],
+          ["Pin 14 (VBATT)", "VBATT", "Battery supply input (3.15V - 4.5V)"],
+          ["Pin 15 (VSYS)", "VSYS", "System power supply input (3.3V - 4.5V)"]
+        ]
+      }
     ]
   },
-  "id04": {
-    name: "Intel Edison Kit",
-    color: "#0ea5e9",
-    processor: "Intel Atom Core",
-    pins: [
-      { pin: "D0", label: "GP130 / RX", desc: "Arduino compatible serial receive line" },
-      { pin: "D1", label: "GP131 / TX", desc: "Arduino compatible serial transmit line" },
-      { pin: "D2", label: "GP128", desc: "Arduino compatible digital I/O with interrupts" },
-      { pin: "D3", label: "GP12 / PWM0", desc: "Arduino compatible timer PWM output" },
-      { pin: "D4", label: "GP129", desc: "Arduino compatible general-purpose GPIO" },
-      { pin: "D5", label: "GP13 / PWM1", desc: "Arduino compatible timer PWM output" },
-      { pin: "D6", label: "GP182 / PWM2", desc: "Arduino compatible timer PWM output" },
-      { pin: "D7", label: "GP48", desc: "Arduino compatible general-purpose GPIO" },
-      { pin: "D8", label: "GP49", desc: "Arduino compatible general-purpose GPIO" },
-      { pin: "D9", label: "GP183 / PWM3", desc: "Arduino compatible timer PWM output" },
-      { pin: "D10", label: "GP111 / CS", desc: "Arduino compatible SPI Chip Select line" },
-      { pin: "D11", label: "GP115 / MOSI", desc: "Arduino compatible SPI Master Out line" },
-      { pin: "D12", label: "GP114 / MISO", desc: "Arduino compatible SPI Master In line" },
-      { pin: "D13", label: "GP110 / SCK", desc: "Arduino compatible SPI clock / onboard LED" },
-      { pin: "A0-A5", label: "ADS7830", desc: "12-bit resolution I2C analog conversion channels" }
+  {
+    name: "Intel Edison Kit (for Arduino)",
+    tag: "Wireless Computing",
+    subtitle: "Arduino-Compatible Intel Edison Breakout",
+    svgs: [
+      {
+        label: "Edison Kit Layout",
+        html: `
+          <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0f172a" rx="10"/>
+            <rect x="15" y="15" width="290" height="130" fill="#0ea5e9" rx="6" opacity="0.85"/>
+            <!-- SoC Core -->
+            <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+            <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">Intel Atom Core</text>
+            <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">Arduino Shield Platform</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Intel Edison Kit (for Arduino) Pinout Reference",
+        columns: ["Pin / Pad", "Signal Label", "Description"],
+        rows: [
+          ["D0", "GP130 / RX", "Arduino compatible serial receive line"],
+          ["D1", "GP131 / TX", "Arduino compatible serial transmit line"],
+          ["D2", "GP128", "Arduino compatible digital I/O with interrupts"],
+          ["D3", "GP12 / PWM0", "Arduino compatible timer PWM output"],
+          ["D4", "GP129", "Arduino compatible general-purpose GPIO"],
+          ["D5", "GP13 / PWM1", "Arduino compatible timer PWM output"],
+          ["D6", "GP182 / PWM2", "Arduino compatible timer PWM output"],
+          ["D7", "GP48", "Arduino compatible general-purpose GPIO"],
+          ["D8", "GP49", "Arduino compatible general-purpose GPIO"],
+          ["D9", "GP183 / PWM3", "Arduino compatible timer PWM output"],
+          ["D10", "GP111 / CS", "Arduino compatible SPI Chip Select line"],
+          ["D11", "GP115 / MOSI", "Arduino compatible SPI Master Out line"],
+          ["D12", "GP114 / MISO", "Arduino compatible SPI Master In line"],
+          ["D13", "GP110 / SCK", "Arduino compatible SPI clock / onboard LED"],
+          ["A0-A5", "ADS7830", "12-bit resolution I2C analog conversion channels"]
+        ]
+      }
     ]
   }
-};
+];
 
-// Open Modal and populate it dynamically
-function openModal(id) {
-  const board = pinoutsData[id];
-  if (!board) return;
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
 
-  const target = document.getElementById('modalTarget');
+// Update display with selected board parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
   
-  // Create beautiful kalyanized SVG on-the-fly to prevent copyright issues
-  const svgTemplate = `
-    <div class="diagramBox">
-      <svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
-        <rect width="320" height="160" fill="#0f172a" rx="10"/>
-        <rect x="15" y="15" width="290" height="130" fill="${board.color || '#0284c7'}" rx="6" opacity="0.85"/>
-        <!-- MCU Core -->
-        <rect x="110" y="45" width="100" height="70" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
-        <text x="160" y="80" fill="#38bdf8" font-size="11" text-anchor="middle" font-weight="bold">${board.processor}</text>
-        <text x="160" y="95" fill="#94a3b8" font-size="8" text-anchor="middle">CPU Core</text>
-        <!-- Highlights -->
-        <rect x="25" y="22" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-        <rect x="25" y="126" width="270" height="12" fill="#ea580c" rx="2" stroke="#fff" stroke-width="1"/>
-        <text x="160" y="18" fill="#fff" font-size="7" text-anchor="middle" font-weight="bold">${board.name.toUpperCase()} PIN REFERENCE</text>
-      </svg>
-    </div>
-    <div class="img-caption">Diagram: Interactive hardware mapping for ${board.name}</div>
-  `;
-
-  // Create Table dynamic rows ensuring NO pins are missing
-  let tableRows = '';
-  board.pins.forEach(p => {
-    tableRows += `
-      <tr>
-        <td><strong>${p.pin}</strong></td>
-        <td>${p.label}</td>
-        <td>${p.desc || ""}</td>
-      </tr>
-    `;
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
   });
-
-  const tableTemplate = `
-    <table>
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
       <thead>
         <tr>
-          <th>Pin / Pad</th>
-          <th>Signal Label</th>
-          <th>Description</th>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
         </tr>
       </thead>
-      <tbody>
-        ${tableRows}
-      </tbody>
-    </table>
-  `;
-
-  target.innerHTML = `
-    <h2>${board.name} Pinout Reference</h2>
-    ${svgTemplate}
-    ${tableTemplate}
-  `;
-
-  document.getElementById('dynamicModal').style.display = 'block';
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
 }
 
-function closeModal() {
-  document.getElementById('dynamicModal').style.display = 'none';
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
+}
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first board entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+};
+</script>
+
+<!-- SEO Structured JSON-LD Schemas -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Are Intel Galileo pins 5V tolerant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Both Galileo Gen 1 and Gen 2 boards feature onboard level shifters and jumper configurations that allow you to toggle the IO header logic levels between 3.3V and 5V safely."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do Intel Edison breakout pins run on 1.8V logic?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Edison computer module uses a high-density 22nm Atom SoC designed for ultra-low power consumption. Running the internal digital I/O lines at 1.8V reduces overall power draw and heat dissipation."
+      }
+    }
+  ]
 }
 </script>
 
 <script type="application/ld+json">
 {
-"@context":"https://schema.org",
-"@type":"FAQPage",
-"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
-"mainEntity":[
-{"@type":"Question","name":"1. What is the difference between T568A and T568B wiring?","acceptedAnswer":{"@type":"Answer","text":"The only functional difference is that pin pairs 2 (orange) and 3 (green) are swapped. T568A is commonly used in federal and legacy systems, while T568B is the standard for most commercial and residential networks."}},
-{"@type":"Question","name":"2. Can I plug an RJ11 connector into an RJ45 jack?","acceptedAnswer":{"@type":"Answer","text":"Physically yes, but it is not recommended. The smaller RJ11 connector can bend and permanently damage the outer pins (Pins 1 and 8) of the female RJ45 wall jack."}},
-{"@type":"Question","name":"3. What do the terms \"Tip\" and \"Ring\" mean in telephony?","acceptedAnswer":{"@type":"Answer","text":"These terms originate from legacy manual telephone switchboards. \"Tip\" refers to the positive side of the line connected to the plug tip, while \"Ring\" refers to the negative side connected to the metal ring behind the tip."}},
-{"@type":"Question","name":"4. What is the difference between RJ48 and RJ45?","acceptedAnswer":{"@type":"Answer","text":"Both use the same physical 8P8C modular connector, but they have different wiring configurations. RJ45 is used for local area networks, while RJ48 (such as RJ48C and RJ48X) is used for T1/E1 digital telecom lines and requires shielded wiring."}},
-{"@type":"Question","name":"5. Why German TAE wiring have multiple lettered contacts?","acceptedAnswer":{"@type":"Answer","text":"The TAE (Telekommunikations-Anschluss-Einheit) standard uses mechanical switching contacts (a2 and b2) to route signals in series through auxiliary devices (like fax machines or modems) back to the main telephone line."}},
-{"@type":"Question","name":"6. How are RJ21 connectors used in enterprise telephony?","acceptedAnswer":{"@type":"Answer","text":"Also known as Amphenol or Telco connectors, RJ21 connectors contain 50 pins to carry 25 individual analog telephone lines over a single trunk cable, simplifying wiring in office telephone closets."}}
-]
-}
-</script>
-
-<script type="application/ld+json">
-{
-"@context":"https://schema.org",
-"@type":"BreadcrumbList",
-"itemListElement":[
-{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
-{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
-{"@type":"ListItem","position":3,"name":"Intel IoT Development Boards Pinouts Guide","item":"https://calcboy.com/tool/intel-iot-development-boards-pinouts-guide"}
-]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Intel IoT Development Boards Pinouts Guide", "item": "https://calcboy.com/tool/intel-iot-development-boards-pinouts-guide" }
+  ]
 }
 </script>
 
