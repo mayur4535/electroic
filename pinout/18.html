@@ -6,1860 +6,417 @@
 <title>Orange Pi GPIO Pinouts and Reference Guide | CalcBoy</title>
 <meta name="description" content="Complete Orange Pi GPIO pinouts reference guide for Orange Pi Zero, One, PC, Lite, Prime, RK3399, and more. Detailed 40-pin and 26-pin interfaces.">
 <meta name="keywords" content="orange pi pinout, orange pi zero pinout, orange pi pc pinout, orange pi lite pinout, wiringOP, orange pi gpio reference, single board computer, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/orange-pi-gpio-pinouts-and-reference-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Orange Pi GPIO Pinouts and Reference Guide | CalcBoy">
+<meta property="og:description" content="Access complete, exhaustive pin-by-pin specifications and vector schematics for Orange Pi single-board computers (SBC) including Zero, One, PC, and RK3399.">
+<meta property="og:url" content="https://calcboy.com/tool/orange-pi-gpio-pinouts-and-reference-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Orange Pi GPIO Pinouts and Reference Guide | CalcBoy">
+<meta name="twitter:description" content="Complete engineering reference directory for Orange Pi board architectures, pin multiplexing, and expansion pinouts.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#audio-pinout-calc,#audio-pinout-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#audio-pinout-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#beagle-pinouts-tool, #beagle-pinouts-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#beagle-pinouts-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
 }
-.pinout-item-card:hover {
-  border-color:#ff6a00;
-  box-shadow:0 4px 12px rgba(255,106,0,.08);
+.calc-grid {
+  display: grid;
+  gap: 15px;
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#ff6a00;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
 }
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
 }
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
-}
-
-/* Modal Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:auto;
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:20px 10px;
-}
-.w3-modal-content {
-  background:#fff;
-  margin:20px auto;
-  width:100%;
-  max-width:580px;
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-
-/* Red Close Button STICKY 10% */
-.mid {
-  position: sticky !important;
-  top: 10% !important;
-  right: 16px !important;
-  float: right !important;
-  z-index: 1010 !important;
-  width: 36px;
-  height: 36px;
-  background-color: #ef4444 !important;
-  border: none !important;
-  border-radius: 50% !important;
-  color: #ffffff !important;
-  font-size: 16px !important;
-  font-weight: 900 !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
-  transition: background-color 0.2s, transform 0.1s;
-  margin-top: -8px;
-  margin-right: -8px;
-}
-.mid:hover {
-  background-color: #dc2626 !important;
-}
-
-/* Inline Diagram Styling */
-.diagram-container {
+select {
   width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+}
+select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
+}
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
   border-radius: 12px;
   padding: 16px;
-  margin: 12px auto 6px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.connector-header-card .badge {
+  background: #ffedd5;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ea580c;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ffedd5;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
+  display: flex;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
+}
+.vector-box {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 140px;
   justify-content: center;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
 }
-.diagram-container svg {
+.vector-box:hover {
+  transform: scale(1.02);
+  border-color: #ff6a00;
+}
+.vector-box svg {
   max-width: 100%;
   height: auto;
 }
-
-.table1 {width:100%;text-align:left;clear:both}
-
+.vector-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
 .img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:6px;
-  margin-bottom:16px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
 }
 
-/* Standardized Tables & Scroll wrappers */
-.table-responsive {
-  width: 100%;
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
   overflow-x: auto;
-  margin: 15px 0 20px;
+  margin-top: 15px;
+}
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
+}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #475467 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutNote {
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-left: 5px solid #ff6a00;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9a3412;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
 }
-table {
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  overflow:hidden;
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff6a00;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
 }
-th {
-  background:#f1f5f9;
-  color:#1e293b;
-  font-size:12px;
-  font-weight:900;
-  padding:10px 12px;
-  text-align:left;
-  border-bottom:2px solid #e2e8f0;
-  white-space: nowrap;
-}
-td {
-  padding:8px 12px;
-  font-size:12px;
-  color:#475467;
-  border-bottom:1px solid #edf2f7;
-  white-space: nowrap;
-}
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
-
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
-
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="audio-pinout-calc">
+<div id="beagle-pinouts-tool">
 
-  <div class="search-container">
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Orange Pi Boards..." title="Type in a board name">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Board Pinout Selector</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Orange Pi Board</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
+    </div>
   </div>
 
-  <ul id="myUL">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">Allwinner H2+ Compact SBC</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Pinout Map</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <!-- ORANGE PI ZERO -->
-    <li>
-      <a href="#" onclick="document.getElementById('id01').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H2+ Compact SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi Zero Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id01" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id01').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG representation of Orange Pi Zero 2x13 pin header -->
-              <svg viewBox="0 0 360 80" width="100%">
-                <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI ZERO (2x13 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <!-- Row 1 -->
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" fill="#eab308" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-                <g fill="#cbd5e1">
-                  <!-- Row 2 -->
-                  <circle cx="25" cy="55" r="5" fill="#ef4444" />
-                  <circle cx="50" cy="55" r="5" fill="#ef4444" />
-                  <circle cx="75" cy="55" r="5" fill="#64748b" />
-                  <circle cx="100" cy="55" r="5" />
-                  <circle cx="125" cy="55" r="5" />
-                  <circle cx="150" cy="55" r="5" />
-                  <circle cx="175" cy="55" r="5" fill="#64748b" />
-                  <circle cx="200" cy="55" r="5" />
-                  <circle cx="225" cy="55" r="5" fill="#64748b" />
-                  <circle cx="250" cy="55" r="5" />
-                  <circle cx="275" cy="55" r="5" />
-                  <circle cx="300" cy="55" r="5" />
-                  <circle cx="325" cy="55" r="5" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: ZERO 26-PIN PINOUT INTERFACE</div>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+  </div>
 
-            <h3>2x13 Main Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Power Line</td><td>2</td><td>5V Power Line</td></tr>
-                  <tr><td>3</td><td>TWI0_SDA / PA12 / GPIO12</td><td>4</td><td>5V Power Line</td></tr>
-                  <tr><td>5</td><td>TWI0_SCK / PA11 / GPIO11</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PWM1 / PA06 / GPIO6</td><td>8</td><td>UART1_TX / PG06 / GPIO198</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>UART1_RX / PG07 / GPIO199</td></tr>
-                  <tr><td>11</td><td>UART2_RX / PA01 / GPIO1</td><td>12</td><td>SIM_CLK / PA_EINT7 / PA07 / GPIO7</td></tr>
-                  <tr><td>13</td><td>UART2_TX / PA00 / GPIO0</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>UART2_CTS / PA03 / GPIO3</td><td>16</td><td>TWI1-SDA / PA19 / GPIO19</td></tr>
-                  <tr><td>17</td><td>3.3V Power Line</td><td>18</td><td>TWI1-SCK / PA18 / GPIO18</td></tr>
-                  <tr><td>19</td><td>SPI1_MOSI / PA15 / GPIO15</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>SPI1_MISO / PA16 / GPIO16</td><td>22</td><td>UART2_RTS / PA02 / GPIO2</td></tr>
-                  <tr><td>23</td><td>SPI1_CLK / PA14 / GPIO14</td><td>24</td><td>SPI1_CS / PA13 / GPIO13</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>SIM_DET / PA_EINT10 / PA10 / GPIO10</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <h3>1x13 Auxiliary Header (Low-Speed Audio/USB Expansion)</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Name &amp; Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>5V Power Input / Output Line</td></tr>
-                  <tr><td>2</td><td>Ground Reference (GND)</td></tr>
-                  <tr><td>3</td><td>USB-DM2 (USB Host 2 Data Minus)</td></tr>
-                  <tr><td>4</td><td>USB-DP2 (USB Host 2 Data Plus)</td></tr>
-                  <tr><td>5</td><td>USB-DM3 (USB Host 3 Data Minus)</td></tr>
-                  <tr><td>6</td><td>USB-DP3 (USB Host 3 Data Plus)</td></tr>
-                  <tr><td>7</td><td>LINEOUTR (Analog Audio Output Right)</td></tr>
-                  <tr><td>8</td><td>LINEOUTL (Analog Audio Output Left)</td></tr>
-                  <tr><td>9</td><td>TV-OUT (Composite CVBS Video Output)</td></tr>
-                  <tr><td>10</td><td>MIC-BIAS (Microphone DC Bias Reference)</td></tr>
-                  <tr><td>11</td><td>MIC1P (Microphone Input Positive)</td></tr>
-                  <tr><td>12</td><td>MIC1N (Microphone Input Negative)</td></tr>
-                  <tr><td>13</td><td>CIR-RX (Infrared Receiver Signal Line)</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <h3>Ethernet Passive PoE Configuration</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Ethernet Pins</th>
-                    <th>Passive Power Description</th>
-                    <th>Active Bridge Resistor</th>
-                    <th>Resistor Value</th>
-                    <th>Nominal Voltage Rail</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>4/5</td><td>PoE+ Input Node</td><td>R29</td><td>0 Ohm</td><td>5V DC Input</td></tr>
-                  <tr><td>7/8</td><td>PoE- Return Node</td><td>R358</td><td>0 Ohm</td><td>Ground (GND)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI ONE -->
-    <li>
-      <a href="#" onclick="document.getElementById('id02').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H3 Classic SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi One Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id02" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id02').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG representation of standard 40-pin header -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI ONE (2x20 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                  <circle cx="350" cy="40" r="5" />
-                  <circle cx="375" cy="40" r="5" />
-                  <circle cx="400" cy="40" r="5" />
-                  <circle cx="425" cy="40" r="5" />
-                  <circle cx="450" cy="40" r="5" />
-                  <circle cx="475" cy="40" r="5" />
-                  <circle cx="500" cy="40" r="5" fill="#64748b" />
-                </g>
-                <g fill="#94a3b8">
-                  <circle cx="25" cy="55" r="5" fill="#ef4444" />
-                  <circle cx="50" cy="55" r="5" fill="#ef4444" />
-                  <circle cx="75" cy="55" r="5" fill="#64748b" />
-                  <circle cx="100" cy="55" r="5" />
-                  <circle cx="125" cy="55" r="5" />
-                  <circle cx="150" cy="55" r="5" />
-                  <circle cx="175" cy="55" r="5" fill="#64748b" />
-                  <circle cx="200" cy="55" r="5" />
-                  <circle cx="225" cy="55" r="5" />
-                  <circle cx="250" cy="55" r="5" fill="#64748b" />
-                  <circle cx="275" cy="55" r="5" />
-                  <circle cx="300" cy="55" r="5" />
-                  <circle cx="325" cy="55" r="5" />
-                  <circle cx="350" cy="55" r="5" fill="#64748b" />
-                  <circle cx="375" cy="55" r="5" />
-                  <circle cx="400" cy="55" r="5" />
-                  <circle cx="425" cy="55" r="5" />
-                  <circle cx="450" cy="55" r="5" />
-                  <circle cx="475" cy="55" r="5" />
-                  <circle cx="500" cy="55" r="5" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: ONE 40-PIN EXPANSION MATRIX</div>
-
-            <h3>2x20 Main Expansion Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Rail</td><td>2</td><td>5V Output Rail</td></tr>
-                  <tr><td>3</td><td>PA12 (TWI0_SDA / DI_RX / PA_EINT12)</td><td>4</td><td>5V Output Rail</td></tr>
-                  <tr><td>5</td><td>PA11 (TWI0_SCK / DI_TX / PA_EINT11)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PA6 (SIM_PWREN / PWM1 / PA_EINT6)</td><td>8</td><td>PA13 (SPI1_CS / UART3_TX / PA_EINT13)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>PA14 (SPI1_CLK / UART3_RX / PA_EINT14)</td></tr>
-                  <tr><td>11</td><td>PA1 (UART2_RX / JTAG_CK / PA_EINT1)</td><td>12</td><td>PD14 (RMII Port Line)</td></tr>
-                  <tr><td>13</td><td>PA0 (UART2_TX / JTAG_MS / PA_EINT0)</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>PA3 (UART2_CTS / JTAG_DI / PA_EINT3)</td><td>16</td><td>PC4 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>17</td><td>3.3V Output Rail</td><td>18</td><td>PC7 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>19</td><td>PC0 (SPI0_MOSI)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>PC1 (SPI0_MISO)</td><td>22</td><td>PA2 (UART2_RTS / JTAG_DO / PA_EINT2)</td></tr>
-                  <tr><td>23</td><td>PC2 (SPI0_CLK)</td><td>24</td><td>PC3 (SPI0_CS)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>PA21 (PCM0_DIN / SIM_VPPPP / PA_EINT21)</td></tr>
-                  <tr><td>27</td><td>PA19 (PCM0_CLK / TWI1_SDA / PA_EINT19)</td><td>28</td><td>PA18 (PCM0_SYNC / TWI1_SCK / PA_EINT18)</td></tr>
-                  <tr><td>29</td><td>PA7 (SIM_CLK / PA_EINT7)</td><td>30</td><td>Ground (GND)</td></tr>
-                  <tr><td>31</td><td>PA8 (SIM_DATA / PA_EINT8)</td><td>32</td><td>PG8 (UART1_RTS / PG_EINT8)</td></tr>
-                  <tr><td>33</td><td>PA9 (SIM_RST / PA_EINT9)</td><td>34</td><td>Ground (GND)</td></tr>
-                  <tr><td>35</td><td>PA10 (SIM_DET / PA_EINT10)</td><td>36</td><td>PG9 (UART1_CTS / PG_EINT9)</td></tr>
-                  <tr><td>37</td><td>PA20 (PCM0_DOUT / SIM_VPPEN / PA_EINT20)</td><td>38</td><td>PG6 (UART1_TX / PG_EINT6)</td></tr>
-                  <tr><td>39</td><td>Ground (GND)</td><td>40</td><td>PG7 (UART1_RX / PG_EINT7)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI ZERO PLUS 2 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id03').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H3/H5 Bluetooth SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi Zero Plus2 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id03" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id03').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG visual representation of Zero Plus2 -->
-              <svg viewBox="0 0 360 80" width="100%">
-                <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI ZERO PLUS 2 MAP</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-                <g fill="#94a3b8">
-                  <circle cx="25" cy="55" r="5" fill="#ef4444" />
-                  <circle cx="50" cy="55" r="5" fill="#ef4444" />
-                  <circle cx="75" cy="55" r="5" fill="#64748b" />
-                  <circle cx="100" cy="55" r="5" />
-                  <circle cx="125" cy="55" r="5" />
-                  <circle cx="150" cy="55" r="5" />
-                  <circle cx="175" cy="55" r="5" fill="#64748b" />
-                  <circle cx="200" cy="55" r="5" />
-                  <circle cx="225" cy="55" r="5" fill="#64748b" />
-                  <circle cx="250" cy="55" r="5" />
-                  <circle cx="275" cy="55" r="5" />
-                  <circle cx="300" cy="55" r="5" />
-                  <circle cx="325" cy="55" r="5" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: ZERO PLUS2 PIN BLOCK CONFIGURATION</div>
-
-            <h3>2x13 Main Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Port Configuration</th>
-                    <th>Pin</th>
-                    <th>Signal Port Configuration</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Power Rail</td><td>2</td><td>5V Power Rail</td></tr>
-                  <tr><td>3</td><td>TWI0_SDA / PA12 / GPIO12</td><td>4</td><td>5V Power Rail</td></tr>
-                  <tr><td>5</td><td>TWI0_SCK / PA11 / GPIO11</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PWM1 / PA06 / GPIO6</td><td>8</td><td>UART2_TX / PA00 / GPIO0</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>UART2_RX / PA01 / GPIO1</td></tr>
-                  <tr><td>11</td><td>S-TWI-SCK / PL0 / GPIO352</td><td>12</td><td>PD11 / GPIO107</td></tr>
-                  <tr><td>13</td><td>S-TWI-SDA / PL1 / GPIO353</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>UART2_CTS / PA03 / GPIO3</td><td>16</td><td>TWI1-SDA / PA19 / GPIO19</td></tr>
-                  <tr><td>17</td><td>3.3V Power Rail</td><td>18</td><td>TWI1-SCK / PA18 / GPIO18</td></tr>
-                  <tr><td>19</td><td>SPI1_MOSI / PA15 / GPIO15</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>SPI1_MISO / PA16 / GPIO16</td><td>22</td><td>UART2_RTS / PA02 / GPIO2</td></tr>
-                  <tr><td>23</td><td>SPI1_CLK / PA14 / GPIO14</td><td>24</td><td>SPI1_CS / PA13 / GPIO13</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>PD14 / GPIO110</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <h3>1x13 Auxiliary Low-Speed Interface Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin Number</th>
-                    <th>Signal Port Connection</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>5V Power Rail</td></tr>
-                  <tr><td>2</td><td>Ground Reference (GND)</td></tr>
-                  <tr><td>3</td><td>USB-DM2</td></tr>
-                  <tr><td>4</td><td>USB-DP2</td></tr>
-                  <tr><td>5</td><td>USB-DM3</td></tr>
-                  <tr><td>6</td><td>USB-DP3</td></tr>
-                  <tr><td>7</td><td>LINEOUTR</td></tr>
-                  <tr><td>8</td><td>LINEOUTL</td></tr>
-                  <tr><td>9</td><td>TV-OUT (Composite CVBS Video Output)</td></tr>
-                  <tr><td>10</td><td>MIC-BIAS</td></tr>
-                  <tr><td>11</td><td>MIC1P</td></tr>
-                  <tr><td>12</td><td>MIC1N</td></tr>
-                  <tr><td>13</td><td>CIR-RX (Infrared Receiver Line)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI 2G-IOT -->
-    <li>
-      <a href="#" onclick="document.getElementById('id04').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">GPRS / GSM Mobile IoT Module</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi 2G-IOT Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id04" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id04').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG of 2G-IOT Camera Interface -->
-              <svg viewBox="0 0 300 80" width="100%">
-                <rect x="5" y="5" width="290" height="70" rx="5" fill="#1e293b" />
-                <text x="15" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI 2G-IOT (CSI PIN MATRIX)</text>
-                <g fill="#cbd5e1">
-                  <!-- Row 1 -->
-                  <circle cx="15" cy="45" r="3" />
-                  <circle cx="35" cy="45" r="3" fill="#64748b" />
-                  <circle cx="55" cy="45" r="3" />
-                  <circle cx="75" cy="45" r="3" />
-                  <circle cx="95" cy="45" r="3" />
-                  <circle cx="115" cy="45" r="3" />
-                  <circle cx="135" cy="45" r="3" />
-                  <circle cx="155" cy="45" r="3" />
-                  <circle cx="175" cy="45" r="3" />
-                  <circle cx="195" cy="45" r="3" />
-                  <circle cx="215" cy="45" r="3" />
-                  <circle cx="235" cy="45" r="3" />
-                  <circle cx="255" cy="45" r="3" />
-                  <circle cx="275" cy="45" r="3" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: 24-PIN CSI PORT CONNECTIONS</div>
-
-            <h3>OrangePi 2G-IOT CSI Camera Pin Definition</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Connection Pin</th>
-                    <th>Bus / Signal Allocation</th>
-                    <th>SoC Pin Ref</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>CON1-P01</td><td>No Connection (NC)</td><td>-</td></tr>
-                  <tr><td>CON1-P02</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P03</td><td>TWI2-SDA</td><td>PE13</td></tr>
-                  <tr><td>CON1-P04</td><td>VCC-CSI (Camera IO Power)</td><td>-</td></tr>
-                  <tr><td>CON1-P05</td><td>TWI2-SCK</td><td>PE12</td></tr>
-                  <tr><td>CON1-P06</td><td>CSI-RESET# (Active Low)</td><td>PE15</td></tr>
-                  <tr><td>CON1-P07</td><td>CSI-VSYNC (Vertical Sync)</td><td>PE3</td></tr>
-                  <tr><td>CON1-P08</td><td>CSI-STBY-EN (Camera Standby Enable)</td><td>PE15</td></tr>
-                  <tr><td>CON1-P09</td><td>CSI-HSYNC (Horizontal Sync)</td><td>PE2</td></tr>
-                  <tr><td>CON1-P10</td><td>VDD1V8-CSI (Camera Core Power)</td><td>-</td></tr>
-                  <tr><td>CON1-P11</td><td>VCC-CSI (Camera Analog Power)</td><td>-</td></tr>
-                  <tr><td>CON1-P12</td><td>CSI-D7 (Data Bit 7)</td><td>PE11</td></tr>
-                  <tr><td>CON1-P13</td><td>CSI-MCLK (Master Clock Output)</td><td>PE1</td></tr>
-                  <tr><td>CON1-P14</td><td>CSI-D6 (Data Bit 6)</td><td>PE10</td></tr>
-                  <tr><td>CON1-P15</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P16</td><td>CSI-D5 (Data Bit 5)</td><td>PE9</td></tr>
-                  <tr><td>CON1-P17</td><td>CSI-PCLK (Pixel Clock Input)</td><td>PE0</td></tr>
-                  <tr><td>CON1-P18</td><td>CSI-D4 (Data Bit 4)</td><td>PE8</td></tr>
-                  <tr><td>CON1-P19</td><td>CSI-D0 (Data Bit 0)</td><td>PE4</td></tr>
-                  <tr><td>CON1-P20</td><td>CSI-D3 (Data Bit 3)</td><td>PE7</td></tr>
-                  <tr><td>CON1-P21</td><td>CSI-D1 (Data Bit 1)</td><td>PE5</td></tr>
-                  <tr><td>CON1-P22</td><td>CSI-D2 (Data Bit 2)</td><td>PE6</td></tr>
-                  <tr><td>CON1-P23</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P24</td><td>AFVCC-CSI (Auto-Focus Motor VCC)</td><td>-</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI WIN / WIN PLUS -->
-    <li>
-      <a href="#" onclick="document.getElementById('id05').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner A64 Quad-Core SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi Win/Win Plus Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id05" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id05').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG representation of A64 40-pin header -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI WIN/WIN PLUS (A64 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#ef4444" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <!-- Remaining generic pins -->
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                  <circle cx="350" cy="40" r="5" />
-                  <circle cx="375" cy="40" r="5" />
-                  <circle cx="400" cy="40" r="5" />
-                  <circle cx="425" cy="40" r="5" />
-                  <circle cx="450" cy="40" r="5" />
-                  <circle cx="475" cy="40" r="5" />
-                  <circle cx="500" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: A64 WIN 40-PIN INTERACTIVE MAP</div>
-
-            <h3>40-Pin Main Header (A64 Interface)</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Header Pin</th>
-                    <th>Signal Port Description</th>
-                    <th>SoC Pin Ref</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>CON1-P01</td><td>VCC3V3-EXT (Regulated 3.3V Output)</td><td>-</td></tr>
-                  <tr><td>CON1-P02</td><td>VCC5V-EXT (5V Output Rail)</td><td>-</td></tr>
-                  <tr><td>CON1-P03</td><td>TWI1-SDA (I2C1 Data Line)</td><td>PH3</td></tr>
-                  <tr><td>CON1-P04</td><td>VCC-5V (Secondary 5V Line)</td><td>-</td></tr>
-                  <tr><td>CON1-P05</td><td>TWI1-SCK (I2C1 Clock Line)</td><td>PH2</td></tr>
-                  <tr><td>CON1-P06</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P07</td><td>S_PWM (System Pulse Width Modulation)</td><td>PL10</td></tr>
-                  <tr><td>CON1-P08</td><td>S_UART_TX (System UART Transmit)</td><td>PL2</td></tr>
-                  <tr><td>CON1-P09</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P10</td><td>S_UART_RX (System UART Receive)</td><td>PL3</td></tr>
-                  <tr><td>CON1-P11</td><td>UART3_RX</td><td>PH5</td></tr>
-                  <tr><td>CON1-P12</td><td>PD4 (General IO)</td><td>PD4</td></tr>
-                  <tr><td>CON1-P13</td><td>UART3_TX</td><td>PH4</td></tr>
-                  <tr><td>CON1-P14</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P15</td><td>UART3_CTS</td><td>PH7</td></tr>
-                  <tr><td>CON1-P16</td><td>PL9 (General IO)</td><td>PL9</td></tr>
-                  <tr><td>CON1-P17</td><td>VCC3V3-EXT</td><td>-</td></tr>
-                  <tr><td>CON1-P18</td><td>PC4 (General IO)</td><td>PC4</td></tr>
-                  <tr><td>CON1-P19</td><td>SPI1_MOSI</td><td>PD2</td></tr>
-                  <tr><td>CON1-P20</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P21</td><td>SPI1_MISO</td><td>PD3</td></tr>
-                  <tr><td>CON1-P22</td><td>UART3_RTS</td><td>PH6</td></tr>
-                  <tr><td>CON1-P23</td><td>SPI1_CLK</td><td>PD1</td></tr>
-                  <tr><td>CON1-P24</td><td>SPI1_CS0</td><td>PD0</td></tr>
-                  <tr><td>CON1-P25</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P26</td><td>PD6 (General IO)</td><td>PD6</td></tr>
-                  <tr><td>CON1-P27</td><td>TWI2-SDA</td><td>PE15</td></tr>
-                  <tr><td>CON1-P28</td><td>TWI2-SCK</td><td>PE14</td></tr>
-                  <tr><td>CON1-P29</td><td>PB4 (General IO)</td><td>PB4</td></tr>
-                  <tr><td>CON1-P30</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P31</td><td>PB5 (General IO)</td><td>PB5</td></tr>
-                  <tr><td>CON1-P32</td><td>UART2_RTS</td><td>PB2</td></tr>
-                  <tr><td>CON1-P33</td><td>PB6 (General IO)</td><td>PB6</td></tr>
-                  <tr><td>CON1-P34</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P35</td><td>PB7 (General IO)</td><td>PB7</td></tr>
-                  <tr><td>CON1-P36</td><td>UART2_CTS</td><td>PB3</td></tr>
-                  <tr><td>CON1-P37</td><td>PD5 (General IO)</td><td>PD5</td></tr>
-                  <tr><td>CON1-P38</td><td>UART2_TX</td><td>PB0</td></tr>
-                  <tr><td>CON1-P39</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P40</td><td>UART2_RX</td><td>PB1</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <h3>CSI Camera Expansion Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Connection Pin</th>
-                    <th>Bus / Signal Allocation</th>
-                    <th>SoC Pin Ref</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>CON1-P01</td><td>No Connection (NC)</td><td>-</td></tr>
-                  <tr><td>CON1-P02</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P03</td><td>TWI2-SDA</td><td>PE13</td></tr>
-                  <tr><td>CON1-P04</td><td>VCC-CSI (Camera IO Power)</td><td>-</td></tr>
-                  <tr><td>CON1-P05</td><td>TWI2-SCK</td><td>PE12</td></tr>
-                  <tr><td>CON1-P06</td><td>CSI-RESET#</td><td>PE15</td></tr>
-                  <tr><td>CON1-P07</td><td>CSI-VSYNC</td><td>PE3</td></tr>
-                  <tr><td>CON1-P08</td><td>CSI-STBY-EN</td><td>PE15</td></tr>
-                  <tr><td>CON1-P09</td><td>CSI-HSYNC</td><td>PE2</td></tr>
-                  <tr><td>CON1-P10</td><td>VDD1V8-CSI</td><td>-</td></tr>
-                  <tr><td>CON1-P11</td><td>VCC-CSI</td><td>-</td></tr>
-                  <tr><td>CON1-P12</td><td>CSI-D7</td><td>PE11</td></tr>
-                  <tr><td>CON1-P13</td><td>CSI-MCLK</td><td>PE1</td></tr>
-                  <tr><td>CON1-P14</td><td>CSI-D6</td><td>PE10</td></tr>
-                  <tr><td>CON1-P15</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P16</td><td>CSI-D5</td><td>PE9</td></tr>
-                  <tr><td>CON1-P17</td><td>CSI-PCLK</td><td>PE0</td></tr>
-                  <tr><td>CON1-P18</td><td>CSI-D4</td><td>PE8</td></tr>
-                  <tr><td>CON1-P19</td><td>CSI-D0</td><td>PE4</td></tr>
-                  <tr><td>CON1-P20</td><td>CSI-D3</td><td>PE7</td></tr>
-                  <tr><td>CON1-P21</td><td>CSI-D1</td><td>PE5</td></tr>
-                  <tr><td>CON1-P22</td><td>CSI-D2</td><td>PE6</td></tr>
-                  <tr><td>CON1-P23</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P24</td><td>AFVCC-CSI (Auto-Focus Motor VCC)</td><td>-</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI PRIME -->
-    <li>
-      <a href="#" onclick="document.getElementById('id06').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H5 High Performance SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi Prime Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id06" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id06').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG design for Orange Pi Prime -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI PRIME (H5 PRO HEADERS)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                  <circle cx="350" cy="40" r="5" />
-                  <circle cx="375" cy="40" r="5" />
-                  <circle cx="400" cy="40" r="5" />
-                  <circle cx="425" cy="40" r="5" />
-                  <circle cx="450" cy="40" r="5" />
-                  <circle cx="475" cy="40" r="5" />
-                  <circle cx="500" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: PRIME HIGH-DENSITY PORT DEFINITION</div>
-
-            <h3>2x20 Main Expansion Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Port Alternate Specifications (With 2k Hardware Pull-ups on key lines)</th>
-                    <th>Pin</th>
-                    <th>Signal Port Alternate Specifications</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Rail</td><td>2</td><td>5V Output Rail</td></tr>
-                  <tr><td>3</td><td>PA12 [Active 2k Pull-up] (TWI0_SDA / DI_RX / PA_EINT12)</td><td>4</td><td>5V Output Rail</td></tr>
-                  <tr><td>5</td><td>PA11 [Active 2k Pull-up] (TWI0_SCK / DI_TX / PA_EINT11)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PA6 (SIM_PWREN / PWM1 / PA_EINT6)</td><td>8</td><td>PA13 (SPI1_CS / UART3_TX / PA_EINT13)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>PA14 (SPI1_CLK / UART3_RX / PA_EINT14)</td></tr>
-                  <tr><td>11</td><td>PA1 (UART2_RX / JTAG_CK / PA_EINT1)</td><td>12</td><td>PD14 (RMII Line)</td></tr>
-                  <tr><td>13</td><td>PA0 (UART2_TX / JTAG_MS / PA_EINT0)</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>PA3 (UART2_CTS / JTAG_DI / PA_EINT3)</td><td>16</td><td>PC4 (General Flash Line)</td></tr>
-                  <tr><td>17</td><td>3.3V Output Rail</td><td>18</td><td>PC7 (General Flash Line)</td></tr>
-                  <tr><td>19</td><td>PC0 (SPI0_MOSI)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>PC1 (SPI0_MISO)</td><td>22</td><td>PA2 (UART2_RTS / JTAG_DO / PA_EINT2)</td></tr>
-                  <tr><td>23</td><td>PC2 (SPI0_CLK)</td><td>24</td><td>PC3 (SPI0_CS)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>PA21 (PCM0_DIN / SIM_VPPPP / PA_EINT21)</td></tr>
-                  <tr><td>27</td><td>PA19 [Active 2k Pull-up] (PCM0_CLK / TWI1_SDA / PA_EINT19)</td><td>28</td><td>PA18 [Active 2k Pull-up] (PCM0_SYNC / TWI1_SCK / PA_EINT18)</td></tr>
-                  <tr><td>29</td><td>PA7 (SIM_CLK / PA_EINT7)</td><td>30</td><td>Ground (GND)</td></tr>
-                  <tr><td>31</td><td>PA8 (SIM_DATA / PA_EINT8)</td><td>32</td><td>PG8 (UART1_RTS / PG_EINT8)</td></tr>
-                  <tr><td>33</td><td>PA9 (SIM_RST / PA_EINT9)</td><td>34</td><td>Ground (GND)</td></tr>
-                  <tr><td>35</td><td>PA10 (SIM_DET / PA_EINT10)</td><td>36</td><td>PG9 (UART1_CTS / PG_EINT9)</td></tr>
-                  <tr><td>37</td><td>PA20 (PCM0_DOUT / SIM_VPPEN / PA_EINT20)</td><td>38</td><td>PG6 (UART1_TX / PG_EINT6)</td></tr>
-                  <tr><td>39</td><td>Ground (GND)</td><td>40</td><td>PG7 (UART1_RX / PG_EINT7)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI I96 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id07').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">RDA8810PL ARM Cortex-A5 Module</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi I96 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id07" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id07').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schema of I96 camera connector -->
-              <svg viewBox="0 0 300 80" width="100%">
-                <rect x="5" y="5" width="290" height="70" rx="5" fill="#1e293b" />
-                <text x="15" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI I96 (CSI PORT MAP)</text>
-                <g fill="#cbd5e1">
-                  <!-- Row 1 -->
-                  <circle cx="15" cy="45" r="3" />
-                  <circle cx="35" cy="45" r="3" fill="#64748b" />
-                  <circle cx="55" cy="45" r="3" />
-                  <circle cx="75" cy="45" r="3" />
-                  <circle cx="95" cy="45" r="3" />
-                  <circle cx="115" cy="45" r="3" />
-                  <circle cx="135" cy="45" r="3" />
-                  <circle cx="155" cy="45" r="3" />
-                  <circle cx="175" cy="45" r="3" />
-                  <circle cx="195" cy="45" r="3" />
-                  <circle cx="215" cy="45" r="3" />
-                  <circle cx="235" cy="45" r="3" />
-                  <circle cx="255" cy="45" r="3" />
-                  <circle cx="275" cy="45" r="3" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: I96 CAMERA PORT DEFINITIONS</div>
-
-            <h3>OrangePi I96 CSI Interface Pinout Specification</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Connection Pin</th>
-                    <th>Bus / Signal Allocation</th>
-                    <th>SoC Pin Ref</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>CON1-P01</td><td>No Connection (NC)</td><td>-</td></tr>
-                  <tr><td>CON1-P02</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P03</td><td>TWI2-SDA</td><td>PE13</td></tr>
-                  <tr><td>CON1-P04</td><td>VCC-CSI (Camera IO Power)</td><td>-</td></tr>
-                  <tr><td>CON1-P05</td><td>TWI2-SCK</td><td>PE12</td></tr>
-                  <tr><td>CON1-P06</td><td>CSI-RESET#</td><td>PE15</td></tr>
-                  <tr><td>CON1-P07</td><td>CSI-VSYNC</td><td>PE3</td></tr>
-                  <tr><td>CON1-P08</td><td>CSI-STBY-EN</td><td>PE15</td></tr>
-                  <tr><td>CON1-P09</td><td>CSI-HSYNC</td><td>PE2</td></tr>
-                  <tr><td>CON1-P10</td><td>VDD1V8-CSI</td><td>-</td></tr>
-                  <tr><td>CON1-P11</td><td>VCC-CSI</td><td>-</td></tr>
-                  <tr><td>CON1-P12</td><td>CSI-D7</td><td>PE11</td></tr>
-                  <tr><td>CON1-P13</td><td>CSI-MCLK</td><td>PE1</td></tr>
-                  <tr><td>CON1-P14</td><td>CSI-D6</td><td>PE10</td></tr>
-                  <tr><td>CON1-P15</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P16</td><td>CSI-D5</td><td>PE9</td></tr>
-                  <tr><td>CON1-P17</td><td>CSI-PCLK</td><td>PE0</td></tr>
-                  <tr><td>CON1-P18</td><td>CSI-D4</td><td>PE8</td></tr>
-                  <tr><td>CON1-P19</td><td>CSI-D0</td><td>PE4</td></tr>
-                  <tr><td>CON1-P20</td><td>CSI-D3</td><td>PE7</td></tr>
-                  <tr><td>CON1-P21</td><td>CSI-D1</td><td>PE5</td></tr>
-                  <tr><td>CON1-P22</td><td>CSI-D2</td><td>PE6</td></tr>
-                  <tr><td>CON1-P23</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON1-P24</td><td>AFVCC-CSI (Auto-Focus Motor VCC)</td><td>-</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI ZERO PLUS -->
-    <li>
-      <a href="#" onclick="document.getElementById('id08').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H5 Quad-Core Zero Size</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi Zero Plus Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id08" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id08').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG design representation of Zero Plus -->
-              <svg viewBox="0 0 360 80" width="100%">
-                <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI ZERO PLUS INTERFACE</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: ZERO PLUS COMPACT SYSTEM EXPANSION CORES</div>
-
-            <h3>2x13 Main Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Port Configuration</th>
-                    <th>Pin</th>
-                    <th>Signal Port Configuration</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Power Rail</td><td>2</td><td>5V Power Rail</td></tr>
-                  <tr><td>3</td><td>TWI0_SDA / PA12 / GPIO12</td><td>4</td><td>5V Power Rail</td></tr>
-                  <tr><td>5</td><td>TWI0_SCK / PA11 / GPIO11</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PWM1 / PA06 / GPIO6</td><td>8</td><td>UART1_TX / PG06 / GPIO198</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>UART1_RX / PG07 / GPIO199</td></tr>
-                  <tr><td>11</td><td>UART2_RX / PA01 / GPIO1</td><td>12</td><td>SIM_CLK/PA_EINT7 / PA07 / GPIO7</td></tr>
-                  <tr><td>13</td><td>UART2_TX / PA00 / GPIO0</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>UART2_CTS / PA03 / GPIO3</td><td>16</td><td>TWI1-SDA / PA19 / GPIO19</td></tr>
-                  <tr><td>17</td><td>3.3V Power Rail</td><td>18</td><td>TWI1-SCK / PA18 / GPIO18</td></tr>
-                  <tr><td>19</td><td>SPI1_MOSI / PA15 / GPIO15</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>SPI1_MISO / PA16 / GPIO16</td><td>22</td><td>UART2_RTS / PA02 / GPIO2</td></tr>
-                  <tr><td>23</td><td>SPI1_CLK / PA14 / GPIO14</td><td>24</td><td>SPI1_CS / PA13 / GPIO13</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>SIM_DET/PA_EINT10 / PA10 / GPIO10</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <h3>1x13 Auxiliary Audio/USB Interface</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin Number</th>
-                    <th>Signal Connection Port</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>5V Power Rail</td></tr>
-                  <tr><td>2</td><td>Ground (GND)</td></tr>
-                  <tr><td>3</td><td>USB-DM2</td></tr>
-                  <tr><td>4</td><td>USB-DP2</td></tr>
-                  <tr><td>5</td><td>USB-DM3</td></tr>
-                  <tr><td>6</td><td>USB-DP3</td></tr>
-                  <tr><td>7</td><td>LINEOUTR</td></tr>
-                  <tr><td>8</td><td>LINEOUTL</td></tr>
-                  <tr><td>9</td><td>TV-OUT (Composite CVBS Video Output)</td></tr>
-                  <tr><td>10</td><td>MIC-BIAS</td></tr>
-                  <tr><td>11</td><td>MIC1P</td></tr>
-                  <tr><td>12</td><td>MIC1N</td></tr>
-                  <tr><td>13</td><td>CIR-RX (Infrared Receiver Line)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI R1 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id09').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Dual-Ethernet Router SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi R1 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id09" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id09').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic for Orange Pi R1 2x13 header -->
-              <svg viewBox="0 0 360 80" width="100%">
-                <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI R1 (CON3 HEADERS)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: R1 CON3 DUAL ROW HEADER INTERFACE</div>
-
-            <h3>CON3 Header Array (Divided Interface Layout)</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Header Pin</th>
-                    <th>Bus / Signal Allocation</th>
-                    <th>SoC Pin Ref</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>CON3-P01</td><td>VCC-3V3 (Regulated 3.3V output)</td><td>-</td></tr>
-                  <tr><td>CON3-P02</td><td>VCC-5V (Secondary 5V Line)</td><td>-</td></tr>
-                  <tr><td>CON3-P03</td><td>TWI0-SDA (I2C0 Data Line)</td><td>PA12</td></tr>
-                  <tr><td>CON3-P04</td><td>VCC-5V (Secondary 5V Line)</td><td>-</td></tr>
-                  <tr><td>CON3-P05</td><td>TWI0-SCK (I2C0 Clock Line)</td><td>PA11</td></tr>
-                  <tr><td>CON3-P06</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON3-P07</td><td>PWM1 (Pulse Width Modulator channel 1)</td><td>PA6</td></tr>
-                  <tr><td>CON3-P08</td><td>UART1_TX</td><td>PG6</td></tr>
-                  <tr><td>CON3-P09</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON3-P10</td><td>UART1_RX</td><td>PG7</td></tr>
-                  <tr><td>CON3-P11</td><td>UART2_RX</td><td>PA1</td></tr>
-                  <tr><td>CON3-P12</td><td>PA7 (General Purpose Input / Output)</td><td>PA7</td></tr>
-                  <tr><td>CON3-P13</td><td>UART2_TX</td><td>PA0</td></tr>
-                  <tr><td>CON3-P14</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON3-P15</td><td>UART2_CTS</td><td>PA3</td></tr>
-                  <tr><td>CON3-P16</td><td>TWI1-SDA (I2C1 Data Line)</td><td>PA19</td></tr>
-                  <tr><td>CON3-P17</td><td>VCC3V3-EXT (3.3V Output)</td><td>-</td></tr>
-                  <tr><td>CON3-P18</td><td>TWI1-SCK (I2C1 Clock Line)</td><td>PA18</td></tr>
-                  <tr><td>CON3-P19</td><td>SPI1_MOSI</td><td>PA15</td></tr>
-                  <tr><td>CON3-P20</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON3-P21</td><td>SPI1_MISO</td><td>PA16</td></tr>
-                  <tr><td>CON3-P22</td><td>UART2_RTS</td><td>PA2</td></tr>
-                  <tr><td>CON3-P23</td><td>SPI1_CLK</td><td>PA14</td></tr>
-                  <tr><td>CON3-P24</td><td>SPI1_CS</td><td>PA13</td></tr>
-                  <tr><td>CON3-P25</td><td>Ground (GND)</td><td>-</td></tr>
-                  <tr><td>CON3-P26</td><td>PA10 (General Purpose Input / Output)</td><td>PA10</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI RK3399 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id010').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Hexa-Core Dual Cortex-A72 SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi RK3399 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id010" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id010').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic layout for Orange Pi RK3399 -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI RK3399 (SoC EXPANSION CORE)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <!-- Pins match RK3399 configurations -->
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: RK3399 DUAL CORE EXTENSION MAP</div>
-
-            <h3>RK3399 Complete Pin Definition Table</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Port Connection</th>
-                    <th>GPIO Ref</th>
-                    <th>Bus Type</th>
-                    <th>Alternative Functions &amp; Explanations</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>PIN1</td><td>3V3-1 (3.3V Output)</td><td>-</td><td>Power</td><td>Power 3.3V output node</td></tr>
-                  <tr><td>PIN2</td><td>5V-1 (5V Output)</td><td>-</td><td>Power</td><td>Power 5V output node</td></tr>
-                  <tr><td>PIN3</td><td>SDA</td><td>GPIO1_B3</td><td>I2C4_SDA</td><td>Default configured for I2C4 connection</td></tr>
-                  <tr><td>PIN4</td><td>5V-2 (5V Output)</td><td>-</td><td>Power</td><td>Power 5V output node</td></tr>
-                  <tr><td>PIN5</td><td>SCL</td><td>GPIO1_B4</td><td>I2C4_SCL</td><td>Default configured for I2C4 connection</td></tr>
-                  <tr><td>PIN6</td><td>GND4 (Ground)</td><td>-</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>PIN7</td><td>GPIO4</td><td>GPIO2_A0</td><td>I2C2_SDA</td><td>Secondary I2C Data interface channel</td></tr>
-                  <tr><td>PIN8</td><td>TX</td><td>GPIO4_C4</td><td>UART2DBG_TX</td><td>Default configured for UART Debug console out</td></tr>
-                  <tr><td>PIN9</td><td>GND1 (Ground)</td><td>-</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>PIN10</td><td>RX</td><td>GPIO4_C3</td><td>UART2DBG_RX</td><td>Default configured for UART Debug console in</td></tr>
-                  <tr><td>PIN11</td><td>GPIO17</td><td>GPIO2_C0</td><td>UART0_RXD</td><td>General Purpose / Main system UART Receiver</td></tr>
-                  <tr><td>PIN12</td><td>GPIO18</td><td>GPIO2_A1</td><td>I2C2_SCL</td><td>Secondary I2C Clock interface channel</td></tr>
-                  <tr><td>PIN13</td><td>GPIO27</td><td>GPIO2_C1</td><td>UART0_TXD</td><td>General Purpose / Main system UART Transmitter</td></tr>
-                  <tr><td>PIN14</td><td>GND5 (Ground)</td><td>-</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>PIN15</td><td>GPIO22</td><td>GPIO2_C2</td><td>UART0_CTS</td><td>Clear-To-Send handshake line for UART0</td></tr>
-                  <tr><td>PIN16</td><td>GPIO23</td><td>GPIO2_A2</td><td>-</td><td>General Purpose Input / Output channel</td></tr>
-                  <tr><td>PIN17</td><td>3V3-2 (3.3V Output)</td><td>-</td><td>Power</td><td>Power 3.3V output node</td></tr>
-                  <tr><td>PIN18</td><td>GPIO24</td><td>GPIO2_A3</td><td>-</td><td>General Purpose Input / Output channel</td></tr>
-                  <tr><td>PIN19</td><td>MOSI</td><td>GPIO1_A7</td><td>SPI1_RXD</td><td>Serial Peripheral Interface Data In channel</td></tr>
-                  <tr><td>PIN20</td><td>GND6 (Ground)</td><td>-</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>PIN21</td><td>MISO</td><td>GPIO1_B0</td><td>SPI1_TXD</td><td>Serial Peripheral Interface Data Out channel</td></tr>
-                  <tr><td>PIN22</td><td>GPIO25</td><td>GPIO2_C3</td><td>UART0_RTS</td><td>Request-To-Send handshake line for UART0</td></tr>
-                  <tr><td>PIN23</td><td>SCLK</td><td>GPIO1_B1</td><td>SPI1_CLK</td><td>SPI Master Clock interface bus</td></tr>
-                  <tr><td>PIN24</td><td>CS0</td><td>GPIO1_B2</td><td>-</td><td>SPI Master Chip Select 0 output</td></tr>
-                  <tr><td>PIN25</td><td>GND2 (Ground)</td><td>-</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>PIN26</td><td>CS1</td><td>GPIO2_D4</td><td>-</td><td>Camera CSI conflict pin (PDN0_H occupied)</td></tr>
-                  <tr><td>PIN27</td><td>DNP1</td><td>GPIO4_D2</td><td>-</td><td>Auxiliary System Port</td></tr>
-                  <tr><td>PIN28</td><td>DNP2</td><td>GPIO1_C2</td><td>-</td><td>Auxiliary System Port</td></tr>
-                  <tr><td>PIN29</td><td>GPIO5</td><td>GPIO2_A4</td><td>-</td><td>PCIE Reset pinout conflict output line (PERST)</td></tr>
-                  <tr><td>PIN30</td><td>GND7 (Ground)</td><td>-</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>PIN31</td><td>GPIO6</td><td>GPIO2_A5</td><td>-</td><td>HDMI Power-Enable conflict pinout (PWREN33)</td></tr>
-                  <tr><td>PIN32</td><td>GPIO12</td><td>GPIO2_B4</td><td>SPI2_CSN</td><td>Camera CSI conflict pin (PDN0_H occupied)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI 4G-IOT -->
-    <li>
-      <a href="#" onclick="document.getElementById('id011').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">MT6737 Quad-Core 4G Wireless SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi 4G-IOT Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id011" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id011').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic design for 4G-IOT -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI 4G-IOT GPIO HEADERS</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: 4G-IOT HIGH-SPEED BUS MATRIX</div>
-
-            <h3>4G-IOT GPIO Header Map</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Port Configuration</th>
-                    <th>Pin</th>
-                    <th>Signal Port Configuration</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>VIO28_PMU (2.8V IO Power Output)</td><td>2</td><td>DC5V (5V Power Rail)</td></tr>
-                  <tr><td>3</td><td>SDA1 (GPIO48)</td><td>4</td><td>DC5V (5V Power Rail)</td></tr>
-                  <tr><td>5</td><td>SCL1 (GPIO50)</td><td>6</td><td>GND (Ground Reference)</td></tr>
-                  <tr><td>7</td><td>EINT87 (GPIO87)</td><td>8</td><td>UTXD2 (UART2 Transmit Output)</td></tr>
-                  <tr><td>9</td><td>GND (Ground Reference)</td><td>10</td><td>URXD2 (UART2 Receive Input / GPIO57)</td></tr>
-                  <tr><td>11</td><td>URXD1 (UART1 Receive Input)</td><td>12</td><td>EINT8 (GPIO8)</td></tr>
-                  <tr><td>13</td><td>UTXD1 (UART1 Transmit Output)</td><td>14</td><td>GND (Ground Reference)</td></tr>
-                  <tr><td>15</td><td>UCTS1 (UART1 Clear-To-Send Handshake)</td><td>16</td><td>EINT5 (GPIO5)</td></tr>
-                  <tr><td>17</td><td>VIO28_PMU (2.8V IO Power Output)</td><td>18</td><td>EINT11 (GPIO11)</td></tr>
-                  <tr><td>19</td><td>SPI2_MISO / SPI2_MI (EINT3)</td><td>20</td><td>GND (Ground Reference)</td></tr>
-                  <tr><td>21</td><td>SPI2_MOSI / SPI2_MO (EINT4)</td><td>22</td><td>URTS1 (UART1 Request-To-Send Handshake)</td></tr>
-                  <tr><td>23</td><td>SPI2_CLK / SPI2_CK (EINT1)</td><td>24</td><td>SPI2_CS / EINT5</td></tr>
-                  <tr><td>25</td><td>GND (Ground Reference)</td><td>26</td><td>EINT12 (GPIO12)</td></tr>
-                  <tr><td>27</td><td>SDA2 (GPIO51)</td><td>28</td><td>SCL2 (GPIO52)</td></tr>
-                  <tr><td>29</td><td>SPI_CS (GPIO65)</td><td>30</td><td>GND (Ground Reference)</td></tr>
-                  <tr><td>31</td><td>SPI_CK (GPIO66)</td><td>32</td><td>URTS2 (UART2 Request-To-Send Handshake / GPIO60)</td></tr>
-                  <tr><td>33</td><td>SPI_MO (SPI Master Output)</td><td>34</td><td>GND (Ground Reference)</td></tr>
-                  <tr><td>35</td><td>SPUM (GPIO67)</td><td>36</td><td>UCTS2 (UART2 Clear-To-Send Handshake / GPIO59)</td></tr>
-                  <tr><td>37</td><td>EINT_123 (GPIO123)</td><td>38</td><td>SCL3 (GPIO54)</td></tr>
-                  <tr><td>39</td><td>GND (Ground Reference)</td><td>40</td><td>SDA3 (GPIO53)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI ONE PLUS -->
-    <li>
-      <a href="#" onclick="document.getElementById('id012').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H6 4K Smart SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi One Plus Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id012" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id012').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of One Plus 26-pin CON12 header -->
-              <svg viewBox="0 0 360 80" width="100%">
-                <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI ONE PLUS (2x13 CON12 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: ONE PLUS HIGH-SPEED EXPANSION CORES</div>
-
-            <h3>CON12 Header Map</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Header Pin</th>
-                    <th>Bus / Signal Allocation</th>
-                    <th>SoC Pin Ref</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>CON12-P01</td><td>VCC-3.3V Output Rail</td><td>VCC-IO</td></tr>
-                  <tr><td>CON12-P02</td><td>VCC-5V Input/Output Rail</td><td>DCIN</td></tr>
-                  <tr><td>CON12-P03</td><td>TWI1-SDA (I2C1 Data Line)</td><td>PH06</td></tr>
-                  <tr><td>CON12-P04</td><td>VCC-5V Input/Output Rail</td><td>DCIN</td></tr>
-                  <tr><td>CON12-P05</td><td>TWI1-SCK (I2C1 Clock Line)</td><td>PH05</td></tr>
-                  <tr><td>CON12-P06</td><td>Ground (GND)</td><td>GND</td></tr>
-                  <tr><td>CON12-P07</td><td>PWM1 (Pulse Width Modulator channel 1)</td><td>PH04</td></tr>
-                  <tr><td>CON12-P08</td><td>PD21 (General Purpose Input / Output)</td><td>PD21</td></tr>
-                  <tr><td>CON12-P09</td><td>Ground (GND)</td><td>GND</td></tr>
-                  <tr><td>CON12-P10</td><td>PD22 (General Purpose Input / Output)</td><td>PD22</td></tr>
-                  <tr><td>CON12-P11</td><td>UART3_RX</td><td>PD24</td></tr>
-                  <tr><td>CON12-P12</td><td>PC09 (General Purpose Input / Output)</td><td>PC09</td></tr>
-                  <tr><td>CON12-P13</td><td>UART3_TX</td><td>PD23</td></tr>
-                  <tr><td>CON12-P14</td><td>Ground (GND)</td><td>GND</td></tr>
-                  <tr><td>CON12-P15</td><td>UART3_CTS</td><td>PD26</td></tr>
-                  <tr><td>CON12-P16</td><td>PC08 (General Purpose Input / Output)</td><td>PC08</td></tr>
-                  <tr><td>CON12-P17</td><td>VCC-3V3 Output Rail</td><td>VCC-IO</td></tr>
-                  <tr><td>CON12-P18</td><td>PC07 (General Purpose Input / Output)</td><td>PC07</td></tr>
-                  <tr><td>CON12-P19</td><td>SPI0_MOSI</td><td>PC02</td></tr>
-                  <tr><td>CON12-P20</td><td>Ground (GND)</td><td>GND</td></tr>
-                  <tr><td>CON12-P21</td><td>SPI0_MISO</td><td>PC03</td></tr>
-                  <tr><td>CON12-P22</td><td>UART3_RTS</td><td>PD25</td></tr>
-                  <tr><td>CON12-P23</td><td>SPI0_CLK</td><td>PC00</td></tr>
-                  <tr><td>CON12-P24</td><td>SPI0_CS0</td><td>PC05</td></tr>
-                  <tr><td>CON12-P25</td><td>Ground (GND)</td><td>GND</td></tr>
-                  <tr><td>CON12-P26</td><td>PH03 (General Purpose Input / Output)</td><td>PH03</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI LITE -->
-    <li>
-      <a href="#" onclick="document.getElementById('id013').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H3 Affordable Wi-Fi SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi Lite Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id013" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id013').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of standard 40-pin header -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI LITE (2x20 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <!-- Remaining generic pins -->
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: LITE 40-PIN EXPANSION MATRIX</div>
-
-            <h3>2x20 Main Expansion Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Rail</td><td>2</td><td>5V Output Rail</td></tr>
-                  <tr><td>3</td><td>PA12 (TWI0_SDA / DI_RX / PA_EINT12)</td><td>4</td><td>5V Output Rail</td></tr>
-                  <tr><td>5</td><td>PA11 (TWI0_SCK / DI_TX / PA_EINT11)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PA6 (SIM_PWREN / PWM1 / PA_EINT6)</td><td>8</td><td>PA13 (SPI1_CS / UART3_TX / PA_EINT13)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>PA14 (SPI1_CLK / UART3_RX / PA_EINT14)</td></tr>
-                  <tr><td>11</td><td>PA1 (UART2_RX / JTAG_CK / PA_EINT1)</td><td>12</td><td>PD14 (RMII Port Line)</td></tr>
-                  <tr><td>13</td><td>PA0 (UART2_TX / JTAG_MS / PA_EINT0)</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>PA3 (UART2_CTS / JTAG_DI / PA_EINT3)</td><td>16</td><td>PC4 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>17</td><td>3.3V Output Rail</td><td>18</td><td>PC7 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>19</td><td>PC0 (SPI0_MOSI)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>PC1 (SPI0_MISO)</td><td>22</td><td>PA2 (UART2_RTS / JTAG_DO / PA_EINT2)</td></tr>
-                  <tr><td>23</td><td>PC2 (SPI0_CLK)</td><td>24</td><td>PC3 (SPI0_CS)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>PA21 (PCM0_DIN / SIM_VPPPP / PA_EINT21)</td></tr>
-                  <tr><td>27</td><td>PA19 (PCM0_CLK / TWI1_SDA / PA_EINT19)</td><td>28</td><td>PA18 (PCM0_SYNC / TWI1_SCK / PA_EINT18)</td></tr>
-                  <tr><td>29</td><td>PA7 (SIM_CLK / PA_EINT7)</td><td>30</td><td>Ground (GND)</td></tr>
-                  <tr><td>31</td><td>PA8 (SIM_DATA / PA_EINT8)</td><td>32</td><td>PG8 (UART1_RTS / PG_EINT8)</td></tr>
-                  <tr><td>33</td><td>PA9 (SIM_RST / PA_EINT9)</td><td>34</td><td>Ground (GND)</td></tr>
-                  <tr><td>35</td><td>PA10 (SIM_DET / PA_EINT10)</td><td>36</td><td>PG9 (UART1_CTS / PG_EINT9)</td></tr>
-                  <tr><td>37</td><td>PA20 (PCM0_DOUT / SIM_VPPEN / PA_EINT20)</td><td>38</td><td>PG6 (UART1_TX / PG_EINT6)</td></tr>
-                  <tr><td>39</td><td>Ground (GND)</td><td>40</td><td>PG7 (UART1_RX / PG_EINT7)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI LITE 2 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id014').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H6 smart wifi SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi Lite 2 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id014" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id014').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of Lite 2 2x13 header -->
-              <svg viewBox="0 0 360 80" width="100%">
-                <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI LITE 2 (2x13 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: LITE 2 26-PIN PINOUT INTERFACE</div>
-
-            <h3>2x13 Main Header Layout</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Port Configuration</th>
-                    <th>Pin</th>
-                    <th>Signal Port Configuration</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Power Rail</td><td>2</td><td>5V Power Rail</td></tr>
-                  <tr><td>3</td><td>TWI1-SDA / PH6 / GPIO230</td><td>4</td><td>5V Power Rail</td></tr>
-                  <tr><td>5</td><td>TWI1-SCK / PH5 / GPIO229</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PWM1 / PH4 / GPIO228</td><td>8</td><td>UART2-RTS / PD21 / GPIO117</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>UART2-CTS / PD22 / GPIO118</td></tr>
-                  <tr><td>11</td><td>UART3-RX / PD24 / GPIO120</td><td>12</td><td>SDC2-D3 / PC9 / GPIO73</td></tr>
-                  <tr><td>13</td><td>UART3-TX / PD23 / GPIO119</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>UART3-CTS / PD26 / GPIO122</td><td>16</td><td>SDC2-D2 / PC8 / GPIO72</td></tr>
-                  <tr><td>17</td><td>3.3V Power Rail</td><td>18</td><td>SPI0-WP / PC7 / GPIO71</td></tr>
-                  <tr><td>19</td><td>SPI0-MOSI / PC2 / GPIO66</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>SPI0-MISO / PC3 / GPIO67</td><td>22</td><td>UART3-RTS / PD25 / GPIO121</td></tr>
-                  <tr><td>23</td><td>SPI0-CLK / PC0 / GPIO64</td><td>24</td><td>SPI0-CS / PC5 / GPIO69</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>SPI1-CS / PH3 / GPIO227</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI PC -->
-    <li>
-      <a href="#" onclick="document.getElementById('id015').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H3 Classic PC SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi PC Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id015" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id015').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of standard 40-pin header -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI PC (2x20 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <!-- Remaining generic pins -->
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: PC 40-PIN EXPANSION MATRIX</div>
-
-            <h3>2x20 Main Expansion Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Rail</td><td>2</td><td>5V Output Rail</td></tr>
-                  <tr><td>3</td><td>PA12 (TWI0_SDA / DI_RX / PA_EINT12)</td><td>4</td><td>5V Output Rail</td></tr>
-                  <tr><td>5</td><td>PA11 (TWI0_SCK / DI_TX / PA_EINT11)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PA6 (SIM_PWREN / PWM1 / PA_EINT6)</td><td>8</td><td>PA13 (SPI1_CS / UART3_TX / PA_EINT13)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>PA14 (SPI1_CLK / UART3_RX / PA_EINT14)</td></tr>
-                  <tr><td>11</td><td>PA1 (UART2_RX / JTAG_CK / PA_EINT1)</td><td>12</td><td>PD14 (RMII Port Line)</td></tr>
-                  <tr><td>13</td><td>PA0 (UART2_TX / JTAG_MS / PA_EINT0)</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>PA3 (UART2_CTS / JTAG_DI / PA_EINT3)</td><td>16</td><td>PC4 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>17</td><td>3.3V Output Rail</td><td>18</td><td>PC7 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>19</td><td>PC0 (SPI0_MOSI)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>PC1 (SPI0_MISO)</td><td>22</td><td>PA2 (UART2_RTS / JTAG_DO / PA_EINT2)</td></tr>
-                  <tr><td>23</td><td>PC2 (SPI0_CLK)</td><td>24</td><td>PC3 (SPI0_CS)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>PA21 (PCM0_DIN / SIM_VPPPP / PA_EINT21)</td></tr>
-                  <tr><td>27</td><td>PA19 (PCM0_CLK / TWI1_SDA / PA_EINT19)</td><td>28</td><td>PA18 (PCM0_SYNC / TWI1_SCK / PA_EINT18)</td></tr>
-                  <tr><td>29</td><td>PA7 (SIM_CLK / PA_EINT7)</td><td>30</td><td>Ground (GND)</td></tr>
-                  <tr><td>31</td><td>PA8 (SIM_DATA / PA_EINT8)</td><td>32</td><td>PG8 (UART1_RTS / PG_EINT8)</td></tr>
-                  <tr><td>33</td><td>PA9 (SIM_RST / PA_EINT9)</td><td>34</td><td>Ground (GND)</td></tr>
-                  <tr><td>35</td><td>PA10 (SIM_DET / PA_EINT10)</td><td>36</td><td>PG9 (UART1_CTS / PG_EINT9)</td></tr>
-                  <tr><td>37</td><td>PA20 (PCM0_DOUT / SIM_VPPEN / PA_EINT20)</td><td>38</td><td>PG6 (UART1_TX / PG_EINT6)</td></tr>
-                  <tr><td>39</td><td>Ground (GND)</td><td>40</td><td>PG7 (UART1_RX / PG_EINT7)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI PC 2 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id016').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H5 high speed PC SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi PC 2 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id016" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id016').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of standard 40-pin header -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI PC 2 (H5 PROCESSOR MAP)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <!-- Remaining generic pins -->
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: PC 2 40-PIN EXPANSION MATRIX</div>
-
-            <h3>2x20 Main Expansion Header Layout</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Rail</td><td>2</td><td>5V Output Rail</td></tr>
-                  <tr><td>3</td><td>PA12 (TWI0_SDA / DI_RX / PA_EINT12)</td><td>4</td><td>5V Output Rail</td></tr>
-                  <tr><td>5</td><td>PA11 (TWI0_SCK / DI_TX / PA_EINT11)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PA6 (SIM_PWREN / PWM1 / PA_EINT6)</td><td>8</td><td>PC5 (NAND_RE / SDC2_CLK)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>PC6 (NAND_RB0 / SDC2_CMD)</td></tr>
-                  <tr><td>11</td><td>PA1 (UART2_RX / JTAG_CK0 / PA_EINT1)</td><td>12</td><td>PD14 (RMII Line Interface)</td></tr>
-                  <tr><td>13</td><td>PA0 (UART2_TX / JTAG_MS0 / PA_EINT0)</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>PA3 (UART2_CTS / JTAG_DI0 / PA_EINT3)</td><td>16</td><td>PC4 (NAND_CE0)</td></tr>
-                  <tr><td>17</td><td>3.3V Output Rail</td><td>18</td><td>PC7 (NAND_RB1)</td></tr>
-                  <tr><td>19</td><td>PA15 (SPI1_MOSI / UART3_RTS / PA_EINT15)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>PA16 (SPI1_MISO / UART3_CTS / PA_EINT16)</td><td>22</td><td>PA2 (UART2_RTS / JTAG_DO0 / PA_EINT2)</td></tr>
-                  <tr><td>23</td><td>PA14 (SPI1_CLK / UART3_RX / PA_EINT14)</td><td>24</td><td>PA13 (SPI1_CS / UART3_TX / PA_EINT13)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>PA21 (PCM0_DIN / SIM_VPPPP / PA_EINT21)</td></tr>
-                  <tr><td>27</td><td>PA19 (PCM0_CLK / TWI1_SDA / PA_EINT19)</td><td>28</td><td>PA18 (PCM0_SYNC / TWI1_SCK / PA_EINT18)</td></tr>
-                  <tr><td>29</td><td>PA7 (SIM_CLK / PA_EINT7)</td><td>30</td><td>Ground (GND)</td></tr>
-                  <tr><td>31</td><td>PA8 (SIM_DATA / PA_EINT8)</td><td>32</td><td>PG8 (UART1_RTS / PG_EINT8)</td></tr>
-                  <tr><td>33</td><td>PA9 (SIM_RST / PA_EINT9)</td><td>34</td><td>Ground (GND)</td></tr>
-                  <tr><td>35</td><td>PA10 (SIM_DET / PA_EINT10)</td><td>36</td><td>PG9 (UART1_CTS / PG_EINT9)</td></tr>
-                  <tr><td>37</td><td>PD11 (RMII Signal Interface)</td><td>38</td><td>PG6 (UART1_TX / PG_EINT6)</td></tr>
-                  <tr><td>39</td><td>Ground (GND)</td><td>40</td><td>PG7 (UART1_RX / PG_EINT7)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI PLUS 2E -->
-    <li>
-      <a href="#" onclick="document.getElementById('id018').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H3 Smart Multimedia SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi Plus 2E Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id018" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id018').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of standard 40-pin header -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI PLUS 2E (2x20 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <!-- Remaining generic pins -->
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: PLUS 2E 40-PIN EXPANSION MATRIX</div>
-
-            <h3>2x20 Main Expansion Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Rail</td><td>2</td><td>5V Output Rail</td></tr>
-                  <tr><td>3</td><td>PA12 (TWI0_SDA / DI_RX / PA_EINT12)</td><td>4</td><td>5V Output Rail</td></tr>
-                  <tr><td>5</td><td>PA11 (TWI0_SCK / DI_TX / PA_EINT11)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PA6 (SIM_PWREN / PWM1 / PA_EINT6)</td><td>8</td><td>PA13 (SPI1_CS / UART3_TX / PA_EINT13)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>PA14 (SPI1_CLK / UART3_RX / PA_EINT14)</td></tr>
-                  <tr><td>11</td><td>PA1 (UART2_RX / JTAG_CK / PA_EINT1)</td><td>12</td><td>PD14 (RMII Line)</td></tr>
-                  <tr><td>13</td><td>PA0 (UART2_TX / JTAG_MS / PA_EINT0)</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>PA3 (UART2_CTS / JTAG_DI / PA_EINT3)</td><td>16</td><td>PC4 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>17</td><td>3.3V Output Rail</td><td>18</td><td>PC7 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>19</td><td>PC0 (SPI0_MOSI)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>PC1 (SPI0_MISO)</td><td>22</td><td>PA2 (UART2_RTS / JTAG_DO / PA_EINT2)</td></tr>
-                  <tr><td>23</td><td>PC2 (SPI0_CLK)</td><td>24</td><td>PC3 (SPI0_CS)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>PA21 (PCM0_DIN / SIM_VPPPP / PA_EINT21)</td></tr>
-                  <tr><td>27</td><td>PA19 (PCM0_CLK / TWI1_SDA / PA_EINT19)</td><td>28</td><td>PA18 (PCM0_SYNC / TWI1_SCK / PA_EINT18)</td></tr>
-                  <tr><td>29</td><td>PA7 (SIM_CLK / PA_EINT7)</td><td>30</td><td>Ground (GND)</td></tr>
-                  <tr><td>31</td><td>PA8 (SIM_DATA / PA_EINT8)</td><td>32</td><td>PG8 (UART1_RTS / PG_EINT8)</td></tr>
-                  <tr><td>33</td><td>PA9 (SIM_RST / PA_EINT9)</td><td>34</td><td>Ground (GND)</td></tr>
-                  <tr><td>35</td><td>PA10 (SIM_DET / PA_EINT10)</td><td>36</td><td>PG9 (UART1_CTS / PG_EINT9)</td></tr>
-                  <tr><td>37</td><td>PA20 (PCM0_DOUT / SIM_VPPEN / PA_EINT20)</td><td>38</td><td>PG6 (UART1_TX / PG_EINT6)</td></tr>
-                  <tr><td>39</td><td>Ground (GND)</td><td>40</td><td>PG7 (UART1_RX / PG_EINT7)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- ORANGE PI PLUS 2 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id019').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Allwinner H3 Quad-Core High Memory SBC</span>
-        <div class="card-inner">
-          <span class="card-title">Orange Pi Plus 2 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id019" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id019').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of standard 40-pin header -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI PLUS 2 (2x20 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <!-- Remaining generic pins -->
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: PLUS 2 40-PIN EXPANSION MATRIX</div>
-
-            <h3>2x20 Main Expansion Header</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                    <th>Pin</th>
-                    <th>Signal / SoC Port Alternate Functions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Rail</td><td>2</td><td>5V Output Rail</td></tr>
-                  <tr><td>3</td><td>PA12 (TWI0_SDA / DI_RX / PA_EINT12)</td><td>4</td><td>5V Output Rail</td></tr>
-                  <tr><td>5</td><td>PA11 (TWI0_SCK / DI_TX / PA_EINT11)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>PA6 (SIM_PWREN / PWM1 / PA_EINT6)</td><td>8</td><td>PA13 (SPI1_CS / UART3_TX / PA_EINT13)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>PA14 (SPI1_CLK / UART3_RX / PA_EINT14)</td></tr>
-                  <tr><td>11</td><td>PA1 (UART2_RX / JTAG_CK / PA_EINT1)</td><td>12</td><td>PD14 (RMII Line)</td></tr>
-                  <tr><td>13</td><td>PA0 (UART2_TX / JTAG_MS / PA_EINT0)</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>PA3 (UART2_CTS / JTAG_DI / PA_EINT3)</td><td>16</td><td>PC4 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>17</td><td>3.3V Output Rail</td><td>18</td><td>PC7 (High-Speed Flash Interface)</td></tr>
-                  <tr><td>19</td><td>PC0 (SPI0_MOSI)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>PC1 (SPI0_MISO)</td><td>22</td><td>PA2 (UART2_RTS / JTAG_DO / PA_EINT2)</td></tr>
-                  <tr><td>23</td><td>PC2 (SPI0_CLK)</td><td>24</td><td>PC3 (SPI0_CS)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>PA21 (PCM0_DIN / SIM_VPPPP / PA_EINT21)</td></tr>
-                  <tr><td>27</td><td>PA19 (PCM0_CLK / TWI1_SDA / PA_EINT19)</td><td>28</td><td>PA18 (PCM0_SYNC / TWI1_SCK / PA_EINT18)</td></tr>
-                  <tr><td>29</td><td>PA7 (SIM_CLK / PA_EINT7)</td><td>30</td><td>Ground (GND)</td></tr>
-                  <tr><td>31</td><td>PA8 (SIM_DATA / PA_EINT8)</td><td>32</td><td>PG8 (UART1_RTS / PG_EINT8)</td></tr>
-                  <tr><td>33</td><td>PA9 (SIM_RST / PA_EINT9)</td><td>34</td><td>Ground (GND)</td></tr>
-                  <tr><td>35</td><td>PA10 (SIM_DET / PA_EINT10)</td><td>36</td><td>PG9 (UART1_CTS / PG_EINT9)</td></tr>
-                  <tr><td>37</td><td>PA20 (PCM0_DOUT / SIM_VPPEN / PA_EINT20)</td><td>38</td><td>PG6 (UART1_TX / PG_EINT6)</td></tr>
-                  <tr><td>39</td><td>Ground (GND)</td><td>40</td><td>PG7 (UART1_RX / PG_EINT7)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-  </ul>
-
-  <!-- Educational & SEO Sections -->
+  <!-- Input Parameters Specification -->
   <section class="infoBox">
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
-      <div class="paramItem"><strong>SBC Quick Filter</strong>Locate individual board layouts using the top dynamic search utility.</div>
-      <div class="paramItem"><strong>PoE Ground Isolation</strong>Orange Pi Zero features PoE ground returns over pins 7 and 8 through a dedicated 0-ohm bridge resistor (R358).</div>
-      <div class="paramItem"><strong>Integrated Pull-Up Rails</strong>The Orange Pi Prime SoC bus tracks contain built-in 2k-ohm pull-up resistors on select TWI/I2C channels.</div>
-      <div class="paramItem"><strong>CSI Conflict Mapping</strong>High-density layouts (e.g., RK3399) may deactivate alternate GPIO assignments when camera ribbons are actively connected.</div>
+      <div class="paramItem">
+        <strong>Pin Multiplexing Overlays</strong>
+        Processor register maps that configure physical pins dynamically into standard SPI, I2C, UART, or PWM outputs.
+      </div>
+      <div class="paramItem">
+        <strong>PoE Ground Isolation</strong>
+        Orange Pi Zero features PoE ground returns over pins 7 and 8 through a dedicated 0-ohm bridge resistor (R358).
+      </div>
+      <div class="paramItem">
+        <strong>Integrated Pull-Up Rails</strong>
+        The Orange Pi Prime SoC bus tracks contain built-in 2k-ohm pull-up resistors on select TWI/I2C channels.
+      </div>
+      <div class="paramItem">
+        <strong>CSI Conflict Mapping</strong>
+        High-density layouts (e.g., RK3399) may deactivate alternate GPIO assignments when camera ribbons are actively connected.
+      </div>
     </div>
   </section>
 
+  <!-- Practical Operational Examples -->
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
     <div class="exampleGrid">
@@ -1882,24 +439,38 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
     <h2>Logic and Power Rail Theory</h2>
     <p>Orange Pi developmental modules operate on Allwinner and Mediatek SoC architectures. Because these modern silicon dies feature sub-micron processes, they rely on clean, stabilized 3.3V CMOS logic signaling. Applying direct 5V input lines to these delicate ports will compromise internal chip junctions and lead to complete processor failure.</p>
     <div class="aboutNote">Tip: Always trace and secure your common ground (GND) connections first to protect high-frequency SPI and I2C lines from static discharge.</div>
   </section>
 
+  <!-- Formulas & Mathematical Logic -->
   <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
+    <h2>Formulas &amp; Hardware Calculations</h2>
     <div class="formula">Series Load Protection: R_series = (V_logic_out - V_forward_LED) / I_target</div>
     <div class="formula">Pull-up Transition Time: T_rise = 2.2 × R_pullup × C_bus (Calculating I2C clock speed limitations)</div>
     <div class="formula">Bus Pull-up Range: R_min = (V_cc - V_low) / I_sink, preventing overcurrent drain on open-drain pins.</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target Orange Pi platform using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the board's class and primary SoC chipset.</div>
+      <div class="aboutStep">Study the customized 2D vector layout showing board structure and pin maps.</div>
+      <div class="aboutStep">Consult the exhaustive connection tables below the diagram to locate specific peripheral pin assignments.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
   <section class="infoBox">
     <h2>About This Reference Guide</h2>
     <div class="aboutLead">
-      <strong>Quick access to standard Orange Pi development board layouts.</strong>
-      <p>This reference consolidates layout configurations, logic states, and physical system interfaces across the Orange Pi family.</p>
+      <strong>Your direct lookup path for Orange Pi development boards and interfaces.</strong>
+      <p>This reference index consolidates pin configurations, expansion header maps, and line assignments for the Orange Pi family.</p>
     </div>
     <p>Finding accurate pinout layouts is crucial for embedded designers, system architects, IoT engineers, and DIY hobbyists. This directory documents active signal paths to help prevent wiring errors, serial protocol failures, and board damage.</p>
     <p>Always verify pinout configurations with a digital multimeter before powering up custom circuits or shield adapters.</p>
@@ -1911,88 +482,602 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. Are Orange Pi GPIO pins 5V tolerant?</strong></h3>
+    
+    <h3>1. <strong>Are Orange Pi GPIO pins 5V tolerant?</strong></h3>
     <p>No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure.</p>
 
-    <h3><strong>2. What is the baud rate of the Orange Pi debug console?</strong></h3>
+    <h3>2. <strong>What is the baud rate of the Orange Pi debug console?</strong></h3>
     <p>Most Orange Pi boards configure their main UART debug terminal (typically UART0 or UART2) to a baud rate of 115200 by default.</p>
 
-    <h3><strong>3. How does the Passive PoE system work on the Orange Pi Zero?</strong></h3>
+    <h3>3. <strong>How does the Passive PoE system work on the Orange Pi Zero?</strong></h3>
     <p>The Zero uses on-board zero-ohm resistors (R29 and R358) to route passive DC power from Ethernet pairs 4/5 and 7/8 directly to the main 5V and Ground lines.</p>
 
-    <h3><strong>4. Why do some SPI and I2C channels fail when a camera is connected?</strong></h3>
+    <h3>4. <strong>Why do some SPI and I2C channels fail when a camera is connected?</strong></h3>
     <p>High-density boards like the RK3399 share physical SoC traces between certain GPIO pin groups and the CSI camera connector, disabling these pins when the camera is active.</p>
-
-    <h3><strong>5. How do I reset search filters in this tool?</strong></h3>
-    <p>Clear any text from the search box at the top of the interface to restore the full list of pinout cards.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
-      <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Identify primary and secondary system winding calculations.</div>
-      <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure stored energy metrics inside transformer components.</div>
-      <div class="linkCard"><strong>SMPS Duty Cycle Calculator</strong>Evaluate performance criteria on active switching regulators.</div>
-      <div class="linkCard"><strong>Wire Gauge Calculator</strong>Estimate safe wire sizes for diverse line current applications.</div>
+      <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Verify primary and secondary winding values.</div>
+      <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure magnetic storage parameters in active units.</div>
+      <div class="linkCard"><strong>SMPS Duty Cycle Calculator</strong>Evaluate voltage regulators and switching controllers.</div>
+      <div class="linkCard"><strong>Wire Gauge Calculator</strong>Estimate safe wire thickness for different current limits.</div>
     </div>
   </section>
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function myFunction() {
-    var input, filter, ul, li, a, i, txtValue;
-    input = document.getElementById("myInput");
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("myUL");
-    li = ul.getElementsByTagName("li");
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
-        }
-    }
-}
-
-// Close modals when user clicks outside of them
-window.onclick = function(event) {
-  if (event.target.classList.contains('w3-modal')) {
-    event.target.style.display = "none";
+// Master Orange Pi IoT Development Boards Pinouts Database
+const packageDetails = [
+  {
+    name: "Orange Pi Zero / Zero Plus / Zero Plus 2",
+    tag: "Allwinner H2+/H5 Compact SBC",
+    subtitle: "Allwinner Compact Pinout Reference",
+    svgs: [
+      {
+        label: "Orange Pi Zero Layout",
+        html: `
+          <svg viewBox="0 0 360 80" width="100%">
+            <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
+            <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI ZERO (2x13 HEADER)</text>
+            <g fill="#cbd5e1">
+              <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
+              <circle cx="50" cy="40" r="5" />
+              <circle cx="75" cy="40" r="5" />
+              <circle cx="100" cy="40" r="5" />
+              <circle cx="125" cy="40" r="5" fill="#64748b" />
+              <circle cx="150" cy="40" r="5" />
+              <circle cx="175" cy="40" r="5" />
+              <circle cx="200" cy="40" r="5" fill="#eab308" />
+              <circle cx="225" cy="40" r="5" />
+              <circle cx="250" cy="40" r="5" />
+              <circle cx="275" cy="40" r="5" />
+              <circle cx="300" cy="40" r="5" />
+              <circle cx="325" cy="40" r="5" fill="#64748b" />
+            </g>
+            <g fill="#cbd5e1">
+              <circle cx="25" cy="55" r="5" fill="#ef4444" />
+              <circle cx="50" cy="55" r="5" fill="#ef4444" />
+              <circle cx="75" cy="55" r="5" fill="#64748b" />
+              <circle cx="100" cy="55" r="5" />
+              <circle cx="125" cy="55" r="5" />
+              <circle cx="150" cy="55" r="5" />
+              <circle cx="175" cy="55" r="5" fill="#64748b" />
+              <circle cx="200" cy="55" r="5" />
+              <circle cx="225" cy="55" r="5" fill="#64748b" />
+              <circle cx="250" cy="55" r="5" />
+              <circle cx="275" cy="55" r="5" />
+              <circle cx="300" cy="55" r="5" />
+              <circle cx="325" cy="55" r="5" />
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "2x13 Main Header Pinout",
+        columns: ["Pin", "Signal Function", "Pin", "Signal Function"],
+        rows: [
+          ["1", "3.3V Power Line", "2", "5V Power Line"],
+          ["3", "TWI0_SDA / PA12 / GPIO12", "4", "5V Power Line"],
+          ["5", "TWI0_SCK / PA11 / GPIO11", "6", "Ground (GND)"],
+          ["7", "PWM1 / PA06 / GPIO6", "8", "UART1_TX / PG06 / GPIO198"],
+          ["9", "Ground (GND)", "10", "UART1_RX / PG07 / GPIO199"],
+          ["11", "UART2_RX / PA01 / GPIO1", "12", "SIM_CLK / PA_EINT7 / PA07 / GPIO7"],
+          ["13", "UART2_TX / PA00 / GPIO0", "14", "Ground (GND)"],
+          ["15", "UART2_CTS / PA03 / GPIO3", "16", "TWI1-SDA / PA19 / GPIO19"],
+          ["17", "3.3V Power Line", "18", "TWI1-SCK / PA18 / GPIO18"],
+          ["19", "SPI1_MOSI / PA15 / GPIO15", "20", "Ground (GND)"],
+          ["21", "SPI1_MISO / PA16 / GPIO16", "22", "UART2_RTS / PA02 / GPIO2"],
+          ["23", "SPI1_CLK / PA14 / GPIO14", "24", "SPI1_CS / PA13 / GPIO13"],
+          ["25", "Ground (GND)", "26", "SIM_DET / PA_EINT10 / PA10 / GPIO10"]
+        ]
+      },
+      {
+        header: "1x13 Auxiliary Header (Low-Speed Audio/USB Expansion)",
+        columns: ["Pin Number", "Signal Port Connection"],
+        rows: [
+          ["1", "5V Power Rail"],
+          ["2", "Ground Reference (GND)"],
+          ["3", "USB-DM2"],
+          ["4", "USB-DP2"],
+          ["5", "USB-DM3"],
+          ["6", "USB-DP3"],
+          ["7", "LINEOUTR"],
+          ["8", "LINEOUTL"],
+          ["9", "TV-OUT (Composite CVBS Video Output)"],
+          ["10", "MIC-BIAS"],
+          ["11", "MIC1P"],
+          ["12", "MIC1N"],
+          ["13", "CIR-RX (Infrared Receiver Line)"]
+        ]
+      },
+      {
+        header: "Ethernet Passive PoE Configuration",
+        columns: ["Ethernet Pins", "Passive Power Description", "Active Bridge Resistor", "Resistor Value", "Nominal Voltage Rail"],
+        rows: [
+          ["4/5", "PoE+ Input Node", "R29", "0 Ohm", "5V DC Input"],
+          ["7/8", "PoE- Return Node", "R358", "0 Ohm", "Ground (GND)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Orange Pi One / Lite / PC / PC 2 / Plus 2 / Plus 2E / Prime",
+    tag: "Allwinner H3/H5 Classic SBC",
+    subtitle: "Allwinner H3/H5 40-Pin Header Pinout",
+    svgs: [
+      {
+        label: "Orange Pi 40-Pin Header Layout",
+        html: `
+          <svg viewBox="0 0 520 80" width="100%">
+            <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
+            <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI (2x20 HEADER)</text>
+            <g fill="#cbd5e1">
+              <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
+              <circle cx="50" cy="40" r="5" />
+              <circle cx="75" cy="40" r="5" />
+              <circle cx="100" cy="40" r="5" />
+              <circle cx="125" cy="40" r="5" fill="#64748b" />
+              <circle cx="150" cy="40" r="5" />
+              <circle cx="175" cy="40" r="5" />
+              <circle cx="200" cy="40" r="5" />
+              <circle cx="225" cy="40" r="5" />
+              <circle cx="250" cy="40" r="5" />
+              <circle cx="275" cy="40" r="5" />
+              <circle cx="300" cy="40" r="5" />
+              <circle cx="325" cy="40" r="5" fill="#64748b" />
+              <circle cx="350" cy="40" r="5" />
+              <circle cx="375" cy="40" r="5" />
+              <circle cx="400" cy="40" r="5" />
+              <circle cx="425" cy="40" r="5" />
+              <circle cx="450" cy="40" r="5" />
+              <circle cx="475" cy="40" r="5" />
+              <circle cx="500" cy="40" r="5" fill="#64748b" />
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "2x20 Main Expansion Header Pinout",
+        columns: ["Pin", "Signal / SoC Port Alternate Functions", "Pin", "Signal / SoC Port Alternate Functions"],
+        rows: [
+          ["1", "3.3V Output Rail", "2", "5V Output Rail"],
+          ["3", "PA12 (TWI0_SDA / DI_RX / PA_EINT12)", "4", "5V Output Rail"],
+          ["5", "PA11 (TWI0_SCK / DI_TX / PA_EINT11)", "6", "Ground (GND)"],
+          ["7", "PA6 (SIM_PWREN / PWM1 / PA_EINT6)", "8", "PA13 (SPI1_CS / UART3_TX / PA_EINT13)"],
+          ["9", "Ground (GND)", "10", "PA14 (SPI1_CLK / UART3_RX / PA_EINT14)"],
+          ["11", "PA1 (UART2_RX / JTAG_CK / PA_EINT1)", "12", "PD14 (RMII Port Line)"],
+          ["13", "PA0 (UART2_TX / JTAG_MS / PA_EINT0)", "14", "Ground (GND)"],
+          ["15", "PA3 (UART2_CTS / JTAG_DI / PA_EINT3)", "16", "PC4 (High-Speed Flash Interface)"],
+          ["17", "3.3V Output Rail", "18", "PC7 (High-Speed Flash Interface)"],
+          ["19", "PC0 (SPI0_MOSI)", "20", "Ground (GND)"],
+          ["21", "PC1 (SPI0_MISO)", "22", "PA2 (UART2_RTS / JTAG_DO / PA_EINT2)"],
+          ["23", "PC2 (SPI0_CLK)", "24", "PC3 (SPI0_CS)"],
+          ["25", "Ground (GND)", "26", "PA21 (PCM0_DIN / SIM_VPPPP / PA_EINT21)"],
+          ["27", "PA19 (PCM0_CLK / TWI1_SDA / PA_EINT19)", "28", "PA18 (PCM0_SYNC / TWI1_SCK / PA_EINT18)"],
+          ["29", "PA7 (SIM_CLK / PA_EINT7)", "30", "Ground (GND)"],
+          ["31", "PA8 (SIM_DATA / PA_EINT8)", "32", "PG8 (UART1_RTS / PG_EINT8)"],
+          ["33", "PA9 (SIM_RST / PA_EINT9)", "34", "Ground (GND)"],
+          ["35", "PA10 (SIM_DET / PA_EINT10)", "36", "PG9 (UART1_CTS / PG_EINT9)"],
+          ["37", "PA20 (PCM0_DOUT / SIM_VPPEN / PA_EINT20)", "38", "PG6 (UART1_TX / PG_EINT6)"],
+          ["39", "Ground (GND)", "40", "PG7 (UART1_RX / PG_EINT7)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Orange Pi 2G-IOT / 4G-IOT / I96",
+    tag: "Mobile / IoT Module",
+    subtitle: "IoT Module CSI Camera Pin Define",
+    svgs: [
+      {
+        label: "CSI Pin Matrix",
+        html: `
+          <svg viewBox="0 0 300 80" width="100%">
+            <rect x="5" y="5" width="290" height="70" rx="5" fill="#1e293b" />
+            <text x="15" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI (CSI PIN MATRIX)</text>
+            <g fill="#cbd5e1">
+              <circle cx="15" cy="45" r="3" />
+              <circle cx="35" cy="45" r="3" fill="#64748b" />
+              <circle cx="55" cy="45" r="3" />
+              <circle cx="75" cy="45" r="3" />
+              <circle cx="95" cy="45" r="3" />
+              <circle cx="115" cy="45" r="3" />
+              <circle cx="135" cy="45" r="3" />
+              <circle cx="155" cy="45" r="3" />
+              <circle cx="175" cy="45" r="3" />
+              <circle cx="195" cy="45" r="3" />
+              <circle cx="215" cy="45" r="3" />
+              <circle cx="235" cy="45" r="3" />
+              <circle cx="255" cy="45" r="3" />
+              <circle cx="275" cy="45" r="3" />
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "CSI Camera Pin Definition Table",
+        columns: ["Connection Pin", "Bus / Signal Allocation", "SoC Pin Ref"],
+        rows: [
+          ["CON1-P01", "No Connection (NC)", "-"],
+          ["CON1-P02", "Ground (GND)", "-"],
+          ["CON1-P03", "TWI2-SDA", "PE13"],
+          ["CON1-P04", "VCC-CSI (Camera IO Power)", "-"],
+          ["CON1-P05", "TWI2-SCK", "PE12"],
+          ["CON1-P06", "CSI-RESET#", "PE15"],
+          ["CON1-P07", "CSI-VSYNC", "PE3"],
+          ["CON1-P08", "CSI-STBY-EN", "PE15"],
+          ["CON1-P09", "CSI-HSYNC", "PE2"],
+          ["CON1-P10", "VDD1V8-CSI", "-"],
+          ["CON1-P11", "VCC-CSI", "-"],
+          ["CON1-P12", "CSI-D7", "PE11"],
+          ["CON1-P13", "CSI-MCLK", "PE1"],
+          ["CON1-P14", "CSI-D6", "PE10"],
+          ["CON1-P15", "Ground (GND)", "-"],
+          ["CON1-P16", "CSI-D5", "PE9"],
+          ["CON1-P17", "CSI-PCLK", "PE0"],
+          ["CON1-P18", "CSI-D4", "PE8"],
+          ["CON1-P19", "CSI-D0", "PE4"],
+          ["CON1-P20", "CSI-D3", "PE7"],
+          ["CON1-P21", "CSI-D1", "PE5"],
+          ["CON1-P22", "CSI-D2", "PE6"],
+          ["CON1-P23", "Ground (GND)", "-"],
+          ["CON1-P24", "AFVCC-CSI (Auto-Focus Motor VCC)", "-"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Orange Pi Win / Win Plus / One Plus / Lite 2",
+    tag: "Allwinner A64 / H6 64-Bit SBC",
+    subtitle: "A64/H6 64-Bit Interface Header Pinout",
+    svgs: [
+      {
+        label: "Orange Pi 64-Bit Header Layout",
+        html: `
+          <svg viewBox="0 0 520 80" width="100%">
+            <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
+            <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI (A64 / H6 HEADER)</text>
+            <g fill="#cbd5e1">
+              <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
+              <circle cx="50" cy="40" r="5" />
+              <circle cx="75" cy="40" r="5" />
+              <circle cx="100" cy="40" r="5" />
+              <circle cx="125" cy="40" r="5" fill="#64748b" />
+              <!-- Generic pins -->
+              <circle cx="150" cy="40" r="5" />
+              <circle cx="175" cy="40" r="5" />
+              <circle cx="200" cy="40" r="5" />
+              <circle cx="225" cy="40" r="5" />
+              <circle cx="250" cy="40" r="5" />
+              <circle cx="275" cy="40" r="5" />
+              <circle cx="300" cy="40" r="5" />
+              <circle cx="325" cy="40" r="5" fill="#64748b" />
+              <circle cx="350" cy="40" r="5" />
+              <circle cx="375" cy="40" r="5" />
+              <circle cx="400" cy="40" r="5" />
+              <circle cx="425" cy="40" r="5" />
+              <circle cx="450" cy="40" r="5" />
+              <circle cx="475" cy="40" r="5" />
+              <circle cx="500" cy="40" r="5" fill="#64748b" />
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "40-Pin Main Header (64-Bit System Bus)",
+        columns: ["Pin", "Signal Port Description", "SoC Pin Ref"],
+        rows: [
+          ["CON1-P01", "VCC3V3-EXT (Regulated 3.3V Output)", "-"],
+          ["CON1-P02", "VCC5V-EXT (5V Output Rail)", "-"],
+          ["CON1-P03", "TWI1-SDA (I2C1 Data Line)", "PH3"],
+          ["CON1-P04", "VCC-5V (Secondary 5V Line)", "-"],
+          ["CON1-P05", "TWI1-SCK (I2C1 Clock Line)", "PH2"],
+          ["CON1-P06", "Ground (GND)", "-"],
+          ["CON1-P07", "S_PWM (System Pulse Width Modulation)", "PL10"],
+          ["CON1-P08", "S_UART_TX (System UART Transmit)", "PL2"],
+          ["CON1-P09", "Ground (GND)", "-"],
+          ["CON1-P10", "S_UART_RX (System UART Receive)", "PL3"],
+          ["CON1-P11", "UART3_RX", "PH5"],
+          ["CON1-P12", "PD4 (General IO)", "PD4"],
+          ["CON1-P13", "UART3_TX", "PH4"],
+          ["CON1-P14", "Ground (GND)", "-"],
+          ["CON1-P15", "UART3_CTS", "PH7"],
+          ["CON1-P16", "PL9 (General IO)", "PL9"],
+          ["CON1-P17", "VCC3V3-EXT", "-"],
+          ["CON1-P18", "PC4 (General IO)", "PC4"],
+          ["CON1-P19", "SPI1_MOSI", "PD2"],
+          ["CON1-P20", "Ground (GND)", "-"],
+          ["CON1-P21", "SPI1_MISO", "PD3"],
+          ["CON1-P22", "UART3_RTS", "PH6"],
+          ["CON1-P23", "SPI1_CLK", "PD1"],
+          ["CON1-P24", "SPI1_CS0", "PD0"],
+          ["CON1-P25", "Ground (GND)", "-"],
+          ["CON1-P26", "PD6 (General IO)", "PD6"],
+          ["CON1-P27", "TWI2-SDA", "PE15"],
+          ["CON1-P28", "TWI2-SCK", "PE14"],
+          ["CON1-P29", "PB4 (General IO)", "PB4"],
+          ["CON1-P30", "Ground (GND)", "-"],
+          ["CON1-P31", "PB5 (General IO)", "PB5"],
+          ["CON1-P32", "UART2_RTS", "PB2"],
+          ["CON1-P33", "PB6 (General IO)", "PB6"],
+          ["CON1-P34", "Ground (GND)", "-"],
+          ["CON1-P35", "PB7 (General IO)", "PB7"],
+          ["CON1-P36", "UART2_CTS", "PB3"],
+          ["CON1-P37", "PD5 (General IO)", "PD5"],
+          ["CON1-P38", "UART2_TX", "PB0"],
+          ["CON1-P39", "Ground (GND)", "-"],
+          ["CON1-P40", "UART2_RX", "PB1"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Orange Pi RK3399",
+    tag: "Hexa-Core Dual Cortex-A72 SBC",
+    subtitle: "Rockchip RK3399 Multi-Core Board Pinout",
+    svgs: [
+      {
+        label: "RK3399 Header Layout",
+        html: `
+          <svg viewBox="0 0 520 80" width="100%">
+            <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
+            <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">ORANGE PI RK3399 (SoC EXPANSION CORE)</text>
+            <g fill="#cbd5e1">
+              <rect x="20" y="35" width="10" height="10" fill="#eab308" rx="1" />
+              <circle cx="50" cy="40" r="5" />
+              <circle cx="75" cy="40" r="5" />
+              <circle cx="100" cy="40" r="5" />
+              <circle cx="125" cy="40" r="5" fill="#64748b" />
+              <!-- Pins match RK3399 configurations -->
+              <circle cx="150" cy="40" r="5" />
+              <circle cx="175" cy="40" r="5" />
+              <circle cx="200" cy="40" r="5" />
+              <circle cx="225" cy="40" r="5" />
+              <circle cx="250" cy="40" r="5" />
+              <circle cx="275" cy="40" r="5" />
+              <circle cx="300" cy="40" r="5" />
+              <circle cx="325" cy="40" r="5" fill="#64748b" />
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "RK3399 Complete Pin Definition Table",
+        columns: ["Pin", "Signal Port Connection", "GPIO Ref", "Bus Type", "Alternative Functions & Explanations"],
+        rows: [
+          ["PIN1", "3V3-1 (3.3V Output)", "-", "Power", "Power 3.3V output node"],
+          ["PIN2", "5V-1 (5V Output)", "-", "Power", "Power 5V output node"],
+          ["PIN3", "SDA", "GPIO1_B3", "I2C4_SDA", "Default configured for I2C4 connection"],
+          ["PIN4", "5V-2 (5V Output)", "-", "Power", "Power 5V output node"],
+          ["PIN5", "SCL", "GPIO1_B4", "I2C4_SCL", "Default configured for I2C4 connection"],
+          ["PIN6", "GND4 (Ground)", "-", "Power", "Common system ground reference"],
+          ["PIN7", "GPIO4", "GPIO2_A0", "I2C2_SDA", "Secondary I2C Data interface channel"],
+          ["PIN8", "TX", "GPIO4_C4", "UART2DBG_TX", "Default configured for UART Debug console out"],
+          ["PIN9", "GND1 (Ground)", "-", "Power", "Common system ground reference"],
+          ["PIN10", "RX", "GPIO4_C3", "UART2DBG_RX", "Default configured for UART Debug console in"],
+          ["PIN11", "GPIO17", "GPIO2_C0", "UART0_RXD", "General Purpose / Main system UART Receiver"],
+          ["PIN12", "GPIO18", "GPIO2_A1", "I2C2_SCL", "Secondary I2C Clock interface channel"],
+          ["PIN13", "GPIO27", "GPIO2_C1", "UART0_TXD", "General Purpose / Main system UART Transmitter"],
+          ["PIN14", "GND5 (Ground)", "-", "Power", "Common system ground reference"],
+          ["PIN15", "GPIO22", "GPIO2_C2", "UART0_CTS", "Clear-To-Send handshake line for UART0"],
+          ["PIN16", "GPIO23", "GPIO2_A2", "-", "General Purpose Input / Output channel"],
+          ["PIN17", "3V3-2 (3.3V Output)", "-", "Power", "Power 3.3V output node"],
+          ["PIN18", "GPIO24", "GPIO2_A3", "-", "General Purpose Input / Output channel"],
+          ["PIN19", "MOSI", "GPIO1_A7", "SPI1_RXD", "Serial Peripheral Interface Data In channel"],
+          ["PIN20", "GND6 (Ground)", "-", "Power", "Common system ground reference"],
+          ["PIN21", "MISO", "GPIO1_B0", "SPI1_TXD", "Serial Peripheral Interface Data Out channel"],
+          ["PIN22", "GPIO25", "GPIO2_C3", "UART0_RTS", "Request-To-Send handshake line for UART0"],
+          ["PIN23", "SCLK", "GPIO1_B1", "SPI1_CLK", "SPI Master Clock interface bus"],
+          ["PIN24", "CS0", "GPIO1_B2", "-", "SPI Master Chip Select 0 output"],
+          ["PIN25", "GND2 (Ground)", "-", "Power", "Common system ground reference"],
+          ["PIN26", "CS1", "GPIO2_D4", "-", "Camera CSI conflict pin (PDN0_H occupied)"],
+          ["PIN27", "DNP1", "GPIO4_D2", "-", "Auxiliary System Port"],
+          ["PIN28", "DNP2", "GPIO1_C2", "-", "Auxiliary System Port"],
+          ["PIN29", "GPIO5", "GPIO2_A4", "-", "PCIE Reset pinout conflict output line (PERST)"],
+          ["PIN30", "GND7 (Ground)", "-", "Power", "Common system ground reference"],
+          ["PIN31", "GPIO6", "GPIO2_A5", "-", "HDMI Power-Enable conflict pinout (PWREN33)"],
+          ["PIN32", "GPIO12", "GPIO2_B4", "SPI2_CSN", "Camera CSI conflict pin (PDN0_H occupied)"]
+        ]
+      }
+    ]
   }
+];
+
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
+
+// Update display with selected board parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
+  
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
+}
+
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
+}
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first board entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+};
+</script>
+
+<!-- SEO Structured JSON-LD Schemas -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Are Orange Pi GPIO pins 5V tolerant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the baud rate of the Orange Pi debug console?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most Orange Pi boards configure their main UART debug terminal (typically UART0 or UART2) to a baud rate of 115200 by default."
+      }
+    }
+  ]
 }
 </script>
 
 <script type="application/ld+json">
 {
-"@context":"https://schema.org",
-"@type":"FAQPage",
-"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
-"mainEntity":[
-{"@type":"Question","name":"1. Are Orange Pi GPIO pins 5V tolerant?","acceptedAnswer":{"@type":"Answer","text":"No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure."}},
-{"@type":"Question","name":"2. What is the baud rate of the Orange Pi debug console?","acceptedAnswer":{"@type":"Answer","text":"Most Orange Pi boards configure their main UART debug terminal (typically UART0 or UART2) to a baud rate of 115200 by default."}},
-{"@type":"Question","name":"3. How does the Passive PoE system work on the Orange Pi Zero?","acceptedAnswer":{"@type":"Answer","text":"The Zero uses on-board zero-ohm resistors (R29 and R358) to route passive DC power from Ethernet pairs 4/5 and 7/8 directly to the main 5V and Ground lines."}},
-{"@type":"Question","name":"4. Why do some SPI and I2C channels fail when a camera is connected?","acceptedAnswer":{"@type":"Answer","text":"High-density boards like the RK3399 share physical SoC traces between certain GPIO pin groups and the CSI camera connector, disabling these pins when the camera is active."}},
-{"@type":"Question","name":"5. How do I reset search filters in this tool?","acceptedAnswer":{"@type":"Answer","text":"Clear any text from the search box at the top of the interface to restore the full list of pinout cards."}}
-]
-}
-</script>
-
-<script type="application/ld+json">
-{
-"@context":"https://schema.org",
-"@type":"BreadcrumbList",
-"itemListElement":[
-{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
-{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
-{"@type":"ListItem","position":3,"name":"Orange Pi GPIO Pinouts and Reference Guide","item":"https://calcboy.com/tool/orange-pi-gpio-pinouts-and-reference-guide"}
-]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Orange Pi GPIO Pinouts and Reference Guide", "item": "https://calcboy.com/tool/orange-pi-gpio-pinouts-and-reference-guide" }
+  ]
 }
 </script>
 
