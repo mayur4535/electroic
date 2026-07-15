@@ -6,694 +6,417 @@
 <title>Particle IoT GPIO Pinouts and Reference Guide | CalcBoy</title>
 <meta name="description" content="Complete Particle IoT pinouts reference guide for Tracker SoM, Boron, Argon, Xenon, Electron, Photon, B-Series, and E-Series. Detailed GPIO maps and specs.">
 <meta name="keywords" content="particle pinout, particle boron pinout, tracker som pinout, particle argon, electron gpio, photon pinout, particle iot guide, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/particle-iot-gpio-pinouts-and-reference-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Particle IoT GPIO Pinouts and Reference Guide | CalcBoy">
+<meta property="og:description" content="Access complete, exhaustive pin-by-pin specifications and vector schematics for Particle IoT platforms including Tracker SoM, Boron, and B-Series.">
+<meta property="og:url" content="https://calcboy.com/tool/particle-iot-gpio-pinouts-and-reference-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Particle IoT GPIO Pinouts and Reference Guide | CalcBoy">
+<meta name="twitter:description" content="Complete engineering reference directory for Particle IoT board architectures, pin multiplexing, and expansion pinouts.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#audio-pinout-calc,#audio-pinout-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#audio-pinout-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#beagle-pinouts-tool, #beagle-pinouts-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#beagle-pinouts-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
 }
-.pinout-item-card:hover {
-  border-color:#ff6a00;
-  box-shadow:0 4px 12px rgba(255,106,0,.08);
+.calc-grid {
+  display: grid;
+  gap: 15px;
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#ff6a00;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
 }
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
 }
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
-}
-
-/* Modal Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:auto;
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:20px 10px;
-}
-.w3-modal-content {
-  background:#fff;
-  margin:20px auto;
-  width:100%;
-  max-width:580px;
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-
-/* Red Close Button STICKY 10% */
-.mid {
-  position: sticky !important;
-  top: 10% !important;
-  right: 16px !important;
-  float: right !important;
-  z-index: 1010 !important;
-  width: 36px;
-  height: 36px;
-  background-color: #ef4444 !important;
-  border: none !important;
-  border-radius: 50% !important;
-  color: #ffffff !important;
-  font-size: 16px !important;
-  font-weight: 900 !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
-  transition: background-color 0.2s, transform 0.1s;
-  margin-top: -8px;
-  margin-right: -8px;
-}
-.mid:hover {
-  background-color: #dc2626 !important;
-}
-
-/* Inline Diagram Styling */
-.diagram-container {
+select {
   width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+}
+select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
+}
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
   border-radius: 12px;
   padding: 16px;
-  margin: 12px auto 6px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.connector-header-card .badge {
+  background: #ffedd5;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ea580c;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ffedd5;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
+  display: flex;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
+}
+.vector-box {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 140px;
   justify-content: center;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
 }
-.diagram-container svg {
+.vector-box:hover {
+  transform: scale(1.02);
+  border-color: #ff6a00;
+}
+.vector-box svg {
   max-width: 100%;
   height: auto;
 }
-
-.table1 {width:100%;text-align:left;clear:both}
-
+.vector-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
 .img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:6px;
-  margin-bottom:16px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
 }
 
-/* Standardized Tables & Scroll wrappers */
-.table-responsive {
-  width: 100%;
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
   overflow-x: auto;
-  margin: 15px 0 20px;
+  margin-top: 15px;
+}
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
+}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #475467 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutNote {
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-left: 5px solid #ff6a00;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9a3412;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
 }
-table {
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  overflow:hidden;
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff6a00;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
 }
-th {
-  background:#f1f5f9;
-  color:#1e293b;
-  font-size:12px;
-  font-weight:900;
-  padding:10px 12px;
-  text-align:left;
-  border-bottom:2px solid #e2e8f0;
-  white-space: nowrap;
-}
-td {
-  padding:8px 12px;
-  font-size:12px;
-  color:#475467;
-  border-bottom:1px solid #edf2f7;
-  white-space: nowrap;
-}
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
-
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
-
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="audio-pinout-calc">
+<div id="beagle-pinouts-tool">
 
-  <div class="search-container">
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Particle Boards..." title="Type in a board name">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Board Pinout Selector</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Particle Board</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
+    </div>
   </div>
 
-  <ul id="myUL">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">nRF52840 Cellular SoM</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Pinout Map</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <!-- TRACKER SOM -->
-    <li>
-      <a href="#" onclick="document.getElementById('id01').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">nRF52840 Cellular SoM</span>
-        <div class="card-inner">
-          <span class="card-title">Tracker SoM Pinout Reference</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id01" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id01').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of Tracker SoM edge profile -->
-              <svg viewBox="0 0 500 120" width="100%">
-                <rect x="10" y="10" width="480" height="100" rx="8" fill="#1e293b" />
-                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="12" font-weight="bold">TRACKER SOM (HIGH-DENSITY M.2 EDGE BLOCK)</text>
-                <g fill="#cbd5e1">
-                  <!-- Segment lines indicating four outer boundary connection zones -->
-                  <line x1="20" y1="50" x2="180" y2="50" stroke="#ff6a00" stroke-width="4" />
-                  <text x="25" y="70" fill="#94a3b8" font-family="Arial" font-size="9">RIGHT SIDE: Pins 1-42</text>
-                  
-                  <line x1="200" y1="50" x2="300" y2="50" stroke="#3b82f6" stroke-width="4" />
-                  <text x="205" y="70" fill="#94a3b8" font-family="Arial" font-size="9">TOP: Pins 43-53</text>
-                  
-                  <line x1="320" y1="50" x2="480" y2="50" stroke="#10b981" stroke-width="4" />
-                  <text x="325" y="70" fill="#94a3b8" font-family="Arial" font-size="9">LEFT: Pins 54-95</text>
-                </g>
-                <text x="25" y="95" fill="#eab308" font-family="Arial" font-size="8">SWD, NFC, RGB, PMIC, GNSS, ESP32, nRF52 PORT INTERFACES INTEGRATED</text>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: TRACKER SOM SYSTEM BLOCK ALLOCATION</div>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+  </div>
 
-            <h3>Complete SoM Pin Allocation Table</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th># Pin</th>
-                    <th>Pin Name</th>
-                    <th>Function</th>
-                    <th>Linked Component</th>
-                    <th>Signal Port Description &amp; Alternate Profiles</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td colspan="5" style="background:#f1f5f9; font-weight:bold;">RIGHT SIDE INTERFACE TERMINALS</td></tr>
-                  <tr><td>1</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>2</td><td>GNSS_BAT</td><td>POWER IN</td><td>GNSS</td><td>RTC Backup battery rail for u-blox GNSS hot-start cycles</td></tr>
-                  <tr><td>3</td><td>GNSS_RESET</td><td>IO</td><td>GNSS &amp; IOEX</td><td>GNSS reset control line; can be driven manually or via internal IO Expander</td></tr>
-                  <tr><td>4</td><td>GNSS_VBUS</td><td>USB PWR</td><td>GNSS</td><td> u-blox USB port power rail (Optional deployment)</td></tr>
-                  <tr><td>5</td><td>GNSS_P</td><td>USB D+</td><td>GNSS</td><td>u-blox USB differential transceiver plus (+)</td></tr>
-                  <tr><td>6</td><td>GNSS_N</td><td>USB D-</td><td>GNSS</td><td>u-blox USB differential transceiver minus (-)</td></tr>
-                  <tr><td>7</td><td>GNSS_PULSE</td><td>OUT</td><td>GNSS</td><td>High-precision time pulse output (Configurable as fix status LED driver)</td></tr>
-                  <tr><td>8</td><td>-</td><td>-</td><td>-</td><td>Empty Terminal Node</td></tr>
-                  <tr><td>9</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>10</td><td>-</td><td>-</td><td>-</td><td>Empty Terminal Node</td></tr>
-                  <tr><td>11</td><td>URXD1</td><td>Input</td><td>nRF52840</td><td>Main system UART Receiver Port 1 (Alternative GPIO use)</td></tr>
-                  <tr><td>12</td><td>EINT8</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 8 (Alternative GPIO use)</td></tr>
-                  <tr><td>13</td><td>UTXD1</td><td>Output</td><td>nRF52840</td><td>Main system UART Transmitter Port 1 (Alternative GPIO use)</td></tr>
-                  <tr><td>14</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>15</td><td>UCTS1</td><td>Input</td><td>nRF52840</td><td>UART1 Clear-to-Send Flow Control handshaking line</td></tr>
-                  <tr><td>16</td><td>EINT5</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 5 (Alternative GPIO use)</td></tr>
-                  <tr><td>17</td><td>VIO28_PMU</td><td>Power</td><td>PMU</td><td>2.8V IO Power Rail Output</td></tr>
-                  <tr><td>18</td><td>EINT11</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 11 (Alternative GPIO use)</td></tr>
-                  <tr><td>19</td><td>SPI2_MISO</td><td>Input</td><td>nRF52840</td><td>SPI2 MISO Line (Shared with EINT3)</td></tr>
-                  <tr><td>20</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>21</td><td>SPI2_MOSI</td><td>Output</td><td>nRF52840</td><td>SPI2 MOSI Line (Shared with EINT4)</td></tr>
-                  <tr><td>22</td><td>URTS1</td><td>Output</td><td>nRF52840</td><td>UART1 Request-to-Send Flow Control handshaking line</td></tr>
-                  <tr><td>23</td><td>SPI2_CLK</td><td>Output</td><td>nRF52840</td><td>SPI2 Clock Line (Shared with EINT1)</td></tr>
-                  <tr><td>24</td><td>SPI2_CS</td><td>Output</td><td>nRF52840</td><td>SPI2 CS Line (Shared with EINT5)</td></tr>
-                  <tr><td>25</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>26</td><td>EINT12</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 12 (Alternative GPIO use)</td></tr>
-                  <tr><td>27</td><td>SDA2</td><td>I/O</td><td>nRF52840</td><td>Secondary I2C Data Line (Shared with GPIO51)</td></tr>
-                  <tr><td>28</td><td>SCL2</td><td>I/O</td><td>nRF52840</td><td>Secondary I2C Clock Line (Shared with GPIO52)</td></tr>
-                  <tr><td>29</td><td>SPI_CS</td><td>Output</td><td>nRF52840</td><td>SPI CS Line (Shared with GPIO65)</td></tr>
-                  <tr><td>30</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>31</td><td>SPI_CK</td><td>Output</td><td>nRF52840</td><td>SPI Clock Line (Shared with GPIO66)</td></tr>
-                  <tr><td>32</td><td>URTS2</td><td>Output</td><td>nRF52840</td><td>UART2 Request-to-Send Flow Control handshaking line / GPIO60</td></tr>
-                  <tr><td>33</td><td>SPI_MO</td><td>Output</td><td>nRF52840</td><td>SPI Master Output (PA Line)</td></tr>
-                  <tr><td>34</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>35</td><td>SPUM</td><td>I/O</td><td>nRF52840</td><td>Shared GPIO67 line</td></tr>
-                  <tr><td>36</td><td>UCTS2</td><td>Input</td><td>nRF52840</td><td>UART2 Clear-to-Send Flow Control handshaking line / GPIO59</td></tr>
-                  <tr><td>37</td><td>EINT_123</td><td>Input</td><td>nRF52840</td><td>External Interrupt Line 123 (GPIO123)</td></tr>
-                  <tr><td>38</td><td>SCL3</td><td>Output</td><td>nRF52840</td><td>Tertiary I2C Clock Line (Shared with GPIO54)</td></tr>
-                  <tr><td>39</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>40</td><td>SDA3</td><td>I/O</td><td>nRF52840</td><td>Tertiary I2C Data Line (Shared with GPIO53)</td></tr>
-                  <tr><td>41</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>42</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-
-                  <tr><td colspan="5" style="background:#f1f5f9; font-weight:bold;">TOP SIDE INTERFACE TERMINALS</td></tr>
-                  <tr><td>43</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>44</td><td>NC</td><td>-</td><td>-</td><td>Empty Terminal Node</td></tr>
-                  <tr><td>45</td><td>3V3</td><td>POWER OUT</td><td>TPS62291</td><td>Regulated 3.3V Output Rail (1.0A max allocation limit)</td></tr>
-                  <tr><td>46</td><td>TS</td><td>Input</td><td>PMIC</td><td>Power Management IC battery temperature thermistor sensor</td></tr>
-                  <tr><td>47</td><td>PMID</td><td>POWER OUT</td><td>PMIC</td><td>Power Management IC boost converter out during OTG operations</td></tr>
-                  <tr><td>48</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>49</td><td>VIN</td><td>POWER IN</td><td>PMIC</td><td>Wide voltage main input rail (3.88V to 12.0V DC)</td></tr>
-                  <tr><td>50</td><td>STAT</td><td>Output</td><td>PMIC</td><td>Power Management IC charger status indicator pin (Active-Low)</td></tr>
-                  <tr><td>51</td><td>VBUS</td><td>POWER IN</td><td>PMIC &amp; MCU</td><td>USB power supply alternative input rail (5V)</td></tr>
-                  <tr><td>52</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>53</td><td>LI+</td><td>POWER</td><td>PMIC</td><td>Rechargeable Single-Cell Lithium-Polymer battery anode rail</td></tr>
-
-                  <tr><td colspan="5" style="background:#f1f5f9; font-weight:bold;">LEFT SIDE INTERFACE TERMINALS</td></tr>
-                  <tr><td>54</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>55</td><td>A0</td><td>I/O</td><td>nRF52840</td><td>Analog Input 0 / Digital I/O / I2C1 Data / Internal Thermistor</td></tr>
-                  <tr><td>56</td><td>A1</td><td>I/O</td><td>nRF52840</td><td>Analog Input 1 / Digital I/O / I2C1 Clock / User Button Line</td></tr>
-                  <tr><td>57</td><td>A2</td><td>I/O</td><td>nRF52840</td><td>Analog Input 2 / Digital I/O / UART1 Clear-to-Send / GNSS Fix State</td></tr>
-                  <tr><td>58</td><td>A3</td><td>I/O</td><td>nRF52840</td><td>Analog Input 3 / Digital I/O / UART1 Request-to-Send / GNSS GPIO</td></tr>
-                  <tr><td>59 to 62</td><td>-</td><td>-</td><td>-</td><td>Empty Terminal Nodes</td></tr>
-                  <tr><td>63</td><td>AGND</td><td>POWER</td><td>nRF52840</td><td>Analog noise-isolated ground reference</td></tr>
-                  <tr><td>64</td><td>CAN_N</td><td>I/O</td><td>CAN controller</td><td>Controller Area Network differential transceiver minus (-)</td></tr>
-                  <tr><td>65</td><td>CAN_P</td><td>I/O</td><td>CAN controller</td><td>Controller Area Network differential transceiver plus (+)</td></tr>
-                  <tr><td>66</td><td>CAN_5V</td><td>Power Out</td><td>XCL9142F40</td><td>On-board 5.0V step-up converter output (0.8A max)</td></tr>
-                  <tr><td>67</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>68</td><td>MCU-D-</td><td>Analog I/O</td><td>nRF52840</td><td>MCU USB differential transceiver minus (-)</td></tr>
-                  <tr><td>69</td><td>MCU_D+</td><td>Analog I/O</td><td>nRF52840</td><td>MCU USB differential transceiver plus (+)</td></tr>
-                  <tr><td>70</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>71</td><td>MCU_RX</td><td>I/O</td><td>nRF52840</td><td>System UART0 Receiver / Digital I/O / I2C3 Data Line</td></tr>
-                  <tr><td>72</td><td>MCU_TX</td><td>I/O</td><td>nRF52840</td><td>System UART0 Transmitter / Digital I/O / I2C3 Clock Line</td></tr>
-                  <tr><td>73</td><td>RTC_BAT</td><td>Power Input</td><td>AM18X5</td><td>Real-Time Clock / Watchdog battery backup terminal</td></tr>
-                  <tr><td>74</td><td>RTC_BTN</td><td>Input</td><td>AM18X5</td><td>RTC external interrupt wake button input</td></tr>
-                  <tr><td>75 to 82</td><td>-</td><td>-</td><td>-</td><td>Empty Terminal Nodes</td></tr>
-                  <tr><td>83</td><td>CELL_GPS_RX</td><td>Input</td><td>Modem</td><td>Cellular module auxiliary GPS UART receiver input</td></tr>
-                  <tr><td>84</td><td>CELL_GPS_TX</td><td>Output</td><td>Modem</td><td>Cellular module auxiliary GPS UART transmitter output</td></tr>
-                  <tr><td>85</td><td>CELL_RI</td><td>Output</td><td>Modem</td><td>Cellular module active ring indicator status out</td></tr>
-                  <tr><td>86</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>87</td><td>CELL_GPS_RF</td><td>Analog RF</td><td>Modem</td><td>Cellular module GPS RF antenna interface</td></tr>
-                  <tr><td>88, 89</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>90</td><td>GNSS_BOOT</td><td>Input</td><td>GNSS</td><td>u-blox module hardware boot configuration strap</td></tr>
-                  <tr><td>91</td><td>GNSS_ANT_PWR</td><td>Power Out</td><td>GNSS</td><td>u-blox active antenna LDO feed control output</td></tr>
-                  <tr><td>92</td><td>GNSS_LNA_EN</td><td>Output</td><td>GNSS</td><td>u-blox LNA gain amplifier enable pinout</td></tr>
-                  <tr><td>93</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                  <tr><td>94</td><td>GNSS_RF</td><td>Analog RF</td><td>GNSS</td><td>Main GNSS coaxial antenna RF pad</td></tr>
-                  <tr><td>95</td><td>GND</td><td>POWER</td><td>-</td><td>Common System Ground Reference</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- TRACKER SOM EVALUATION BOARD -->
-    <li>
-      <a href="#" onclick="document.getElementById('id02').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Tracker Carrier Interface</span>
-        <div class="card-inner">
-          <span class="card-title">Tracker SoM Eval Board Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id02" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id02').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of Tracker Carrier breakout block -->
-              <svg viewBox="0 0 460 140" width="100%">
-                <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
-                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">TRACKER EVALUATION BREAKOUT STRUCTS</text>
-                <g fill="#10b981">
-                  <!-- Parallel columns left and right -->
-                  <circle cx="40" cy="60" r="4" /><text x="50" y="63" fill="#cbd5e1" font-family="Arial" font-size="8">LEFT ROW (Analog / TS / PMID)</text>
-                  <circle cx="260" cy="60" r="4" /><text x="270" y="63" fill="#cbd5e1" font-family="Arial" font-size="8">RIGHT ROW (VIN / VBUS / LI+)</text>
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: EVAL BOARD CARRIER BLOCK INTERFACE</div>
-
-            <h3>Carrier Header Interface Map</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Left Target Label</th>
-                    <th>Left Connector</th>
-                    <th>Right Connector</th>
-                    <th>Right Target Label</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Ground Return</td><td>GND</td><td>GND</td><td>Ground Return</td></tr>
-                  <tr><td>PMIC system output</td><td>PMID</td><td>LI+</td><td>Single-cell Lithium battery anode</td></tr>
-                  <tr><td>PMIC thermistor input</td><td>TS</td><td>VBUS</td><td>nRF52 USB supply line (5V)</td></tr>
-                  <tr><td>Regulated Output (3.3V)</td><td>3V3</td><td>STAT</td><td>PMIC active charge status output</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM44</td><td>VIN</td><td>External main supply line (5V-12V DC)</td></tr>
-                  <tr><td>Ground Return</td><td>GND</td><td>GND</td><td>Ground Return</td></tr>
-                  <tr><td>Analog input 4 / SPI MOSI</td><td>A4</td><td>A0</td><td>Analog input 0 / I2C1 Data</td></tr>
-                  <tr><td>Analog input 5 / SPI MISO</td><td>A5</td><td>A1</td><td>Analog input 1 / I2C1 Clock</td></tr>
-                  <tr><td>Analog input 6 / SPI Clock</td><td>A6</td><td>A2</td><td>Analog input 2 / Serial1 Clear-to-Send</td></tr>
-                  <tr><td>Analog input 7 / SS Chip select</td><td>A7</td><td>A3</td><td>Analog input 3 / Serial1 Request-to-Send</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM37</td><td>SOM59</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM36</td><td>SOM60</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM35</td><td>SOM61</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM34</td><td>SOM62</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>Regulated Output (3.3V)</td><td>3V3</td><td>3V3</td><td>Regulated Output (3.3V)</td></tr>
-                  <tr><td>Ground Return</td><td>GND</td><td>AGND</td><td>Analog noise-isolated ground</td></tr>
-                  <tr><td>MCU System Reset line</td><td>RESET</td><td>MCU_RX</td><td>USART1 Serial receive channel / GPIO D9</td></tr>
-                  <tr><td>MCU Boot Mode trigger</td><td>MODE</td><td>MCU_TX</td><td>USART1 Serial transmit channel / GPIO D8</td></tr>
-                  <tr><td>Red system status driver</td><td>R</td><td>RTC_BAT</td><td>RTC battery backup line</td></tr>
-                  <tr><td>Green system status driver</td><td>G</td><td>RTC_BTN</td><td>RTC external wake interrupt button</td></tr>
-                  <tr><td>Blue system status driver</td><td>B</td><td>SOM76</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>NFC loop antenna port 1</td><td>NFC1</td><td>SOM77</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>NFC loop antenna port 2</td><td>NFC2</td><td>SOM78</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM21</td><td>SOM79</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM20</td><td>SOM80</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM19</td><td>SOM81</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM18</td><td>SOM82</td><td>Empty/Unused pin</td></tr>
-                  <tr><td>Regulated Output (3.3V)</td><td>3V3</td><td>3V3</td><td>Regulated Output (3.3V)</td></tr>
-                  <tr><td>ESP32 Serial RX</td><td>WIFI_RXD</td><td>NC</td><td>No Connection (NC)</td></tr>
-                  <tr><td>ESP32 Serial TX</td><td>WIFI_TXD</td><td>CELL_RX</td><td>Cellular modem serial receive channel</td></tr>
-                  <tr><td>ESP32 boot configuration</td><td>WIFI_BOOT</td><td>CELL_TX</td><td>Cellular modem serial transmit channel</td></tr>
-                  <tr><td>ESP32 system enable</td><td>WIFI_EN</td><td>CELL_RI</td><td>Cellular active ring status indicator</td></tr>
-                  <tr><td>Empty/Unused pin</td><td>SOM9</td><td>GNSS_TIME_PULSE</td><td>u-blox GNSS time-pulse output</td></tr>
-                  <tr><td>Ground Return</td><td>GND</td><td>GND</td><td>Ground Return</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- B-SERIES B402 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id04').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">nRF52840 LTE Cat M1 / NB-IoT SoM</span>
-        <div class="card-inner">
-          <span class="card-title">Particle B-Series B402 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id04" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id04').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG Schematic of B402 Castellated Module -->
-              <svg viewBox="0 0 460 140" width="100%">
-                <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
-                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">PARTICLE B402 MESH/CELLULAR SOM</text>
-                <g fill="#cbd5e1">
-                  <!-- Top/Bottom Edge pads representation -->
-                  <circle cx="30" cy="60" r="3" fill="#ef4444" />
-                  <circle cx="50" cy="60" r="3" />
-                  <circle cx="70" cy="60" r="3" fill="#64748b" />
-                  <circle cx="90" cy="60" r="3" />
-                  <circle cx="110" cy="60" r="3" />
-                  <circle cx="130" cy="60" r="3" />
-                  <circle cx="150" cy="60" r="3" fill="#eab308" />
-                  <circle cx="170" cy="60" r="3" />
-                  <circle cx="190" cy="60" r="3" />
-                  <circle cx="210" cy="60" r="3" fill="#64748b" />
-                </g>
-                <text x="25" y="85" fill="#10b981" font-family="Arial" font-size="8">75 CAST_PIN CONNECTIONS - INTEGRATED UART, SPI, NFC, &amp; ADC MAPS</text>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: B402 CASTELLATED SMT INTERFACE</div>
-
-            <h3>B402 Pinout &amp; Port Definition Table</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th># Pin</th>
-                    <th>Pin Label</th>
-                    <th>Bus / Alternative Function</th>
-                    <th>Module Class</th>
-                    <th>nRF52 Port Address</th>
-                    <th>Signal Port Description &amp; Alternate Operation Profiles</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>2</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
-                  <tr><td>3</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>4</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
-                  <tr><td>5</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>6</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
-                  <tr><td>7</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>8</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.2V supply</td></tr>
-                  <tr><td>9</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>10</td><td>3V3</td><td>3V3</td><td>POWER</td><td>-</td><td>Stabilized supply input rail (3.0V to 3.6V)</td></tr>
-                  <tr><td>11</td><td>USB D+</td><td>USB D+</td><td>Analog I/O</td><td>-</td><td>nRF52840 native USB differential transceiver plus (+)</td></tr>
-                  <tr><td>12</td><td>3V3</td><td>3V3</td><td>POWER</td><td>-</td><td>Stabilized supply input rail (3.0V to 3.6V)</td></tr>
-                  <tr><td>13</td><td>USB D-</td><td>USB D-</td><td>Analog I/O</td><td>-</td><td>nRF52840 native USB differential transceiver minus (-)</td></tr>
-                  <tr><td>14</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
-                  <tr><td>15</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>16</td><td>VUSB</td><td>VUSB</td><td>Power Input</td><td>-</td><td>USB device controller bus voltage detection pin (5V)</td></tr>
-                  <tr><td>17</td><td>NFC1</td><td>SOM3</td><td>Analog Input</td><td>P0.09</td><td>NFC tag loop antenna interface port 1</td></tr>
-                  <tr><td>18</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
-                  <tr><td>19</td><td>NFC2</td><td>SOM4</td><td>Analog Input</td><td>P0.10</td><td>NFC tag loop antenna interface port 2</td></tr>
-                  <tr><td>20</td><td>D1</td><td>SCL</td><td>I/O</td><td>P0.27</td><td>Main hardware I2C Clock Bus / Digital I/O</td></tr>
-                  <tr><td>21</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>22</td><td>D0</td><td>SDA</td><td>I/O</td><td>P0.26</td><td>Main hardware I2C Data Bus / Digital I/O</td></tr>
-                  <tr><td>23</td><td>A0</td><td>ADC0</td><td>Analog Input</td><td>P0.03</td><td>Analog Input Channel 0 / Digital I/O</td></tr>
-                  <tr><td>32</td><td>MODE</td><td>MODE</td><td>Input</td><td>P0.11</td><td>System MODE button input line (Active-Low)</td></tr>
-                  <tr><td>33</td><td>A1</td><td>ADC1</td><td>Analog Input</td><td>P0.04</td><td>Analog Input Channel 1 / Digital I/O</td></tr>
-                  <tr><td>34</td><td>RESET</td><td>RESET</td><td>Input</td><td>-</td><td>Active-Low hardware reset line</td></tr>
-                  <tr><td>35</td><td>A2</td><td>ADC2</td><td>Analog Input</td><td>P0.28</td><td>Analog Input Channel 2 / Digital I/O</td></tr>
-                  <tr><td>36</td><td>D9</td><td>TX</td><td>Output</td><td>P0.06</td><td>Primary UART Transmitter output / Digital I/O</td></tr>
-                  <tr><td>37</td><td>A3</td><td>ADC3</td><td>Analog Input</td><td>P0.29</td><td>Analog Input Channel 3 / Digital I/O</td></tr>
-                  <tr><td>38</td><td>D10</td><td>RX</td><td>Input</td><td>P0.08</td><td>Primary UART Receiver input / Digital I/O</td></tr>
-                  <tr><td>39</td><td>AGND</td><td>AGND</td><td>POWER</td><td>-</td><td>Analog noise-isolated ground reference</td></tr>
-                  <tr><td>40</td><td>D3</td><td>RESERVED</td><td>I/O</td><td>P1.01</td><td>UART Flow Control CTS / I2C3 SCL / SPI2 MOSI / Digital I/O</td></tr>
-                  <tr><td>41</td><td>A4</td><td>RESERVED</td><td>Analog Input</td><td>P0.30</td><td>Analog Input Channel 4 / Digital I/O</td></tr>
-                  <tr><td>42</td><td>D2</td><td>RESERVED</td><td>I/O</td><td>P1.02</td><td>UART Flow Control RTS / I2C3 SDA / SPI2 Clock / Digital I/O</td></tr>
-                  <tr><td>43</td><td>A5</td><td>RESERVED</td><td>Analog Input</td><td>P0.31</td><td>Analog Input Channel 5 / Digital I/O</td></tr>
-                  <tr><td>44</td><td>u-blox USB D+</td><td>SOM0</td><td>Analog I/O</td><td>-</td><td>Cellular module USB differential transceiver plus (+)</td></tr>
-                  <tr><td>45</td><td>A6</td><td>RESERVED</td><td>Analog Input</td><td>P0.05</td><td>Analog Input Channel 6 / Digital I/O</td></tr>
-                  <tr><td>46</td><td>u-blox USB D-</td><td>SOM1</td><td>Analog I/O</td><td>-</td><td>Cellular module USB differential transceiver minus (-)</td></tr>
-                  <tr><td>47</td><td>A7</td><td>RESERVED</td><td>Analog Input</td><td>P0.02</td><td>Analog Input Channel 7 / Digital I/O</td></tr>
-                  <tr><td>48</td><td>D8</td><td>CS</td><td>Output</td><td>P1.03</td><td>Primary SPI CS Line / Digital I/O</td></tr>
-                  <tr><td>49</td><td>AGND</td><td>AGND</td><td>POWER</td><td>-</td><td>Analog noise-isolated ground reference</td></tr>
-                  <tr><td>50</td><td>D11</td><td>MISO</td><td>Input</td><td>P1.14</td><td>Primary SPI MISO Line / Digital I/O</td></tr>
-                  <tr><td>51</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
-                  <tr><td>52</td><td>D12</td><td>MOSI</td><td>Output</td><td>P1.13</td><td>Primary SPI MOSI Line / Digital I/O</td></tr>
-                  <tr><td>53</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
-                  <tr><td>54</td><td>D13</td><td>SCK</td><td>Output</td><td>P1.15</td><td>Primary SPI Clock Line / Digital I/O</td></tr>
-                  <tr><td>55 to 60</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Nodes (Leave unconnected)</td></tr>
-                  <tr><td>61</td><td>RGBR</td><td>RED</td><td>Output</td><td>P0.13</td><td>Status Indicator RGB LED Red Channel Driver</td></tr>
-                  <tr><td>62</td><td>D22</td><td>GPIO0</td><td>I/O</td><td>P0.24</td><td>General Purpose Digital I/O Line 0</td></tr>
-                  <tr><td>63</td><td>RGBG</td><td>GREEN</td><td>Output</td><td>P0.14</td><td>Status Indicator RGB LED Green Channel Driver</td></tr>
-                  <tr><td>64</td><td>D23</td><td>GPIO1</td><td>I/O</td><td>P1.09</td><td>General Purpose Digital I/O Line 1</td></tr>
-                  <tr><td>65</td><td>RGBB</td><td>BLUE</td><td>Output</td><td>P0.15</td><td>Status Indicator RGB LED Blue Channel Driver</td></tr>
-                  <tr><td>66</td><td>D4</td><td>PWM0</td><td>I/O</td><td>P1.08</td><td>SPI1 MISO / General Purpose Digital I/O / Hardware PWM0</td></tr>
-                  <tr><td>67</td><td>SIM_VCC</td><td>SOM5</td><td>Power Out</td><td>-</td><td>Cellular module SIM power supply line (1.8V / 3V)</td></tr>
-                  <tr><td>68</td><td>D5</td><td>PWM1</td><td>I/O</td><td>P1.10</td><td>General Purpose Digital I/O / Hardware PWM1</td></tr>
-                  <tr><td>69</td><td>SIM_RST</td><td>SOM6</td><td>Output</td><td>-</td><td>Cellular module SIM reset line (1.8V / 3V)</td></tr>
-                  <tr><td>70</td><td>D6</td><td>PWM2</td><td>I/O</td><td>P1.11</td><td>General Purpose Digital I/O / Hardware PWM2</td></tr>
-                  <tr><td>71</td><td>SIM_CLK</td><td>SOM7</td><td>Output</td><td>-</td><td>Cellular module SIM clock line (1.8V / 3V)</td></tr>
-                  <tr><td>72</td><td>D7</td><td>PWM3</td><td>I/O</td><td>P1.12</td><td>General Purpose Digital I/O / Hardware PWM3</td></tr>
-                  <tr><td>73</td><td>SIM_DATA</td><td>SOM8</td><td>I/O</td><td>-</td><td>Cellular module SIM data line (Includes internal 4.7k pull-up)</td></tr>
-                  <tr><td>74</td><td>u-blox VBUS</td><td>SOM2</td><td>Power Input</td><td>-</td><td>Cellular module USB bus detection pin (5V)</td></tr>
-                  <tr><td>75</td><td>-</td><td>SOM9</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- B-SERIES B523 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id05').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Quectel LTE Cat M1 / NB1 / EGPRS SoM</span>
-        <div class="card-inner">
-          <span class="card-title">Particle B-Series B523 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id05" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id05').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG Schematic of B523 Castellated Module -->
-              <svg viewBox="0 0 460 140" width="100%">
-                <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
-                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">PARTICLE B523 QUECTEL CELLULAR SOM</text>
-                <g fill="#cbd5e1">
-                  <!-- Castellated layout representation -->
-                  <circle cx="30" cy="60" r="3" fill="#ef4444" />
-                  <circle cx="50" cy="60" r="3" />
-                  <circle cx="70" cy="60" r="3" fill="#64748b" />
-                  <circle cx="90" cy="60" r="3" />
-                  <circle cx="110" cy="60" r="3" />
-                  <circle cx="130" cy="60" r="3" />
-                  <circle cx="150" cy="60" r="3" fill="#eab308" />
-                  <circle cx="170" cy="60" r="3" />
-                  <circle cx="190" cy="60" r="3" />
-                  <circle cx="210" cy="60" r="3" fill="#64748b" />
-                </g>
-                <text x="25" y="85" fill="#a855f7" font-family="Arial" font-size="8">75 CAST_PIN CONNECTIONS - INTEGRATED UART, SPI, NFC, &amp; ADC MAPS</text>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: B523 CASTELLATED SMT INTERFACE</div>
-
-            <h3>B523 Pinout &amp; Port Definition Table</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th># Pin</th>
-                    <th>Pin Label</th>
-                    <th>Bus / Alternative Function</th>
-                    <th>Module Class</th>
-                    <th>nRF52 Port Address</th>
-                    <th>Signal Port Description &amp; Alternate Operation Profiles</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>2</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.3V supply</td></tr>
-                  <tr><td>3</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>4</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.3V supply</td></tr>
-                  <tr><td>5</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>6</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.3V supply</td></tr>
-                  <tr><td>7</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>8</td><td>VCC</td><td>VCC</td><td>POWER</td><td>-</td><td>Power Input: connect to +LiPo or 3.6V-4.3V supply</td></tr>
-                  <tr><td>9</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>10</td><td>3V3</td><td>3V3</td><td>POWER</td><td>-</td><td>Stabilized supply input rail (3.0V to 3.6V)</td></tr>
-                  <tr><td>11</td><td>USB D+</td><td>USB D+</td><td>Analog I/O</td><td>-</td><td>nRF52840 native USB differential transceiver plus (+)</td></tr>
-                  <tr><td>12</td><td>3V3</td><td>3V3</td><td>POWER</td><td>-</td><td>Stabilized supply input rail (3.0V to 3.6V)</td></tr>
-                  <tr><td>13</td><td>USB D-</td><td>USB D-</td><td>Analog I/O</td><td>-</td><td>nRF52840 native USB differential transceiver minus (-)</td></tr>
-                  <tr><td>14</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
-                  <tr><td>15</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>16</td><td>VUSB</td><td>VUSB</td><td>Power Input</td><td>-</td><td>USB device controller bus voltage detection pin (5V)</td></tr>
-                  <tr><td>17</td><td>NFC1</td><td>SOM3</td><td>Analog Input</td><td>P0.09</td><td>NFC tag loop antenna interface port 1</td></tr>
-                  <tr><td>18</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
-                  <tr><td>19</td><td>NFC2</td><td>SOM4</td><td>Analog Input</td><td>P0.10</td><td>NFC tag loop antenna interface port 2</td></tr>
-                  <tr><td>20</td><td>D1</td><td>SCL</td><td>I/O</td><td>P0.27</td><td>Main hardware I2C Clock Bus / Digital I/O</td></tr>
-                  <tr><td>21</td><td>GND</td><td>GND</td><td>POWER</td><td>-</td><td>System common ground reference</td></tr>
-                  <tr><td>22</td><td>D0</td><td>SDA</td><td>I/O</td><td>P0.26</td><td>Main hardware I2C Data Bus / Digital I/O</td></tr>
-                  <tr><td>23</td><td>A0</td><td>ADC0</td><td>Analog Input</td><td>P0.03</td><td>Analog Input Channel 0 / Digital I/O</td></tr>
-                  <tr><td>32</td><td>MODE</td><td>MODE</td><td>Input</td><td>P0.11</td><td>System MODE button input line (Active-Low)</td></tr>
-                  <tr><td>33</td><td>A1</td><td>ADC1</td><td>Analog Input</td><td>P0.04</td><td>Analog Input Channel 1 / Digital I/O</td></tr>
-                  <tr><td>34</td><td>RESET</td><td>RESET</td><td>Input</td><td>-</td><td>Active-Low hardware reset line</td></tr>
-                  <tr><td>35</td><td>A2</td><td>ADC2</td><td>Analog Input</td><td>P0.28</td><td>Analog Input Channel 2 / Digital I/O</td></tr>
-                  <tr><td>36</td><td>D9</td><td>TX</td><td>Output</td><td>P0.06</td><td>Primary UART Transmitter output / Digital I/O</td></tr>
-                  <tr><td>37</td><td>A3</td><td>ADC3</td><td>Analog Input</td><td>P0.29</td><td>Analog Input Channel 3 / Digital I/O</td></tr>
-                  <tr><td>38</td><td>D10</td><td>RX</td><td>Input</td><td>P0.08</td><td>Primary UART Receiver input / Digital I/O</td></tr>
-                  <tr><td>39</td><td>AGND</td><td>AGND</td><td>POWER</td><td>-</td><td>Analog noise-isolated ground reference</td></tr>
-                  <tr><td>40</td><td>D3</td><td>RESERVED</td><td>I/O</td><td>P1.01</td><td>UART Flow Control CTS / I2C3 SCL / SPI2 MOSI / Digital I/O</td></tr>
-                  <tr><td>41</td><td>A4</td><td>RESERVED</td><td>Analog Input</td><td>P0.30</td><td>Analog Input Channel 4 / Digital I/O</td></tr>
-                  <tr><td>42</td><td>D2</td><td>RESERVED</td><td>I/O</td><td>P1.02</td><td>UART Flow Control RTS / I2C3 SDA / SPI2 Clock / Digital I/O</td></tr>
-                  <tr><td>43</td><td>A5</td><td>RESERVED</td><td>Analog Input</td><td>P0.31</td><td>Analog Input Channel 5 / Digital I/O</td></tr>
-                  <tr><td>44</td><td>Quectel USB D+</td><td>SOM0</td><td>Analog I/O</td><td>-</td><td>Cellular module USB differential transceiver plus (+)</td></tr>
-                  <tr><td>45</td><td>A6</td><td>RESERVED</td><td>Analog Input</td><td>P0.05</td><td>Analog Input Channel 6 / Digital I/O</td></tr>
-                  <tr><td>46</td><td>Quectel USB D-</td><td>SOM1</td><td>Analog I/O</td><td>-</td><td>Cellular module USB differential transceiver minus (-)</td></tr>
-                  <tr><td>47</td><td>A7</td><td>RESERVED</td><td>Analog Input</td><td>P0.02</td><td>Analog Input Channel 7 / Digital I/O</td></tr>
-                  <tr><td>48</td><td>D8</td><td>CS</td><td>Output</td><td>P1.03</td><td>Primary SPI CS Line / Digital I/O</td></tr>
-                  <tr><td>49</td><td>AGND</td><td>AGND</td><td>POWER</td><td>-</td><td>Analog noise-isolated ground reference</td></tr>
-                  <tr><td>50</td><td>D11</td><td>MISO</td><td>Input</td><td>P1.14</td><td>Primary SPI MISO Line / Digital I/O</td></tr>
-                  <tr><td>51</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
-                  <tr><td>52</td><td>D12</td><td>MOSI</td><td>Output</td><td>P1.13</td><td>Primary SPI MOSI Line / Digital I/O</td></tr>
-                  <tr><td>53</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Node (Leave unconnected)</td></tr>
-                  <tr><td>54</td><td>D13</td><td>SCK</td><td>Output</td><td>P1.15</td><td>Primary SPI Clock Line / Digital I/O</td></tr>
-                  <tr><td>55 to 60</td><td>-</td><td>RESERVED</td><td>NC</td><td>-</td><td>Empty Terminal Nodes (Leave unconnected)</td></tr>
-                  <tr><td>61</td><td>RGBR</td><td>RED</td><td>Output</td><td>P0.13</td><td>Status Indicator RGB LED Red Channel Driver</td></tr>
-                  <tr><td>62</td><td>D22</td><td>GPIO0</td><td>I/O</td><td>P0.24</td><td>General Purpose Digital I/O Line 0</td></tr>
-                  <tr><td>63</td><td>RGBG</td><td>GREEN</td><td>Output</td><td>P0.14</td><td>Status Indicator RGB LED Green Channel Driver</td></tr>
-                  <tr><td>64</td><td>D23</td><td>GPIO1</td><td>I/O</td><td>P1.09</td><td>General Purpose Digital I/O Line 1</td></tr>
-                  <tr><td>65</td><td>RGBB</td><td>BLUE</td><td>Output</td><td>P0.15</td><td>Status Indicator RGB LED Blue Channel Driver</td></tr>
-                  <tr><td>66</td><td>D4</td><td>PWM0</td><td>I/O</td><td>P1.08</td><td>SPI1 MISO / General Purpose Digital I/O / Hardware PWM0</td></tr>
-                  <tr><td>67</td><td>SIM_VCC</td><td>SOM5</td><td>Power Out</td><td>-</td><td>Cellular module SIM power supply line (1.8V / 3V)</td></tr>
-                  <tr><td>68</td><td>D5</td><td>PWM1</td><td>I/O</td><td>P1.10</td><td>General Purpose Digital I/O / Hardware PWM1</td></tr>
-                  <tr><td>69</td><td>SIM_RST</td><td>SOM6</td><td>Output</td><td>-</td><td>Cellular module SIM reset line (1.8V / 3V)</td></tr>
-                  <tr><td>70</td><td>D6</td><td>PWM2</td><td>I/O</td><td>P1.11</td><td>General Purpose Digital I/O / Hardware PWM2</td></tr>
-                  <tr><td>71</td><td>SIM_CLK</td><td>SOM7</td><td>Output</td><td>-</td><td>Cellular module SIM clock line (1.8V / 3V)</td></tr>
-                  <tr><td>72</td><td>D7</td><td>PWM3</td><td>I/O</td><td>P1.12</td><td>General Purpose Digital I/O / Hardware PWM3</td></tr>
-                  <tr><td>73</td><td>SIM_DATA</td><td>SOM8</td><td>I/O</td><td>-</td><td>Cellular module SIM data line (Includes internal 4.7k pull-up)</td></tr>
-                  <tr><td>74</td><td>Quectel VBUS</td><td>SOM2</td><td>Power Input</td><td>-</td><td>Cellular module USB bus detection pin (5V)</td></tr>
-                  <tr><td>75</td><td>Quectel RI</td><td>SOM9</td><td>I/O</td><td>-</td><td>Cellular module active ring indicator status line</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-  </ul>
-
-  <!-- Educational & SEO Sections -->
+  <!-- Input Parameters Specification -->
   <section class="infoBox">
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
-      <div class="paramItem"><strong>SBC Quick Filter</strong>Locate individual board layouts using the top dynamic search utility.</div>
-      <div class="paramItem"><strong>M.2 Edge Termination</strong>Tracker SoM units are terminated over 95 gold edge fingers designed for high-vibration M.2 board carriage connections.</div>
-      <div class="paramItem"><strong>SIM Controller Handshaking</strong>SMT cellular modules route core SIM_VCC, RST, CLK, and DATA lines directly to allow easy integration of external eSIM/nano-SIM slots.</div>
-      <div class="paramItem"><strong>Active LNA Power Feeds</strong>On-board LNA power outputs provide clean current to external active GNSS antennas directly through RF coaxial pads.</div>
+      <div class="paramItem">
+        <strong>M.2 Edge Termination</strong>
+        Tracker SoM units are terminated over 95 gold edge fingers designed for high-vibration M.2 board carriage connections.
+      </div>
+      <div class="paramItem">
+        <strong>SIM Controller Handshaking</strong>
+        SMT cellular modules route core SIM_VCC, RST, CLK, and DATA lines directly to allow easy integration of external eSIM/nano-SIM slots.
+      </div>
+      <div class="paramItem">
+        <strong>Active LNA Power Feeds</strong>
+        On-board LNA power outputs provide clean current to external active GNSS antennas directly through RF coaxial pads.
+      </div>
+      <div class="paramItem">
+        <strong>Pin Multiplexing Registers</strong>
+        The nRF52840 SoC features a flexible pin routing multiplexer, allowing software to reconfigure digital pins to support SPI, UART, I2C, or standard GPIO tasks dynamically.
+      </div>
     </div>
   </section>
 
+  <!-- Practical Operational Examples -->
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
     <div class="exampleGrid">
@@ -716,24 +439,38 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
     <h2>Logic and Power Rail Theory</h2>
     <p>The Particle Tracker, Boron, and B-Series modules utilize Nordic Semiconductor nRF52840 ARM Cortex-M4 architectures combined with cellular coprocessors. Operating at a 3.3V CMOS logic rail, these platforms can be damaged if exposed to 5V inputs. Always use active logic-level converters when interfacing with high-voltage sensors.</p>
     <div class="aboutNote">Tip: Use a shared common ground (GND) across all boards in your system to prevent ground loops and serial data corruption.</div>
   </section>
 
+  <!-- Formulas & Hardware Calculations -->
   <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
+    <h2>Formulas &amp; Hardware Calculations</h2>
     <div class="formula">Series Current Limiting: R_series = (3.3V - V_led) / I_target (Keep under 4-8mA per pin)</div>
     <div class="formula">I2C Pull-Up Range: R_min = (3.3V - V_low) / I_sink, preventing overcurrent drain on open-drain pins.</div>
     <div class="formula">RF Transmission Match: Coaxial PCB traces must maintain a characteristic impedance of exactly 50 Ohms to minimize signal reflection.</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target Particle IoT board using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the board's class and primary SoC chipset.</div>
+      <div class="aboutStep">Study the customized 2D vector layout showing board structure and pin headers.</div>
+      <div class="aboutStep">Consult the exhaustive connection tables below the diagram to locate specific peripheral pin assignments.</div>
+    </div>
+  </section>
+
+  <!-- About This Reference Guide -->
   <section class="infoBox">
     <h2>About This Reference Guide</h2>
     <div class="aboutLead">
-      <strong>Quick access to standard Particle IoT development board layouts.</strong>
-      <p>This reference consolidates layout configurations, logic states, and physical system interfaces across the Particle family.</p>
+      <strong>Your direct lookup path for Particle development boards and interfaces.</strong>
+      <p>This reference index consolidates pin configurations, expansion header maps, and line assignments for the Particle IoT family.</p>
     </div>
     <p>Finding accurate pinout layouts is crucial for embedded designers, system architects, IoT engineers, and DIY hobbyists. This directory documents active signal paths to help prevent wiring errors, serial protocol failures, and board damage.</p>
     <p>Always verify pinout configurations with a digital multimeter before powering up custom circuits or shield adapters.</p>
@@ -745,88 +482,594 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. Are Particle GPIO pins 5V tolerant?</strong></h3>
+    
+    <h3>1. <strong>Are Particle GPIO pins 5V tolerant?</strong></h3>
     <p>No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure.</p>
 
-    <h3><strong>2. What is the maximum safe input voltage for the VIN pin?</strong></h3>
+    <h3>2. <strong>What is the maximum safe input voltage for the VIN pin?</strong></h3>
     <p>The on-board power management ICs (PMIC) on the Tracker SoM and Evaluation boards can accept external power inputs ranging from 3.88V to 12.0V DC safely.</p>
 
-    <h3><strong>3. How do I configure the on-board cellular GPS antenna?</strong></h3>
+    <h3>3. <strong>How do I configure the on-board cellular GPS antenna?</strong></h3>
     <p>Ensure your coaxial RF trace connects directly to the GNSS_RF (Pin 94) or CELL_GPS_RF (Pin 87) pads with a characteristic impedance of 50 Ohms for optimal signal reception.</p>
 
-    <h3><strong>4. Why do the SPI and I2C lines share pins with GPIOs?</strong></h3>
+    <h3>4. <strong>Why do the SPI and I2C lines share pins with GPIOs?</strong></h3>
     <p>The nRF52840 chip features a flexible pin routing multiplexer, allowing software to reconfigure digital pins to support SPI, UART, I2C, or standard GPIO tasks dynamically.</p>
-
-    <h3><strong>5. How do I reset search filters in this tool?</strong></h3>
-    <p>Clear any text from the search box at the top of the interface to restore the full list of pinout cards.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
-      <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Identify primary and secondary system winding calculations.</div>
-      <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure stored energy metrics inside transformer components.</div>
-      <div class="linkCard"><strong>SMPS Duty Cycle Calculator</strong>Evaluate performance criteria on active switching regulators.</div>
-      <div class="linkCard"><strong>Wire Gauge Calculator</strong>Estimate safe wire sizes for diverse line current applications.</div>
+      <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Verify primary and secondary winding values.</div>
+      <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure magnetic storage parameters in active units.</div>
+      <div class="linkCard"><strong>SMPS Duty Cycle Calculator</strong>Evaluate voltage regulators and switching controllers.</div>
+      <div class="linkCard"><strong>Wire Gauge Calculator</strong>Estimate safe wire thickness for different current limits.</div>
     </div>
   </section>
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function myFunction() {
-    var input, filter, ul, li, a, i, txtValue;
-    input = document.getElementById("myInput");
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("myUL");
-    li = ul.getElementsByTagName("li");
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
-        }
-    }
-}
-
-// Close modals when user clicks outside of them
-window.onclick = function(event) {
-  if (event.target.classList.contains('w3-modal')) {
-    event.target.style.display = "none";
+// Master Particle IoT Development Boards Pinouts Database
+const packageDetails = [
+  {
+    name: "Tracker SoM",
+    tag: "nRF52840 Cellular SoM",
+    subtitle: "nRF52840 Cellular M.2 SoM Edge Finger Pinout",
+    svgs: [
+      {
+        label: "Tracker SoM Edge Layout",
+        html: `
+          <svg viewBox="0 0 500 120" width="100%">
+            <rect x="10" y="10" width="480" height="100" rx="8" fill="#1e293b" />
+            <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="12" font-weight="bold">TRACKER SOM (HIGH-DENSITY M.2 EDGE BLOCK)</text>
+            <g fill="#cbd5e1">
+              <line x1="20" y1="50" x2="180" y2="50" stroke="#ff6a00" stroke-width="4" />
+              <text x="25" y="70" fill="#94a3b8" font-family="Arial" font-size="9">RIGHT SIDE: Pins 1-42</text>
+              <line x1="200" y1="50" x2="300" y2="50" stroke="#3b82f6" stroke-width="4" />
+              <text x="205" y="70" fill="#94a3b8" font-family="Arial" font-size="9">TOP: Pins 43-53</text>
+              <line x1="320" y1="50" x2="480" y2="50" stroke="#10b981" stroke-width="4" />
+              <text x="325" y="70" fill="#94a3b8" font-family="Arial" font-size="9">LEFT: Pins 54-95</text>
+            </g>
+            <text x="25" y="95" fill="#eab308" font-family="Arial" font-size="8">SWD, NFC, RGB, PMIC, GNSS, ESP32, nRF52 PORT INTERFACES INTEGRATED</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Complete SoM Pin Allocation Table",
+        columns: ["# Pin", "Pin Name", "Function", "Linked Component", "Signal Port Description"],
+        rows: [
+          ["1", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["2", "GNSS_BAT", "POWER IN", "GNSS", "RTC Backup battery rail for u-blox GNSS hot-start cycles"],
+          ["3", "GNSS_RESET", "IO", "GNSS & IOEX", "GNSS reset control line; can be driven manually or via internal IO Expander"],
+          ["4", "GNSS_VBUS", "USB PWR", "GNSS", " u-blox USB port power rail (Optional deployment)"],
+          ["5", "GNSS_P", "USB D+", "GNSS", "u-blox USB differential transceiver plus (+)"],
+          ["6", "GNSS_N", "USB D-", "GNSS", "u-blox USB differential transceiver minus (-)"],
+          ["7", "GNSS_PULSE", "OUT", "GNSS", "High-precision time pulse output (Configurable as fix status LED driver)"],
+          ["8", "-", "-", "-", "Empty Terminal Node"],
+          ["9", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["10", "-", "-", "-", "Empty Terminal Node"],
+          ["11", "URXD1", "Input", "nRF52840", "Main system UART Receiver Port 1 (Alternative GPIO use)"],
+          ["12", "EINT8", "Input", "nRF52840", "External Interrupt Line 8 (Alternative GPIO use)"],
+          ["13", "UTXD1", "Output", "nRF52840", "Main system UART Transmitter Port 1 (Alternative GPIO use)"],
+          ["14", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["15", "UCTS1", "Input", "nRF52840", "UART1 Clear-to-Send Flow Control handshaking line"],
+          ["16", "EINT5", "Input", "nRF52840", "External Interrupt Line 5 (Alternative GPIO use)"],
+          ["17", "VIO28_PMU", "Power", "PMU", "2.8V IO Power Rail Output"],
+          ["18", "EINT11", "Input", "nRF52840", "External Interrupt Line 11 (Alternative GPIO use)"],
+          ["19", "SPI2_MISO", "Input", "nRF52840", "SPI2 MISO Line (Shared with EINT3)"],
+          ["20", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["21", "SPI2_MOSI", "Output", "nRF52840", "SPI2 MOSI Line (Shared with EINT4)"],
+          ["22", "URTS1", "Output", "nRF52840", "UART1 Request-to-Send Flow Control handshaking line"],
+          ["23", "SPI2_CLK", "Output", "nRF52840", "SPI2 Clock Line (Shared with EINT1)"],
+          ["24", "SPI2_CS", "Output", "nRF52840", "SPI2 CS Line (Shared with EINT5)"],
+          ["25", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["26", "EINT12", "Input", "nRF52840", "External Interrupt Line 12 (Alternative GPIO use)"],
+          ["27", "SDA2", "I/O", "nRF52840", "Secondary I2C Data Line (Shared with GPIO51)"],
+          ["28", "SCL2", "I/O", "nRF52840", "Secondary I2C Clock Line (Shared with GPIO52)"],
+          ["29", "SPI_CS", "Output", "nRF52840", "SPI CS Line (Shared with GPIO65)"],
+          ["30", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["31", "SPI_CK", "Output", "nRF52840", "SPI Clock Line (Shared with GPIO66)"],
+          ["32", "URTS2", "Output", "nRF52840", "UART2 Request-to-Send Flow Control handshaking line / GPIO60"],
+          ["33", "SPI_MO", "Output", "nRF52840", "SPI Master Output (PA Line)"],
+          ["34", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["35", "SPUM", "I/O", "nRF52840", "Shared GPIO67 line"],
+          ["36", "UCTS2", "Input", "nRF52840", "UART2 Clear-to-Send Flow Control handshaking line / GPIO59"],
+          ["37", "EINT_123", "Input", "nRF52840", "External Interrupt Line 123 (GPIO123)"],
+          ["38", "SCL3", "Output", "nRF52840", "Tertiary I2C Clock Line (Shared with GPIO54)"],
+          ["39", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["40", "SDA3", "I/O", "nRF52840", "Tertiary I2C Data Line (Shared with GPIO53)"],
+          ["41", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["42", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["43", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["44", "NC", "-", "-", "Empty Terminal Node"],
+          ["45", "3V3", "POWER OUT", "TPS62291", "Regulated 3.3V Output Rail (1.0A max allocation limit)"],
+          ["46", "TS", "Input", "PMIC", "Power Management IC battery temperature thermistor sensor"],
+          ["47", "PMID", "POWER OUT", "PMIC", "Power Management IC boost converter out during OTG operations"],
+          ["48", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["49", "VIN", "POWER IN", "PMIC", "Wide voltage main input rail (3.88V to 12.0V DC)"],
+          ["50", "STAT", "Output", "PMIC", "Power Management IC charger status indicator pin (Active-Low)"],
+          ["51", "VBUS", "POWER IN", "PMIC & MCU", "USB power supply alternative input rail (5V)"],
+          ["52", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["53", "LI+", "POWER", "PMIC", "Rechargeable Single-Cell Lithium-Polymer battery anode rail"],
+          ["54", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["55", "A0", "I/O", "nRF52840", "Analog Input 0 / Digital I/O / I2C1 Data / Internal Thermistor"],
+          ["56", "A1", "I/O", "nRF52840", "Analog Input 1 / Digital I/O / I2C1 Clock / User Button Line"],
+          ["57", "A2", "I/O", "nRF52840", "Analog Input 2 / Digital I/O / UART1 Clear-to-Send / GNSS Fix State"],
+          ["58", "A3", "I/O", "nRF52840", "Analog Input 3 / Digital I/O / UART1 Request-to-Send / GNSS GPIO"],
+          ["59-62", "-", "-", "-", "Empty Terminal Nodes"],
+          ["63", "AGND", "POWER", "nRF52840", "Analog noise-isolated ground reference"],
+          ["64", "CAN_N", "I/O", "CAN controller", "Controller Area Network differential transceiver minus (-)"],
+          ["65", "CAN_P", "I/O", "CAN controller", "Controller Area Network differential transceiver plus (+)"],
+          ["66", "CAN_5V", "Power Out", "XCL9142F40", "On-board 5.0V step-up converter output (0.8A max)"],
+          ["67", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["68", "MCU-D-", "Analog I/O", "nRF52840", "MCU USB differential transceiver minus (-)"],
+          ["69", "MCU_D+", "Analog I/O", "nRF52840", "MCU USB differential transceiver plus (+)"],
+          ["70", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["71", "MCU_RX", "I/O", "nRF52840", "System UART0 Receiver / Digital I/O / I2C3 Data Line"],
+          ["72", "MCU_TX", "I/O", "nRF52840", "System UART0 Transmitter / Digital I/O / I2C3 Clock Line"],
+          ["73", "RTC_BAT", "Power Input", "AM18X5", "Real-Time Clock / Watchdog battery backup terminal"],
+          ["74", "RTC_BTN", "Input", "AM18X5", "RTC external interrupt wake button input"],
+          ["75-82", "-", "-", "-", "Empty Terminal Nodes"],
+          ["83", "CELL_GPS_RX", "Input", "Modem", "Cellular module auxiliary GPS UART receiver input"],
+          ["84", "CELL_GPS_TX", "Output", "Modem", "Cellular module auxiliary GPS UART transmitter output"],
+          ["85", "CELL_RI", "Output", "Modem", "Cellular module active ring indicator status out"],
+          ["86", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["87", "CELL_GPS_RF", "Analog RF", "Modem", "Cellular module GPS RF antenna interface"],
+          ["88, 89", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["90", "GNSS_BOOT", "Input", "GNSS", "u-blox module hardware boot configuration strap"],
+          ["91", "GNSS_ANT_PWR", "Power Out", "GNSS", "u-blox active antenna LDO feed control output"],
+          ["92", "GNSS_LNA_EN", "Output", "GNSS", "u-blox LNA gain amplifier enable pinout"],
+          ["93", "GND", "POWER", "-", "Common System Ground Reference"],
+          ["94", "GNSS_RF", "Analog RF", "GNSS", "Main GNSS coaxial antenna RF pad"],
+          ["95", "GND", "POWER", "-", "Common System Ground Reference"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Tracker SoM Eval Board",
+    tag: "Tracker Carrier Interface",
+    subtitle: "Tracker Evaluation Carrier Board Pinout",
+    svgs: [
+      {
+        label: "Eval Board Carrier",
+        html: `
+          <svg viewBox="0 0 460 140" width="100%">
+            <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
+            <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">TRACKER EVALUATION BREAKOUT STRUCTS</text>
+            <g fill="#10b981">
+              <circle cx="40" cy="60" r="4" /><text x="50" y="63" fill="#cbd5e1" font-family="Arial" font-size="8">LEFT ROW (Analog / TS / PMID)</text>
+              <circle cx="260" cy="60" r="4" /><text x="270" y="63" fill="#cbd5e1" font-family="Arial" font-size="8">RIGHT ROW (VIN / VBUS / LI+)</text>
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Carrier Header Interface Map",
+        columns: ["Left Target Label", "Left Connector", "Right Connector", "Right Target Label"],
+        rows: [
+          ["Ground Return", "GND", "GND", "Ground Return"],
+          ["PMIC system output", "PMID", "LI+", "Single-cell Lithium battery anode"],
+          ["PMIC thermistor input", "TS", "VBUS", "nRF52 USB supply line (5V)"],
+          ["Regulated Output (3.3V)", "3V3", "STAT", "PMIC active charge status output"],
+          ["Empty/Unused pin", "SOM44", "VIN", "External main supply line (5V-12V DC)"],
+          ["Ground Return", "GND", "GND", "Ground Return"],
+          ["Analog input 4 / SPI MOSI", "A4", "A0", "Analog input 0 / I2C1 Data"],
+          ["Analog input 5 / SPI MISO", "A5", "A1", "Analog input 1 / I2C1 Clock"],
+          ["Analog input 6 / SPI Clock", "A6", "A2", "Analog input 2 / Serial1 Clear-to-Send"],
+          ["Analog input 7 / SS Chip select", "A7", "A3", "Analog input 3 / Serial1 Request-to-Send"],
+          ["Empty/Unused pin", "SOM37", "SOM59", "Empty/Unused pin"],
+          ["Empty/Unused pin", "SOM36", "SOM60", "Empty/Unused pin"],
+          ["Empty/Unused pin", "SOM35", "SOM61", "Empty/Unused pin"],
+          ["Empty/Unused pin", "SOM34", "SOM62", "Empty/Unused pin"],
+          ["Regulated Output (3.3V)", "3V3", "3V3", "Regulated Output (3.3V)"],
+          ["Ground Return", "GND", "AGND", "Analog noise-isolated ground"],
+          ["MCU System Reset line", "RESET", "MCU_RX", "USART1 Serial receive channel / GPIO D9"],
+          ["MCU Boot Mode trigger", "MODE", "MCU_TX", "USART1 Serial transmit channel / GPIO D8"],
+          ["Red system status driver", "R", "RTC_BAT", "RTC battery backup line"],
+          ["Green system status driver", "G", "RTC_BTN", "RTC external wake interrupt button"],
+          ["Blue system status driver", "B", "SOM76", "Empty/Unused pin"],
+          ["NFC loop antenna port 1", "NFC1", "SOM77", "Empty/Unused pin"],
+          ["NFC loop antenna port 2", "NFC2", "SOM78", "Empty/Unused pin"],
+          ["Empty/Unused pin", "SOM21", "SOM79", "Empty/Unused pin"],
+          ["Empty/Unused pin", "SOM20", "SOM80", "Empty/Unused pin"],
+          ["Empty/Unused pin", "SOM19", "SOM81", "Empty/Unused pin"],
+          ["Empty/Unused pin", "SOM18", "SOM82", "Empty/Unused pin"],
+          ["Regulated Output (3.3V)", "3V3", "3V3", "Regulated Output (3.3V)"],
+          ["ESP32 Serial RX", "WIFI_RXD", "NC", "No Connection (NC)"],
+          ["ESP32 Serial TX", "WIFI_TXD", "CELL_RX", "Cellular modem serial receive channel"],
+          ["ESP32 boot configuration", "WIFI_BOOT", "CELL_TX", "Cellular modem serial transmit channel"],
+          ["ESP32 system enable", "WIFI_EN", "CELL_RI", "Cellular active ring status indicator"],
+          ["Empty/Unused pin", "SOM9", "GNSS_TIME_PULSE", "u-blox GNSS time-pulse output"],
+          ["Ground Return", "GND", "GND", "Ground Return"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Particle B-Series B402",
+    tag: "nRF52840 Cellular SoM",
+    subtitle: "nRF52840 LTE Cat M1 / NB-IoT SoM SMT Pad Pinout",
+    svgs: [
+      {
+        label: "B402 SMT Module Profile",
+        html: `
+          <svg viewBox="0 0 460 140" width="100%">
+            <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
+            <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">PARTICLE B402 MESH/CELLULAR SOM</text>
+            <g fill="#cbd5e1">
+              <circle cx="30" cy="60" r="3" fill="#ef4444" />
+              <circle cx="50" cy="60" r="3" />
+              <circle cx="70" cy="60" r="3" fill="#64748b" />
+              <circle cx="90" cy="60" r="3" />
+              <circle cx="110" cy="60" r="3" />
+              <circle cx="130" cy="60" r="3" />
+              <circle cx="150" cy="60" r="3" fill="#eab308" />
+              <circle cx="170" cy="60" r="3" />
+              <circle cx="190" cy="60" r="3" />
+              <circle cx="210" cy="60" r="3" fill="#64748b" />
+            </g>
+            <text x="25" y="85" fill="#10b981" font-family="Arial" font-size="8">75 CAST_PIN CONNECTIONS - INTEGRATED UART, SPI, NFC, &amp; ADC MAPS</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "B402 Pinout & Port Definition Table",
+        columns: ["# Pin", "Pin Label", "Bus / Alternative Function", "nRF52 Port Address", "Signal Description"],
+        rows: [
+          ["1", "GND", "GND", "-", "System common ground reference"],
+          ["2", "VCC", "VCC", "-", "Power Input: connect to +LiPo or 3.6V-4.2V supply"],
+          ["3", "GND", "GND", "-", "System common ground reference"],
+          ["4", "VCC", "VCC", "-", "Power Input: connect to +LiPo or 3.6V-4.2V supply"],
+          ["5", "GND", "GND", "-", "System common ground reference"],
+          ["6", "VCC", "VCC", "-", "Power Input: connect to +LiPo or 3.6V-4.2V supply"],
+          ["7", "GND", "GND", "-", "System common ground reference"],
+          ["8", "VCC", "VCC", "-", "Power Input: connect to +LiPo or 3.6V-4.2V supply"],
+          ["9", "GND", "GND", "-", "System common ground reference"],
+          ["10", "3V3", "3V3", "-", "Stabilized supply input rail (3.0V to 3.6V)"],
+          ["11", "USB D+", "USB D+", "-", "nRF52840 native USB differential transceiver plus (+)"],
+          ["12", "3V3", "3V3", "-", "Stabilized supply input rail (3.0V to 3.6V)"],
+          ["13", "USB D-", "USB D-", "-", "nRF52840 native USB differential transceiver minus (-)"],
+          ["14", "-", "RESERVED", "-", "Empty Terminal Node (Leave unconnected)"],
+          ["15", "GND", "GND", "-", "System common ground reference"],
+          ["16", "VUSB", "VUSB", "-", "USB device controller bus voltage detection pin (5V)"],
+          ["17", "NFC1", "SOM3", "P0.09", "NFC tag loop antenna interface port 1"],
+          ["18", "-", "RESERVED", "-", "Empty Terminal Node (Leave unconnected)"],
+          ["19", "NFC2", "SOM4", "P0.10", "NFC tag loop antenna interface port 2"],
+          ["20", "D1", "SCL", "P0.27", "Main hardware I2C Clock Bus / Digital I/O"],
+          ["21", "GND", "GND", "-", "System common ground reference"],
+          ["22", "D0", "SDA", "P0.26", "Main hardware I2C Data Bus / Digital I/O"],
+          ["23", "A0", "ADC0", "P0.03", "Analog Input Channel 0 / Digital I/O"],
+          ["32", "MODE", "MODE", "P0.11", "System MODE button input line (Active-Low)"],
+          ["33", "A1", "ADC1", "P0.04", "Analog Input Channel 1 / Digital I/O"],
+          ["34", "RESET", "RESET", "-", "Active-Low hardware reset line"],
+          ["35", "A2", "ADC2", "P0.28", "Analog Input Channel 2 / Digital I/O"],
+          ["36", "D9", "TX", "P0.06", "Primary UART Transmitter output / Digital I/O"],
+          ["37", "A3", "ADC3", "P0.29", "Analog Input Channel 3 / Digital I/O"],
+          ["38", "D10", "RX", "P0.08", "Primary UART Receiver input / Digital I/O"],
+          ["39", "AGND", "AGND", "-", "Analog noise-isolated ground reference"],
+          ["40", "D3", "RESERVED", "P1.01", "UART Flow Control CTS / I2C3 SCL / SPI2 MOSI / Digital I/O"],
+          ["41", "A4", "RESERVED", "P0.30", "Analog Input Channel 4 / Digital I/O"],
+          ["42", "D2", "RESERVED", "P1.02", "UART Flow Control RTS / I2C3 SDA / SPI2 Clock / Digital I/O"],
+          ["43", "A5", "RESERVED", "P0.31", "Analog Input Channel 5 / Digital I/O"],
+          ["44", "u-blox D+", "SOM0", "-", "Cellular module USB differential transceiver plus (+)"],
+          ["45", "A6", "RESERVED", "P0.05", "Analog Input Channel 6 / Digital I/O"],
+          ["46", "u-blox D-", "SOM1", "-", "Cellular module USB differential transceiver minus (-)"],
+          ["47", "A7", "RESERVED", "P0.02", "Analog Input Channel 7 / Digital I/O"],
+          ["48", "D8", "CS", "P1.03", "Primary SPI CS Line / Digital I/O"],
+          ["49", "AGND", "AGND", "-", "Analog noise-isolated ground reference"],
+          ["50", "D11", "MISO", "P1.14", "Primary SPI MISO Line / Digital I/O"],
+          ["51", "-", "RESERVED", "-", "Empty Terminal Node (Leave unconnected)"],
+          ["52", "D12", "MOSI", "P1.13", "Primary SPI MOSI Line / Digital I/O"],
+          ["53", "-", "RESERVED", "-", "Empty Terminal Node (Leave unconnected)"],
+          ["54", "D13", "SCK", "P1.15", "Primary SPI Clock Line / Digital I/O"],
+          ["61", "RGBR", "RED", "P0.13", "Status Indicator RGB LED Red Channel Driver"],
+          ["62", "D22", "GPIO0", "P0.24", "General Purpose Digital I/O Line 0"],
+          ["63", "RGBG", "GREEN", "P0.14", "Status Indicator RGB LED Green Channel Driver"],
+          ["64", "D23", "GPIO1", "P1.09", "General Purpose Digital I/O Line 1"],
+          ["65", "RGBB", "BLUE", "P0.15", "Status Indicator RGB LED Blue Channel Driver"],
+          ["66", "D4", "PWM0", "P1.08", "SPI1 MISO / General Purpose Digital I/O / Hardware PWM0"],
+          ["67", "SIM_VCC", "SOM5", "-", "Cellular module SIM power supply line (1.8V / 3V)"],
+          ["68", "D5", "PWM1", "P1.10", "General Purpose Digital I/O / Hardware PWM1"],
+          ["69", "SIM_RST", "SOM6", "-", "Cellular module SIM reset line (1.8V / 3V)"],
+          ["70", "D6", "PWM2", "P1.11", "General Purpose Digital I/O / Hardware PWM2"],
+          ["71", "SIM_CLK", "SOM7", "-", "Cellular module SIM clock line (1.8V / 3V)"],
+          ["72", "D7", "PWM3", "P1.12", "General Purpose Digital I/O / Hardware PWM3"],
+          ["73", "SIM_DATA", "SOM8", "-", "Cellular module SIM data line (Includes internal 4.7k pull-up)"],
+          ["74", "u-blox VBUS", "SOM2", "-", "Cellular module USB bus detection pin (5V)"],
+          ["75", "-", "SOM9", "-", "Empty Terminal Node (Leave unconnected)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Particle B-Series B523",
+    tag: "LTE M1 / NB1 / EGPRS SoM",
+    subtitle: "Quectel BG96 Cellular SoM SMT Pad Pinout",
+    svgs: [
+      {
+        label: "B523 SMT Module Profile",
+        html: `
+          <svg viewBox="0 0 460 140" width="100%">
+            <rect x="10" y="10" width="440" height="120" rx="8" fill="#1e293b" />
+            <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">PARTICLE B523 QUECTEL CELLULAR SOM</text>
+            <g fill="#cbd5e1">
+              <circle cx="30" cy="60" r="3" fill="#ef4444" />
+              <circle cx="50" cy="60" r="3" />
+              <circle cx="70" cy="60" r="3" fill="#64748b" />
+              <circle cx="90" cy="60" r="3" />
+              <circle cx="110" cy="60" r="3" />
+              <circle cx="130" cy="60" r="3" />
+              <circle cx="150" cy="60" r="3" fill="#eab308" />
+              <circle cx="170" cy="60" r="3" />
+              <circle cx="190" cy="60" r="3" />
+              <circle cx="210" cy="60" r="3" fill="#64748b" />
+            </g>
+            <text x="25" y="85" fill="#a855f7" font-family="Arial" font-size="8">75 CAST_PIN CONNECTIONS - INTEGRATED UART, SPI, NFC, &amp; ADC MAPS</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "B523 Pinout & Port Definition Table",
+        columns: ["# Pin", "Pin Label", "Bus / Alternative Function", "nRF52 Port Address", "Signal Description"],
+        rows: [
+          ["1", "GND", "GND", "-", "System common ground reference"],
+          ["2", "VCC", "VCC", "-", "Power Input: connect to +LiPo or 3.6V-4.3V supply"],
+          ["3", "GND", "GND", "-", "System common ground reference"],
+          ["4", "VCC", "VCC", "-", "Power Input: connect to +LiPo or 3.6V-4.3V supply"],
+          ["5", "GND", "GND", "-", "System common ground reference"],
+          ["6", "VCC", "VCC", "-", "Power Input: connect to +LiPo or 3.6V-4.3V supply"],
+          ["7", "GND", "GND", "-", "System common ground reference"],
+          ["8", "VCC", "VCC", "-", "Power Input: connect to +LiPo or 3.6V-4.3V supply"],
+          ["9", "GND", "GND", "-", "System common ground reference"],
+          ["10", "3V3", "3V3", "-", "Stabilized supply input rail (3.0V to 3.6V)"],
+          ["11", "USB D+", "USB D+", "-", "nRF52840 native USB differential transceiver plus (+)"],
+          ["12", "3V3", "3V3", "-", "Stabilized supply input rail (3.0V to 3.6V)"],
+          ["13", "USB D-", "USB D-", "-", "nRF52840 native USB differential transceiver minus (-)"],
+          ["14", "-", "RESERVED", "-", "Empty Terminal Node (Leave unconnected)"],
+          ["15", "GND", "GND", "-", "System common ground reference"],
+          ["16", "VUSB", "VUSB", "-", "USB device controller bus voltage detection pin (5V)"],
+          ["17", "NFC1", "SOM3", "P0.09", "NFC tag loop antenna interface port 1"],
+          ["18", "-", "RESERVED", "-", "Empty Terminal Node (Leave unconnected)"],
+          ["19", "NFC2", "SOM4", "P0.10", "NFC tag loop antenna interface port 2"],
+          ["20", "D1", "SCL", "P0.27", "Main hardware I2C Clock Bus / Digital I/O"],
+          ["21", "GND", "GND", "-", "System common ground reference"],
+          ["22", "D0", "SDA", "P0.26", "Main hardware I2C Data Bus / Digital I/O"],
+          ["23", "A0", "ADC0", "P0.03", "Analog Input Channel 0 / Digital I/O"],
+          ["32", "MODE", "MODE", "P0.11", "System MODE button input line (Active-Low)"],
+          ["33", "A1", "ADC1", "P0.04", "Analog Input Channel 1 / Digital I/O"],
+          ["34", "RESET", "RESET", "-", "Active-Low hardware reset line"],
+          ["35", "A2", "ADC2", "P0.28", "Analog Input Channel 2 / Digital I/O"],
+          ["36", "D9", "TX", "P0.06", "Primary UART Transmitter output / Digital I/O"],
+          ["37", "A3", "ADC3", "P0.29", "Analog Input Channel 3 / Digital I/O"],
+          ["38", "D10", "RX", "P0.08", "Primary UART Receiver input / Digital I/O"],
+          ["39", "AGND", "AGND", "-", "Analog noise-isolated ground reference"],
+          ["40", "D3", "RESERVED", "P1.01", "UART Flow Control CTS / I2C3 SCL / SPI2 MOSI / Digital I/O"],
+          ["41", "A4", "RESERVED", "P0.30", "Analog Input Channel 4 / Digital I/O"],
+          ["42", "D2", "RESERVED", "P1.02", "UART Flow Control RTS / I2C3 SDA / SPI2 Clock / Digital I/O"],
+          ["43", "A5", "RESERVED", "P0.31", "Analog Input Channel 5 / Digital I/O"],
+          ["44", "Quectel D+", "SOM0", "-", "Cellular module USB differential transceiver plus (+)"],
+          ["45", "A6", "RESERVED", "P0.05", "Analog Input Channel 6 / Digital I/O"],
+          ["46", "Quectel D-", "SOM1", "-", "Cellular module USB differential transceiver minus (-)"],
+          ["47", "A7", "RESERVED", "P0.02", "Analog Input Channel 7 / Digital I/O"],
+          ["48", "D8", "CS", "P1.03", "Primary SPI CS Line / Digital I/O"],
+          ["49", "AGND", "AGND", "-", "Analog noise-isolated ground reference"],
+          ["50", "D11", "MISO", "P1.14", "Primary SPI MISO Line / Digital I/O"],
+          ["51", "-", "RESERVED", "-", "Empty Terminal Node (Leave unconnected)"],
+          ["52", "D12", "MOSI", "P1.13", "Primary SPI MOSI Line / Digital I/O"],
+          ["53", "-", "RESERVED", "-", "Empty Terminal Node (Leave unconnected)"],
+          ["54", "D13", "SCK", "P1.15", "Primary SPI Clock Line / Digital I/O"],
+          ["61", "RGBR", "RED", "P0.13", "Status Indicator RGB LED Red Channel Driver"],
+          ["62", "D22", "GPIO0", "P0.24", "General Purpose Digital I/O Line 0"],
+          ["63", "RGBG", "GREEN", "P0.14", "Status Indicator RGB LED Green Channel Driver"],
+          ["64", "D23", "GPIO1", "P1.09", "General Purpose Digital I/O Line 1"],
+          ["65", "RGBB", "BLUE", "P0.15", "Status Indicator RGB LED Blue Channel Driver"],
+          ["66", "D4", "PWM0", "P1.08", "SPI1 MISO / General Purpose Digital I/O / Hardware PWM0"],
+          ["67", "SIM_VCC", "SOM5", "-", "Cellular module SIM power supply line (1.8V / 3V)"],
+          ["68", "D5", "PWM1", "P1.10", "General Purpose Digital I/O / Hardware PWM1"],
+          ["69", "SIM_RST", "SOM6", "-", "Cellular module SIM reset line (1.8V / 3V)"],
+          ["70", "D6", "PWM2", "P1.11", "General Purpose Digital I/O / Hardware PWM2"],
+          ["71", "SIM_CLK", "SOM7", "-", "Cellular module SIM clock line (1.8V / 3V)"],
+          ["72", "D7", "PWM3", "P1.12", "General Purpose Digital I/O / Hardware PWM3"],
+          ["73", "SIM_DATA", "SOM8", "-", "Cellular module SIM data line (Includes internal 4.7k pull-up)"],
+          ["74", "Quectel VBUS", "SOM2", "-", "Cellular module USB bus detection pin (5V)"],
+          ["75", "Quectel RI", "SOM9", "-", "Cellular module active ring indicator status line"]
+        ]
+      }
+    ]
   }
+];
+
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
+
+// Update display with selected board parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
+  
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
+}
+
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
+}
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 0; // Load first board entry by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+};
+</script>
+
+<!-- SEO Structured JSON-LD Schemas -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Are Particle GPIO pins 5V tolerant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the maximum safe input voltage for the VIN pin?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The on-board power management ICs (PMIC) on the Tracker SoM and Evaluation boards can accept external power inputs ranging from 3.88V to 12.0V DC safely."
+      }
+    }
+  ]
 }
 </script>
 
 <script type="application/ld+json">
 {
-"@context":"https://schema.org",
-"@type":"FAQPage",
-"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
-"mainEntity":[
-{"@type":"Question","name":"1. Are Particle GPIO pins 5V tolerant?","acceptedAnswer":{"@type":"Answer","text":"No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure."}},
-{"@type":"Question","name":"2. What is the maximum safe input voltage for the VIN pin?","acceptedAnswer":{"@type":"Answer","text":"The on-board power management ICs (PMIC) on the Tracker SoM and Evaluation boards can accept external power inputs ranging from 3.88V to 12.0V DC safely."}},
-{"@type":"Question","name":"3. How do I configure the on-board cellular GPS antenna?","acceptedAnswer":{"@type":"Answer","text":"Ensure your coaxial RF trace connects directly to the GNSS_RF (Pin 94) or CELL_GPS_RF (Pin 87) pads with a characteristic impedance of 50 Ohms for optimal signal reception."}},
-{"@type":"Question","name":"4. Why do the SPI and I2C lines share pins with GPIOs?","acceptedAnswer":{"@type":"Answer","text":"The nRF52840 chip features a flexible pin routing multiplexer, allowing software to reconfigure digital pins to support SPI, UART, I2C, or standard GPIO tasks dynamically."}},
-{"@type":"Question","name":"5. How do I reset search filters in this tool?","acceptedAnswer":{"@type":"Answer","text":"Clear any text from the search box at the top of the interface to restore the full list of pinout cards."}}
-]
-}
-</script>
-
-<script type="application/ld+json">
-{
-"@context":"https://schema.org",
-"@type":"BreadcrumbList",
-"itemListElement":[
-{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
-{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
-{"@type":"ListItem","position":3,"name":"Particle IoT GPIO Pinouts and Reference Guide","item":"https://calcboy.com/tool/particle-iot-gpio-pinouts-and-reference-guide"}
-]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Particle IoT GPIO Pinouts and Reference Guide", "item": "https://calcboy.com/tool/particle-iot-gpio-pinouts-and-reference-guide" }
+  ]
 }
 </script>
 
