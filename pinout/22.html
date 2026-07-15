@@ -6,765 +6,417 @@
 <title>Raspberry Pi GPIO Pinouts and Hardware Reference Guide | CalcBoy</title>
 <meta name="description" content="Complete Raspberry Pi GPIO pinouts guide for models A, A+, B, B+, 2B, 3B, 3B+, 3A+, Zero, Zero W, Compute Modules, and CSI Camera. Detailed pin mapping tables.">
 <meta name="keywords" content="raspberry pi pinout, raspberry pi 3b pinout, raspberry pi zero pinout, rpi gpio reference, rpi camera pinout, compute module pinout, CalcBoy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://calcboy.com/tool/raspberry-pi-gpio-pinouts-and-hardware-reference-guide">
+
+<!-- Open Graph / Social Sharing Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Raspberry Pi GPIO Pinouts and Hardware Reference Guide | CalcBoy">
+<meta property="og:description" content="Access complete, exhaustive pin-by-pin specifications and vector schematics for Raspberry Pi models including A, B, B+, 2B, 3B, Zero, and Compute Modules.">
+<meta property="og:url" content="https://calcboy.com/tool/raspberry-pi-gpio-pinouts-and-hardware-reference-guide">
+<meta property="og:site_name" content="CalcBoy">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Raspberry Pi GPIO Pinouts and Hardware Reference Guide | CalcBoy">
+<meta name="twitter:description" content="Complete engineering reference directory for Raspberry Pi board architectures, pin multiplexing, and GPIO pinouts.">
+
 <style>
-body {margin:0 !important;padding:0 !important;background:#f6f8fb;color:#333}
-#audio-pinout-calc,#audio-pinout-calc *{box-sizing:border-box;font-family:Arial,sans-serif}
-#audio-pinout-calc{width:100% !important;max-width:620px;margin:auto;padding:14px 10px !important;background:transparent;border:none}
-
-/* Search Bar Styling */
-.search-container {margin-bottom:20px;position:relative}
-#myInput {
-  width:100%;
-  height:45px;
-  border:1px solid #cfd6df;
-  border-radius:10px;
-  padding:0 16px 0 40px;
-  font-size:15px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 14px center;
-  outline:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-  transition:border-color .2s, box-shadow .2s;
+/* ==========================================================================
+   1. GLOBAL CALCULATOR WRAPPER CONFIGURATION & Safe 10px Mobile Padding Lock
+   ========================================================================= */
+#beagle-pinouts-tool, #beagle-pinouts-tool * {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-#myInput:focus {
-  border-color:#ff6a00;
-  box-shadow:0 0 0 3px rgba(255,106,0,.12);
+body {
+  margin: 0 !important;
+  padding: 10px !important; /* Strictly locked 10px Safe Mobile Margins */
+  background: #f6f8fb;
+  color: #333;
 }
-
-/* Master UL / List Cards */
-#myUL {list-style-type:none;padding:0;margin:0;display:grid;gap:12px}
-#myUL li {margin:0}
-.pinout-item-card {
-  display:block;
-  text-decoration:none;
-  background:#fff;
-  border:1px solid #cfd6df;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
-  transition:border-color .2s, box-shadow .2s;
+#beagle-pinouts-tool {
+  width: 100% !important;
+  max-width: 620px;
+  margin: auto;
+  padding-top: 14px;
+  background: transparent;
+  border: none;
 }
-.pinout-item-card:hover {
-  border-color:#ff6a00;
-  box-shadow:0 4px 12px rgba(255,106,0,.08);
+.calc-grid {
+  display: grid;
+  gap: 15px;
 }
-.card-tag {
-  display:inline-block;
-  font-size:10px;
-  font-weight:900;
-  color:#ff6a00;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:6px;
+.calc-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 7px;
 }
-.card-inner {display:flex;align-items:center;justify-content:between}
-.card-title {
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  flex-grow:1;
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
 }
-.card-arrow {
-  color:#94a3b8;
-  font-size:18px;
-  font-weight:800;
-  padding-left:12px;
-}
-
-/* Modal Styling */
-.w3-modal {
-  display:none;
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  overflow:auto;
-  background-color:rgba(15,23,42,.65);
-  backdrop-filter:blur(4px);
-  padding:20px 10px;
-}
-.w3-modal-content {
-  background:#fff;
-  margin:20px auto;
-  width:100%;
-  max-width:580px;
-  border-radius:16px;
-  box-shadow:0 20px 25px -5px rgba(0,0,0,.15);
-  position:relative;
-  padding:24px;
-}
-
-/* Red Close Button STICKY 10% */
-.mid {
-  position: sticky !important;
-  top: 10% !important;
-  right: 16px !important;
-  float: right !important;
-  z-index: 1010 !important;
-  width: 36px;
-  height: 36px;
-  background-color: #ef4444 !important;
-  border: none !important;
-  border-radius: 50% !important;
-  color: #ffffff !important;
-  font-size: 16px !important;
-  font-weight: 900 !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
-  transition: background-color 0.2s, transform 0.1s;
-  margin-top: -8px;
-  margin-right: -8px;
-}
-.mid:hover {
-  background-color: #dc2626 !important;
-}
-
-/* Inline Diagram Styling */
-.diagram-container {
+select {
   width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  height: 43px;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+}
+select:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.12);
+}
+.subTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 10px 0 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ==========================================================================
+   2. CATEGORY HEADER CARD STYLING
+   ========================================================================== */
+.connector-header-card {
+  background: #fff;
+  border: 1px solid #cfd6df;
   border-radius: 12px;
   padding: 16px;
-  margin: 12px auto 6px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.connector-header-card .badge {
+  background: #ffedd5;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.connector-header-card .connector-details {
+  display: flex;
+  flex-direction: column;
+}
+.connector-header-card .connector-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.connector-header-card .connector-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   3. SCHEMATIC SVG DISPLAY CONTAINER
+   ========================================================================== */
+.diagram-display-card {
+  margin-top: 15px;
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.diagram-display-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ea580c;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ffedd5;
+  padding-bottom: 6px;
+}
+.diagram-vector-container {
+  display: flex;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
+}
+.vector-box {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 140px;
   justify-content: center;
+  cursor: zoom-in; /* Interactive Zoom Indicator */
+  transition: transform 0.2s, border-color 0.2s;
 }
-.diagram-container svg {
+.vector-box:hover {
+  transform: scale(1.02);
+  border-color: #ff6a00;
+}
+.vector-box svg {
   max-width: 100%;
   height: auto;
 }
-
-.table1 {width:100%;text-align:left;clear:both}
-
+.vector-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
 .img-caption {
-  font-size:11px;
-  font-weight:800;
-  color:#64748b;
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-top:6px;
-  margin-bottom:16px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 10px;
 }
 
-/* Standardized Tables & Scroll wrappers */
-.table-responsive {
-  width: 100%;
+/* ==========================================================================
+   4. PINOUT TABLES STYLING
+   ========================================================================== */
+.table-container {
   overflow-x: auto;
-  margin: 15px 0 20px;
+  margin-top: 15px;
+}
+table.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+table.pinout-table th, table.pinout-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: left;
+}
+table.pinout-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+table.pinout-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+.table-section-header {
+  background: #475467 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   5. PREMIUM SECTIONAL CARDS AND INFORMATION CONTAINERS
+   ========================================================================== */
+.infoBox {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.infoBox h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1e293b;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.infoBox h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin: 12px 0 7px;
+  font-weight: 800;
+}
+.infoBox p, .infoBox li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #667085;
+  font-weight: 700;
+}
+.formula, .formulaBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.paramItem, .exampleCard, .aboutMiniCard, .linkCard {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+  line-height: 1.55;
+}
+.paramItem strong, .aboutMiniCard span, .linkCard strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+.aboutNote {
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-left: 5px solid #ff6a00;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9a3412;
+  line-height: 1.6;
+}
+.aboutSteps {
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.aboutStep {
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
+  padding: 11px 11px 11px 42px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475467;
+  line-height: 1.55;
 }
-table {
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  overflow:hidden;
+.aboutStep:before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff6a00;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
 }
-th {
-  background:#f1f5f9;
-  color:#1e293b;
-  font-size:12px;
-  font-weight:900;
-  padding:10px 12px;
-  text-align:left;
-  border-bottom:2px solid #e2e8f0;
-  white-space: nowrap;
-}
-td {
-  padding:8px 12px;
-  font-size:12px;
-  color:#475467;
-  border-bottom:1px solid #edf2f7;
-  white-space: nowrap;
-}
-tr:nth-child(even) {background:#f8fafc}
-hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
-
-/* Info Box / Content Sections */
-.infoBox{margin-top:16px;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.infoBox h2{margin:0 0 12px;font-size:15px;color:#1e293b;border-bottom:1px solid #edf2f7;padding-bottom:6px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.infoBox h3{font-size:14px;color:#0f172a;margin:12px 0 7px;font-weight:800}
-.infoBox p,.infoBox li{font-size:13px;line-height:1.6;color:#667085;font-weight:700}
-.formula,.formulaBox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#334155;font-weight:700;line-height:1.6}
-.paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.paramItem,.exampleCard,.aboutMiniCard,.linkCard{background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-weight:600;color:#475467;line-height:1.55}
-.paramItem strong,.aboutMiniCard span,.linkCard strong{color:#0f172a;display:block;margin-bottom:2px;font-weight:900}
-.aboutLead{background:linear-gradient(135deg,#eef5ff,#fff7ed);border:1px solid #dbeafe;border-radius:12px;padding:14px;margin-bottom:12px}
-.aboutLead strong{display:block;font-size:16px;color:#0f172a;margin-bottom:7px}
-.aboutNote{background:#ecfdf5;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:#065f46;line-height:1.6}
-
 @media(max-width:600px){
-  .paramGrid,.exampleGrid,.aboutMiniGrid,.linkGrid{grid-template-columns:1fr}
+  .paramGrid, .exampleGrid, .aboutMiniGrid, .linkGrid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="audio-pinout-calc">
+<div id="beagle-pinouts-tool">
 
-  <div class="search-container">
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Raspberry Pi Pinouts..." title="Type in a board name">
+  <!-- Inputs Section -->
+  <div class="calc-grid">
+    <div class="subTitle">Board Pinout Selector</div>
+    <div>
+      <label class="calc-label" for="connectorSelect">Select Raspberry Pi Board / Accessory</label>
+      <div class="calc-row">
+        <select id="connectorSelect" onchange="updateConnectorDetails(this.value)">
+          <!-- Loaded dynamically via JavaScript -->
+        </select>
+      </div>
+    </div>
   </div>
 
-  <ul id="myUL">
+  <!-- Dynamic Connector Header Card -->
+  <div class="connector-header-card" id="connectorCard">
+    <div class="badge" id="connectorTag">Broadcom Universal 40-Pin Platform</div>
+    <div class="connector-details">
+      <span class="connector-name" id="connectorName">Loading...</span>
+      <span class="connector-subtitle" id="connectorSubtitle">Interface Layout Standard</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Diagram & Pinout Tables Container -->
+  <div class="diagram-display-card">
+    <div class="diagram-display-title">Visual Schematic & Pinout Map</div>
+    <div class="diagram-vector-container" id="diagramContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+    <div class="img-caption">CLICK TO LARGE AND ENLARGE</div>
     
-    <!-- RASPBERRY PI A -->
-    <li>
-      <a href="#" onclick="document.getElementById('id01').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Broadcom BCM2835 Legacy</span>
-        <div class="card-inner">
-          <span class="card-title">Raspberry Pi A Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id01" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id01').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG 26-Pin Header for early models -->
-              <svg viewBox="0 0 360 80" width="100%">
-                <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">RASPBERRY PI MODEL A (2x13 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <!-- Top Row (1,3,5...25) -->
-                  <rect x="20" y="35" width="10" height="10" fill="#f59e0b" rx="1" /> <!-- Pin 1 Highlighted -->
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" /> <!-- GND -->
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" fill="#64748b" /> <!-- GND -->
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" /> <!-- GND -->
-                </g>
-                <g fill="#cbd5e1">
-                  <!-- Bottom Row (2,4,6...26) -->
-                  <circle cx="25" cy="55" r="5" fill="#ef4444" /> <!-- 5V -->
-                  <circle cx="50" cy="55" r="5" fill="#ef4444" /> <!-- 5V -->
-                  <circle cx="75" cy="55" r="5" fill="#64748b" /> <!-- GND -->
-                  <circle cx="100" cy="55" r="5" />
-                  <circle cx="125" cy="55" r="5" />
-                  <circle cx="150" cy="55" r="5" />
-                  <circle cx="175" cy="55" r="5" fill="#64748b" /> <!-- GND -->
-                  <circle cx="200" cy="55" r="5" />
-                  <circle cx="225" cy="55" r="5" />
-                  <circle cx="250" cy="55" r="5" />
-                  <circle cx="275" cy="55" r="5" />
-                  <circle cx="300" cy="55" r="5" />
-                  <circle cx="325" cy="55" r="5" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: MODEL A 26-PIN TERMINAL ASSIGNMENTS</div>
+    <div class="table-container" id="tablesContainer">
+      <!-- Generated dynamically based on selection -->
+    </div>
+  </div>
 
-            <h3>Main 26-Pin GPIO Header Table</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Power Rail</td><td>2</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>3</td><td>SDA0 / GPIO 0 (I2C Data)</td><td>4</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>5</td><td>SCL0 / GPIO 1 (I2C Clock)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>GPIO 4 (GPCLK0)</td><td>8</td><td>TXD0 / GPIO 14 (UART Transmit)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>RXD0 / GPIO 15 (UART Receive)</td></tr>
-                  <tr><td>11</td><td>GPIO 17</td><td>12</td><td>GPIO 18 (PCM Clock / PWM)</td></tr>
-                  <tr><td>13</td><td>GPIO 21</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>GPIO 22</td><td>16</td><td>GPIO 23</td></tr>
-                  <tr><td>17</td><td>3.3V Output Power Rail</td><td>18</td><td>GPIO 24</td></tr>
-                  <tr><td>19</td><td>MOSI0 / GPIO 10 (SPI Master Out)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>MISO0 / GPIO 9 (SPI Master In)</td><td>22</td><td>GPIO 25</td></tr>
-                  <tr><td>23</td><td>SCLK0 / GPIO 11 (SPI Clock)</td><td>24</td><td>CE0_N / GPIO 8 (SPI Chip Select 0)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>CE1_N / GPIO 7 (SPI Chip Select 1)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- RASPBERRY PI A+ -->
-    <li>
-      <a href="#" onclick="document.getElementById('id02').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Broadcom BCM2835 40-Pin Classic</span>
-        <div class="card-inner">
-          <span class="card-title">Raspberry Pi A+ Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id02" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id02').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG 40-Pin Header Design -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">RASPBERRY PI MODEL A+ (40-PIN HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#f59e0b" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" fill="#64748b" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                  <circle cx="350" cy="40" r="5" />
-                  <circle cx="375" cy="40" r="5" />
-                  <circle cx="400" cy="40" r="5" />
-                  <circle cx="425" cy="40" r="5" />
-                  <circle cx="450" cy="40" r="5" />
-                  <circle cx="475" cy="40" r="5" />
-                  <circle cx="500" cy="40" r="5" fill="#64748b" />
-                </g>
-                <g fill="#cbd5e1">
-                  <circle cx="25" cy="55" r="5" fill="#ef4444" />
-                  <circle cx="50" cy="55" r="5" fill="#ef4444" />
-                  <circle cx="75" cy="55" r="5" fill="#64748b" />
-                  <circle cx="100" cy="55" r="5" />
-                  <circle cx="125" cy="55" r="5" />
-                  <circle cx="150" cy="55" r="5" />
-                  <circle cx="175" cy="55" r="5" fill="#64748b" />
-                  <circle cx="200" cy="55" r="5" />
-                  <circle cx="225" cy="55" r="5" />
-                  <circle cx="250" cy="55" r="5" />
-                  <circle cx="275" cy="55" r="5" />
-                  <circle cx="300" cy="55" r="5" />
-                  <circle cx="325" cy="55" r="5" />
-                  <circle cx="350" cy="55" r="5" fill="#64748b" />
-                  <circle cx="375" cy="55" r="5" />
-                  <circle cx="400" cy="55" r="5" />
-                  <circle cx="425" cy="55" r="5" />
-                  <circle cx="450" cy="55" r="5" />
-                  <circle cx="475" cy="55" r="5" />
-                  <circle cx="500" cy="55" r="5" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: STANDARD 40-PIN EXPANSION HEADER</div>
-
-            <h3>Standard 40-Pin Header Table (Models A+, B+, 2, 3, Zero)</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Power Rail</td><td>2</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>3</td><td>SDA1 / GPIO 2 (I2C Data)</td><td>4</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>5</td><td>SCL1 / GPIO 3 (I2C Clock)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>GPIO 4 (GPCLK0)</td><td>8</td><td>TXD0 / GPIO 14 (UART Transmit)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>RXD0 / GPIO 15 (UART Receive)</td></tr>
-                  <tr><td>11</td><td>GPIO 17</td><td>12</td><td>GPIO 18 (PCM Clock / PWM)</td></tr>
-                  <tr><td>13</td><td>GPIO 27</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>GPIO 22</td><td>16</td><td>GPIO 23</td></tr>
-                  <tr><td>17</td><td>3.3V Output Power Rail</td><td>18</td><td>GPIO 24</td></tr>
-                  <tr><td>19</td><td>MOSI0 / GPIO 10 (SPI Master Out)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>MISO0 / GPIO 9 (SPI Master In)</td><td>22</td><td>GPIO 25</td></tr>
-                  <tr><td>23</td><td>SCLK0 / GPIO 11 (SPI Clock)</td><td>24</td><td>CE0_N / GPIO 8 (SPI Chip Select 0)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>CE1_N / GPIO 7 (SPI Chip Select 1)</td></tr>
-                  <tr><td>27</td><td>ID_SD (I2C ID EEPROM)</td><td>28</td><td>ID_SC (I2C ID EEPROM)</td></tr>
-                  <tr><td>29</td><td>GPIO 5</td><td>30</td><td>Ground (GND)</td></tr>
-                  <tr><td>31</td><td>GPIO 6</td><td>32</td><td>GPIO 12 (PWM0)</td></tr>
-                  <tr><td>33</td><td>GPIO 13 (PWM1)</td><td>34</td><td>Ground (GND)</td></tr>
-                  <tr><td>35</td><td>MISO1 / GPIO 19 (SPI1 Master In)</td><td>36</td><td>CE2_N / GPIO 16 (SPI1 Chip Select 2)</td></tr>
-                  <tr><td>37</td><td>GPIO 26</td><td>38</td><td>MOSI1 / GPIO 20 (SPI1 Master Out)</td></tr>
-                  <tr><td>39</td><td>Ground (GND)</td><td>40</td><td>SCLK1 / GPIO 21 (SPI1 Clock)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- RASPBERRY PI B (REV-1) -->
-    <li>
-      <a href="#" onclick="document.getElementById('id03').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Broadcom BCM2835 Revision 1</span>
-        <div class="card-inner">
-          <span class="card-title">Raspberry Pi B (Rev-1) Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id03" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id03').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of 26-pin Rev-1 header -->
-              <svg viewBox="0 0 360 80" width="100%">
-                <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">RASPBERRY PI MODEL B REV-1 (2x13 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#f59e0b" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" fill="#64748b" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: MODEL B REV-1 26-PIN INTERFACE</div>
-
-            <h3>Model B Rev-1 26-Pin Header Table (SDA0 / SCL0 configuration)</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Power Rail</td><td>2</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>3</td><td>SDA0 / GPIO 0 (I2C Data)</td><td>4</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>5</td><td>SCL0 / GPIO 1 (I2C Clock)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>GPIO 4 (GPCLK0)</td><td>8</td><td>TXD0 / GPIO 14 (UART Transmit)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>RXD0 / GPIO 15 (UART Receive)</td></tr>
-                  <tr><td>11</td><td>GPIO 17</td><td>12</td><td>GPIO 18 (PCM Clock / PWM)</td></tr>
-                  <tr><td>13</td><td>GPIO 21</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>GPIO 22</td><td>16</td><td>GPIO 23</td></tr>
-                  <tr><td>17</td><td>3.3V Output Power Rail</td><td>18</td><td>GPIO 24</td></tr>
-                  <tr><td>19</td><td>MOSI0 / GPIO 10 (SPI Master Out)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>MISO0 / GPIO 9 (SPI Master In)</td><td>22</td><td>GPIO 25</td></tr>
-                  <tr><td>23</td><td>SCLK0 / GPIO 11 (SPI Clock)</td><td>24</td><td>CE0_N / GPIO 8 (SPI Chip Select 0)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>CE1_N / GPIO 7 (SPI Chip Select 1)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- RASPBERRY PI B (REV-2) -->
-    <li>
-      <a href="#" onclick="document.getElementById('id04').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Broadcom BCM2835 Revision 2</span>
-        <div class="card-inner">
-          <span class="card-title">Raspberry Pi B (Rev-2) Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id04" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id04').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG schematic of 26-pin Rev-2 header -->
-              <svg viewBox="0 0 360 80" width="100%">
-                <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">RASPBERRY PI MODEL B REV-2 (2x13 HEADER)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#f59e0b" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" fill="#64748b" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: MODEL B REV-2 26-PIN INTERFACE</div>
-
-            <h3>Model B Rev-2 26-Pin Header Table (SDA1 / SCL1 configuration)</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Power Rail</td><td>2</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>3</td><td>SDA1 / GPIO 2 (I2C Data)</td><td>4</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>5</td><td>SCL1 / GPIO 3 (I2C Clock)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>GPIO 4 (GPCLK0)</td><td>8</td><td>TXD0 / GPIO 14 (UART Transmit)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>RXD0 / GPIO 15 (UART Receive)</td></tr>
-                  <tr><td>11</td><td>GPIO 17</td><td>12</td><td>GPIO 18 (PCM Clock / PWM)</td></tr>
-                  <tr><td>13</td><td>GPIO 27</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>GPIO 22</td><td>16</td><td>GPIO 23</td></tr>
-                  <tr><td>17</td><td>3.3V Output Power Rail</td><td>18</td><td>GPIO 24</td></tr>
-                  <tr><td>19</td><td>MOSI0 / GPIO 10 (SPI Master Out)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>MISO0 / GPIO 9 (SPI Master In)</td><td>22</td><td>GPIO 25</td></tr>
-                  <tr><td>23</td><td>SCLK0 / GPIO 11 (SPI Clock)</td><td>24</td><td>CE0_N / GPIO 8 (SPI Chip Select 0)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>CE1_N / GPIO 7 (SPI Chip Select 1)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- RASPBERRY PI B+, 2B, 3B, 3B+, 3A+, ZERO, ZERO W -->
-    <!-- These models share the identical standard 40-pin GPIO layout -->
-    <li>
-      <a href="#" onclick="document.getElementById('id05').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Broadcom Universal 40-Pin Platform</span>
-        <div class="card-inner">
-          <span class="card-title">Raspberry Pi B+, 2B, 3B, 3B+, 3A+, Zero &amp; Zero W Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id05" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id05').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG 40-Pin Header Design -->
-              <svg viewBox="0 0 520 80" width="100%">
-                <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
-                <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">RASPBERRY PI STANDARD 40-PIN HEADER (MODEL B+/2/3/ZERO)</text>
-                <g fill="#cbd5e1">
-                  <rect x="20" y="35" width="10" height="10" fill="#f59e0b" rx="1" />
-                  <circle cx="50" cy="40" r="5" />
-                  <circle cx="75" cy="40" r="5" />
-                  <circle cx="100" cy="40" r="5" />
-                  <circle cx="125" cy="40" r="5" fill="#64748b" />
-                  <circle cx="150" cy="40" r="5" />
-                  <circle cx="175" cy="40" r="5" />
-                  <circle cx="200" cy="40" r="5" />
-                  <circle cx="225" cy="40" r="5" fill="#64748b" />
-                  <circle cx="250" cy="40" r="5" />
-                  <circle cx="275" cy="40" r="5" />
-                  <circle cx="300" cy="40" r="5" />
-                  <circle cx="325" cy="40" r="5" fill="#64748b" />
-                  <circle cx="350" cy="40" r="5" />
-                  <circle cx="375" cy="40" r="5" />
-                  <circle cx="400" cy="40" r="5" />
-                  <circle cx="425" cy="40" r="5" />
-                  <circle cx="450" cy="40" r="5" />
-                  <circle cx="475" cy="40" r="5" />
-                  <circle cx="500" cy="40" r="5" fill="#64748b" />
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: STANDARD 40-PIN HEADER SPECIFICATION</div>
-
-            <h3>Standard 40-Pin GPIO Layout</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                    <th>Pin</th>
-                    <th>Signal Function</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>3.3V Output Power Rail</td><td>2</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>3</td><td>SDA1 / GPIO 2 (I2C Data)</td><td>4</td><td>5.0V Input/Output Power Rail</td></tr>
-                  <tr><td>5</td><td>SCL1 / GPIO 3 (I2C Clock)</td><td>6</td><td>Ground (GND)</td></tr>
-                  <tr><td>7</td><td>GPIO 4 (GPCLK0)</td><td>8</td><td>TXD0 / GPIO 14 (UART Transmit)</td></tr>
-                  <tr><td>9</td><td>Ground (GND)</td><td>10</td><td>RXD0 / GPIO 15 (UART Receive)</td></tr>
-                  <tr><td>11</td><td>GPIO 17</td><td>12</td><td>GPIO 18 (PCM Clock / PWM)</td></tr>
-                  <tr><td>13</td><td>GPIO 27</td><td>14</td><td>Ground (GND)</td></tr>
-                  <tr><td>15</td><td>GPIO 22</td><td>16</td><td>GPIO 23</td></tr>
-                  <tr><td>17</td><td>3.3V Output Power Rail</td><td>18</td><td>GPIO 24</td></tr>
-                  <tr><td>19</td><td>MOSI0 / GPIO 10 (SPI Master Out)</td><td>20</td><td>Ground (GND)</td></tr>
-                  <tr><td>21</td><td>MISO0 / GPIO 9 (SPI Master In)</td><td>22</td><td>GPIO 25</td></tr>
-                  <tr><td>23</td><td>SCLK0 / GPIO 11 (SPI Clock)</td><td>24</td><td>CE0_N / GPIO 8 (SPI Chip Select 0)</td></tr>
-                  <tr><td>25</td><td>Ground (GND)</td><td>26</td><td>CE1_N / GPIO 7 (SPI Chip Select 1)</td></tr>
-                  <tr><td>27</td><td>ID_SD (I2C ID EEPROM)</td><td>28</td><td>ID_SC (I2C ID EEPROM)</td></tr>
-                  <tr><td>29</td><td>GPIO 5</td><td>30</td><td>Ground (GND)</td></tr>
-                  <tr><td>31</td><td>GPIO 6</td><td>32</td><td>GPIO 12 (PWM0)</td></tr>
-                  <tr><td>33</td><td>GPIO 13 (PWM1)</td><td>34</td><td>Ground (GND)</td></tr>
-                  <tr><td>35</td><td>MISO1 / GPIO 19 (SPI1 Master In)</td><td>36</td><td>CE2_N / GPIO 16 (SPI1 Chip Select 2)</td></tr>
-                  <tr><td>37</td><td>GPIO 26</td><td>38</td><td>MOSI1 / GPIO 20 (SPI1 Master Out)</td></tr>
-                  <tr><td>39</td><td>Ground (GND)</td><td>40</td><td>SCLK1 / GPIO 21 (SPI1 Clock)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- COMPUTE MODULES (CM1, CM3, CM3+) -->
-    <li>
-      <a href="#" onclick="document.getElementById('id012').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Compute Module DDR2 SODIMM Form Factor</span>
-        <div class="card-inner">
-          <span class="card-title">Raspberry Pi Compute Modules (CM1 / CM3 / CM3+) Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id012" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id012').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG Compute Module SODIMM edge graphic -->
-              <svg viewBox="0 0 460 120" width="100%">
-                <rect x="10" y="10" width="440" height="100" rx="8" fill="#1e293b" />
-                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="12" font-weight="bold">COMPUTE MODULE SODIMM EDGE INTERFACES</text>
-                <g fill="#cbd5e1">
-                  <!-- Gold edge pins indicated -->
-                  <line x1="20" y1="50" x2="480" y2="50" stroke="#ff6a00" stroke-width="4" />
-                  <text x="25" y="70" fill="#94a3b8" font-family="Arial" font-size="9">200-PIN EDGE CONNECTOR MODULE INTERFACE</text>
-                </g>
-                <text x="25" y="95" fill="#eab308" font-family="Arial" font-size="8">REQUIRES IO CARRIER BOARDS FOR GPIO, HDMI, MIPI CSI/DSI BREAKOUTS</text>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: SODIMM COMPUTE MODULE PIN MAP</div>
-
-            <h3>Key Compute Module Subsystem Pinout Groups</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>SODIMM Pin Range</th>
-                    <th>Signal Group</th>
-                    <th>Voltage Rails / Levels</th>
-                    <th>Description &amp; Operation Bounds</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1 to 12 (Odd)</td><td>VDD_CORE</td><td>1.2V to 1.35V DC</td><td>Main GPU and Arm processor logic supply input</td></tr>
-                  <tr><td>2 to 14 (Even)</td><td>VCC_IO</td><td>1.8V to 3.3V DC</td><td>GPIO bank voltage config input rails (SD Card &amp; peripherals)</td></tr>
-                  <tr><td>15 to 45</td><td>GPIO Bank 0</td><td>Configurable (VCC_IO0)</td><td>Primary GPIO lines (GPIO 0 to GPIO 27)</td></tr>
-                  <tr><td>46 to 90</td><td>GPIO Bank 1</td><td>Configurable (VCC_IO1)</td><td>Secondary GPIO lines (GPIO 28 to GPIO 45)</td></tr>
-                  <tr><td>91 to 120</td><td>MIPI CSI Camera</td><td>Analog Differential</td><td>MIPI CSI Dual camera ports (CSI0 and CSI1 lanes)</td></tr>
-                  <tr><td>121 to 150</td><td>MIPI DSI Display</td><td>Analog Differential</td><td>MIPI DSI Dual display ports (DSI0 and DSI1 lanes)</td></tr>
-                  <tr><td>151 to 180</td><td>HDMI / Composite</td><td>Digital / Analog Out</td><td>HDMI TMDS differential pairs and analog TV out lines</td></tr>
-                  <tr><td>181 to 200</td><td>USB / Control</td><td>USB Differential</td><td>Native USB Host/OTG transceiver lines and system reset</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <!-- RASPBERRY PI CAMERA V2 -->
-    <li>
-      <a href="#" onclick="document.getElementById('id015').style.display='block'; return false;" class="pinout-item-card">
-        <span class="card-tag">Sony IMX219 15-Pin CSI accessory</span>
-        <div class="card-inner">
-          <span class="card-title">Raspberry Pi Camera V2 Pinout</span>
-          <span class="card-arrow">&#x2192;</span>
-        </div>
-      </a>
-      <div id="id015" class="w3-modal">
-        <div class="w3-modal-content">
-          <button class="mid" onclick="document.getElementById('id015').style.display='none'">X</button>
-          <div class="table1">
-            <div class="diagram-container">
-              <!-- SVG Camera ribbon layout -->
-              <svg viewBox="0 0 320 120" width="100%">
-                <rect x="10" y="10" width="300" height="100" rx="8" fill="#1e293b" />
-                <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">15-PIN FPC CAMERA CONNECTOR</text>
-                <g fill="#10b981">
-                  <!-- Ribbon segments -->
-                  <line x1="25" y1="50" x2="295" y2="50" stroke="#00ff00" stroke-width="4" />
-                  <text x="25" y="70" fill="#94a3b8" font-family="Arial" font-size="9">CSI-2 MIPI SERIAL INTERFACE INTERCONNECTS</text>
-                </g>
-              </svg>
-            </div>
-            <div class="img-caption">DIAGRAM: Camera 15-Pin Ribbon Connector</div>
-
-            <h3>CSI-2 15-Pin Ribbon Header Table</h3>
-            <div class="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pin</th>
-                    <th>Signal Name</th>
-                    <th>Type</th>
-                    <th>Description &amp; Operation Bounds</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>GND</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>2</td><td>CAM_D0_N</td><td>Differential Input</td><td>CSI Data Lane 0 Negative (-) differential signal</td></tr>
-                  <tr><td>3</td><td>CAM_D0_P</td><td>Differential Input</td><td>CSI Data Lane 0 Positive (+) differential signal</td></tr>
-                  <tr><td>4</td><td>GND</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>5</td><td>CAM_D1_N</td><td>Differential Input</td><td>CSI Data Lane 1 Negative (-) differential signal</td></tr>
-                  <tr><td>6</td><td>CAM_D1_P</td><td>Differential Input</td><td>CSI Data Lane 1 Positive (+) differential signal</td></tr>
-                  <tr><td>7</td><td>GND</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>8</td><td>CAM_CK_N</td><td>Differential Input</td><td>CSI Clock Lane Negative (-) differential signal</td></tr>
-                  <tr><td>9</td><td>CAM_CK_P</td><td>Differential Input</td><td>CSI Clock Lane Positive (+) differential signal</td></tr>
-                  <tr><td>10</td><td>GND</td><td>Power</td><td>Common system ground reference</td></tr>
-                  <tr><td>11</td><td>CAM_IO0 / EN</td><td>Output</td><td>Camera Enable power control pinout line</td></tr>
-                  <tr><td>12</td><td>CAM_IO1 / LED</td><td>Output</td><td>Camera LED driver output line (Typically unused on V2)</td></tr>
-                  <tr><td>13</td><td>SDA_CAM</td><td>I/O</td><td>Camera control I2C Data bus line</td></tr>
-                  <tr><td>14</td><td>SCL_CAM</td><td>Output</td><td>Camera control I2C Clock bus line</td></tr>
-                  <tr><td>15</td><td>3.3V</td><td>Power</td><td>3.3V regulated power rail supply to camera module</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-
-  </ul>
-
-  <!-- Educational & SEO Sections -->
+  <!-- Input Parameters Specification -->
   <section class="infoBox">
     <h2>Input Parameters Specification</h2>
     <div class="paramGrid">
-      <div class="paramItem"><strong>SBC Quick Filter</strong>Locate individual board layouts using the top dynamic search utility.</div>
-      <div class="paramItem"><strong>VCC_IO Compute Configurations</strong>Compute module bank logic thresholds can be configured dynamically to 1.8V, 2.5V, or 3.3V.</div>
-      <div class="paramItem"><strong>CSI MIPI Signal Pairs</strong>High-speed camera connections route raw sensor data over matched impedance differential clock and data lanes.</div>
-      <div class="paramItem"><strong>Reset Pin Configuration</strong>Active-Low hardware reset line includes an internal 10k pull-up resistor to the 3.3V rail.</div>
+      <div class="paramItem">
+        <strong>VCC_IO Compute Configurations</strong>
+        Compute module bank logic thresholds can be configured dynamically to 1.8V, 2.5V, or 3.3V.
+      </div>
+      <div class="paramItem">
+        <strong>CSI MIPI Signal Pairs</strong>
+        High-speed camera connections route raw sensor data over matched impedance differential clock and data lanes.
+      </div>
+      <div class="paramItem">
+        <strong>Pin/Lead Multiplexing</strong>
+        Broadcom SoC register configurations designed to map physical pins dynamically to UART, SPI, I2C, or GPIO roles.
+      </div>
+      <div class="paramItem">
+        <strong>Power Sourcing Schemes</strong>
+        Power routing configurations allocating load paths across USB, battery inputs, and regulated pin rails.
+      </div>
     </div>
   </section>
 
+  <!-- Practical Operational Examples -->
   <section class="infoBox">
     <h2>Practical Operational Examples</h2>
     <div class="exampleGrid">
@@ -787,24 +439,38 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Diagrams & Theory -->
   <section class="infoBox">
     <h2>Logic and Power Rail Theory</h2>
     <p>Raspberry Pi platforms utilize Broadcom BCM series SoC architectures. Because these modern silicon chips feature sub-micron processes, they rely on clean, stabilized 3.3V CMOS logic signaling. Applying direct 5V input lines to these delicate ports will compromise internal chip junctions and lead to complete processor failure.</p>
     <div class="aboutNote">Tip: Always trace and secure your common ground (GND) connections first to protect high-frequency SPI and I2C lines from static discharge.</div>
   </section>
 
+  <!-- Formulas & Mathematical Logic -->
   <section class="infoBox">
-    <h2>Formulas & Mathematical Logic</h2>
+    <h2>Formulas &amp; Mathematical Logic</h2>
     <div class="formula">Series Current Limiting: R_series = (3.3V - V_led) / I_target (Keep below 4-8mA per pin)</div>
     <div class="formula">I2C Pull-Up Range: R_min = (3.3V - V_low) / I_sink, preventing overcurrent drain on open-drain pins.</div>
     <div class="formula">CSI Differential Match: Coaxial FPC CSI traces must maintain a characteristic differential impedance of 100 Ohms to minimize signal reflection.</div>
   </section>
 
+  <!-- Step-by-Step Example -->
+  <section class="infoBox">
+    <h2>Step-by-Step Selection Walkthrough</h2>
+    <div class="aboutSteps">
+      <div class="aboutStep">Choose the target Raspberry Pi board using the select menu at the top of the page.</div>
+      <div class="aboutStep">Review the updated standard card showing the board's class and primary SoC chipset.</div>
+      <div class="aboutStep">Study the customized 2D vector layout showing board structure and pin headers.</div>
+      <div class="aboutStep">Consult the exhaustive connection tables below the diagram to locate specific peripheral pin assignments.</div>
+    </div>
+  </section>
+
+  <!-- About This Database -->
   <section class="infoBox">
     <h2>About This Reference Guide</h2>
     <div class="aboutLead">
-      <strong>Quick access to standard Raspberry Pi development board layouts.</strong>
-      <p>This reference consolidates layout configurations, logic states, and physical system interfaces across the Raspberry Pi family.</p>
+      <strong>Your direct lookup path for Raspberry Pi development boards and interfaces.</strong>
+      <p>This reference index consolidates pin configurations, expansion header maps, and line assignments for the Raspberry Pi family.</p>
     </div>
     <p>Finding accurate pinout layouts is crucial for embedded designers, system architects, IoT engineers, and DIY hobbyists. This directory documents active signal paths to help prevent wiring errors, serial protocol failures, and board damage.</p>
     <p>Always verify pinout configurations with a digital multimeter before powering up custom circuits or shield adapters.</p>
@@ -816,26 +482,29 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
     </div>
   </section>
 
+  <!-- Frequently Asked Questions -->
   <section class="infoBox">
     <h2>Frequently Asked Questions</h2>
-    <h3><strong>1. Are Raspberry Pi GPIO pins 5V tolerant?</strong></h3>
+    
+    <h3>1. <strong>Are Raspberry Pi GPIO pins 5V tolerant?</strong></h3>
     <p>No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure.</p>
 
-    <h3><strong>2. What is the default baud rate of the serial console?</strong></h3>
+    <h3>2. <strong>What is the default baud rate of the serial console?</strong></h3>
     <p>By default, Raspberry Pi boards configure their main UART debug terminal (TXD0 / RXD0) to a baud rate of 115200.</p>
 
-    <h3><strong>3. Can I power the Raspberry Pi directly using the 5V pins?</strong></h3>
+    <h3>3. <strong>Can I power the Raspberry Pi directly using the 5V pins?</strong></h3>
     <p>Yes, you can apply regulated 5.0V directly to pins 2 or 4 on the header. However, this bypasses the on-board input protection fuse, so ensure your power source is regulated and stable.</p>
 
-    <h3><strong>4. Why do some SPI and I2C channels fail when a camera is connected?</strong></h3>
+    <h3>4. <strong>Why do some SPI and I2C channels fail when a camera is connected?</strong></h3>
     <p>High-density boards may share physical SoC traces between certain GPIO pin groups and the CSI camera connector, disabling these pins when the camera is active.</p>
 
-    <h3><strong>5. How do I reset search filters in this tool?</strong></h3>
+    <h3>5. <strong>How do I reset search filters in this tool?</strong></h3>
     <p>Clear any text from the search box at the top of the interface to restore the full list of pinout cards.</p>
   </section>
 
+  <!-- Related Electronics Tools -->
   <section class="infoBox">
-    <h2>Related Calculators</h2>
+    <h2>Related Electronics Tools</h2>
     <div class="linkGrid">
       <div class="linkCard"><strong>Transformer Turns Ratio Calculator</strong>Identify primary and secondary system winding calculations.</div>
       <div class="linkCard"><strong>Inductor Energy Storage Calculator</strong>Measure stored energy metrics inside transformer components.</div>
@@ -846,58 +515,454 @@ hr {border:none;border-top:1px solid #e5e7eb;margin:16px 0}
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-function myFunction() {
-    var input, filter, ul, li, a, i, txtValue;
-    input = document.getElementById("myInput");
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("myUL");
-    li = ul.getElementsByTagName("li");
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
-        }
-    }
-}
-
-// Close modals when user clicks outside of them
-window.onclick = function(event) {
-  if (event.target.classList.contains('w3-modal')) {
-    event.target.style.display = "none";
+// Master Raspberry Pi IoT Development Boards Pinouts Database
+const packageDetails = [
+  {
+    name: "Raspberry Pi A / B Rev-1",
+    tag: "Broadcom BCM2835 Legacy",
+    subtitle: "Raspberry Pi Model A / B Rev-1 26-Pin Pinout",
+    svgs: [
+      {
+        label: "Model A / B Rev-1 Layout",
+        html: `
+          <svg viewBox="0 0 360 80" width="100%">
+            <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
+            <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">RASPBERRY PI MODEL A (2x13 HEADER)</text>
+            <g fill="#cbd5e1">
+              <rect x="20" y="35" width="10" height="10" fill="#f59e0b" rx="1" />
+              <circle cx="50" cy="40" r="5" />
+              <circle cx="75" cy="40" r="5" />
+              <circle cx="100" cy="40" r="5" />
+              <circle cx="125" cy="40" r="5" fill="#64748b" />
+              <circle cx="150" cy="40" r="5" />
+              <circle cx="175" cy="40" r="5" />
+              <circle cx="200" cy="40" r="5" />
+              <circle cx="225" cy="40" r="5" fill="#64748b" />
+              <circle cx="250" cy="40" r="5" />
+              <circle cx="275" cy="40" r="5" />
+              <circle cx="300" cy="40" r="5" />
+              <circle cx="325" cy="40" r="5" fill="#64748b" />
+            </g>
+            <g fill="#cbd5e1">
+              <circle cx="25" cy="55" r="5" fill="#ef4444" />
+              <circle cx="50" cy="55" r="5" fill="#ef4444" />
+              <circle cx="75" cy="55" r="5" fill="#64748b" />
+              <circle cx="100" cy="55" r="5" />
+              <circle cx="125" cy="55" r="5" />
+              <circle cx="150" cy="55" r="5" />
+              <circle cx="175" cy="55" r="5" fill="#64748b" />
+              <circle cx="200" cy="55" r="5" />
+              <circle cx="225" cy="55" r="5" />
+              <circle cx="250" cy="55" r="5" />
+              <circle cx="275" cy="55" r="5" />
+              <circle cx="300" cy="55" r="5" />
+              <circle cx="325" cy="55" r="5" />
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Main 26-Pin GPIO Header Table",
+        columns: ["Pin", "Signal Function", "Pin", "Signal Function"],
+        rows: [
+          ["1", "3.3V Output Power Rail", "2", "5.0V Input/Output Power Rail"],
+          ["3", "SDA0 / GPIO 0 (I2C Data)", "4", "5.0V Input/Output Power Rail"],
+          ["5", "SCL0 / GPIO 1 (I2C Clock)", "6", "Ground (GND)"],
+          ["7", "GPIO 4 (GPCLK0)", "8", "TXD0 / GPIO 14 (UART Transmit)"],
+          ["9", "Ground (GND)", "10", "RXD0 / GPIO 15 (UART Receive)"],
+          ["11", "GPIO 17", "12", "GPIO 18 (PCM Clock / PWM)"],
+          ["13", "GPIO 21", "14", "Ground (GND)"],
+          ["15", "GPIO 22", "16", "GPIO 23"],
+          ["17", "3.3V Output Power Rail", "18", "GPIO 24"],
+          ["19", "MOSI0 / GPIO 10 (SPI Master Out)", "20", "Ground (GND)"],
+          ["21", "MISO0 / GPIO 9 (SPI Master In)", "22", "GPIO 25"],
+          ["23", "SCLK0 / GPIO 11 (SPI Clock)", "24", "CE0_N / GPIO 8 (SPI Chip Select 0)"],
+          ["25", "Ground (GND)", "26", "CE1_N / GPIO 7 (SPI Chip Select 1)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Raspberry Pi B Rev-2",
+    tag: "Broadcom BCM2835 Revision 2",
+    subtitle: "Raspberry Pi Model B Rev-2 26-Pin Pinout (SDA1/SCL1)",
+    svgs: [
+      {
+        label: "Model B Rev-2 Layout",
+        html: `
+          <svg viewBox="0 0 360 80" width="100%">
+            <rect x="5" y="5" width="350" height="70" rx="6" fill="#1e293b" />
+            <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">RASPBERRY PI MODEL B REV-2 (2x13 HEADER)</text>
+            <g fill="#cbd5e1">
+              <rect x="20" y="35" width="10" height="10" fill="#f59e0b" rx="1" />
+              <circle cx="50" cy="40" r="5" />
+              <circle cx="75" cy="40" r="5" />
+              <circle cx="100" cy="40" r="5" />
+              <circle cx="125" cy="40" r="5" fill="#64748b" />
+              <circle cx="150" cy="40" r="5" />
+              <circle cx="175" cy="40" r="5" />
+              <circle cx="200" cy="40" r="5" />
+              <circle cx="225" cy="40" r="5" fill="#64748b" />
+              <circle cx="250" cy="40" r="5" />
+              <circle cx="275" cy="40" r="5" />
+              <circle cx="300" cy="40" r="5" />
+              <circle cx="325" cy="40" r="5" fill="#64748b" />
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Model B Rev-2 26-Pin Header Table (SDA1 / SCL1 configuration)",
+        columns: ["Pin", "Signal Function", "Pin", "Signal Function"],
+        rows: [
+          ["1", "3.3V Output Power Rail", "2", "5.0V Input/Output Power Rail"],
+          ["3", "SDA1 / GPIO 2 (I2C Data)", "4", "5.0V Input/Output Power Rail"],
+          ["5", "SCL1 / GPIO 3 (I2C Clock)", "6", "Ground (GND)"],
+          ["7", "GPIO 4 (GPCLK0)", "8", "TXD0 / GPIO 14 (UART Transmit)"],
+          ["9", "Ground (GND)", "10", "RXD0 / GPIO 15 (UART Receive)"],
+          ["11", "GPIO 17", "12", "GPIO 18 (PCM Clock / PWM)"],
+          ["13", "GPIO 27", "14", "Ground (GND)"],
+          ["15", "GPIO 22", "16", "GPIO 23"],
+          ["17", "3.3V Output Power Rail", "18", "GPIO 24"],
+          ["19", "MOSI0 / GPIO 10 (SPI Master Out)", "20", "Ground (GND)"],
+          ["21", "MISO0 / GPIO 9 (SPI Master In)", "22", "GPIO 25"],
+          ["23", "SCLK0 / GPIO 11 (SPI Clock)", "24", "CE0_N / GPIO 8 (SPI Chip Select 0)"],
+          ["25", "Ground (GND)", "26", "CE1_N / GPIO 7 (SPI Chip Select 1)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Raspberry Pi B+, 2B, 3B, 3B+, 3A+, Zero & Zero W",
+    tag: "Broadcom Universal 40-Pin Platform",
+    subtitle: "Standard 40-Pin GPIO Layout",
+    svgs: [
+      {
+        label: "Standard 40-Pin Header Layout",
+        html: `
+          <svg viewBox="0 0 520 80" width="100%">
+            <rect x="5" y="5" width="510" height="70" rx="6" fill="#1e293b" />
+            <text x="20" y="25" fill="#f8fafc" font-family="Arial" font-size="10" font-weight="bold">RASPBERRY PI STANDARD 40-PIN HEADER (MODEL B+/2/3/ZERO)</text>
+            <g fill="#cbd5e1">
+              <rect x="20" y="35" width="10" height="10" fill="#f59e0b" rx="1" />
+              <circle cx="50" cy="40" r="5" />
+              <circle cx="75" cy="40" r="5" />
+              <circle cx="100" cy="40" r="5" />
+              <circle cx="125" cy="40" r="5" fill="#64748b" />
+              <circle cx="150" cy="40" r="5" />
+              <circle cx="175" cy="40" r="5" />
+              <circle cx="200" cy="40" r="5" />
+              <circle cx="225" cy="40" r="5" fill="#64748b" />
+              <circle cx="250" cy="40" r="5" />
+              <circle cx="275" cy="40" r="5" />
+              <circle cx="300" cy="40" r="5" />
+              <circle cx="325" cy="40" r="5" fill="#64748b" />
+              <circle cx="350" cy="40" r="5" />
+              <circle cx="375" cy="40" r="5" />
+              <circle cx="400" cy="40" r="5" />
+              <circle cx="425" cy="40" r="5" />
+              <circle cx="450" cy="40" r="5" />
+              <circle cx="475" cy="40" r="5" />
+              <circle cx="500" cy="40" r="5" fill="#64748b" />
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Standard 40-Pin GPIO Layout",
+        columns: ["Pin", "Signal Function", "Pin", "Signal Function"],
+        rows: [
+          ["1", "3.3V Output Power Rail", "2", "5.0V Input/Output Power Rail"],
+          ["3", "SDA1 / GPIO 2 (I2C Data)", "4", "5.0V Input/Output Power Rail"],
+          ["5", "SCL1 / GPIO 3 (I2C Clock)", "6", "Ground (GND)"],
+          ["7", "GPIO 4 (GPCLK0)", "8", "TXD0 / GPIO 14 (UART Transmit)"],
+          ["9", "Ground (GND)", "10", "RXD0 / GPIO 15 (UART Receive)"],
+          ["11", "GPIO 17", "12", "GPIO 18 (PCM Clock / PWM)"],
+          ["13", "GPIO 27", "14", "Ground (GND)"],
+          ["15", "GPIO 22", "16", "GPIO 23"],
+          ["17", "3.3V Output Power Rail", "18", "GPIO 24"],
+          ["19", "MOSI0 / GPIO 10 (SPI Master Out)", "20", "Ground (GND)"],
+          ["21", "MISO0 / GPIO 9 (SPI Master In)", "22", "GPIO 25"],
+          ["23", "SCLK0 / GPIO 11 (SPI Clock)", "24", "CE0_N / GPIO 8 (SPI Chip Select 0)"],
+          ["25", "Ground (GND)", "26", "CE1_N / GPIO 7 (SPI Chip Select 1)"],
+          ["27", "ID_SD (I2C ID EEPROM)", "28", "ID_SC (I2C ID EEPROM)"],
+          ["29", "GPIO 5", "30", "Ground (GND)"],
+          ["31", "GPIO 6", "32", "GPIO 12 (PWM0)"],
+          ["33", "GPIO 13 (PWM1)", "34", "Ground (GND)"],
+          ["35", "MISO1 / GPIO 19 (SPI1 Master In)", "36", "CE2_N / GPIO 16 (SPI1 Chip Select 2)"],
+          ["37", "GPIO 26", "38", "MOSI1 / GPIO 20 (SPI1 Master Out)"],
+          ["39", "Ground (GND)", "40", "SCLK1 / GPIO 21 (SPI1 Clock)"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Compute Modules (CM1 / CM3 / CM3+)",
+    tag: "Compute Module DDR2 SODIMM Form Factor",
+    subtitle: "Compute Module SODIMM Edge Interfaces Pinout",
+    svgs: [
+      {
+        label: "SODIMM Edge Layout",
+        html: `
+          <svg viewBox="0 0 460 120" width="100%">
+            <rect x="10" y="10" width="440" height="100" rx="8" fill="#1e293b" />
+            <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="12" font-weight="bold">COMPUTE MODULE SODIMM EDGE INTERFACES</text>
+            <g fill="#cbd5e1">
+              <line x1="20" y1="50" x2="480" y2="50" stroke="#ff6a00" stroke-width="4" />
+              <text x="25" y="70" fill="#94a3b8" font-family="Arial" font-size="9">200-PIN EDGE CONNECTOR MODULE INTERFACE</text>
+            </g>
+            <text x="25" y="95" fill="#eab308" font-family="Arial" font-size="8">REQUIRES IO CARRIER BOARDS FOR GPIO, HDMI, MIPI CSI/DSI BREAKOUTS</text>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "Key Compute Module Subsystem Pinout Groups",
+        columns: ["SODIMM Pin Range", "Signal Group", "Voltage Rails / Levels", "Description & Operation Bounds"],
+        rows: [
+          ["1 to 12 (Odd)", "VDD_CORE", "1.2V to 1.35V DC", "Main GPU and Arm processor logic supply input"],
+          ["2 to 14 (Even)", "VCC_IO", "1.8V to 3.3V DC", "GPIO bank voltage config input rails (SD Card & peripherals)"],
+          ["15 to 45", "GPIO Bank 0", "Configurable (VCC_IO0)", "Primary GPIO lines (GPIO 0 to GPIO 27)"],
+          ["46 to 90", "GPIO Bank 1", "Configurable (VCC_IO1)", "Secondary GPIO lines (GPIO 28 to GPIO 45)"],
+          ["91 to 120", "MIPI CSI Camera", "Analog Differential", "MIPI CSI Dual camera ports (CSI0 and CSI1 lanes)"],
+          ["121 to 150", "MIPI DSI Display", "Analog Differential", "MIPI DSI Dual display ports (DSI0 and DSI1 lanes)"],
+          ["151 to 180", "HDMI / Composite", "Digital / Analog Out", "HDMI TMDS differential pairs and analog TV out lines"],
+          ["181 to 200", "USB / Control", "USB Differential", "Native USB Host/OTG transceiver lines and system reset"]
+        ]
+      }
+    ]
+  },
+  {
+    name: "Raspberry Pi Camera V2",
+    tag: "Sony IMX219 15-Pin CSI accessory",
+    subtitle: "Sony IMX219 15-Pin CSI camera ribbon Pinout",
+    svgs: [
+      {
+        label: "15-Pin FPC Camera Connector Layout",
+        html: `
+          <svg viewBox="0 0 320 120" width="100%">
+            <rect x="10" y="10" width="300" height="100" rx="8" fill="#1e293b" />
+            <text x="25" y="32" fill="#f8fafc" font-family="Arial" font-size="11" font-weight="bold">15-PIN FPC CAMERA CONNECTOR</text>
+            <g fill="#10b981">
+              <line x1="25" y1="50" x2="295" y2="50" stroke="#00ff00" stroke-width="4" />
+              <text x="25" y="70" fill="#94a3b8" font-family="Arial" font-size="9">CSI-2 MIPI SERIAL INTERFACE INTERCONNECTS</text>
+            </g>
+          </svg>
+        `
+      }
+    ],
+    tables: [
+      {
+        header: "CSI-2 15-Pin Ribbon Header Table",
+        columns: ["Pin", "Signal Name", "Type", "Description & Operation Bounds"],
+        rows: [
+          ["1", "GND", "Power", "Common system ground reference"],
+          ["2", "CAM_D0_N", "Differential Input", "CSI Data Lane 0 Negative (-) differential signal"],
+          ["3", "CAM_D0_P", "Differential Input", "CSI Data Lane 0 Positive (+) differential signal"],
+          ["4", "GND", "Power", "Common system ground reference"],
+          ["5", "CAM_D1_N", "Differential Input", "CSI Data Lane 1 Negative (-) differential signal"],
+          ["6", "CAM_D1_P", "Differential Input", "CSI Data Lane 1 Positive (+) differential signal"],
+          ["7", "GND", "Power", "Common system ground reference"],
+          ["8", "CAM_CK_N", "Differential Input", "CSI Clock Lane Negative (-) differential signal"],
+          ["9", "CAM_CK_P", "Differential Input", "CSI Clock Lane Positive (+) differential signal"],
+          ["10", "GND", "Power", "Common system ground reference"],
+          ["11", "CAM_IO0 / EN", "Output", "Camera Enable power control pinout line"],
+          ["12", "CAM_IO1 / LED", "Output", "Camera LED driver output line (Typically unused on V2)"],
+          ["13", "SDA_CAM", "I/O", "Camera control I2C Data bus line"],
+          ["14", "SCL_CAM", "Output", "Camera control I2C Clock bus line"],
+          ["15", "3.3V", "Power", "3.3V regulated power rail supply to camera module"]
+        ]
+      }
+    ]
   }
+];
+
+// Initialize Dropdown Selector
+const selector = document.getElementById("connectorSelect");
+packageDetails.forEach((conn, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = conn.name;
+  selector.appendChild(option);
+});
+
+// Update display with selected board parameters
+function updateConnectorDetails(indexVal) {
+  const idx = parseInt(indexVal);
+  if (isNaN(idx) || idx < 0 || idx >= packageDetails.length) return;
+  
+  const conn = packageDetails[idx];
+  
+  // Set Header block info
+  document.getElementById("connectorTag").innerText = conn.tag;
+  document.getElementById("connectorName").innerText = conn.name;
+  document.getElementById("connectorSubtitle").innerText = conn.subtitle;
+  
+  // Render corresponding SVGs inside diagram container
+  const diagramContainer = document.getElementById("diagramContainer");
+  diagramContainer.innerHTML = "";
+  
+  conn.svgs.forEach(svgData => {
+    const vectorBox = document.createElement("div");
+    vectorBox.className = "vector-box";
+    vectorBox.setAttribute("onclick", "zoomSvg(this.innerHTML)");
+    vectorBox.innerHTML = svgData.html + `<div class="vector-label">${svgData.label}</div>`;
+    diagramContainer.appendChild(vectorBox);
+  });
+  
+  // Render corresponding size tables
+  const tablesContainer = document.getElementById("tablesContainer");
+  tablesContainer.innerHTML = "";
+  
+  conn.tables.forEach(tableData => {
+    // Create Table Element
+    const table = document.createElement("table");
+    table.className = "pinout-table";
+    
+    // Create Header markup
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th colspan="${tableData.columns.length}" class="table-section-header">${tableData.header}</th>
+        </tr>
+        <tr>
+    `;
+    tableData.columns.forEach(colName => {
+      headerHtml += `<th>${colName}</th>`;
+    });
+    headerHtml += `
+        </tr>
+      </thead>
+    `;
+    
+    // Create Body markup
+    let bodyHtml = "<tbody>";
+    tableData.rows.forEach(rowCells => {
+      bodyHtml += "<tr>";
+      rowCells.forEach(cellText => {
+        bodyHtml += `<td>${cellText}</td>`;
+      });
+      bodyHtml += "</tr>";
+    });
+    bodyHtml += "</tbody>";
+    
+    table.innerHTML = headerHtml + bodyHtml;
+    tablesContainer.appendChild(table);
+  });
+}
+
+// Lightbox modal enlarger for dynamic SVG diagrams
+function zoomSvg(svgContent) {
+  const overlay = document.createElement('div');
+  overlay.id = 'svg-zoom-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+  overlay.style.zIndex = '20000';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  
+  // Close cross indicator inside lightbox
+  const closeIndicator = document.createElement('div');
+  closeIndicator.innerHTML = '&times;';
+  closeIndicator.style.position = 'fixed';
+  closeIndicator.style.top = '24px';
+  closeIndicator.style.right = '24px';
+  closeIndicator.style.fontSize = '40px';
+  closeIndicator.style.fontWeight = 'bold';
+  closeIndicator.style.color = '#fff';
+  closeIndicator.style.cursor = 'pointer';
+  overlay.appendChild(closeIndicator);
+
+  // Scale up vector art cleanly inside container
+  const container = document.createElement('div');
+  container.style.width = '90%';
+  container.style.maxWidth = '500px';
+  container.style.maxHeight = '80vh';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.background = '#fff';
+  container.style.padding = '24px';
+  container.style.borderRadius = '16px';
+  
+  // Strip out any nested labels for cleaner presentation in modal
+  let cleanedSvg = svgContent.split('<div class="vector-label"')[0];
+  container.innerHTML = cleanedSvg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"');
+  overlay.appendChild(container);
+  
+  const closeOverlay = function() {
+    overlay.remove();
+    document.body.removeEventListener('keyup', escHandler);
+  };
+  
+  overlay.onclick = closeOverlay;
+  
+  const escHandler = function(e) {
+    if (e.key === 'Escape') {
+      closeOverlay();
+    }
+  };
+  document.body.addEventListener('keyup', escHandler);
+  document.body.appendChild(overlay);
+}
+
+// Initial page setup
+window.onload = function() {
+  const defaultIdx = 2; // Load standard 40-pin by default
+  selector.value = defaultIdx;
+  updateConnectorDetails(defaultIdx);
+};
+</script>
+
+<!-- SEO Structured JSON-LD Schemas -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Are Raspberry Pi GPIO pins 5V tolerant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the default baud rate of the serial console?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "By default, Raspberry Pi boards configure their main UART debug terminal (TXD0 / RXD0) to a baud rate of 115200."
+      }
+    }
+  ]
 }
 </script>
 
 <script type="application/ld+json">
 {
-"@context":"https://schema.org",
-"@type":"FAQPage",
-"publisher":{"@type":"Organization","name":"CalcBoy","url":"https://calcboy.com"},
-"mainEntity":[
-{"@type":"Question","name":"1. Are Raspberry Pi GPIO pins 5V tolerant?","acceptedAnswer":{"@type":"Answer","text":"No, the logic pins operate strictly at a 3.3V threshold. Exposing any GPIO, SPI, or UART pins to a 5V logic source without a level shifter can cause immediate hardware failure."}},
-{"@type":"Question","name":"2. What is the default baud rate of the serial console?","acceptedAnswer":{"@type":"Answer","text":"By default, Raspberry Pi boards configure their main UART debug terminal (TXD0 / RXD0) to a baud rate of 115200."}},
-{"@type":"Question","name":"3. Can I power the Raspberry Pi directly using the 5V pins?","acceptedAnswer":{"@type":"Answer","text":"Yes, you can apply regulated 5.0V directly to pins 2 or 4 on the header. However, this bypasses the on-board input protection fuse, so ensure your power source is regulated and stable."}},
-{"@type":"Question","name":"4. Why do some SPI and I2C channels fail when a camera is connected?","acceptedAnswer":{"@type":"Answer","text":"High-density boards may share physical SoC traces between certain GPIO pin groups and the CSI camera connector, disabling these pins when the camera is active."}},
-{"@type":"Question","name":"5. How do I reset search filters in this tool?","acceptedAnswer":{"@type":"Answer","text":"Clear any text from the search box at the top of the interface to restore the full list of pinout cards."}}
-]
-}
-</script>
-
-<script type="application/ld+json">
-{
-"@context":"https://schema.org",
-"@type":"BreadcrumbList",
-"itemListElement":[
-{"@type":"ListItem","position":1,"name":"CalcBoy","item":"https://calcboy.com/"},
-{"@type":"ListItem","position":2,"name":"Electronics Calculators","item":"https://calcboy.com/category/electronics-calculators/"},
-{"@type":"ListItem","position":3,"name":"Raspberry Pi GPIO Pinouts and Hardware Reference Guide","item":"https://calcboy.com/tool/raspberry-pi-gpio-pinouts-and-hardware-reference-guide"}
-]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "CalcBoy", "item": "https://calcboy.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electronics Tools", "item": "https://calcboy.com/category/electronics-calculators/" },
+    { "@type": "ListItem", "position": 3, "name": "Raspberry Pi GPIO Pinouts and Hardware Reference Guide", "item": "https://calcboy.com/tool/raspberry-pi-gpio-pinouts-and-hardware-reference-guide" }
+  ]
 }
 </script>
 
