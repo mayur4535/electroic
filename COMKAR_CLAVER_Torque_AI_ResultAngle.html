@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COMKAR Reference Learning Torque Calculator</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#64748b;--line:#dbe3ee;--orange:#f97316;--blue:#2563eb;--green:#15803d;--red:#b91c1c;--purple:#6d28d9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--ink);padding:16px}
+.wrap{max-width:800px;margin:auto}.hero{background:linear-gradient(135deg,#172554,#1d4ed8);color:#fff;border-radius:18px;padding:22px;margin-bottom:16px}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:18px;margin:0 0 14px}.hero p{margin:0;color:#dbeafe;line-height:1.5}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 5px 18px #0f172a0a}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+label{display:block;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:6px}
+input,select{width:100%;min-width:0;height:43px;border:1px solid #cbd5e1;border-radius:9px;padding:9px 10px;font-size:15px;background:#fff;color:var(--ink)}
+.hint,.note{font-size:13px;color:#475569;line-height:1.55}.hint{color:var(--muted);margin-top:6px}
+.btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}button{border:0;border-radius:10px;padding:12px 14px;font-weight:700;font-size:14px;cursor:pointer}
+.primary{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff}.blue{background:#2563eb;color:#fff}.purple{background:#6d28d9;color:#fff}.secondary{background:#e2e8f0;color:#1e293b}.danger{background:#fee2e2;color:#991b1b}
+.result{border:1px solid #bfdbfe;background:#eff6ff;border-radius:13px;padding:15px;margin-top:14px}.ai{border-color:#c4b5fd;background:#f5f3ff}
+.big{font-size:30px;font-weight:800;color:#1d4ed8}.status{font-weight:700;margin-top:6px}.good{color:var(--green)}.warn{color:#a16207}.bad{color:var(--red)}
+.mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px}.stat small{display:block;color:var(--muted);margin-bottom:5px}.stat strong{font-size:16px;overflow-wrap:anywhere}
+.warning{border-left:4px solid #f59e0b;background:#fffbeb;padding:12px;border-radius:8px;font-size:13px;line-height:1.5}
+.checkline{display:flex;align-items:flex-start;gap:9px;margin-top:12px;font-size:13px;line-height:1.5}.checkline input{width:18px;height:18px;flex:0 0 18px;margin-top:1px}
+.count{font-size:25px;font-weight:800;color:#6d28d9}.refrow{border-top:1px solid var(--line);padding:9px 0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:8px}
+@media(max-width:580px){body{padding:9px}.hero{padding:17px}.card{padding:13px}h1{font-size:21px}.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}.mini{grid-template-columns:1fr}.big{font-size:27px}}
+
+.authbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.auth-panel{border:1px solid #c7d2fe;background:#eef2ff;border-radius:12px;padding:14px;margin-bottom:14px}
+.settings-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;background:#172554;color:#fff;padding:15px 17px;margin:0 0 12px;border-radius:12px}.settings-panel{display:none}.ref-card{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:#fbfdff}.ref-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.ref-actions button{padding:9px 11px}.edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.edit-grid input{height:38px;font-size:14px}.ref-edit{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}.tiny{font-size:11px;color:var(--muted)}
+.auth-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(max-width:580px){.auth-grid{grid-template-columns:1fr}}
+
+/* App-style splash and right-side navigation drawer */
+body{padding:0}
+.wrap{max-width:900px;padding:12px}
+.app-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#172554;color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.app-brand{font-weight:800;font-size:16px}
+.menu-btn{background:transparent;color:#fff;border:1px solid #64748b;font-size:24px;padding:5px 12px;line-height:1.1}
+#splashScreen{position:fixed;inset:0;z-index:1000;background:linear-gradient(145deg,#0f172a,#1d4ed8 70%,#2563eb);display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
+.splash-inner{width:100%;max-width:440px;color:white}
+.splash-logo{width:72px;height:72px;border-radius:22px;background:#fff;color:#1d4ed8;display:grid;place-items:center;font-size:30px;font-weight:900;margin:0 auto 18px;box-shadow:0 10px 30px #0003}
+.splash-title{text-align:center;font-size:28px;font-weight:800;margin:0 0 8px}
+.splash-subtitle{text-align:center;color:#dbeafe;line-height:1.5;margin:0 0 22px}
+#splashAuth .auth-panel{box-shadow:0 20px 55px #0003;margin:0}
+#splashAuth .auth-panel h2{color:#172033}
+#splashAuth .note,#splashAuth .hint{color:#475569}
+#splashAuth .auth-grid{grid-template-columns:1fr}
+#splashAuth .btns{display:grid;grid-template-columns:1fr}
+#splashAuth button{width:100%}
+#drawerBackdrop{position:fixed;inset:0;background:#0f172a88;z-index:1100;display:none}
+#rightDrawer{position:fixed;z-index:1101;top:0;right:0;height:100dvh;width:min(92vw,460px);background:#f4f7fb;box-shadow:-15px 0 45px #0f172a33;transform:translateX(105%);transition:transform .25s ease;overflow:auto;padding:16px}
+#rightDrawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.drawer-head h2{margin:0}
+.drawer-close{background:#e2e8f0;color:#172033;font-size:22px;padding:6px 12px}
+#rightDrawer .settings-panel{display:block!important}
+#rightDrawer .settings-toggle{display:none}
+#rightDrawer .auth-panel{margin-bottom:12px}
+#rightDrawer .account-email{overflow-wrap:anywhere}
+body.app-locked .wrap{display:none}
+body.app-unlocked #splashScreen{display:none}
+@media(max-width:580px){
+ .wrap{padding:8px}
+ .hero{border-radius:14px;padding:15px}
+ .app-topbar{border-radius:12px}
+ .grid{grid-template-columns:1fr}
+ .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .mini{grid-template-columns:1fr}
+ #rightDrawer{width:100vw;padding:12px}
+ .card{border-radius:13px}
+}
+
+.angle-result-field{margin:12px 0;padding:12px;border:1px solid #b9d4ff;background:#f7faff;border-radius:10px}.angle-result-field label{display:block;font-weight:700;margin-bottom:7px}.angle-result-field input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #c8d5e5;border-radius:8px;font-size:16px}.angle-result-field .hint{margin-bottom:0}
+</style>
+</head>
+<body class="app-locked">
+<div id="splashScreen">
+ <div class="splash-inner">
+  <div class="splash-logo">C</div>
+  <h1 class="splash-title">COMKAR Torque</h1>
+  <p class="splash-subtitle">Reference Learning Calculator<br>Secure sign in · Cloud-synced references</p>
+  <div id="splashAuth"></div>
+ </div>
+</div>
+<div id="drawerBackdrop"></div>
+<aside id="rightDrawer" aria-label="Reference and account menu">
+ <div class="drawer-head"><h2>Menu</h2><button class="drawer-close" id="drawerClose" aria-label="Close menu">×</button></div>
+ <div id="drawerAccount"></div>
+ <div id="drawerRefs"></div>
+</aside>
+<div class="wrap">
+<div class="app-topbar"><div class="app-brand">COMKAR Torque Calculator</div><button class="menu-btn" id="hamburgerBtn" aria-label="Open references and account menu">☰</button></div>
+<header class="hero">
+<h1>COMKAR Reference Learning Torque Calculator</h1>
+<p>Your formula result stays separate from Reference AI. Save only verified-good results; the local rule engine uses saved references to estimate a torque after at least 10 references exist.</p>
+</header>
+
+<section class="card auth-panel" id="authPanel">
+  <div class="authbar">
+    <div>
+      <h2 style="margin-bottom:5px">Firebase Login</h2>
+      <div class="note" id="authStatus">Sign in to sync your reference library securely across devices.</div>
+    </div>
+    <button class="secondary" id="logoutBtn" style="display:none">Log out</button>
+  </div>
+  <div id="authForm">
+    <div class="auth-grid">
+      <div><label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="username" placeholder="you@example.com"></div>
+      <div><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters"></div>
+    </div>
+    <div class="btns">
+      <button class="blue" id="loginBtn">Log in</button>
+      <button class="primary" id="signupBtn">Create account</button>
+      <button class="secondary" id="resetPasswordBtn">Forgot password</button>
+    </div>
+    <p class="hint">Create one account per user. Use a password you do not use elsewhere.</p>
+  </div>
+</section>
+
+<section class="card">
+<h2>1. Before / After machine readings</h2>
+<div class="grid">
+ <div>
+  <h3 style="font-size:15px;margin:0 0 10px">BEFORE</h3>
+  <label for="t1">Before torque</label><input id="t1" type="number" step="any" value="800">
+  <label for="a1" style="margin-top:9px">Before angle (°)</label><input id="a1" type="number" step="any" value="1.5">
+  <label for="core1" style="margin-top:9px">Before core value</label><input id="core1" type="number" step="any" placeholder="Enter core value">
+  <label for="clad1" style="margin-top:9px">Before clad value</label><input id="clad1" type="number" step="any" placeholder="Enter clad value">
+ </div>
+ <div>
+  <h3 style="font-size:15px;margin:0 0 10px">AFTER</h3>
+  <label for="t2">After torque</label><input id="t2" type="number" step="any" value="700">
+  <label for="a2" style="margin-top:9px">After angle (°)</label><input id="a2" type="number" step="any" value="0.2">
+  <label for="core2" style="margin-top:9px">After core value</label><input id="core2" type="number" step="any" placeholder="Enter core value">
+  <label for="clad2" style="margin-top:9px">After clad value</label><input id="clad2" type="number" step="any" placeholder="Enter clad value">
+ </div>
+</div>
+<p class="hint">Core/Clad values and units should be entered consistently for every saved reference. If Core/Clad mean a particular measurement in your process, use that same measurement method every time.</p>
+</section>
+
+<section class="card">
+<h2>2. Target, machine limits and your formula result</h2>
+<div class="grid">
+ <div><label for="target">Target angle (°)</label><input id="target" type="number" step="any" min="0" value="0.5"></div>
+ <div><label for="minTorque">Minimum permitted torque (optional)</label><input id="minTorque" type="number" step="any" placeholder="Machine limit"></div>
+ <div><label for="maxTorque">Maximum permitted torque (optional)</label><input id="maxTorque" type="number" step="any" placeholder="Machine limit"></div>
+ <div><label for="method">Your formula calculation method</label><select id="method"><option value="linear">Linear formula from before/after readings</option><option value="midpoint">Midpoint test candidate</option></select></div>
+</div>
+<div class="btns">
+ <button class="primary" id="calculate">Calculate formula result</button>
+</div>
+<div id="result" class="result" aria-live="polite"><div class="note">Enter readings and calculate your formula result.</div></div>
+<div class="angle-result-field"><label for="resultAngle">Actual result angle (measured after test)</label><input id="resultAngle" type="number" step="any" min="0" placeholder="Enter measured angle, e.g. 0.42"><p class="hint">Enter the real angle measured on the machine/sample. This value will be saved with the torque and used by Reference AI.</p></div>
+<label class="checkline"><input type="checkbox" id="confirmed"><span><strong>I confirm this formula result has been checked on the machine/sample and the result is acceptable.</strong> Tick this only when the result is genuinely verified.</span></label>
+<div class="btns">
+ <button class="blue" id="saveRef">Save as Reference</button>
+ <button class="purple" id="aiResult">AI Result — Use Saved References</button>
+</div>
+<p class="hint">Saving stores the current input readings and the formula torque as a successful reference. The confirmation checkbox is required. Save only repeatable, verified-good results.</p>
+<div id="saveStatus" class="note" aria-live="polite"></div>
+<div id="aiPanel" class="result ai" style="display:none" aria-live="polite"><h2>Reference AI Result</h2><div id="aiReply" class="note"></div></div>
+</section>
+
+<button class="settings-toggle" id="settingsToggle" aria-expanded="false"><span>⚙ Settings Menu · Saved References</span><span id="settingsArrow">＋</span></button>
+<section class="card settings-panel" id="settingsPanel">
+<h2>Settings & Reference Manager</h2>
+<p class="note">અહીંથી saved references જોઈ, modify અથવા delete કરી શકો છો. ફેરફાર Firebase accountમાં save થશે.</p>
+<div class="mini">
+ <div class="stat"><small>Saved references</small><div class="count" id="refCount">0 / 10</div></div>
+ <div class="stat"><small>Storage</small><strong id="storageStatus">Firebase Cloud Firestore</strong></div>
+ <div class="stat"><small>AI status</small><strong id="libraryStatus">Need 10 references</strong></div>
+</div>
+<p class="hint">References are stored in your signed-in Firebase account. Use the same account on other devices. Export a backup periodically.</p>
+<div class="btns">
+ <button class="secondary" id="exportRefs">Export reference backup (JSON)</button>
+ <button class="secondary" id="importRefsBtn">Import backup</button>
+ <input id="importRefs" type="file" accept=".json,application/json" style="display:none">
+ <button class="danger" id="clearRefs">Delete all references</button>
+</div>
+<div id="settingsStatus" class="note"></div>
+<div id="refList"></div>
+<div class="warning" style="margin-top:14px"><strong>Reference safety:</strong> Only edit verified records when correcting a saved value. Export a backup before deleting or importing many references.</div>
+</section>
+
+<section class="card">
+<h2>How the reference system works</h2>
+<p class="note"><strong>Formula result:</strong> calculated directly from the current readings. It is not replaced by the reference engine.</p>
+<p class="note"><strong>Reference AI:</strong> with fewer than 10 saved references, it reports that there is not enough data. At 10 or more, it compares the current Core/Clad and angle inputs with saved successful cases, selects the nearest cases, and calculates a similarity-weighted torque suggestion.</p>
+<div class="warning"><strong>Important:</strong> This is a local reference-based calculation, not a live cloud AI model and not a certified COMKAR formula. Ten references are a minimum threshold, not proof of accuracy. Use consistent units and conditions, verify the suggestion on a sample cable, and follow the machine/cable manufacturer's limits. Never rely on angle alone to judge fiber/cable quality.</div>
+</section>
+<footer>COMKAR Reference Learning Calculator • Firebase Authentication + Cloud Firestore</footer>
+</div>
+<!-- Firebase compat SDKs required by this standalone HTML calculator -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+// IMPORTANT: Add your Firebase Web App config below from Firebase Console.
+// Recommended Firestore rules (Firebase Console > Firestore > Rules):
+// rules_version = '2';
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /users/{userId}/references/{referenceId} {
+//       allow read, write: if request.auth != null && request.auth.uid == userId;
+//     }
+//   }
+// }
+// Enable Email/Password provider in Firebase Authentication before using login.
+const firebaseConfig = {
+  apiKey: "AIzaSyCqflqHwXmd79BGuEb6MrT_zgxjrc0zK0Y",
+  authDomain: "claver-fc83c.firebaseapp.com",
+  projectId: "claver-fc83c",
+  storageBucket: "claver-fc83c.firebasestorage.app",
+  messagingSenderId: "508009765675",
+  appId: "1:508009765675:web:848067ff6c8a928496836e",
+  measurementId: "G-4K4N5QP739"
+};
+let lastFormulaResult=null;
+let firebaseApp=null, auth=null, db=null, currentUser=null, referencesCache=[];
+let firebaseReady=false;
+function num(id){const v=$(id).value.trim();return v===''?null:Number(v)}
+function fmt(n){return Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:4}):'—'}
+function readInputs(){
+ return {t1:num('t1'),a1:num('a1'),core1:num('core1'),clad1:num('clad1'),
+ t2:num('t2'),a2:num('a2'),core2:num('core2'),clad2:num('clad2'),
+ target:num('target'),min:num('minTorque'),max:num('maxTorque'),method:$('method').value};
+}
+function validCoreClad(d){return d.core1!==null&&d.clad1!==null&&d.core2!==null&&d.clad2!==null&&[d.core1,d.clad1,d.core2,d.clad2].every(Number.isFinite)}
+function getRefs(){return referencesCache.slice()}
+async function loadReferences(){
+ if(!currentUser||!db){referencesCache=[];renderRefs();return}
+ try{
+  const snap=await db.collection('users').doc(currentUser.uid).collection('references').orderBy('createdAt','asc').get();
+  referencesCache=snap.docs.map(doc=>({id:doc.id,...doc.data()}));
+  renderRefs();
+  $('saveStatus').textContent=`Synced ${referencesCache.length} reference(s) from Firebase.`;
+ }catch(err){
+  $('saveStatus').innerHTML='<span class="bad">Could not load cloud references. Check Firestore security rules and internet connection.</span>';
+  console.error(err);
+ }
+}
+async function saveReferenceToCloud(record){
+ if(!currentUser||!db)throw new Error('Please log in to Firebase first.');
+ const refDoc=db.collection('users').doc(currentUser.uid).collection('references').doc(record.id);
+ await refDoc.set(record);
+ referencesCache.push(record);renderRefs();
+}
+function calculate(){
+ const d=readInputs(),out=$('result');
+ if([d.t1,d.a1,d.t2,d.a2,d.target].some(v=>v===null||!Number.isFinite(v))){out.innerHTML='<div class="status bad">Enter valid torque, angle and target values.</div>';lastFormulaResult=null;return}
+ if(d.t1===d.t2&&d.method==='linear'){out.innerHTML='<div class="status bad">Before and after torque must be different for linear calculation.</div>';lastFormulaResult=null;return}
+ if(d.a1<0||d.a2<0||d.target<0){out.innerHTML='<div class="status bad">Angle values cannot be negative.</div>';lastFormulaResult=null;return}
+ const slope=(d.a2-d.a1)/(d.t2-d.t1);
+ let chosen,kind,explanation;
+ if(d.method==='linear'){
+  if(!Number.isFinite(slope)||slope===0){out.innerHTML='<div class="status bad">Cannot calculate a linear result from these readings.</div>';lastFormulaResult=null;return}
+  chosen=d.t1+(d.target-d.a1)/slope;
+  kind=(d.target>=Math.min(d.a1,d.a2)&&d.target<=Math.max(d.a1,d.a2))?'Interpolation estimate':'Extrapolation estimate';
+  explanation=kind==='Interpolation estimate'?'Target lies between the measured angles. This is a mathematical estimate, not a safety guarantee.':'Target lies outside the measured angle range; extrapolation can be unreliable.';
+ }else{
+  chosen=(d.t1+d.t2)/2;kind='Midpoint test candidate';
+  explanation='Midpoint is a proposed next test only; it does not predict the target angle.';
+ }
+ if(d.min!==null&&chosen<d.min){chosen=d.min;explanation+=' Candidate limited to entered minimum.'}
+ if(d.max!==null&&chosen>d.max){chosen=d.max;explanation+=' Candidate limited to entered maximum.'}
+ if(!Number.isFinite(chosen)){out.innerHTML='<div class="status bad">Formula result is not finite. Check inputs.</div>';lastFormulaResult=null;return}
+ lastFormulaResult={torque:chosen,kind,explanation,data:d,createdAt:new Date().toISOString()};
+ out.innerHTML=`<div class="note">YOUR FORMULA RESULT</div><div class="big">${fmt(chosen)} torque</div><div class="status ${kind.includes('Extrapolation')?'bad':'warn'}">${kind}</div><p class="note">${explanation}</p><div class="mini"><div class="stat"><small>Target angle</small><strong>${fmt(d.target)}°</strong></div><div class="stat"><small>Before</small><strong>${fmt(d.t1)} / ${fmt(d.a1)}°</strong></div><div class="stat"><small>After</small><strong>${fmt(d.t2)} / ${fmt(d.a2)}°</strong></div></div>`;
+ $('saveStatus').textContent='Formula result ready. Tick the confirmation checkbox only if this result was verified and acceptable.';
+ return lastFormulaResult;
+}
+async function saveReference(){
+ const d=readInputs();
+ if(!currentUser){$('saveStatus').innerHTML='<span class="bad">Please log in before saving references.</span>';return}
+ if(!lastFormulaResult)calculate();
+ if(!lastFormulaResult){$('saveStatus').innerHTML='<span class="bad">Calculate a valid formula result first.</span>';return}
+ if(!$('confirmed').checked){$('saveStatus').innerHTML='<span class="bad">Please confirm that the formula result was checked and acceptable before saving.</span>';return}
+ if(!validCoreClad(d)){$('saveStatus').innerHTML='<span class="bad">Enter all four Core/Clad values before saving a reference.</span>';return}
+ const record={id:(Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)),createdAt:new Date().toISOString(),
+ inputs:{t1:d.t1,a1:d.a1,core1:d.core1,clad1:d.clad1,t2:d.t2,a2:d.a2,core2:d.core2,clad2:d.clad2,target:d.target},
+ successfulTorque:lastFormulaResult.torque,resultAngle:Number($('resultAngle').value),formulaKind:lastFormulaResult.kind,verifiedGood:true};
+ try{await saveReferenceToCloud(record);$('saveStatus').innerHTML=`<span class="good">Reference saved to Firebase. Cloud library now has ${referencesCache.length} verified reference(s).</span>`;$('confirmed').checked=false;}
+ catch(e){$('saveStatus').innerHTML='<span class="bad">Firebase save failed. Check login, internet, Firebase config and Firestore rules.</span>';console.error(e)}
+}
+function aiResult(){
+ const d=readInputs(),refs=getRefs(),panel=$('aiPanel'),reply=$('aiReply');
+ panel.style.display='block';
+ if(!validCoreClad(d)){
+  reply.innerHTML='<div class="status bad">Enter all four Core/Clad values to let the reference engine compare cases.</div>';return;
+ }
+ if(refs.length<10){
+  reply.innerHTML=`<div class="count">Not enough data: ${refs.length}/10 references</div><p>Save ${10-refs.length} more verified-good reference(s). Once at least 10 references are stored, this section will compare the current Core/Clad and angle readings with saved cases and show a reference-based torque suggestion.</p><p><strong>Current formula result:</strong> ${lastFormulaResult?fmt(lastFormulaResult.torque)+' torque':'Calculate your formula result first.'}</p>`;return;
+ }
+ const features=[
+  {key:'core1',v:d.core1},{key:'clad1',v:d.clad1},{key:'core2',v:d.core2},{key:'clad2',v:d.clad2},
+  {key:'a1',v:d.a1},{key:'a2',v:d.a2}
+ ];
+ const scales={core1:1,clad1:1,core2:1,clad2:1,a1:Math.max(0.1,Math.abs(d.a1)),a2:Math.max(0.1,Math.abs(d.a2))};
+ const rows=refs.filter(r=>r.verifiedGood&&r.inputs&&Number.isFinite(r.successfulTorque)&&features.every(f=>Number.isFinite(r.inputs[f.key])));
+ if(rows.length<10){reply.innerHTML=`<div class="status bad">Only ${rows.length} valid verified references are available. Need at least 10 valid records.</div>`;return}
+ const distances=rows.map(r=>{
+  let sum=0;
+  for(const f of features){
+   const vals=rows.map(x=>Number(x.inputs[f.key])).filter(Number.isFinite).sort((a,b)=>a-b);
+   const range=Math.max(1e-9,vals[vals.length-1]-vals[0]);
+   const delta=(Number(r.inputs[f.key])-f.v)/range;
+   sum+=delta*delta;
+  }
+  return {r,dist:Math.sqrt(sum)};
+ }).sort((a,b)=>a.dist-b.dist);
+ const k=Math.min(5,distances.length);
+ const nearest=distances.slice(0,k);
+ const weights=nearest.map(x=>1/Math.max(0.0001,x.dist));
+ const total=weights.reduce((a,b)=>a+b,0);
+ const suggestion=nearest.reduce((s,x,i)=>s+x.r.successfulTorque*weights[i],0)/total;
+ const spread=Math.max(...nearest.map(x=>x.r.successfulTorque))-Math.min(...nearest.map(x=>x.r.successfulTorque));
+ const quality=spread<=Math.max(1,Math.abs(suggestion)*0.05)?'Nearest successful references agree fairly closely.':'Nearest references have a noticeable torque spread; treat this as lower confidence and gather more comparable tests.';
+ reply.innerHTML=`<div class="note">REFERENCE-BASED TORQUE SUGGESTION</div><div class="big">${fmt(suggestion)} torque</div><div class="status ${spread<=Math.max(1,Math.abs(suggestion)*0.05)?'good':'warn'}">Compared ${rows.length} valid references; using ${k} nearest cases</div><p>${quality}</p><p><strong>Current formula result:</strong> ${lastFormulaResult?fmt(lastFormulaResult.torque)+' torque':'not calculated in this session'}. Keep your formula result separate and compare it with this reference suggestion.</p><p><strong>Reference torque range among nearest cases:</strong> ${fmt(Math.min(...nearest.map(x=>x.r.successfulTorque)))} to ${fmt(Math.max(...nearest.map(x=>x.r.successfulTorque)))}.</p><p>Similarity inputs: before/after Core and Clad values plus before/after angles. The engine does not prove safety or causation; validate the suggested setting on a sample and follow machine limits.</p><p><strong>Nearest reference records:</strong></p>${nearest.map((x,i)=>`<div class="refrow">#${i+1}: ${new Date(x.r.createdAt).toLocaleString()} · torque ${fmt(x.r.successfulTorque)} · before ${fmt(x.r.inputs.t1)} / ${fmt(x.r.inputs.a1)}° · after ${fmt(x.r.inputs.t2)} / ${fmt(x.r.inputs.a2)}° · distance ${fmt(x.dist)}</div>`).join('')}`;
+ panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function renderRefs(){
+ const refs=getRefs();
+ $('refCount').textContent=`${refs.length} / 10`;
+ $('libraryStatus').textContent=refs.length>=10?'Reference threshold reached':'Need '+(10-refs.length)+' more';
+ if(!$('refList'))return;
+ $('refList').innerHTML=refs.length?'<h3 style="font-size:15px;margin:15px 0 5px">Saved references (latest first)</h3>'+refs.slice().reverse().map((r,i)=>{
+  const id=String(r.id).replace(/[^a-zA-Z0-9_-]/g,'');
+  const inp=r.inputs||{};
+  return `<div class="ref-card" id="ref-${id}"><strong>Reference ${refs.length-i}</strong> <span class="tiny">${new Date(r.createdAt).toLocaleString()}</span><br><strong>Successful torque: ${fmt(r.successfulTorque)}</strong><br><span class="note">Before: ${fmt(inp.t1)} torque / ${fmt(inp.a1)}° · After: ${fmt(inp.t2)} torque / ${fmt(inp.a2)}° · Core/Clad: ${fmt(inp.core1)}/${fmt(inp.clad1)} → ${fmt(inp.core2)}/${fmt(inp.clad2)}</span>
+  <div class="ref-actions"><button class="blue" onclick="toggleRefEdit('${id}')">Modify</button><button class="danger" onclick="deleteOneReference('${id}')">Delete</button></div>
+  <div class="ref-edit" id="edit-${id}"><label>Successful torque (verified result)</label><input id="e-torque-${id}" type="number" step="any" value="${Number(r.successfulTorque)}">
+  <div class="edit-grid" style="margin-top:8px">${[['t1','Before torque'],['a1','Before angle'],['core1','Before core'],['clad1','Before clad'],['t2','After torque'],['a2','After angle'],['core2','After core'],['clad2','After clad'],['target','Target angle']].map(([key,label])=>`<div><label>${label}</label><input id="e-${key}-${id}" type="number" step="any" value="${inp[key]===null||inp[key]===undefined?'':Number(inp[key])}"></div>`).join('')}</div>
+  <div class="ref-actions"><button class="primary" onclick="saveReferenceEdit('${id}')">Save changes</button><button class="secondary" onclick="toggleRefEdit('${id}')">Cancel</button></div><p class="tiny">Edit only if correcting a recorded value. Keep successful torque as the actual verified-good result.</p></div></div>`;
+ }).join(''):'<p class="note">No references saved yet.</p>';
+}
+function toggleRefEdit(id){const el=$('edit-'+id);if(el)el.style.display=el.style.display==='block'?'none':'block'}
+async function saveReferenceEdit(id){
+ if(!currentUser||!db){$('settingsStatus').innerHTML='<span class="bad">Log in to modify references.</span>';return}
+ const r=referencesCache.find(x=>String(x.id)===id);if(!r){$('settingsStatus').textContent='Reference not found. Refresh the reference list.';return}
+ const torque=Number($('e-torque-'+id).value);
+ const keys=['t1','a1','core1','clad1','t2','a2','core2','clad2','target'];
+ const inputs={...(r.inputs||{})};
+ for(const key of keys){const raw=$('e-'+key+'-'+id).value.trim();if(raw===''){if(['core1','clad1','core2','clad2'].includes(key)){ $('settingsStatus').innerHTML='<span class="bad">All four Core/Clad values are required.</span>';return;} inputs[key]=null;}else{const n=Number(raw);if(!Number.isFinite(n)){ $('settingsStatus').innerHTML='<span class="bad">Please enter valid numeric values.</span>';return;}inputs[key]=n;}}
+ if(!Number.isFinite(torque)){ $('settingsStatus').innerHTML='<span class="bad">Enter a valid successful torque.</span>';return;}
+ const updated={...r,inputs,successfulTorque:torque,modifiedAt:new Date().toISOString()};
+ try{await db.collection('users').doc(currentUser.uid).collection('references').doc(r.id).set(updated);referencesCache=referencesCache.map(x=>String(x.id)===id?updated:x);renderRefs();$('settingsStatus').innerHTML='<span class="good">Reference updated in Firebase.</span>';}
+ catch(e){$('settingsStatus').innerHTML='<span class="bad">Could not update reference. Check Firestore rules and connection.</span>';console.error(e)}
+}
+async function deleteOneReference(id){
+ if(!currentUser||!db){$('settingsStatus').innerHTML='<span class="bad">Log in to delete references.</span>';return}
+ const r=referencesCache.find(x=>String(x.id)===id);if(!r)return;
+ if(!confirm('Delete this saved reference? This cannot be undone unless you exported a backup.'))return;
+ try{await db.collection('users').doc(currentUser.uid).collection('references').doc(r.id).delete();referencesCache=referencesCache.filter(x=>String(x.id)!==id);renderRefs();$('settingsStatus').innerHTML='<span class="good">Reference deleted.</span>';}
+ catch(e){$('settingsStatus').innerHTML='<span class="bad">Could not delete reference. Check Firestore rules.</span>';console.error(e)}
+}
+function exportRefs(){
+ const blob=new Blob([JSON.stringify({format:'COMKAR_REFERENCE_BACKUP_V1',references:getRefs()},null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='comkar-reference-backup.json';a.click();URL.revokeObjectURL(url);
+}
+async function importRefs(file){
+ if(!currentUser||!db){$('saveStatus').innerHTML='<span class="bad">Log in before importing references to Firebase.</span>';return}
+ const reader=new FileReader();reader.onload=async()=>{
+  try{const obj=JSON.parse(reader.result);const incoming=Array.isArray(obj)?obj:obj.references;
+   if(!Array.isArray(incoming))throw new Error('Invalid backup');
+   let added=0;const seen=new Set(getRefs().map(r=>r.id));
+   for(const r of incoming){if(r&&r.id&&!seen.has(r.id)&&r.inputs&&Number.isFinite(r.successfulTorque)){
+     const clean={id:String(r.id),createdAt:r.createdAt||new Date().toISOString(),inputs:r.inputs,successfulTorque:r.successfulTorque,formulaKind:r.formulaKind||'Imported verified reference',verifiedGood:true};
+     await db.collection('users').doc(currentUser.uid).collection('references').doc(clean.id).set(clean);referencesCache.push(clean);seen.add(clean.id);added++;
+   }}
+   renderRefs();$('saveStatus').textContent=`Imported ${added} new reference(s) into Firebase. Total: ${referencesCache.length}.`;
+  }catch(e){$('saveStatus').innerHTML='<span class="bad">Could not import backup. Check JSON format and Firebase permissions.</span>';console.error(e)}
+ };reader.readAsText(file);
+}
+async function clearCloudReferences(){
+ if(!currentUser||!db){$('saveStatus').innerHTML='<span class="bad">Log in before deleting references.</span>';return}
+ if(!confirm('Delete every saved reference in your Firebase account? This cannot be undone unless you exported a backup.'))return;
+ try{
+  const col=db.collection('users').doc(currentUser.uid).collection('references');
+  const snap=await col.get();
+  const batch=db.batch();snap.docs.forEach(doc=>batch.delete(doc.ref));await batch.commit();
+  referencesCache=[];renderRefs();$('saveStatus').textContent='All cloud references deleted.';
+ }catch(e){$('saveStatus').innerHTML='<span class="bad">Could not delete references. Check Firestore rules.</span>';console.error(e)}
+}
+async function initializeFirebase(){
+ try{
+  if(typeof firebase==='undefined'){ $('authStatus').innerHTML='<span class="bad">Firebase SDK load failed. Check internet connection and reopen this HTML in Chrome.</span>'; ['loginBtn','signupBtn','resetPasswordBtn'].forEach(id=>$(id).disabled=true); return; }
+  if(!firebaseConfig.apiKey||firebaseConfig.apiKey.startsWith('PASTE_')||firebaseConfig.projectId.startsWith('PASTE_')){
+   $('authStatus').innerHTML='<span class="bad">Firebase setup required: paste your Firebase Web App config into the HTML first.</span>';if($('storageStatus'))$('storageStatus').textContent='Firebase not configured';
+   $('loginBtn').disabled=true;$('signupBtn').disabled=true;$('resetPasswordBtn').disabled=true;return;
+  }
+  firebaseApp=firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();firebaseReady=true;if($('storageStatus'))$('storageStatus').textContent='Firebase connected';
+  auth.onAuthStateChanged(async user=>{
+   currentUser=user||null;
+   document.body.classList.toggle('app-locked',!user);
+   document.body.classList.toggle('app-unlocked',!!user);
+   const authPanel=$('authPanel');
+   if(user){ $('drawerAccount').appendChild(authPanel); authPanel.classList.add('account-card'); }
+   else { $('splashAuth').appendChild(authPanel); authPanel.classList.remove('account-card'); }
+   $('authForm').style.display=user?'none':'block';$('logoutBtn').style.display=user?'inline-block':'none';
+   $('authStatus').textContent=user?`Signed in as ${user.email||user.uid}. References sync to this account.`:'Sign in to sync your reference library securely across devices.';
+   if(user){ $('authPanel').querySelector('h2').textContent='Account details'; $('authPanel').querySelector('.note').classList.add('account-email'); }
+   else { $('authPanel').querySelector('h2').textContent='Login / Create account'; }
+   $('saveRef').disabled=!user;$('importRefsBtn').disabled=!user;$('clearRefs').disabled=!user;
+   await loadReferences();
+  });
+ }catch(e){$('authStatus').innerHTML='<span class="bad">Firebase initialization failed. Check the Firebase config values.</span>';console.error(e)}
+}
+$('settingsToggle').addEventListener('click',()=>{const panel=$('settingsPanel'),open=panel.style.display==='block';panel.style.display=open?'none':'block';$('settingsToggle').setAttribute('aria-expanded',String(!open));$('settingsArrow').textContent=open?'＋':'−';if(!open)panel.scrollIntoView({behavior:'smooth',block:'start'});});
+$('loginBtn').addEventListener('click',async()=>{
+ if(!auth){$('authStatus').textContent='Firebase is not initialized. Check internet connection, SDK loading, and Firebase config, then refresh the page.';return;}
+ const email=$('authEmail').value.trim(),password=$('authPassword').value;
+ if(!email||!password){$('authStatus').textContent='Enter email and password.';return}
+ try{await auth.signInWithEmailAndPassword(email,password)}catch(e){$('authStatus').textContent='Login failed: '+e.message}
+});
+$('signupBtn').addEventListener('click',async()=>{
+ if(!auth){$('authStatus').textContent='Firebase is not initialized. Check internet connection, SDK loading, and Firebase config, then refresh the page.';return;}
+ const email=$('authEmail').value.trim(),password=$('authPassword').value;
+ if(!email||password.length<6){$('authStatus').textContent='Enter a valid email and password of at least 6 characters.';return}
+ try{await auth.createUserWithEmailAndPassword(email,password)}catch(e){$('authStatus').textContent='Account creation failed: '+e.message}
+});
+$('resetPasswordBtn').addEventListener('click',async()=>{
+ if(!auth){$('authStatus').textContent='Firebase is not initialized. Check internet connection, SDK loading, and Firebase config, then refresh the page.';return;}
+ const email=$('authEmail').value.trim();if(!email){$('authStatus').textContent='Enter your email first.';return}
+ try{await auth.sendPasswordResetEmail(email);$('authStatus').textContent='Password reset email sent if the address is registered.'}catch(e){$('authStatus').textContent='Could not send reset email: '+e.message}
+});
+$('logoutBtn').addEventListener('click',async()=>{if(auth)await auth.signOut()});
+$('calculate').addEventListener('click',calculate);
+$('saveRef').addEventListener('click',saveReference);
+$('aiResult').addEventListener('click',aiResult);
+$('exportRefs').addEventListener('click',exportRefs);
+$('importRefsBtn').addEventListener('click',()=>$('importRefs').click());
+$('importRefs').addEventListener('change',e=>{if(e.target.files&&e.target.files[0])importRefs(e.target.files[0]);e.target.value=''});
+$('clearRefs').addEventListener('click',clearCloudReferences);
+['t1','a1','t2','a2','target','minTorque','maxTorque','method','core1','clad1','core2','clad2'].forEach(id=>$(id).addEventListener('input',()=>{lastFormulaResult=null;$('confirmed').checked=false}));
+
+// Arrange the existing login card as the splash-screen sign-in form and
+// move the reference manager/account controls into the right-side drawer.
+(function setupAppShell(){
+ const authPanel=$('authPanel'),settingsToggle=$('settingsToggle'),settingsPanel=$('settingsPanel');
+ const splashAuth=$('splashAuth'),drawerAccount=$('drawerAccount'),drawerRefs=$('drawerRefs');
+ if(authPanel && splashAuth) splashAuth.appendChild(authPanel);
+ 
+ // The auth card is moved back to splash until a user signs in; on login it moves to drawer.
+ if(settingsToggle) settingsToggle.style.display='none';
+ if(settingsPanel && drawerRefs) drawerRefs.appendChild(settingsPanel);
+ const backdrop=$('drawerBackdrop'),drawer=$('rightDrawer');
+ function openDrawer(){drawer.classList.add('open');backdrop.style.display='block';document.body.style.overflow='hidden'}
+ function closeDrawer(){drawer.classList.remove('open');backdrop.style.display='none';document.body.style.overflow=''}
+ $('hamburgerBtn').addEventListener('click',openDrawer);
+ $('drawerClose').addEventListener('click',closeDrawer);
+ backdrop.addEventListener('click',closeDrawer);
+ // Make the settings list visible in the drawer by default.
+ if(settingsPanel) settingsPanel.style.display='block';
+ window.__comkarOpenDrawer=openDrawer;
+ window.__comkarCloseDrawer=closeDrawer;
+})();
+
+renderRefs();calculate();initializeFirebase();
+</script>
+</body>
+</html>
